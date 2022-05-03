@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Http\Requests\User;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class ProfilePhotoRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'avatars' => 'required|max:'.config('cms.files.avatars.size_byte').'
+                |mimes:'.config('cms.files.avatars.mimes'),
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'avatars' => __('module/user.label.photo'),
+        ];
+    }
+}

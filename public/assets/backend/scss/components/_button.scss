@@ -1,0 +1,276 @@
+@mixin btn() {
+    // position: relative;
+    // padding: .625rem 1.25rem;
+    // font-size: .875rem;
+    // line-height: 1.5;
+    // text-align: center;
+    // margin: {
+    //     top: .5rem;
+    //     bottom: .5rem;
+    // }
+    font-size: .875rem;
+    height: calc(1.5em + 1.25rem + 2px);
+    border-radius: 5em !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin button($bg-color, $bd-color, $color) {
+    background-color: $bg-color;
+    border-color: $bd-color;
+    color: $color;
+}
+
+@mixin button-hover($bg-color, $bd-color) {
+    background-color: $bg-color;
+    border-color: $bd-color;
+    color: #fff;
+}
+
+
+.alsen {
+    .btn {
+
+        @include btn();
+
+
+        &.dropdown-toggle {
+            border-radius: 0.25rem !important;
+            border-color: #d7dbdf;
+
+            &.btn-toggle-radius {
+                border-radius: 5rem !important;
+            }
+
+            &.dropdown-toggle-icon-only {
+                padding: .438rem;
+
+                i {
+                    margin: 0;
+                }
+
+                &::after {
+                    display: none;
+                }
+            }
+
+            &:hover {
+                background-color: transparent;
+            }
+
+            &[aria-expanded="true"] {
+                // background-color: transparent;
+                border-color: $main-color;
+            }
+
+            .filter-option {
+                display: flex;
+                align-items: center;
+                color: #777;
+                font-size: 0.875rem;
+            }
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        &:not(.icon-btn) {
+            min-width: calc(1.5em + 1.25rem + 2px);
+
+            i {
+                font-size: 1.15rem;
+                margin-right: 7px;
+            }
+        }
+
+        &.btn-sm {
+            height: calc(1.501rem + 2px);
+
+            i {
+                font-size: 0.975rem;
+
+            }
+        }
+
+        &.icon-btn:not(.btn-sm) {
+            min-width: calc(1.55em + 1.25rem + 2px);
+        }
+
+        @media screen and (max-width: $breakpoint-lg) {
+            &.icon-btn-only-sm {
+                width: calc(2.25276rem + 2px) !important;
+
+                &.btn-sm-only {
+                    min-width: calc(1.501rem + 2px) !important;
+                    width: calc(1.501rem + 2px) !important;
+                    height: calc(1.501rem + 2px) !important;
+                    line-height: 1.501rem;
+                    padding: 0;
+
+                    i {
+                        font-size: 0.975rem;
+                    }
+                }
+
+                i {
+                    margin: 0;
+
+                    + span {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        // btn-secondary
+        &.btn-primary {
+            @include button($main-color, $main-color, #fff);
+            &:active {
+                @include button-hover($main-color-hover, $main-color-hover);
+            }
+            &:hover {
+                @include button-hover($main-color-hover, $main-color-hover);
+            }
+            &:disabled {
+                @include button($main-color, $main-color, #fff);
+            }
+
+        }
+
+        &.btn-outline-primary {
+            @include button(transparent, $main-color, $main-color);
+            &:active {
+                @include button-hover($main-color, $main-color);
+            }
+            &:hover {
+                @include button-hover($main-color, $main-color);
+            }
+
+
+        }
+
+        // btn-secondary
+        // &.btn-secondary {
+        //     @include button($grey-color, #dae3ea, #333);
+        //     &:active {
+        //         @include button-hover($grey-color-hover, $grey-color-hover);
+        //     }
+        //     &.btn-outline {
+        //         @include button(transparent, $grey-color, $grey-color);
+        //         &:active {
+        //             @include button-hover($grey-color, $grey-color);
+        //         }
+        //     }
+        // }
+
+         // btn-warning
+         &.btn-warning {
+            @include button($secondary-color, $secondary-color, #fff);
+            &:active {
+                @include button-hover($secondary-color-hover, $secondary-color-hover);
+            }
+            &:hover {
+                @include button-hover($secondary-color-hover, $secondary-color-hover);
+            }
+
+        }
+
+
+
+        &.btn-outline-warning {
+            @include button(transparent, $secondary-color, $secondary-color);
+            &:active {
+                @include button-hover($secondary-color, $secondary-color);
+            }
+            &:hover {
+                @include button-hover($secondary-color, $secondary-color);
+            }
+        }
+
+        &.btn-danger {
+            @include button($red-color, $red-color, #fff);
+            &:active {
+                @include button-hover($red-color-hover, $red-color-hover);
+            }
+            &:hover {
+                @include button-hover($red-color-hover, $red-color-hover);
+            }
+        }
+
+        &.btn-success {
+            @include button($green-color, $green-color, #fff);
+            &:active {
+                @include button-hover($green-color-hover, $green-color-hover);
+            }
+            &:hover {
+                @include button-hover($green-color-hover, $green-color-hover);
+            }
+        }
+
+        &.btn-outline-success {
+            @include button(transparent, $green-color, $green-color);
+            &:active {
+                @include button-hover($green-color, $green-color);
+            }
+            &:hover {
+                @include button-hover($green-color, $green-color);
+            }
+        }
+    }
+    .input-group {
+      .input-group-append {
+        .btn {
+          border: {
+            top-right-radius: .25rem !important;
+            bottom-right-radius: .25rem !important;
+            top-left-radius: 0 !important;
+            bottom-left-radius: 0 !important;
+          }
+          i {
+            margin: 0;
+          }
+        }
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .box-btn {
+        margin-top: $dt-1;
+    }
+
+    .sw-btn-prev {
+        margin-right: .5rem;
+    }
+
+    // custome-nav
+    .nav-link {
+        transition: .3s;
+        &.active {
+            .btn-outline-warning {
+                @include button-hover($secondary-color, $secondary-color);
+            }
+        }
+
+        &:hover {
+            .btn-outline-warning {
+                @include button-hover($secondary-color, $secondary-color);
+            }
+        }
+    }
+
+}

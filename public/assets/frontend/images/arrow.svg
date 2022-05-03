@@ -1,0 +1,14 @@
+<svg width="14" height="11" viewBox="0 0 14 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>arrows-24px-outline-1_small-triangle-down</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-2020 -5702)">
+<g id="arrows-24px-outline-1_small-triangle-down">
+<g id="Shape" opacity="0.8">
+<use xlink:href="#path0_stroke" transform="matrix(-1 2.44929e-16 2.44929e-16 1 2032 5703)" fill="#0084FF"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_stroke" d="M 0 0L 0 -1L -1.80425 -1L -0.847998 0.529999L 0 0ZM 10 0L 10.848 0.529999L 11.8042 -1L 10 -1L 10 0ZM 5 8L 4.152 8.53L 5 9.8868L 5.848 8.53L 5 8ZM 0 1L 10 1L 10 -1L 0 -1L 0 1ZM 9.152 -0.529999L 4.152 7.47L 5.848 8.53L 10.848 0.529999L 9.152 -0.529999ZM 5.848 7.47L 0.847998 -0.529999L -0.847998 0.529999L 4.152 8.53L 5.848 7.47Z"/>
+</defs>
+</svg>

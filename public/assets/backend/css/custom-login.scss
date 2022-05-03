@@ -1,0 +1,263 @@
+@import url(../vendor/font/vesterbro/font.css);
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: red;
+}
+
+
+
+.custom-login {
+    background: #f7f0eb;
+    color: #333;
+
+    a {
+        color: #68b8bd;
+
+        &:hover {
+            color: #8dd4da;
+        }
+    }
+
+
+    .f-title {
+        position: relative;;
+        font-family: "vesterbro", serif;
+
+        &::after {
+            position: relative;
+            content: ".";
+            display: inline;
+            color: #ff5a00;
+            margin-left: 3px;
+        }
+    }
+
+    .authentication-wrapper {
+        position: relative;
+
+        height: 100vh;
+
+
+
+        .authentication-inner {
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0px 60px 70px -25px rgba(159, 123, 97, 0.6);
+            overflow: hidden;
+            border-radius: 15px;
+            padding: 15px;
+
+
+            .theme-bg-white {
+                background-color: #fff !important;
+            }
+
+            .ui-bg-cover {
+
+                .logo-jabar {
+                    position: relative;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: 20px;
+
+                    img {
+                        width: 100px;
+                        height: auto;
+                    }
+                }
+
+
+                .ui-bg-overlay {
+                    mix-blend-mode: multiply;
+                   background-image: linear-gradient(200deg, #28275f 0%,  #28275f 100%) !important;
+                }
+
+                .ui-bg-text {
+                    position: relative;
+
+
+                }
+            }
+
+            .ui-bg-form {
+                position: relative;
+
+                &:before {
+                    content: "";
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    background-image: url(../images/bg-login.jpg);
+                    background-position: center top;
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    opacity: 0.3;
+                    pointer-events: none;
+                }
+
+                .form-group {
+                    position: relative;
+
+                    i {
+                        position: absolute;
+                        bottom: 10px;
+                        left: 0px;
+                        color: #ff5a00;
+                        font-size: 22px;
+                        font-weight: 700;
+                    }
+
+                    .invalid-feedback {
+                        position: absolute;
+                        right: 0;
+                    }
+                }
+
+                .form-label {
+                    color: #999;
+                }
+
+                .form-control {
+                    border-radius: 0;
+                    border: none;
+                    border-bottom: 2px solid rgba(24,28,33,0.1);
+                    padding-left: 30px;
+                    background-color: transparent;
+                    // background-color: rgba(255,255,255,0.05);
+                    // border: 1px solid rgba(255,255,255,0.15);
+
+                    &:focus {
+                        border-color: #ff5a00;
+                        // box-shadow: 0 0 0 2px rgba(255, 90, 0,.2)
+                    }
+                }
+
+                .box-4vm {
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 30px;
+
+                    a {
+                        width: 100px;
+                        margin-left: 10px;
+
+                        img {
+                            width: 100%;
+                            height: auto;
+                        }
+                    }
+                }
+
+                .box-jabar {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-top: 30px;
+
+                    .logo-jabar-footer {
+                        width: 50px;
+                        margin-right: 10px;
+
+                        img {
+                            width: 100%;
+                            height: auto;
+                        }
+                    }
+                }
+            }
+
+            .btn-primary {
+                background: #ff5a00;
+                color: #fff;
+                border-radius: 30px;
+                height: 50px;
+
+                &:focus {
+                    box-shadow: 0 0 0 2px rgba(255, 90, 0,.4)
+                }
+            }
+
+
+
+            .ui-form {
+                position: relative;
+                height: 100%;
+                overflow: auto;
+            }
+        }
+    }
+}
+
+
+
+@media screen and (max-width: 991.98px) {
+    .custom-login {
+        background-color: #28275f;
+
+        .authentication-wrapper {
+            padding: 3%;
+
+            .authentication-inner {
+                box-shadow: none;
+            }
+
+            &::before {
+               display: none;
+            }
+
+            .leaf {
+                &::before,  &::after {
+                    width: 300px;
+                    height: 300px;
+                }
+
+                &::before {
+                    top: -15%;
+                    left: -15%;
+                }
+
+                &::after {
+                    right: -15%;
+                    bottom: -15%;
+                }
+            }
+
+        }
+    }
+}
+
+@media screen and (max-width: 575.98px) {
+    .custom-login {
+        .authentication-wrapper {
+
+            .authentication-inner {
+                padding: 0;
+            }
+
+            .leaf {
+                &::before,  &::after {
+                    width: 150px;
+                    height: 150px;
+                }
+
+                &::before {
+                    top: -40px;
+                    left: -60px;
+                }
+
+                &::after {
+                    right: -60px;
+                    bottom: -40px;
+                }
+            }
+
+        }
+    }
+}
+

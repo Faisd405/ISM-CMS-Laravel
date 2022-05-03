@@ -1,0 +1,94 @@
+.alsen {
+    .table-mobile-responsive {
+        .table {
+
+            tbody.tbody-responsive {
+                display: none;
+            }
+
+            @media screen and (max-width: $breakpoint-xl) {
+                thead {
+                    display: none;
+                }
+
+                tbody {
+                    display: none;
+                }
+
+                .tbody-responsive {
+                    display: block !important;
+                    border: none !important;
+
+                    tr {
+                        display: block;
+
+                        td {
+                            position: relative;
+                            display: block;
+                            width: 100%;
+                            background-color: #f7f7f7;
+                            border: none !important;
+
+                            .card {
+                                margin-bottom: 0;
+
+                                .item-table {
+                                    display: flex;
+                                    flex-direction: column;
+                                    margin-bottom: $dt-1 / 2;
+                                }
+
+                                @media screen and (min-width: $breakpoint-sm) {
+                                    .item-table {
+                                        flex-direction: row;
+                                        justify-content: space-between;
+                                    }
+                                }
+
+
+                                .data-table {
+                                    font-size: 0.89em;
+                                    font-weight: 500;
+
+                                }
+
+                                .desc-table {
+                                    color: $main-color;
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    .table {
+
+        thead {
+            background-color: #e5e5e5;
+            th {
+                color: $main-color-hover;
+                padding: 0.75rem;
+                font-weight: 500;
+                vertical-align: middle;
+            }
+        }
+
+        td {
+            font-weight: 400;
+            vertical-align: middle;
+
+            .btn {
+                margin: 3px;
+            }
+        }
+
+
+
+
+    }
+
+}

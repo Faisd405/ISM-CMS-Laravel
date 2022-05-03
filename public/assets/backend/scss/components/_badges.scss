@@ -1,0 +1,24 @@
+.alsen {
+    .badge {
+        padding: .25em .617em;
+        border-radius: 1em;
+
+        a {
+            color: #fff;
+        }
+
+        &.badge-primary {
+            background-color: $main-color;
+        }
+
+        &.badge-warning {
+            background-color: $secondary-color;
+            color: #fff;
+        }
+
+        &.badge-outline-warning {
+            box-shadow: 0 0 0 1px $secondary-color inset;
+            color: $secondary-color;
+        }
+    }
+}

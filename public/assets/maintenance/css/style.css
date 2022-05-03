@@ -1,0 +1,161 @@
+body {
+	font-family: "Merriweather Sans", sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 1.7;
+	height: 100%;
+	width: 100%;
+	background-color: #ffffff;
+	margin: 0;
+}
+
+ul,
+li,
+ol {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.intro-content {
+	position: relative;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+}
+
+.intro-logo {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	justify-content: center;
+	flex-direction: column;
+	padding: 10em 0 5em;
+}
+
+.intro-logo:before {
+	position: absolute;
+	content: "";
+	display: block;
+	background: transparent url("../images/bg.svg") no-repeat scroll center center;
+	height: 100%;
+	width: 100%;
+}
+
+.wrap-logo {
+	position: relative;
+}
+
+.bg-logo {
+	width: 150px;
+	height: 150px;
+	border-radius: 100%;
+	background-color: #fff;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 30px;
+	box-shadow: 0px 24px 57px 0px rgba(18, 21, 40, 0.35);
+	transform-origin: center center;
+	transition: 0.5s;
+	cursor: crosshair;
+}
+
+.bg-logo:hover {
+	transform: scale(1.075);
+}
+
+.logo {
+	background: transparent url("../images/logo.svg") no-repeat scroll center
+		center;
+	display: block;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	text-indent: -9999px;
+	z-index: 1001;
+	position: relative;
+}
+
+.list-socmed {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-top: 3em;
+}
+
+.list-socmed li {
+	position: relative;
+	margin: 0 20px;
+}
+
+.list-socmed li a {
+	position: relative;
+	background-color: #ffffff;
+	width: 50px;
+	height: 50px;
+	border-radius: 100%;
+	box-shadow: 0px 5px 9px 0px rgba(0, 0, 0, 0.2);
+	text-align: center;
+	display: block;
+	padding: 15px;
+	line-height: 1;
+	transform-origin: center center;
+	transition: 0.5s;
+}
+
+.list-socmed li a:hover {
+	transform: scale(1.1);
+}
+
+.intro-desc {
+	position: relative;
+	text-align: center;
+	width: 100%;
+	padding-top: 2em;
+}
+
+.intro-desc h5 {
+	margin-bottom: 15px;
+	font-weight: 400;
+}
+
+.intro-desc h3 {
+	font-weight: 700;
+	text-transform: uppercase;
+	margin-bottom: 20px;
+	font-size: 28px;
+	line-height: 1.7;
+}
+
+.intro-desc span {
+	color: #d5d5d5;
+}
+
+@media screen and (max-width: 575px) {
+	.intro-logo {
+		padding: 5em 0 2em;
+	}
+
+	.intro-desc {
+		padding-bottom: 3em;
+	}
+
+	.intro-desc h5 {
+		font-size: 18px;
+	}
+
+	.intro-desc h3 {
+		font-size: 24px;
+	}
+
+	.list-socmed {
+		margin-top: 2em;
+	}
+}

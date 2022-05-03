@@ -1,0 +1,67 @@
+/* LG OPTION*/
+
+.lg-backdrop {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.lg-toolbar {
+    background-color: rgba(0, 0, 0, 0.0) !important;
+}
+
+.lg-icon {
+    font-family: 'themify' !important;
+}
+
+.lg-toolbar .lg-icon {
+    font-size: 18px !important;
+}
+
+.lg-toolbar .lg-close::after {
+    content: "\e646" !important;
+}
+
+#lg-actual-size::after {
+    content: "\e62f" !important;
+}
+
+#lg-zoom-in:after {
+    content: "\e611" !important;
+}
+
+#lg-zoom-out:after {
+    content: "\e612" !important;
+}
+
+.lg-actions .lg-prev::after {
+    content: "\e65e" !important;
+}
+
+.lg-actions .lg-next::before {
+    content: "\e65d" !important;
+}
+
+.lg-outer .lg-toogle-thumb::after {
+    content: "\e708" !important;
+}
+
+.lg-fullscreen::after {
+    content: "\e708" !important;
+}
+
+.lg-outer .lg-toogle-thumb {
+    padding: 10px 0 !important;
+}
+
+.lg-outer .lg-thumb-item {
+    border-radius: 0 !important;
+}
+
+.lg-actions .lg-next,
+.lg-actions .lg-prev {
+    background: transparent !important;
+}
+
+.lg-outer .lg-thumb-item.active,
+.lg-outer .lg-thumb-item:hover {
+    border-color: #279220 !important;
+}

@@ -1,0 +1,67 @@
+.alsen {
+    font-family: $font-global;
+    color: $primary-text-color;
+    background-color: $bg-color;
+    font-size: 14px;
+    line-height: 1.7;
+
+    // a {
+    //     &:not(.btn) {
+    //         color: $main-color;
+    //     }
+
+    //     &:not(.dropdown-item) {
+    //         color: $main-color;
+    //     }
+    // }
+
+    .text-primary {
+        color: $main-color !important;
+    }
+
+    .text-body[href]:hover {
+        color: $main-color !important;
+    }
+
+    .pagination {
+        justify-content: flex-end;
+        margin: $dt-1 / 2 0;
+        flex-wrap: wrap;
+        .page-item {
+            &.active {
+                .page-link {
+                    background-color: $main-color;
+                    border-color: $main-color;
+                    color: $secondary-color;
+                }
+            }
+            +.page-item {
+                .page-link {
+                    margin-left: 0.588rem;
+                }
+            }
+        }
+        .page-link {
+            border-radius: 100% !important;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-lg) {
+        .pagination {
+            justify-content: center;
+        }
+
+        .breadcrumb {
+            margin-bottom: 0;
+            .breadcrumb-item {
+                a {
+                    font-size: 1rem;
+                }
+            }
+        }
+    }
+
+}
+
+
+

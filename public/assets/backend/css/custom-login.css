@@ -1,0 +1,194 @@
+/* @import url(../vendor/font/vesterbro/font.css);
+* {
+  scrollbar-width: thin;
+  scrollbar-color: red;
+} */
+
+.custom-login {
+  background: #f7f0eb;
+  color: #333;
+}
+.custom-login a {
+  color: #68b8bd;
+}
+.custom-login a:hover {
+  color: #8dd4da;
+}
+/* .custom-login .f-title {
+  position: relative;
+  font-family: "vesterbro", serif;
+} */
+.custom-login .f-title::after {
+  position: relative;
+  content: ".";
+  display: inline;
+  color: #0084ff;
+  margin-left: 3px;
+}
+.custom-login .authentication-wrapper {
+  position: relative;
+  height: 100vh;
+}
+.custom-login .authentication-wrapper .authentication-inner {
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0px 60px 70px -25px rgba(159, 123, 97, 0.6);
+  overflow: hidden;
+  border-radius: 15px;
+  padding: 15px;
+}
+.custom-login .authentication-wrapper .authentication-inner .theme-bg-white {
+  background-color: #fff !important;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-cover .logo-jabar {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-cover .logo-jabar img {
+  width: 100px;
+  height: auto;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-cover .ui-bg-overlay {
+  mix-blend-mode: multiply;
+  background-image: linear-gradient(200deg, #002a52 0%, #002a52 100%) !important;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-cover .ui-bg-text {
+  position: relative;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form {
+  position: relative;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url(../images/bg-login.jpg);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.3;
+  pointer-events: none;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .form-group {
+  position: relative;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .form-group i {
+  position: absolute;
+  bottom: 10px;
+  left: 0px;
+  color: #0084ff;
+  font-size: 22px;
+  font-weight: 700;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .form-group .invalid-feedback {
+  position: absolute;
+  text-align: right;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .form-label {
+  color: #999;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .form-control {
+  border-radius: 0;
+  border: none;
+  border-bottom: 2px solid rgba(24, 28, 33, 0.1);
+  padding-left: 30px;
+  background-color: transparent;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .form-control:focus {
+  border-color: #0084ff;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .box-4vm {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .box-4vm a {
+  width: 100px;
+  margin-left: 10px;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .box-4vm a img {
+  width: 100%;
+  height: auto;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .box-jabar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .box-jabar .logo-jabar-footer {
+  width: 50px;
+  margin-right: 10px;
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-bg-form .box-jabar .logo-jabar-footer img {
+  width: 100%;
+  height: auto;
+}
+.custom-login .authentication-wrapper .authentication-inner .btn-primary {
+  background: #0084ff;
+  color: #fff;
+  /* border-radius: 30px;
+  height: 50px; */
+}
+.custom-login .authentication-wrapper .authentication-inner .btn-primary:focus {
+  box-shadow: 0 0 0 2px rgba(255, 90, 0, 0.4);
+}
+.custom-login .authentication-wrapper .authentication-inner .ui-form {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+}
+
+@media screen and (max-width: 991.98px) {
+  .custom-login {
+    background-color: #00417e;
+  }
+  .custom-login .authentication-wrapper {
+    padding: 3%;
+  }
+  .custom-login .authentication-wrapper .authentication-inner {
+    box-shadow: none;
+  }
+  .custom-login .authentication-wrapper::before {
+    display: none;
+  }
+  .custom-login .authentication-wrapper .leaf::before, .custom-login .authentication-wrapper .leaf::after {
+    width: 300px;
+    height: 300px;
+  }
+  .custom-login .authentication-wrapper .leaf::before {
+    top: -15%;
+    left: -15%;
+  }
+  .custom-login .authentication-wrapper .leaf::after {
+    right: -15%;
+    bottom: -15%;
+  }
+}
+@media screen and (max-width: 575.98px) {
+  .custom-login .authentication-wrapper .authentication-inner {
+    padding: 0;
+  }
+  .custom-login .authentication-wrapper .leaf::before, .custom-login .authentication-wrapper .leaf::after {
+    width: 150px;
+    height: 150px;
+  }
+  .custom-login .authentication-wrapper .leaf::before {
+    top: -40px;
+    left: -60px;
+  }
+  .custom-login .authentication-wrapper .leaf::after {
+    right: -60px;
+    bottom: -40px;
+  }
+}
+
+/*# sourceMappingURL=custom-login.css.map */

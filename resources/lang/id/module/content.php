@@ -1,0 +1,70 @@
+<?php
+
+return[
+    'caption' => 'Content',
+    'section' => [
+        'title' => 'Sections',
+        'caption' => 'Section',
+        'text' => 'List Section',
+        'label' => [
+            'field1' => 'Nama',
+            'field2' => 'Slug',
+            'field3' => 'Deskripsi',
+            'field5' => 'Order Field',
+            'field6' => 'Order By',
+            'field7' => 'Template List',
+            'field8' => 'Template Detail',
+            'field9' => 'Kategori Limit',
+            'field10' => 'Post Limit',
+            'field11' => 'Post Selected',
+        ],
+        'placeholder' => [
+            'field1' => 'Masukan nama',
+            'field2' => '',
+            'field3' => '',
+            'field4' => '',
+            'field5' => '',
+            'field6' => '',
+            'field7' => '',
+            'field8' => '',
+            'field9' => '',
+            'field10' => '',
+            'field11' => '',
+        ],
+    ],
+    'category' => [
+        'title' => 'Kategori',
+        'caption' => 'Kategori',
+        'text' => 'List Kategori',
+        'manage' => 'Manage Kategori',
+        'label' => [
+            'field1' => 'Nama',
+            'field2' => 'Slug',
+            'field3' => 'Deskripsi',
+        ],
+        'placeholder' => [
+            'field1' => 'Masukan nama',
+            'field2' => '',
+            'field3' => '',
+        ],
+    ],
+    'post' => [
+        'title' => 'Post',
+        'caption' => 'Post',
+        'text' => 'List Post',
+        'label' => [
+            'field1' => 'Judul',
+            'field2' => 'Slug',
+            'field3' => 'Intro',
+            'field4' => 'Konten',
+            'publish_time' => 'Publish Time',
+            'publish_end' => 'Publish End',
+        ],
+        'placeholder' => [
+            'field1' => 'Masukan judul',
+            'field2' => '',
+            'field3' => '',
+            'field4' => '',
+        ],
+    ],
+];
