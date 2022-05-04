@@ -2,46 +2,42 @@
 
 namespace App\Services\Module;
 
-use App\Models\Module\Inquiry\Inquiry;
-use App\Models\Module\Inquiry\InquiryField;
-use App\Models\Module\Inquiry\InquiryForm;
+use App\Models\Module\Event\Event;
+use App\Models\Module\Event\EventField;
+use App\Models\Module\Event\EventForm;
 use App\Services\Feature\LanguageService;
-use App\Services\IndexUrlService;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class InquiryService
+class EventService
 {
     use ApiResponser;
 
-    private $inquiryModel, $inquiryFieldModel, $inquiryFormModel, $language, $indexUrl;
+    private $eventModel, $eventFieldModel, $eventFormModel, $language;
 
     public function __construct(
-        Inquiry $inquiryModel,
-        InquiryField $inquiryFieldModel,
-        InquiryForm $inquiryFormModel,
-        LanguageService $language,
-        IndexUrlService $indexUrl
+        Event $eventModel,
+        EventField $eventFieldModel,
+        EventForm $eventFormModel,
+        LanguageService $language
     )
     {
-        $this->inquiryModel = $inquiryModel;
-        $this->inquiryFieldModel = $inquiryFieldModel;
-        $this->inquiryFormModel = $inquiryFormModel;
+        $this->eventModel = $eventModel;
+        $this->eventFieldModel = $eventFieldModel;
+        $this->eventFormModel = $eventFormModel;
         $this->language = $language;
-        $this->indexUrl = $indexUrl;
     }
 
     //---------------------------
-    // INQUIRY
+    // EVENT
     //---------------------------
 
     /**
-     * Get Inquiry List
+     * Get Event List
      * @param array $filter
      * @param booleean $withPaginate
      * @param int $limit
@@ -49,113 +45,100 @@ class InquiryService
      * @param array $with
      * @param array $orderBy
      */
-    public function getInquiryList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getEventList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
-        $inquiry = $this->inquiryModel->query();
+        $event = $this->eventModel->query();
 
         if ($isTrash == true)
-            $inquiry->onlyTrashed();
+            $event->onlyTrashed();
+
+        if (isset($filter['type']))
+            $event->where('type', $filter['type']);
 
         if (isset($filter['publish']))
-            $inquiry->where('publish', $filter['publish']);
+            $event->where('publish', $filter['publish']);
 
         if (isset($filter['public']))
-            $inquiry->where('public', $filter['public']);
+            $event->where('public', $filter['public']);
 
         if (isset($filter['approved']))
-            $inquiry->where('approved', $filter['approved']);
+            $event->where('approved', $filter['approved']);
 
         if (isset($filter['created_by']))
-            $inquiry->where('created_by', $filter['created_by']);
+            $event->where('created_by', $filter['created_by']);
 
         if (isset($filter['q']))
-            $inquiry->when($filter['q'], function ($inquiry, $q) {
-                $inquiry->whereRaw('LOWER(JSON_EXTRACT(name, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
-                    ->orWhereRaw('LOWER(JSON_EXTRACT(body, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"']);
+            $event->when($filter['q'], function ($event, $q) {
+                $event->whereRaw('LOWER(JSON_EXTRACT(name, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
+                    ->orWhereRaw('LOWER(JSON_EXTRACT(description, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"']);
             });
 
         if (isset($filter['limit']))
             $limit = $filter['limit'];
 
         if (!empty($with))
-            $inquiry->with($with);
+            $event->with($with);
 
         if (!empty($orderBy))
             foreach ($orderBy as $key => $value) {
-                $inquiry->orderBy($key, $value);
+                $event->orderBy($key, $value);
             }
 
         if ($withPaginate == true) {
-            $result = $inquiry->paginate($limit);
+            $result = $event->paginate($limit);
         } else {
-            $result = $inquiry->get();
+            $result = $event->get();
         }
         
         return $result;
     }
 
     /**
-     * Get Inquiry One
+     * Get Event One
      * @param array $where
      * @param array $with
      */
-    public function getInquiry($where, $with = [])
+    public function getEvent($where, $with = [])
     {
-        $inquiry = $this->inquiryModel->query();
+        $event = $this->eventModel->query();
         
         if (!empty($with))
-            $inquiry->with($with);
+            $event->with($with);
         
-        $result = $inquiry->firstWhere($where);;
+        $result = $event->firstWhere($where);;
 
         return $result;
     }
 
     /**
-     * Create Inquiry
+     * Create Event
      * @param array $data
      */
-    public function storeInquiry($data)
+    public function storeEvent($data)
     {
         try {
 
-            DB::beginTransaction();
 
-            $inquiry = new Inquiry;
-            $this->setFieldInquiry($data, $inquiry);
-            $inquiry->position = $this->inquiryModel->max('position') + 1;
+            $event = new Event;
+            $this->setFieldEvent($data, $event);
+            $event->position = $this->eventModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.inquiry.approval') == true) {
-                    $inquiry->approved = 2;
+                if (Auth::user()->hasRole('editor') && config('module.event.approval') == true) {
+                    $event->approved = 2;
                 }
-                $inquiry->created_by = Auth::user()['id'];
+                $event->created_by = Auth::user()['id'];
 
-            $inquiry->save();
+            $event->save();
 
-            try {
-                
-                DB::commit();
-                $slug = Str::slug($data['slug'], '-');
-                $data['slug'] = $slug;
-                $data['module'] = 'inquiry';
-                $this->indexUrl->storeAssociate($data, $inquiry);
+            $slug = Str::slug($data['slug'], '-');
 
-                File::copy(resource_path('views/frontend/inquiries/detail.blade.php'), 
-                    resource_path('views/frontend/inquiries/'.$slug.'.blade.php'));
+            File::copy(resource_path('views/frontend/events/detail.blade.php'), 
+                resource_path('views/frontend/events/'.$slug.'.blade.php'));
 
-                return $this->success($inquiry,  __('global.alert.create_success', [
-                    'attribute' => __('module/inquiry.caption')
-                ]));
-
-            } catch (Exception $e) {
-               
-                return $this->error(null,  $e->getMessage());
-            }
-
-            return $this->success($inquiry,  __('global.alert.create_success', [
-                'attribute' => __('module/inquiry.caption')
+            return $this->success($event,  __('global.alert.create_success', [
+                'attribute' => __('module/event.caption')
             ]));
             
         } catch (Exception $e) {
@@ -165,37 +148,36 @@ class InquiryService
     }
 
     /**
-     * Update Inquiry
+     * Update Event
      * @param array $data
      * @param array $where
      */
-    public function updateInquiry($data, $where)
+    public function updateEvent($data, $where)
     {
-        $inquiry = $this->getInquiry($where);
-        $oldSlug = $inquiry['slug'];
+        $event = $this->getEvent($where);
+        $oldSlug = $event['slug'];
 
         try {
             
-            $this->setFieldInquiry($data, $inquiry);
+            $this->setFieldEvent($data, $event);
             if (Auth::guard()->check())
-                $inquiry->updated_by = Auth::user()['id'];
+                $event->updated_by = Auth::user()['id'];
 
-            $inquiry->save();
+            $event->save();
 
             $slug = Str::slug($data['slug'], '-');
-            $this->indexUrl->updateAssociate($slug, ['id' => $inquiry['indexing']['id']]);
 
             if ($oldSlug != $slug) {
                 
-                File::copy(resource_path('views/frontend/inquiries/'.$oldSlug.'.blade.php'), 
-                    resource_path('views/frontend/inquiries/'.$slug.'.blade.php'));
+                File::copy(resource_path('views/frontend/events/'.$oldSlug.'.blade.php'), 
+                    resource_path('views/frontend/events/'.$slug.'.blade.php'));
 
-                $path = resource_path('views/frontend/inquiries/'.$oldSlug.'.blade.php');
+                $path = resource_path('views/frontend/events/'.$oldSlug.'.blade.php');
                 File::delete($path);
             }
 
-            return $this->success($inquiry,  __('global.alert.update_success', [
-                'attribute' => __('module/inquiry.caption')
+            return $this->success($event,  __('global.alert.update_success', [
+                'attribute' => __('module/event.caption')
             ]));
 
         } catch (Exception $e) {
@@ -205,11 +187,11 @@ class InquiryService
     }
 
     /**
-     * Set Field Inquiry
+     * Set Field Event
      * @param array $data
-     * @param model $inquiry
+     * @param model $event
      */
-    private function setFieldInquiry($data, $inquiry)
+    private function setFieldEvent($data, $event)
     {
         $multiple = config('cms.module.feature.language.multiple');
         $langDefault = config('cms.module.feature.language.default');
@@ -218,39 +200,52 @@ class InquiryService
             $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
                 $data['name_'.$langDefault] : $data['name_'.$value['iso_codes']];
 
-            $body[$value['iso_codes']] = ($data['body_'.$value['iso_codes']] == null) ?
-                $data['body_'.$langDefault] : $data['body_'.$value['iso_codes']];
+            $description[$value['iso_codes']] = ($data['description_'.$value['iso_codes']] == null) ?
+                $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
 
-            $afterBody[$value['iso_codes']] = ($data['after_body_'.$value['iso_codes']] == null) ?
-                $data['after_body_'.$langDefault] : $data['after_body_'.$value['iso_codes']];
+            $formDescription[$value['iso_codes']] = ($data['form_description_'.$value['iso_codes']] == null) ?
+                $data['form_description_'.$langDefault] : $data['form_description_'.$value['iso_codes']];
         }
 
-        $inquiry->slug = Str::slug($data['slug'], '-');
-        $inquiry->name = $name;
-        $inquiry->body = $body;
-        $inquiry->after_body = $afterBody;
-        $inquiry->banner = [
+        $event->slug = Str::slug($data['slug'], '-');
+        $event->name = $name;
+        $event->description = $description;
+        $event->form_description = $formDescription;
+        $event->register_code = $data['register_code'] ?? null;
+        $event->type = $data['type'];
+        $event->place = $data['place'] ?? null;
+        $event->links = [
+            'meeting_url' => $data['meeting_url'] ?? null,
+            'meeting_id' => $data['meeting_id'] ?? null,
+            'meeting_passcode' => $data['meeting_passcode'] ?? null,
+        ];
+        $event->start_date = $data['start_date'] ?? null;
+        $event->end_date = $data['end_date'] ?? null;
+        if (!empty($data['email'])) {
+            $event->email = explode(',', $data['email']);
+        }
+        $event->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
+        ];
+        $event->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
             'alt' => $data['banner_alt'] ?? null,
         ];
-        if (!empty($data['email'])) {
-            $inquiry->email = explode(',', $data['email']);
-        }
-        $inquiry->longitude = $data['longitude'] ?? null;
-        $inquiry->latitude = $data['latitude'] ?? null;
 
-        $inquiry->publish = (bool)$data['publish'];
-        $inquiry->public = (bool)$data['public'];
-        $inquiry->locked = (bool)$data['locked'];
-        $inquiry->config = [
+        $event->publish = (bool)$data['publish'];
+        $event->public = (bool)$data['public'];
+        $event->locked = (bool)$data['locked'];
+        $event->config = [
             'is_detail' => (bool)$data['is_detail'],
-            'hide_map' => (bool)$data['hide_map'],
             'hide_form' => (bool)$data['hide_form'],
-            'hide_body' => (bool)$data['hide_body'],
+            'hide_description' => (bool)$data['hide_description'],
+            'hide_cover' => (bool)$data['hide_cover'],
             'hide_banner' => (bool)$data['hide_banner'],
         ];
-        $inquiry->seo = [
+        $event->seo = [
             'title' => $data['meta_title'] ?? null,
             'description' => $data['meta_description'] ?? null,
             'keywords' => $data['meta_keywords'] ?? null,
@@ -264,32 +259,32 @@ class InquiryService
                 $customField[$value] = $data['cf_value'][$key];
             }
 
-            $inquiry->custom_fields = $customField;
+            $event->custom_fields = $customField;
         } else {
-            $inquiry->custom_fields = null;
+            $event->custom_fields = null;
         }
 
-        return $inquiry;
+        return $event;
     }
 
     /**
-     * Status Inquiry (boolean type only)
+     * Status Event (boolean type only)
      * @param string $field
      * @param array $where
      */
-    public function statusInquiry($field, $where)
+    public function statusEvent($field, $where)
     {
-        $inquiry = $this->getInquiry($where);
+        $event = $this->getEvent($where);
 
         try {
             
-            $inquiry->update([
-                $field => !$inquiry[$field],
-                'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $inquiry['updated_by'],
+            $event->update([
+                $field => !$event[$field],
+                'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $event['updated_by'],
             ]);
 
-            return $this->success($inquiry, __('global.alert.update_success', [
-                'attribute' => __('module/inquiry.caption')
+            return $this->success($event, __('global.alert.update_success', [
+                'attribute' => __('module/event.caption')
             ]));
             
         } catch (Exception $e) {
@@ -299,30 +294,30 @@ class InquiryService
     }
 
     /**
-     * Set Position Inquiry
+     * Set Position Event
      * @param array $where
      * @param int $position
      */
-    public function positionInquiry($where, $position)
+    public function positionEvent($where, $position)
     {
-        $inquiry = $this->getInquiry($where);
+        $event = $this->getEvent($where);
         
         try {
 
             if ($position >= 1) {
     
-                $this->inquiryModel->where('position', $position)->update([
-                    'position' => $inquiry['position'],
+                $this->eventModel->where('position', $position)->update([
+                    'position' => $event['position'],
                 ]);
     
-                $inquiry->position = $position;
+                $event->position = $position;
                 if (Auth::guard()->check()) {
-                    $inquiry->updated_by = Auth::user()['id'];
+                    $event->updated_by = Auth::user()['id'];
                 }
-                $inquiry->save();
+                $event->save();
     
-                return $this->success($inquiry, __('global.alert.update_success', [
-                    'attribute' => __('module/inquiry.caption')
+                return $this->success($event, __('global.alert.update_success', [
+                    'attribute' => __('module/event.caption')
                 ]));
 
             } else {
@@ -344,52 +339,51 @@ class InquiryService
      */
     public function recordHits($where)
     {
-        $inquiry = $this->getInquiry($where);
-        $inquiry->update([
-            'hits' => ($inquiry->hits+1)
+        $event = $this->getEvent($where);
+        $event->update([
+            'hits' => ($event->hits+1)
         ]);
 
-        return $inquiry;
+        return $event;
     }
 
     /**
-     * Trash Inquiry
+     * Trash Event
      * @param array $where
      */
-    public function trashInquiry($where)
+    public function trashEvent($where)
     {
-        $inquiry = $this->getInquiry($where);
+        $event = $this->getEvent($where);
 
         try {
             
-            $fields = $inquiry->fields()->count();
-            $forms = $inquiry->forms()->count();
+            $fields = $event->fields()->count();
+            $forms = $event->forms()->count();
 
-            if ($inquiry['locked'] == 0 && $fields == 0 && $forms == 0) {
+            if ($event['locked'] == 0 && $fields == 0 && $forms == 0) {
 
                 if (Auth::guard()->check()) {
 
-                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $inquiry['created_by']) {
-                        return $this->error($inquiry,  __('global.alert.delete_failed_used', [
-                            'attribute' => __('module/inquiry.caption')
+                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $event['created_by']) {
+                        return $this->error($event,  __('global.alert.delete_failed_used', [
+                            'attribute' => __('module/event.caption')
                         ]));
                     }
 
-                    $inquiry->update([
+                    $event->update([
                         'deleted_by' => Auth::user()['id']
                     ]);
                 }
 
-                $inquiry->indexing->delete();
-                $inquiry->delete();
+                $event->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
-                    'attribute' => __('module/inquiry.caption')
+                    'attribute' => __('module/event.caption')
                 ]));
     
             } else {
-                return $this->error($inquiry,  __('global.alert.delete_failed_used', [
-                    'attribute' => __('module/inquiry.caption')
+                return $this->error($event,  __('global.alert.delete_failed_used', [
+                    'attribute' => __('module/event.caption')
                 ]));
             }
 
@@ -400,28 +394,27 @@ class InquiryService
     }
 
     /**
-     * Restore Inquiry
+     * Restore Event
      * @param array $where
      */
-    public function restoreInqury($where)
+    public function restoreEvent($where)
     {
-        $inquiry = $this->inquiryModel->onlyTrashed()->firstWhere($where);
+        $event = $this->eventModel->onlyTrashed()->firstWhere($where);
 
         try {
             
-            $checkSlug = $this->getInquiry(['slug' => $inquiry['slug']]);
+            $checkSlug = $this->getEvent(['slug' => $event['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
-                    'attribute' => __('module/inquiry.caption')
+                    'attribute' => __('module/event.caption')
                 ]));
             }
             
             //restore data yang bersangkutan
-            $inquiry->indexing()->restore();
-            $inquiry->restore();
+            $event->restore();
 
-            return $this->success($inquiry, __('global.alert.restore_success', [
-                'attribute' => __('module/inquiry.caption')
+            return $this->success($event, __('global.alert.restore_success', [
+                'attribute' => __('module/event.caption')
             ]));
             
         } catch (Exception $e) {
@@ -431,27 +424,26 @@ class InquiryService
     }
 
     /**
-     * Delete Inquiry (Permanent)
+     * Delete Event (Permanent)
      * @param array $where
      */
-    public function deleteInquiry($request, $where)
+    public function deleteEvent($request, $where)
     {
         if ($request->get('is_trash') == 'yes') {
-            $inquiry = $this->inquiryModel->onlyTrashed()->firstWhere($where);
+            $event = $this->eventModel->onlyTrashed()->firstWhere($where);
         } else {
-            $inquiry = $this->getInquiry($where);
+            $event = $this->getEvent($where);
         }
 
         try {
 
-            $path = resource_path('views/frontend/inquiries/'.$inquiry['slug'].'.blade.php');
+            $path = resource_path('views/frontend/events/'.$event['slug'].'.blade.php');
                 File::delete($path);
                 
-            $inquiry->indexing()->forceDelete();
-            $inquiry->forceDelete();
+            $event->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
-                'attribute' => __('module/inquiry.caption')
+                'attribute' => __('module/event.caption')
             ]));
             
         } catch (Exception $e) {
@@ -461,7 +453,7 @@ class InquiryService
     }
 
     //---------------------------
-    // INQUIRY FIELD
+    // Event FIELD
     //---------------------------
 
     /**
@@ -476,13 +468,13 @@ class InquiryService
     public function getFieldList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
-        $field = $this->inquiryFieldModel->query();
+        $field = $this->eventFieldModel->query();
 
         if ($isTrash == true)
             $field->onlyTrashed();
 
-        if (isset($filter['inquiry_id']))
-            $field->where('inquiry_id', $filter['inquiry_id']);
+        if (isset($filter['event_id']))
+            $field->where('event_id', $filter['event_id']);
 
         if (isset($filter['publish']))
             $field->where('publish', $filter['publish']);
@@ -529,7 +521,7 @@ class InquiryService
      */
     public function getField($where, $with = [])
     {
-        $field = $this->inquiryFieldModel->query();
+        $field = $this->eventFieldModel->query();
         
         if (!empty($with))
             $field->with($with);
@@ -547,13 +539,13 @@ class InquiryService
     {
         try {
 
-            $field = new InquiryField;
-            $field->inquiry_id = $data['inquiry_id'];
+            $field = new EventField;
+            $field->event_id = $data['event_id'];
             $this->setField($data, $field);
-            $field->position = $this->inquiryFieldModel->where('inquiry_id', $data['inquiry_id'])->max('position') + 1;
+            $field->position = $this->eventFieldModel->where('event_id', $data['event_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.inquiry.field.approval') == true) {
+                if (Auth::user()->hasRole('editor') && config('module.event.field.approval') == true) {
                     $field->approved = 2;
                 }
                 $field->created_by = Auth::user()['id'];
@@ -561,7 +553,7 @@ class InquiryService
             $field->save();
 
             return $this->success($field,  __('global.alert.create_success', [
-                'attribute' => __('module/inquiry.field.caption')
+                'attribute' => __('module/event.field.caption')
             ]));
             
         } catch (Exception $e) {
@@ -588,7 +580,7 @@ class InquiryService
             $field->save();
 
             return $this->success($field,  __('global.alert.update_success', [
-                'attribute' => __('module/inquiry.field.caption')
+                'attribute' => __('module/event.field.caption')
             ]));
 
         } catch (Exception $e) {
@@ -650,7 +642,7 @@ class InquiryService
             ]);
 
             return $this->success($field, __('global.alert.update_success', [
-                'attribute' => __('module/inquiry.field.caption')
+                'attribute' => __('module/event.field.caption')
             ]));
             
         } catch (Exception $e) {
@@ -672,7 +664,7 @@ class InquiryService
 
             if ($position >= 1) {
     
-                $this->inquiryFieldModel->where('inquiry_id', $field['inquiry_id'])
+                $this->eventFieldModel->where('event_id', $field['event_id'])
                     ->where('position', $position)->update([
                     'position' => $field['position'],
                 ]);
@@ -684,13 +676,13 @@ class InquiryService
                 $field->save();
     
                 return $this->success($field, __('global.alert.update_success', [
-                    'attribute' => __('module/inquiry.field.caption')
+                    'attribute' => __('module/event.field.caption')
                 ]));
 
             } else {
 
                 return $this->error(null, __('global.alert.update_failed', [
-                    'attribute' => __('module/inquiry.field.caption')
+                    'attribute' => __('module/event.field.caption')
                 ]));
             }
             
@@ -716,7 +708,7 @@ class InquiryService
 
                     if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $field['created_by']) {
                         return $this->error($field,  __('global.alert.delete_failed_used', [
-                            'attribute' => __('module/inquiry.field.caption')
+                            'attribute' => __('module/event.field.caption')
                         ]));
                     }
 
@@ -728,13 +720,13 @@ class InquiryService
                 $field->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
-                    'attribute' => __('module/inquiry.field.caption')
+                    'attribute' => __('module/event.field.caption')
                 ]));
 
             } else {
 
                 return $this->error($field,  __('global.alert.delete_failed_used', [
-                    'attribute' => __('module/inquiry.field.caption')
+                    'attribute' => __('module/event.field.caption')
                 ]));
             }
 
@@ -750,7 +742,7 @@ class InquiryService
      */
     public function restoreField($where)
     {
-        $field = $this->inquiryFieldModel->onlyTrashed()->firstWhere($where);
+        $field = $this->eventFieldModel->onlyTrashed()->firstWhere($where);
 
         try {
             
@@ -758,7 +750,7 @@ class InquiryService
             $field->restore();
 
             return $this->success($field, __('global.alert.restore_success', [
-                'attribute' => __('module/inquiry.field.caption')
+                'attribute' => __('module/event.field.caption')
             ]));
             
         } catch (Exception $e) {
@@ -774,7 +766,7 @@ class InquiryService
     public function deleteField($request, $where)
     {
         if ($request->get('is_trash') == 'yes') {
-            $field = $this->inquiryFieldModel->onlyTrashed()->firstWhere($where);
+            $field = $this->eventFieldModel->onlyTrashed()->firstWhere($where);
 
         } else {
             $field = $this->getField($where);
@@ -785,7 +777,7 @@ class InquiryService
             $field->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
-                'attribute' => __('module/inquiry.field.caption')
+                'attribute' => __('module/event.field.caption')
             ]));
             
         } catch (Exception $e) {
@@ -795,7 +787,7 @@ class InquiryService
     }
 
     //---------------------------
-    // INQUIRY FORM
+    // EVENT FORM
     //---------------------------
 
     /**
@@ -810,13 +802,13 @@ class InquiryService
     public function getFormList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
-        $form = $this->inquiryFormModel->query();
+        $form = $this->eventFormModel->query();
 
         if ($isTrash == true)
             $form->onlyTrashed();
 
-        if (isset($filter['inquiry_id']))
-            $form->where('inquiry_id', $filter['inquiry_id']);
+        if (isset($filter['event_id']))
+            $form->where('event_id', $filter['event_id']);
 
         if (isset($filter['status']))
             $form->where('status', $filter['status']);
@@ -826,8 +818,9 @@ class InquiryService
 
         if (isset($filter['q']))
             $form->when($filter['q'], function ($form, $q) {
-                $form->where('ip_address', 'like', '%'.$q.'%');
-                foreach ($this->inquiryFieldModel->where('inquiry_id', request()->segment(3))
+                $form->where('ip_address', 'like', '%'.$q.'%')
+                    ->orWhere('register_code', 'like', '%'.$q.'%');
+                foreach ($this->eventFieldModel->where('event_id', request()->segment(3))
                     ->get() as $value) {
                     $form->orWhereRaw('LOWER(JSON_EXTRACT(fields, "$.'.$value['name'].'")) like ?', ['"%' . strtolower($q) . '%"']);
                 }
@@ -860,7 +853,7 @@ class InquiryService
      */
     public function getForm($where, $with = [])
     {
-        $form = $this->inquiryFormModel->query();
+        $form = $this->eventFormModel->query();
         
         if (!empty($with))
             $form->with($with);
@@ -878,21 +871,22 @@ class InquiryService
     {
         try {
             
-            $getFields = $this->getFieldList(['inquiry_id' => $data['inquiry_id']], false);
+            $getFields = $this->getFieldList(['event_id' => $data['event_id']], false);
 
             foreach ($getFields as $key => $value) {
                 $fields[$value['name']] = strip_tags($data[$value['name']]) ?? null;
             }
 
-            $form = new InquiryForm;
-            $form->inquiry_id = $data['inquiry_id'];
+            $form = new eventForm;
+            $form->event_id = $data['event_id'];
+            $form->register_code = $this->eventFormModel->where('event_id', $data['event_id'])->max('register_code') + 1;
             $form->ip_address = request()->ip();
             $form->fields = $fields;
             $form->submit_time = now();
             $form->save();
 
             return $this->success($form, __('global.alert.create_success', [
-                'attribute' => __('module/inquiry.form.caption')
+                'attribute' => __('module/event.form.caption')
             ]));
 
         } catch (Exception $e) {
@@ -918,7 +912,7 @@ class InquiryService
             ]);
 
             return $this->success($form, __('global.alert.update_success', [
-                'attribute' => __('module/inquiry.form.caption')
+                'attribute' => __('module/event.form.caption')
             ]));
             
         } catch (Exception $e) {
@@ -940,7 +934,7 @@ class InquiryService
             $form->delete();
 
             return $this->success(null,  __('global.alert.delete_success', [
-                'attribute' => __('module/inquiry.form.caption')
+                'attribute' => __('module/event.form.caption')
             ]));
             
         } catch (Exception $e) {

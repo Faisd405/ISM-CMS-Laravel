@@ -552,6 +552,46 @@ class UserSeeder extends Seeder
                 'name' => 'inquiry_field_delete',
                 'locked' => true
             ],
+            99 => [
+                'parent' => 0,
+                'name' => 'events',
+                'locked' => true
+            ],
+            100 => [
+                'parent' => 100,
+                'name' => 'event_create',
+                'locked' => true
+            ],
+            101 => [
+                'parent' => 100,
+                'name' => 'event_update',
+                'locked' => true
+            ],
+            102 => [
+                'parent' => 100,
+                'name' => 'event_delete',
+                'locked' => true
+            ],
+            103 => [
+                'parent' => 0,
+                'name' => 'event_fields',
+                'locked' => true
+            ],
+            104 => [
+                'parent' => 104,
+                'name' => 'event_field_create',
+                'locked' => true
+            ],
+            105 => [
+                'parent' => 104,
+                'name' => 'event_field_update',
+                'locked' => true
+            ],
+            106 => [
+                'parent' => 104,
+                'name' => 'event_field_delete',
+                'locked' => true
+            ],
         ];
 
         foreach ($permissions as $item) {

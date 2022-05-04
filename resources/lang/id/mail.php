@@ -19,5 +19,8 @@ return [
     'inquiry' => [
         'title' => ':attribute baru saja mengirim pesan',
     ],
+    'event' => [
+        'title' => ':attribute baru saja mendaftar',
+    ],
     'alert_expired' => 'Link akan otomatis kedaluarsa dalam 3 Jam',
 ];

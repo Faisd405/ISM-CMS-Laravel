@@ -108,4 +108,17 @@
     </sitemap>
     @endforeach
 @endif
+@if (config('cms.module.event.active') == true)
+    @if (config('cms.module.event.list_view') == true)
+    <sitemap>
+        <loc>{{ route('event.list') }}</loc>
+    </sitemap>
+    @endif
+    @foreach ($data['events'] as $event)
+    <sitemap>
+        <loc>{{ route('event.read', ['slugEvent' => $event['slug']]) }}</loc>
+        <lastmod>{{ $event['updated_at'] }}</lastmod>
+    </sitemap>
+    @endforeach
+@endif
 </sitemapindex>

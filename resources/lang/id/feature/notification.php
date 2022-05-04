@@ -16,6 +16,10 @@ return [
         'title' => 'Pesan baru',
         'text' => 'Pesan baru dari :attribute',
     ],
+    'event' => [
+        'title' => 'Event Register baru',
+        'text' => 'Event Register baru dari :attribute',
+    ],
     'alert' => [
         'success_read' => 'Notif berhasil dibaca',
     ]

@@ -141,6 +141,13 @@ class UrlSeeder extends Seeder
                 'type' => null,
                 'locked' => true
             ],
+            [
+                'slug' => 'event',
+                'module' => null,
+                'id' => null,
+                'type' => null,
+                'locked' => true
+            ],
         ];
 
         foreach ($indexing as $value) {

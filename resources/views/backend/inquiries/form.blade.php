@@ -62,7 +62,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field4')</label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control tiny-mce @error('after_body'.$lang['iso_codes']) is-invalid @enderror" name="after_body_{{ $lang['iso_codes'] }}">{!! !isset($data['inquiry']) ? old('after_body_'.$lang['iso_codes']) : old('after_body_'.$lang['iso_codes'], $data['inquiry']->fieldLang('after_body', $lang['iso_codes'])) !!}</textarea>
+                                    <textarea class="form-control tiny-mce @error('after_body_'.$lang['iso_codes']) is-invalid @enderror" name="after_body_{{ $lang['iso_codes'] }}">{!! !isset($data['inquiry']) ? old('after_body_'.$lang['iso_codes']) : old('after_body_'.$lang['iso_codes'], $data['inquiry']->fieldLang('after_body', $lang['iso_codes'])) !!}</textarea>
                                     @include('components.field-error', ['field' => 'after_body_'.$lang['iso_codes']])
                                 </div>
                             </div>

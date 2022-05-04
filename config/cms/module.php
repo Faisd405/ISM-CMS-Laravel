@@ -68,10 +68,12 @@ return [
                 'register' => true,
                 'inquiry' => true,
                 'login_failed' => true,
+                'event' => true
             ],
             'apps' => [
                 'register' => true,
                 'inquiry' => true,
+                'event' => true
             ],
         ],
         'language' => [
@@ -261,6 +263,18 @@ return [
     // INQUIRY
     //---------------
     'inquiry' => [
+        'list_view' => true,
+        'approval' => true,
+        'active' => true,
+        'field' => [
+            'approval' => true,
+        ]
+    ],
+
+    //---------------
+    // EVENT
+    //---------------
+    'event' => [
         'list_view' => true,
         'approval' => true,
         'active' => true,

@@ -106,7 +106,7 @@
 
         @if (Auth::user()->can('pages') || Auth::user()->can('content_sections') || Auth::user()->can('menus') || Auth::user()->can('banner_categories')
             || Auth::user()->can('gallery_albums') || Auth::user()->can('document_categories') || Auth::user()->can('link_categories')
-            || Auth::user()->can('inquiries'))
+            || Auth::user()->can('inquiries') || Auth::user()->can('events'))
         {{-- Module --}}
         <li class="sidenav-divider mb-1"></li>
         <li class="sidenav-header small font-weight-semibold">MODULE</li>
@@ -165,6 +165,14 @@
         <li class="sidenav-item {{ Request::is('admin/inquiry*') ? 'active' : '' }}">
             <a href="{{ route('inquiry.index') }}" class="sidenav-link" title="@lang('module/inquiry.caption')">
               <i class="sidenav-icon las la-envelope"></i><div>@lang('module/inquiry.caption')</div>
+            </a>
+        </li>
+        @endif
+        @if (Auth::user()->can('events') && config('cms.module.event.active') == true)
+        <!-- Event -->
+        <li class="sidenav-item {{ Request::is('admin/event*') ? 'active' : '' }}">
+            <a href="{{ route('event.index') }}" class="sidenav-link" title="@lang('module/event.caption')">
+              <i class="sidenav-icon las la-calendar"></i><div>@lang('module/event.caption')</div>
             </a>
         </li>
         @endif

@@ -23,4 +23,12 @@ return [
         4 => 'Checkbox',
         5 => 'Radiobox',
     ],
+    'event_field' => [
+        0 => 'Text',
+        1 => 'Textarea',
+        2 => 'File',
+        3 => 'Select',
+        4 => 'Checkbox',
+        5 => 'Radiobox',
+    ],
 ];
