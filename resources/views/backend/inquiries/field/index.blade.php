@@ -23,15 +23,15 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @can('link_media_create')
-                    <a href="{{ route('link.media.create', ['categoryId' => $data['category']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
-                        'attribute' => __('module/link.media.caption')
+                    @can('inquiry_field_create')
+                    <a href="{{ route('inquiry.field.create', ['inquiryId' => $data['inquiry']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                        'attribute' => __('module/inquiry.field.caption')
                         ])">
-                        <i class="las la-plus"></i> <span>@lang('module/link.media.caption')</span>
+                        <i class="las la-plus"></i> <span>@lang('module/inquiry.field.caption')</span>
                     </a>
                     @endcan
                     @role('super')
-                    <a href="{{ route('link.media.trash', ['categoryId' => $data['category']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
+                    <a href="{{ route('inquiry.field.trash', ['inquiryId' => $data['inquiry']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
                     @endrole
@@ -82,7 +82,7 @@
 
         <div class="card">
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/link.media.text')</h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/inquiry.field.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -90,8 +90,7 @@
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th>@lang('module/link.media.label.field1')</th>
-                            <th>@lang('module/link.media.label.field3')</th>
+                            <th>@lang('module/inquiry.field.label.field1')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
@@ -100,23 +99,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($data['medias'] as $item)
+                        @forelse ($data['fields'] as $item)
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                {!! Str::limit($item->fieldLang('title'), 30) !!}
-                            </td>
-                            <td>
-                                <a href="{{ $item['url'] }}" target="_blank">
-                                    {{ Str::limit($item['url'], 30) }}
-                                </a>
+                                {!! Str::limit($item->fieldLang('label'), 30) !!} <code>({{ $item['name'] }})</code>
                             </td>
                             <td class="text-center">
-                                @can('link_media_update')
+                                @can('inquiry_field_update')
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}"
                                     title="{{ __('global.label.publish.'.$item['publish']) }}">
                                     {{ __('global.label.publish.'.$item['publish']) }}
-                                    <form action="{{ route('link.media.publish', ['categoryId' => $item['link_category_id'], 'id' => $item['id']]) }}" method="POST">
+                                    <form action="{{ route('inquiry.field.publish', ['inquiryId' => $item['inquiry_id'], 'id' => $item['id']]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -140,10 +134,10 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if (Auth::user()->can('link_media_update') && $item->where('link_category_id', $item['link_category_id'])->min('position') != $item['position'])
+                                @if (Auth::user()->can('inquiry_field_update') && $item->where('inquiry_id', $item['inquiry_id'])->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
-                                    <form action="{{ route('link.media.position', ['categoryId' => $item['link_category_id'], 'id' => $item['id'], 'position' => ($item['position'] - 1)]) }}" method="POST">
+                                    <form action="{{ route('inquiry.field.position', ['inquiryId' => $item['inquiry_id'], 'id' => $item['id'], 'position' => ($item['position'] - 1)]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -151,10 +145,10 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-up"></i></button>
                                 @endif
-                                @if (Auth::user()->can('link_media_update') && $item->where('link_category_id', $item['link_category_id'])->max('position') != $item['position'])
+                                @if (Auth::user()->can('inquiry_field_update') && $item->where('inquiry_id', $item['inquiry_id'])->max('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-down"></i>
-                                    <form action="{{ route('link.media.position', ['categoryId' => $item['link_category_id'], 'id' => $item['id'], 'position' => ($item['position'] + 1)]) }}" method="POST">
+                                    <form action="{{ route('inquiry.field.position', ['inquiryId' => $item['inquiry_id'], 'id' => $item['id'], 'position' => ($item['position'] + 1)]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -164,26 +158,26 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                @can('link_media_update')
-                                <a href="{{ route('link.media.edit', ['categoryId' => $item['link_category_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
-                                    'attribute' => __('module/link.media.caption')
+                                @can('inquiry_field_update')
+                                <a href="{{ route('inquiry.field.edit', ['inquiryId' => $item['inquiry_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                    'attribute' => __('module/inquiry.field.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
-                                @can('link_media_delete')
+                                @can('inquiry_field_delete')
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/link.media.caption')
+                                        'attribute' => __('module/inquiry.field.caption')
                                     ])"
-                                    data-category-id="{{ $item['link_category_id'] }}"
+                                    data-category-id="{{ $item['inquiry_id'] }}"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.link.media.approval') == true)
+                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.inquiry.field.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
-                                    <form action="{{ route('link.media.approved', ['categoryId' => $item['link_category_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
+                                    <form action="{{ route('inquiry.field.approved', ['inquiryId' => $item['inquiry_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -193,16 +187,16 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" align="center">
+                            <td colspan="7" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)
                                     ! @lang('global.data_attr_not_found', [
-                                        'attribute' => __('module/link.media.caption')
+                                        'attribute' => __('module/inquiry.field.caption')
                                     ]) !
                                     @else
                                     ! @lang('global.data_attr_empty', [
-                                        'attribute' => __('module/link.media.caption')
+                                        'attribute' => __('module/inquiry.field.caption')
                                     ]) !
                                     @endif
                                     </strong>
@@ -215,11 +209,11 @@
                 <div class="card-footer">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['medias']->firstItem() }}</strong> - <strong>{{ $data['medias']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['medias']->total() }}</strong>
+                            @lang('pagination.showing') : <strong>{{ $data['fields']->firstItem() }}</strong> - <strong>{{ $data['fields']->lastItem() }}</strong> @lang('pagination.of')
+                            <strong>{{ $data['fields']->total() }}</strong>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            {{ $data['medias']->onEachSide(1)->links() }}
+                            {{ $data['fields']->onEachSide(1)->links() }}
                         </div>
                     </div>
                 </div>
@@ -240,7 +234,7 @@
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
-            var categoryId = $(this).attr('data-category-id');
+            var inquiryId = $(this).attr('data-inquiry-id');
             var id = $(this).attr('data-id');
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
@@ -257,7 +251,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/link/category/' + categoryId + '/'+ id +'/soft',
+                        url: '/admin/inquiry/' + inquiryId + '/field/'+ id +'/soft',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -279,7 +273,7 @@
                 if (response.value.success) {
                     Swal.fire({
                         type: 'success',
-                        text: "@lang('global.alert.delete_success', ['attribute' => __('module/link.media.caption')])"
+                        text: "@lang('global.alert.delete_success', ['attribute' => __('module/inquiry.field.caption')])"
                     }).then(() => {
                         window.location.reload();
                     })

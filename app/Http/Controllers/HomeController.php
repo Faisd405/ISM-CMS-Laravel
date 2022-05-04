@@ -6,6 +6,7 @@ use App\Services\Feature\ConfigurationService;
 use App\Services\Module\ContentService;
 use App\Services\Module\DocumentService;
 use App\Services\Module\GalleryService;
+use App\Services\Module\InquiryService;
 use App\Services\Module\LinkService;
 use App\Services\Module\PageService;
 use Illuminate\Http\Request;
@@ -102,6 +103,12 @@ class HomeController extends Controller
         ], false, 0, false, [], []);
 
         $data['link_categories'] = App::make(LinkService::class)->getCategoryList([
+            'publish' => 1,
+            'approved' => 1,
+            'is_detail' => 1
+        ], false, 0, false, [], []);
+
+        $data['inquiries'] = App::make(InquiryService::class)->getInquiryList([
             'publish' => 1,
             'approved' => 1,
             'is_detail' => 1

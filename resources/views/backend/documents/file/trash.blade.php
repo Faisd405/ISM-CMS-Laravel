@@ -43,7 +43,7 @@
                                 <label class="form-label">@lang('global.status')</label>
                                 <select class="custom-select" name="status">
                                     <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('global.label.active') as $key => $val)
+                                    @foreach (__('global.label.publish') as $key => $val)
                                     <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach

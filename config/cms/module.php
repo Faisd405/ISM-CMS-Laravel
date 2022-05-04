@@ -72,7 +72,6 @@ return [
             'apps' => [
                 'register' => true,
                 'inquiry' => true,
-                'polling' => true,
             ],
         ],
         'language' => [
@@ -159,10 +158,7 @@ return [
         'mod' => [
             'page',
             'content_section',
-            'content_category',
-            'content_post',
-            'gallery_categories',
-            'gallery_albums'
+            'inquiry'
         ],
     ],
 
@@ -266,6 +262,7 @@ return [
     //---------------
     'inquiry' => [
         'list_view' => true,
+        'approval' => true,
         'active' => true,
         'field' => [
             'approval' => true,

@@ -95,4 +95,17 @@
     </sitemap>
     @endforeach
 @endif
+@if (config('cms.module.inquiry.active') == true)
+    @if (config('cms.module.inquiry.list_view') == true)
+    <sitemap>
+        <loc>{{ route('inquiry.list') }}</loc>
+    </sitemap>
+    @endif
+    @foreach ($data['inquiries'] as $inq)
+    <sitemap>
+        <loc>{{ route('inquiry.read.'.$inq['slug']) }}</loc>
+        <lastmod>{{ $inq['updated_at'] }}</lastmod>
+    </sitemap>
+    @endforeach
+@endif
 </sitemapindex>

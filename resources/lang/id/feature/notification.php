@@ -13,7 +13,8 @@ return [
         'text' => 'User bernama :attribute baru saja mendaftar',
     ],
     'inquiry' => [
-        'title' => 'Pesan baru dari :attribute',
+        'title' => 'Pesan baru',
+        'text' => 'Pesan baru dari :attribute',
     ],
     'alert' => [
         'success_read' => 'Notif berhasil dibaca',

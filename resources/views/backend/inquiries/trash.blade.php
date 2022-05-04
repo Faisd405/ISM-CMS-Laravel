@@ -21,20 +21,6 @@
                     </a>
                     @endif
                 </div>
-                <div class="d-flex w-100 w-xl-auto">
-                    @can('banner_category_create')
-                    <a href="{{ route('banner.category.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
-                        'attribute' => __('module/banner.category.caption')
-                        ])">
-                        <i class="las la-plus"></i> <span>@lang('module/banner.category.caption')</span>
-                    </a>
-                    @endcan
-                    @role('super')
-                    <a href="{{ route('banner.category.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
-                        <i class="las la-trash"></i> <span>@lang('global.trash')</span>
-                    </a>
-                    @endrole
-                </div>
             </div>
             <hr class="m-0">
             <div class="card-body" id="{{ $totalQueryParam == 0 ? 'filter-form' : '' }}">
@@ -54,10 +40,10 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-label">@lang('global.status')</label>
-                                <select class="custom-select" name="status">
+                                <select class="custom-select" name="publish">
                                     <option value=" " selected>@lang('global.show_all')</option>
                                     @foreach (__('global.label.publish') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }} 
+                                    <option value="{{ $key }}" {{ Request::get('publish') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
                                 </select>
@@ -80,88 +66,52 @@
         </div>
 
         <div class="card">
+            {{-- Filter --}}
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/banner.category.text')</h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('global.trash')</h5>
             </div>
 
-             {{-- Table --}}
-             <div class="table-responsive">
+            <div class="table-responsive">
                 <table class="table card-table table-striped table-hover">
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th>@lang('module/banner.category.label.field1')</th>
-                            <th style="width: 80px;" class="text-center">@lang('global.status')</th>
-                            <th style="width: 230px;">@lang('global.created')</th>
-                            <th style="width: 230px;">@lang('global.updated')</th>
-                            <th class="text-center" style="width: 180px;"></th>
+                            <th>@lang('module/inquiry.label.field1')</th>
+                            <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
+                            <th class="text-center" style="width: 100px;">@lang('global.status')</th>
+                            <th style="width: 230px;">@lang('global.deleted')</th>
+                            <th class="text-center" style="width: 210px;"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($data['categories'] as $item)
+                        @forelse ($data['inquiries'] as $item)
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
+                                <strong>{!! Str::limit($item['name'][App::getLocale()], 65) !!}</strong>
                             </td>
-                            <td class="text-center">
-                                @can('banner_category_update')
-                                <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}"
-                                    title="{{ __('global.label.publish.'.$item['publish']) }}">
-                                    {{ __('global.label.publish.'.$item['publish']) }}
-                                    <form action="{{ route('banner.category.publish', ['id' => $item['id']]) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                    </form>
-                                </a>
-                                @else
+                            <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>
+                            <td>
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>
-                                @endcan
                             </td>
                             <td>
-                                {{ $item['created_at']->format('d F Y (H:i A)') }}
-                                @if (!empty($item['created_by']))
-                                <br>
-                                <span class="text-muted"> @lang('global.by') : {{ $item['createBy'] != null ? $item['createBy']['name'] : 'User Deleted' }}</span>
-                                @endif
-                            </td>
-                            <td>
-                                {{ $item['updated_at']->format('d F Y (H:i A)') }}
-                                @if (!empty($item['updated_by']))
-                                <br>
-                                <span class="text-muted"> @lang('global.by') : {{ $item['updateBy'] != null ? $item['updateBy']['name'] : 'User Deleted' }}</span>
+                                {{ $item['deleted_at']->format('d F Y (H:i A)') }}
+                                @if (!empty($item['deleted_by']))
+                                    <br>
+                                   <span class="text-muted">@lang('global.by') : {{ $item['deleteBy'] != null ? $item['deleteBy']['name'] : 'User Deleted' }}</span>
                                 @endif
                             </td>
                             <td class="text-center">
-                                @can('banners')
-                                <a href="{{ route('banner.index', ['categoryId' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success" title="@lang('module/banner.caption')">
-                                    <i class="las la-list"></i>
-                                </a>
-                                @endcan
-                                @can('banner_category_update')
-                                <a href="{{ route('banner.category.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
-                                        'attribute' => __('module/banner.category.caption')
-                                    ])">
-                                    <i class="las la-pen"></i>
-                                </a>
-                                @endcan
-                                @can('banner_category_delete')
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/banner.category.caption')
-                                    ])"
-                                    data-id="{{ $item['id'] }}">
-                                    <i class="las la-trash-alt"></i>
-                                </button>
-                                @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.banner.category.approval') == true)
-                                <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
-                                    <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
-                                    <form action="{{ route('banner.category.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
+                                <button type="button" class="btn btn-success icon-btn btn-sm restore" onclick="$(this).find('#form-restore').submit();" title="@lang('global.restore')" data-id="{{ $item['id'] }}">
+                                    <i class="las la-trash-restore-alt"></i>
+                                    <form action="{{ route('inquiry.restore', ['id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
                                         @csrf
                                         @method('PUT')
                                     </form>
-                                </a>
-                                @endif
+                                </button>
+                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
+                                    <i class="las la-ban"></i>
+                                </button>
                             </td>
                         </tr>
                         @empty
@@ -169,14 +119,14 @@
                             <td colspan="6" align="center">
                                 <i>
                                     <strong style="color:red;">
-                                    @if ($totalQueryParam > 0)
-                                        ! @lang('global.data_attr_not_found', [
-                                            'attribute' => __('module/banner.category.caption')
-                                        ]) !
+                                    @if (count(Request::query()) > 0)
+                                    ! @lang('global.data_attr_not_found', [
+                                        'attribute' => __('global.trash')
+                                    ]) !
                                     @else
-                                        ! @lang('global.data_attr_empty', [
-                                            'attribute' => __('module/banner.category.caption')
-                                        ]) !
+                                    ! @lang('global.data_attr_empty', [
+                                        'attribute' => __('global.trash')
+                                    ]) !
                                     @endif
                                     </strong>
                                 </i>
@@ -188,15 +138,15 @@
                 <div class="card-footer">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['categories']->firstItem() }}</strong> - <strong>{{ $data['categories']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['categories']->total() }}</strong>
+                            @lang('pagination.showing') : <strong>{{ $data['inquiries']->firstItem() }}</strong> - <strong>{{ $data['inquiries']->lastItem() }}</strong> @lang('pagination.of')
+                            <strong>{{ $data['inquiries']->total() }}</strong>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            {{ $data['categories']->onEachSide(1)->links() }}
+                            {{ $data['inquiries']->onEachSide(1)->links() }}
                         </div>
                     </div>
                 </div>
-             </div>
+            </div>
         </div>
 
     </div>
@@ -228,7 +178,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/banner/category/' + id + '/soft',
+                        url: '/admin/inquiry/' + id + '/permanent?is_trash=yes',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -250,7 +200,7 @@
                 if (response.value.success) {
                     Swal.fire({
                         type: 'success',
-                        text: "@lang('global.alert.delete_success', ['attribute' => __('module/banner.category.caption')])"
+                        text: "{{ __('global.alert.delete_success', ['attribute' => __('module/inquiry.caption')]) }}"
                     }).then(() => {
                         window.location.reload();
                     })
@@ -264,6 +214,27 @@
                 }
             });
         });
+    });
+
+    //restore
+    $('.restore').click(function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var url = $(this).attr('href');
+        Swal.fire({
+        title: "@lang('global.alert.delete_confirm_restore_title')",
+        text: "@lang('global.alert.delete_confirm_text')",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: "@lang('global.restore')",
+        cancelButtonText: "@lang('global.cancel')",
+        }).then((result) => {
+        if (result.value) {
+            $("#form-restore-" + id).submit();
+        }
+        })
     });
 </script>
 @endsection

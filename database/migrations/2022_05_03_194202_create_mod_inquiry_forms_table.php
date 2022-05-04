@@ -21,7 +21,6 @@ class CreateModInquiryFormsTable extends Migration
             $table->boolean('status')->default(false);
             $table->boolean('exported')->default(false);
             $table->timestamp('submit_time');
-            $table->softDeletesTz('deleted_at', 0);
 
             $table->foreign('inquiry_id')->references('id')->on('mod_inquiries')
                 ->cascadeOnDelete();

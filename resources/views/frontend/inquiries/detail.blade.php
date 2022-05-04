@@ -4,23 +4,23 @@
 {{-- DETAIL
 
     DATA :
-    {!! $data['read']->fieldLang('name') !!} // name
+    {!! $data['read']->fieldLang('title') !!} // title
     
-    @if ($data['read']['config']['hide_description'] == false)
-    {!! $data['read']->fieldLang('description') !!} //description
+    @if ($data['read']['config']['hide_body'] == false)
+    {!! $data['read']->fieldLang('body') !!} //body
     @endif
 
-    //image preview
-    <img src="{{ $data['image_preview'] }}" title="{{ $data['read']['image_preview']['title'] }}" alt="{{ $data['read']['image_preview']['alt'] }}">
+    {!! $data['read']->fieldLang('after_body') !!} //after_body
 
     @if ($data['read']['config']['hide_banner'] == false) //banner
     <img src="{{ $data['banner'] }}" title="{{ $data['read']['banner']['title'] }}" alt="{{ $data['read']['banner']['alt'] }}">
     @endif
 
     DATA LOOPING :
-    $data['medias']
     $data['read']['fields']
+    $data['read']['custom_fields']
 
     {!! $data['creator'] !!}
+    
 --}}
 @endsection

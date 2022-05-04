@@ -5,12 +5,10 @@
 
     DATA :
     $data['banner'] // jika diperlukan banner default
-    $data['categories']
-    $data['medias']
+    $data['inquiries']
 
     LOOPING :
-    $data['categories']
-    $data['medias']
+    $data['inquiries']
 
     ATTRIBUTE DIDALAM LOOPING :
     contoh penulisan attribute ada di detail
