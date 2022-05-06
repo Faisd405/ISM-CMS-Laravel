@@ -36,7 +36,7 @@ Route::prefix('admin/banner')->name('banner.')->middleware('auth')->group(functi
             ->middleware('permission:banner_category_update');
         Route::put('/{id}/approved', [BannerCategoryController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:super');
         Route::delete('/{id}/soft', [BannerCategoryController::class, 'softDelete'])
             ->name('delete.soft')
             ->middleware('permission:banner_category_delete');

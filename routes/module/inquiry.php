@@ -32,7 +32,7 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
         ->middleware('permission:inquiry_update');
     Route::put('/{id}/approved', [InquiryController::class, 'approved'])
         ->name('approved')
-        ->middleware('role:super|support|admin');
+        ->middleware('role:super');
     Route::put('/{id}/position/{position}', [InquiryController::class, 'position'])
         ->name('position')
         ->middleware('permission:inquiry_update');

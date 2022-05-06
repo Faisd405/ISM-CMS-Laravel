@@ -80,7 +80,7 @@
             <i class="las la-trash-alt"></i>
         </button>
         @endcan
-        @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.menu.approval') == true)
+        @if (Auth::user()->hasRole('super') && config('cms.module.menu.approval') == true)
         <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $child['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $child['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
             <i class="las la-{{ $child['approved'] == 1 ? 'times' : 'check' }}"></i>
             <form action="{{ route('menu.approved', ['categoryId' => $child['menu_category_id'], 'id' => $child['id']]) }}" method="POST" id="form-approval">

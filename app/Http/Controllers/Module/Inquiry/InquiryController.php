@@ -424,6 +424,16 @@ class InquiryController extends Controller
         $id = $request->route('id');
         $inquiry = $this->inquiryService->getInquiry(['id' => $id]);
 
+        if ($inquiry['config']['hide_form'] == true) {
+            return redirect()->back();
+        }
+
+        // $unique = $inquiry->forms()->where('fields->email', $request->input('email', ''))
+        //     ->where('fields->phone', $request->input('phone', ''))->count();
+        // if ($unique > 0) {
+        //     return redirect()->back()->with('failed', __('module/inquiry.form.unique_warning'));
+        // }
+
         $data = [
             'title' => $inquiry->fieldLang('name'),
             'inquiry' => $inquiry,

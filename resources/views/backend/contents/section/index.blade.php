@@ -184,7 +184,7 @@
                                     <i class="las la-trash-alt"></i>
                                 </button>
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.content.section.approval') == true)
+                                @if (Auth::user()->hasRole('super') && config('cms.module.content.section.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('content.section.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">

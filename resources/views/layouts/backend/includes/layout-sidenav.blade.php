@@ -73,7 +73,7 @@
         </li>
         @endif
 
-        @if (Auth::user()->can('regionals') || Auth::user()->can('templates'))
+        @if (Auth::user()->can('regionals') || Auth::user()->can('templates') || Auth::user()->can('tags'))
         {{-- Master Data --}}
         <li class="sidenav-divider mb-1"></li>
         <li class="sidenav-header small font-weight-semibold">MASTER DATA</li>

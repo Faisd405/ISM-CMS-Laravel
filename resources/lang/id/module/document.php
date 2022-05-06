@@ -36,8 +36,8 @@ return [
             'field1' => 'Masukan judul',
         ],
         'type' => [
-            0 => 'Upload',
-            1 => 'Filemanager',
+            0 => 'UPLOAD',
+            1 => 'FILEMANAGER',
             2 => 'URL'
         ],
     ]

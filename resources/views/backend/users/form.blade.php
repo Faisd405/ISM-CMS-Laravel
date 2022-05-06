@@ -165,14 +165,14 @@
                     </thead>
                     <tbody>
                       @forelse ($data['permissions'] as $item)
-                      <tr class="{{ $item->where('parent', $item['id'])->count() > 0 ? 'table-warning' : '' }}">
+                      <tr class="bg-primary" style="color: #fff;">
                         <td><strong>{{ $loop->iteration }}</strong></td>
                           <td>
                               <strong>
                                   {!! Str::replace('_', ' ', Str::upper($item['name'])) !!}
                               </strong>
                           </td>
-                          <td><span class="badge badge-info">READ</span></td>
+                          <td><strong><i>READ</i></strong></td>
                           <td class="text-center">
                               <label class="form-check form-check-inline">
                                   <input type="checkbox" class="form-check-input check-parent" data-id="{{ $item['id'] }}" name="permissions[]" value="{{ $item['id'] }}" 
@@ -184,25 +184,13 @@
                       @foreach (Auth::user()['roles'][0]['permissions']->where('parent', $item['id']) as $child)
                       @php
                           $parentName = substr_replace($item['name'], '', -1);
-                          // $childName = str_replace([$parentName.'_', 'content_category_', 'banner_category_'], '', $child['name'])
+                          // $childName = str_replace([$parentName.'_'], '', $child['name'])
                       @endphp
                       <tr>
                           <td>{{ $loop->iteration }}</td>
                           <td></td>
                           <td>
-                            @switch($loop->iteration)
-                                @case(1)
-                                    <span class="badge badge-success">CREATE</span>
-                                    @break
-                                @case(2)
-                                    <span class="badge badge-primary">UPDATE</span>
-                                    @break
-                                @case(3)
-                                    <span class="badge badge-danger">DELETE</span>
-                                    @break
-                                @default
-                                    <span class="badge badge-info">READ</span>
-                            @endswitch
+                            <i>{!! Str::replace('_', ' ', Str::upper($child['name'])) !!}</i>
                           </td>
                           <td class="text-center">
                               <label class="form-check form-check-inline">

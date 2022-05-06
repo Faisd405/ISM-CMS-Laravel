@@ -67,17 +67,17 @@ return [
             'field4' => '',
         ],
         'type' => [
-            0 => 'Gambar',
-            1 => 'Video',
+            0 => 'IMAGE',
+            1 => 'VIDEO',
         ],
         'type_image' => [
-            0 => 'Upload',
-            1 => 'Filemanager',
+            0 => 'UPLOAD',
+            1 => 'FILEMANAGER',
             2 => 'URL'
         ],
         'type_video' => [
-            0 => 'Upload',
-            1 => 'Youtube ID'
+            0 => 'UPLOAD',
+            1 => 'YOUTUBE ID'
         ],
     ],
 ];

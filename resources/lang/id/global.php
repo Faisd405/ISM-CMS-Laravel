@@ -216,8 +216,8 @@ return [
             ],
         ],
         'login_failed_type' => [
-            0 => 'Backend',
-            1 => 'Frontend'
+            0 => 'BACKEND',
+            1 => 'FRONTEND'
         ],
     ],
 ];

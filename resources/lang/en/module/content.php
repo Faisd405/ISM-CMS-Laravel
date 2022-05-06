@@ -1,0 +1,70 @@
+<?php
+
+return[
+    'caption' => 'Content',
+    'section' => [
+        'title' => 'Sections',
+        'caption' => 'Section',
+        'text' => 'List Section',
+        'label' => [
+            'field1' => 'Name',
+            'field2' => 'Slug',
+            'field3' => 'Description',
+            'field5' => 'Order Field',
+            'field6' => 'Order By',
+            'field7' => 'Template List',
+            'field8' => 'Template Detail',
+            'field9' => 'Category Limit',
+            'field10' => 'Post Limit',
+            'field11' => 'Post Selected',
+        ],
+        'placeholder' => [
+            'field1' => 'Enter name',
+            'field2' => '',
+            'field3' => '',
+            'field4' => '',
+            'field5' => '',
+            'field6' => '',
+            'field7' => '',
+            'field8' => '',
+            'field9' => '',
+            'field10' => '',
+            'field11' => '',
+        ],
+    ],
+    'category' => [
+        'title' => 'Category',
+        'caption' => 'Category',
+        'text' => 'Category List',
+        'manage' => 'Manage Category',
+        'label' => [
+            'field1' => 'Name',
+            'field2' => 'Slug',
+            'field3' => 'Description',
+        ],
+        'placeholder' => [
+            'field1' => 'Enter name',
+            'field2' => '',
+            'field3' => '',
+        ],
+    ],
+    'post' => [
+        'title' => 'Post',
+        'caption' => 'Post',
+        'text' => 'Post List',
+        'label' => [
+            'field1' => 'Title',
+            'field2' => 'Slug',
+            'field3' => 'Intro',
+            'field4' => 'Content',
+            'publish_time' => 'Publish Time',
+            'publish_end' => 'Publish End',
+        ],
+        'placeholder' => [
+            'field1' => 'Enter title',
+            'field2' => '',
+            'field3' => '',
+            'field4' => '',
+        ],
+    ],
+];

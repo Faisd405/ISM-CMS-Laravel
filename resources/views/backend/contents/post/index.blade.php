@@ -245,7 +245,7 @@
                                         @method('PUT')
                                     </form>
                                 </a>
-                                @endid
+                                @endif
                             </td>
                         </tr>
                         @empty

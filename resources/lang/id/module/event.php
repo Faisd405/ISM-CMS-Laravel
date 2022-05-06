@@ -7,8 +7,8 @@ return [
     'label' => [
         'field1' => 'Nama',
         'field2' => 'Slug',
-        'field3' => 'Description',
-        'field4' => 'Form Description',
+        'field3' => 'Deskripsi',
+        'field4' => 'Form Deskripsi',
         'field5' => 'Register Code',
         'field6' => 'Tempat',
         'field7' => 'Tanggal Mulai',
@@ -57,9 +57,9 @@ return [
         ],
     ],
     'form' => [
-        'title' => 'Pesan',
-        'caption' => 'Pesan',
-        'text' => 'List Pesan',
+        'title' => 'Submit Form',
+        'caption' => 'Submit Form',
+        'text' => 'List Submit Form',
         'label' => [
             'field1' => 'IP Address',
             'field2' => 'Exported',
@@ -69,5 +69,6 @@ return [
             
         ],
         'submit_success' => 'Submit form berhasil',
+        'unique_warning' => 'Email / Telpon yang anda masukan sudah ada',
     ],
 ];

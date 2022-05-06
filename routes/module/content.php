@@ -35,7 +35,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_section_update');
         Route::put('/{id}/approved', [ContentSectionController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:super');
         Route::put('/{id}/position/{position}', [ContentSectionController::class, 'position'])
             ->name('position')
             ->middleware('permission:content_section_update');

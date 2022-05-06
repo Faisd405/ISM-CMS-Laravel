@@ -59,9 +59,9 @@ return [
         ],
     ],
     'form' => [
-        'title' => 'Pesan',
-        'caption' => 'Pesan',
-        'text' => 'List Pesan',
+        'title' => 'Submit Form',
+        'caption' => 'Submit Form',
+        'text' => 'List Submit Form',
         'label' => [
             'field1' => 'IP Address',
             'field2' => 'Exported',
@@ -71,5 +71,6 @@ return [
             
         ],
         'submit_success' => 'Submit form berhasil',
+        'unique_warning' => 'Email / Telpon yang anda masukan sudah ada',
     ],
 ];

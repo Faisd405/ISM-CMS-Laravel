@@ -382,6 +382,10 @@ class EventController extends Controller
         $this->eventService->recordHits(['id' => $data['read']['id']]);
 
         //data
+        $form = $data['read']->forms()->firstWhere('fields->email', $request->input('email', ''));
+        if (!empty($form))
+            $data['form'] = $form;
+
         $data['fields'] = $this->eventService->getFieldList([
             'event_id' => $data['read']['id'],
             'publish' => 1,
@@ -406,11 +410,8 @@ class EventController extends Controller
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
-            !empty($data['read']->fieldLang('body'))) {
-            $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('body')), 155);
-        } elseif (empty($data['read']['seo']['description']) && 
-            empty($data['read']->fieldLang('body')) && !empty($data['read']->fieldLang('after_body'))) {
-            $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('after_body')), 155);
+            !empty($data['read']->fieldLang('description'))) {
+            $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
 
         $data['meta_keywords'] = $this->configService->getConfigValue('meta_keywords');
@@ -430,6 +431,16 @@ class EventController extends Controller
     {
         $id = $request->route('id');
         $event = $this->eventService->getevent(['id' => $id]);
+
+        if ($event['config']['hide_form'] == true) {
+            return redirect()->back();
+        }
+
+        // $unique = $event->forms()->where('fields->email', $request->input('email', ''))
+        //     ->where('fields->phone', $request->input('phone', ''))->count();
+        // if ($unique > 0) {
+        //     return redirect()->back()->with('failed', __('module/event.form.unique_warning'));
+        // }
 
         $data = [
             'title' => $event->fieldLang('name'),
@@ -464,13 +475,11 @@ class EventController extends Controller
             ]);
         }
 
-        Cookie::queue($event['slug'], $event->fieldLang('name'), 120);
+        // Cookie::queue($event['slug'], $event->fieldLang('name'), 120);
 
         $message = __('module/event.form.submit_success');
-        if (!empty($event->fieldLang('after_body'))) {
-            $message = strip_tags($event->fieldLang('after_body'));
-        }
 
-        return back()->with('success', $message);
+        return redirect()->route('event.read', ['slugEvent' => $event['slug'], 'email' => $request->input('email')])
+            ->with('success', $message);
     }
 }

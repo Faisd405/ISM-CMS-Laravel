@@ -141,7 +141,7 @@ return [
     |
     */
 
-    'recaptcha' => ':attribute not verified!',
+    'recaptcha' => ':attribute not verification!',
 
     'custom' => [
         'attribute-name' => [

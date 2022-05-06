@@ -70,7 +70,7 @@ Route::prefix('admin/menu')->name('menu.')->middleware('auth')->group(function (
             ->middleware('permission:menu_update');
         Route::put('/{id}/approved', [MenuController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:super');
         Route::put('/{id}/position/{position}', [MenuController::class, 'position'])
             ->name('position')
             ->middleware('permission:menu_update');

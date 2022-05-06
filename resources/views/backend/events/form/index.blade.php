@@ -138,6 +138,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/event.form.label.field1')</th>
+                            <th>@lang('module/event.label.field5')</th>
                             @foreach ($data['fields']->take(3) as $item)
                                 <th>{{ $item->fieldLang('label') }}</th>
                             @endforeach
@@ -152,6 +153,7 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td><strong>{{ $item['ip_address'] }}</strong></td>
+                            <td><strong>{{ !empty($item['event']['register_code']) ? $item['event']['register_code'].'-'.sprintf("%03d", $item['register_code']) : sprintf("%03d", $item['register_code']) }}</strong></td>
                             @foreach ($data['fields']->take(3) as $keyF => $field)
                             <td>
                                 {!! $item['fields'][$field['name']] !!}
@@ -185,7 +187,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="{{ 6+$data['fields']->count() }}" align="center">
+                            <td colspan="{{ 7+$data['fields']->count() }}" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)
@@ -221,7 +223,7 @@
     </div>
 </div>
 
-@include('backend.inquiries.form.modal-detail')
+@include('backend.events.form.modal-detail')
 @endsection
 
 @section('scripts')

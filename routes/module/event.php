@@ -31,7 +31,7 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
         ->middleware('permission:event_update');
     Route::put('/{id}/approved', [EventController::class, 'approved'])
         ->name('approved')
-        ->middleware('role:super|support|admin');
+        ->middleware('role:super');
     Route::put('/{id}/position/{position}', [EventController::class, 'position'])
         ->name('position')
         ->middleware('permission:event_update');
@@ -48,16 +48,16 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
     //--- Form
     Route::get('/{eventId}/form', [EventController::class, 'form'])
         ->name('form')
-        ->middleware('permission:inquiries');
+        ->middleware('permission:events');
     Route::post('/{eventId}/export', [EventController::class, 'exportForm'])
         ->name('form.export')
-        ->middleware('permission:inquiries');
+        ->middleware('permission:events');
     Route::put('/{eventId}/form/{id}/status', [EventController::class, 'statusForm'])
         ->name('form.status')
-        ->middleware('permission:inquiries');
+        ->middleware('permission:events');
     Route::delete('/{eventId}/form/{id}', [EventController::class, 'destroyForm'])
         ->name('form.destroy')
-        ->middleware('permission:inquiries');
+        ->middleware('permission:events');
 
     //--- Field
     Route::prefix('{eventId}/field')->name('field.')->group(function () {

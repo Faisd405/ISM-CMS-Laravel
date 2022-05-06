@@ -42,17 +42,17 @@ return [
         'field9' => '',
     ],
     'type' => [
-        0 => 'Gambar',
-        1 => 'Video',
-        2 => 'Text',
+        0 => 'IMAGE',
+        1 => 'VIDEO',
+        2 => 'TEXT',
     ],
     'type_image' => [
-        0 => 'Upload',
-        1 => 'Filemanager',
+        0 => 'UPLOAD',
+        1 => 'FILEMANAGER',
         2 => 'URL'
     ],
     'type_video' => [
-        0 => 'Upload',
-        1 => 'Youtube ID'
+        0 => 'UPLOAD',
+        1 => 'YOUTUBE ID'
     ],
 ];

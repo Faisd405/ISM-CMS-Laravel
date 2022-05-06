@@ -21,7 +21,7 @@ class InquiryForm extends Model
 
     public function inquiry()
     {
-        return $this->belongsTo(InquiryForm::class, 'inquiry_id');
+        return $this->belongsTo(Inquiry::class, 'inquiry_id');
     }
 
     public function scopeRead($query)

@@ -1,5 +1,5 @@
 <?php 
 
 return [
-	'copyright' => 'All Rights Reserved',
+	'copyright' => 'All Rights Reserved.',
 ];

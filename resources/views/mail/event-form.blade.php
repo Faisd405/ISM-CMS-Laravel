@@ -1,6 +1,7 @@
 @extends('mail.layout')
 
 @section('content')
+<h4>{!! $data['title'] !!}</h4>
 <p>
     @lang('mail.event.title', [
         'attribute' => $data['request']['name']

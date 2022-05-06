@@ -52,6 +52,11 @@ class DashboardController extends Controller
             'inquiries' => App::make(InquiryService::class)->getFormList([], true, 5),
         ];
 
+        if (!empty(env('ANALYTICS_VIEW_ID'))) {
+            $periode = Period::days(7);
+            $data['latest_visitor'] = Analytics::fetchTotalVisitorsAndPageViews($periode);
+        }
+
         return view('backend.dashboard.index', compact('data'), [
             'title' => __('module/dashboard.caption')
         ]);

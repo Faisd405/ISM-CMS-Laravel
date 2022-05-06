@@ -83,6 +83,7 @@
                                 @include('components.field-error', ['field' => 'slug'])
                             </div>
                         </div>
+                        @if (config('cms.module.master.tags.active') == true)
                         <div class="form-group row">
                             <label class="col-form-label col-sm-2 text-sm-right">@lang('master/tags.caption')</label>
                             <div class="col-sm-10">
@@ -90,6 +91,7 @@
                                 <small class="text-muted">@lang('global.separated_comma')</small>
                             </div>
                         </div>
+                        @endif
                     </div>
                 </div>
                 <div class="card-footer text-center">

@@ -17,5 +17,4 @@ return [
     'next' => 'Next &raquo;',
     'showing' => 'Showing',
     'of' => 'of',
-
 ];
