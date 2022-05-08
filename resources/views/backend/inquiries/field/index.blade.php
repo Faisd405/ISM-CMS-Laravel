@@ -91,6 +91,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/inquiry.field.label.field1')</th>
+                            <th style="width: 210px;">@lang('module/inquiry.field.label.field2')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
@@ -103,7 +104,10 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                {!! Str::limit($item->fieldLang('label'), 30) !!} <code>({{ $item['name'] }})</code>
+                                {!! Str::limit($item->fieldLang('label'), 30) !!}
+                            </td>
+                            <td>
+                                <code>{{ $item['name'] }}</code>
                             </td>
                             <td class="text-center">
                                 @can('inquiry_field_update')
@@ -174,7 +178,7 @@
                                     <i class="las la-trash-alt"></i>
                                 </button>
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.inquiry.field.approval') == true)
+                                @if (Auth::user()->hasRole('super') && config('cms.module.inquiry.field.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('inquiry.field.approved', ['inquiryId' => $item['inquiry_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -187,7 +191,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" align="center">
+                            <td colspan="8" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)

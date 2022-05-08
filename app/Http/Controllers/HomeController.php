@@ -63,62 +63,52 @@ class HomeController extends Controller
     {
         $data['pages'] = App::make(PageService::class)->getPageList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['content_sections'] = App::make(ContentService::class)->getSectionList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['content_categories'] = App::make(ContentService::class)->getCategoryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['content_posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['gallery_categories'] = App::make(GalleryService::class)->getCategoryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['gallery_albums'] = App::make(GalleryService::class)->getAlbumList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['document_categories'] = App::make(DocumentService::class)->getCategoryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['link_categories'] = App::make(LinkService::class)->getCategoryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['inquiries'] = App::make(InquiryService::class)->getInquiryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         $data['events'] = App::make(EventService::class)->getEventList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         return response()->view('frontend.sitemap', compact('data'))
@@ -131,8 +121,7 @@ class HomeController extends Controller
         $data['description'] = $this->configService->getConfigValue('meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         return view('frontend.rss.feed', compact('data'));
@@ -144,8 +133,7 @@ class HomeController extends Controller
         $data['description'] = $this->configService->getConfigValue('meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], false, 0, false, [], []);
 
         return view('frontend.rss.post', compact('data'));

@@ -243,15 +243,13 @@ class GalleryCategoryController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['categories'] = $this->galleryService->getCategoryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
         $data['albums'] = $this->galleryService->getAlbumList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
@@ -305,8 +303,7 @@ class GalleryCategoryController extends Controller
         $data['albums'] = $this->galleryService->getAlbumList([
             'gallery_category_id' => $data['read']['id'],
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $albumPerpage, false, [], [
             'position' => 'ASC'
         ]);

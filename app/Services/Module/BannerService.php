@@ -118,7 +118,7 @@ class BannerService
             $this->setFieldCategory($data, $category);
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.banner.category.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.banner.category.approval') == true) {
                     $category->approved = 2;
                 }
                 $category->created_by = Auth::user()['id'];

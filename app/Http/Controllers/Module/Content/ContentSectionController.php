@@ -245,8 +245,7 @@ class ContentSectionController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['sections'] = $this->contentService->getSectionList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
@@ -294,8 +293,7 @@ class ContentSectionController extends Controller
         $data['categories'] = $this->contentService->getCategoryList([
             'section_id' => $data['read']['id'],
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $catPerpage, false, [], [
             'position' => 'ASC'
         ]);
@@ -303,9 +301,8 @@ class ContentSectionController extends Controller
         $data['posts'] = $this->contentService->getPostList([
             'section_id' => $data['read']['id'],
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
-        ], false, $postPerpage, false, [], [
+            'approved' => 1
+        ], true, $postPerpage, false, [], [
             $data['read']['ordering']['order_by'] => $data['read']['ordering']['order_seq']
         ]);
 

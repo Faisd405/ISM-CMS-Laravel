@@ -86,7 +86,7 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <strong>{!! Str::limit($item['title'][App::getLocale()], 65) !!}</strong>
+                                <strong>{!! Str::limit($item->module()['title'], 65) !!}</strong>
                             </td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>
@@ -99,6 +99,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
+                                @if (empty($item->module()['is_trash']))
                                 <button type="button" class="btn btn-success icon-btn btn-sm restore" onclick="$(this).find('#form-restore').submit();" title="@lang('global.restore')" data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-restore-alt"></i>
                                     <form action="{{ route('menu.restore', ['categoryId' => $item['menu_category_id'], 'id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
@@ -109,6 +110,7 @@
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
                                     <i class="las la-ban"></i>
                                 </button>
+                                @endif
                             </td>
                         </tr>
                         @empty

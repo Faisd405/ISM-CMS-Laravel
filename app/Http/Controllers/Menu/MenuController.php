@@ -117,8 +117,10 @@ class MenuController extends Controller
         $data = $request->all();
         $data['menu_category_id'] = $categoryId;
         $data['parent'] = $request->parent ?? 0;
+        $data['not_from_module'] = (bool)$request->not_from_module;
+        $data['module'] = $request->module;
+        $data['menuable_id'] = $request->menuable_id;
         $data['target_blank'] = (bool)$request->target_blank;
-        $data['not_from_module'] = 1;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
         $menu = $this->menuService->storeMenu($data);
 
@@ -151,8 +153,10 @@ class MenuController extends Controller
     {
         $data = $request->all();
         $data['menu_category_id'] = $categoryId;
+        $data['not_from_module'] = (bool)$request->not_from_module;
+        $data['module'] = $request->module;
+        $data['menuable_id'] = $request->menuable_id;
         $data['target_blank'] = (bool)$request->target_blank;
-        $data['not_from_module'] = 1;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
         $menu = $this->menuService->updateMenu($data, ['id' => $id]);
 

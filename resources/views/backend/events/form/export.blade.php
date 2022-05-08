@@ -23,10 +23,10 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $item['ip_address'] }}</td>
-                <td><strong>{{ !empty($item['event']['register_code']) ? $item['event']['register_code'].'-'.sprintf("%03d", $item['register_code']) : sprintf("%03d", $item['register_code']) }}</strong></td>
+                <td><strong>{{ !empty($item['event']['register_code']) ? $item['event']['register_code'].'-'.$item['register_code'] : $item['register_code'] }}</strong></td>
                 @foreach ($field as $field)
                 <td>
-                    {!! preg_replace("/[^a-zA-Z0-9]/", " ", $item->fields[$field->name]) !!}
+                    {!! preg_replace("/[^a-zA-Z0-9]/", " ", $item->fields[$field['name']]) !!}
                 </td>
                 @endforeach
                 <td>{!! $item['submit_time']->format('d F Y (H:i)') !!}</td>

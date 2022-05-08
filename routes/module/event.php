@@ -86,7 +86,7 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
             ->middleware('permission:event_field_update');
         Route::put('/{id}/approved', [EventFieldController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:super');
         Route::put('/{id}/position/{position}', [EventFieldController::class, 'position'])
             ->name('position')
             ->middleware('permission:event_field_update');

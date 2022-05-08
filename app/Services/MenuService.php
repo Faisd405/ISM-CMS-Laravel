@@ -4,6 +4,16 @@ namespace App\Services;
 
 use App\Models\Menu\Menu;
 use App\Models\Menu\MenuCategory;
+use App\Models\Module\Content\ContentCategory;
+use App\Models\Module\Content\ContentPost;
+use App\Models\Module\Content\ContentSection;
+use App\Models\Module\Document\DocumentCategory;
+use App\Models\Module\Event\Event;
+use App\Models\Module\Gallery\GalleryAlbum;
+use App\Models\Module\Gallery\GalleryCategory;
+use App\Models\Module\Inquiry\Inquiry;
+use App\Models\Module\Link\LinkCategory;
+use App\Models\Module\Page;
 use App\Services\Feature\LanguageService;
 use App\Traits\ApiResponser;
 use Exception;
@@ -357,7 +367,7 @@ class MenuService
                 ->max('position') + 1;
             if (Auth::guard()->check()) {
 
-                if (Auth::user()->hasRole('editor') && config('module.menu.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.menu.approval') == true) {
                     $menu->approved = 2;
                 }
                 $menu->created_by = Auth::user()['id'];
@@ -419,19 +429,81 @@ class MenuService
                 $data['title_'.$langDefault] : $data['title_'.$value['iso_codes']];
         }
 
+        $notFromModule = (bool)$data['not_from_module'];
+
         $menu->title = $title;
+        $menu->module = $notFromModule == 0 ? $data['module'] : null;
+        if ($notFromModule == 1) {
+            $menu->menuable_id = null;
+            $menu->menuable_type = null;
+        }
+        
+        if ($notFromModule == 0 && !empty($data['module']) && !empty($data['menuable_id'])) {
+            $this->moduleAssociate($data, $menu);
+        }
+
         $menu->publish = (bool)$data['publish'];
         $menu->public = (bool)$data['public'];
         $menu->locked = (bool)$data['locked'];
         $menu->config = [
             'url' => $data['url'],
             'target_blank' => (bool)$data['target_blank'],
-            'not_from_module' => (bool)$data['not_from_module'],
+            'not_from_module' => $notFromModule,
             'icon' => $data['icon'] ?? null,
             'edit_public_menu' => (bool)$data['edit_public_menu'],
         ];
         
         return $menu;
+    }
+
+    /**
+     * Module Associate
+     *  @param array $data
+     *  @param model $menu
+     */
+    private function moduleAssociate($data, $menu)
+    {
+        if ($data['module'] == 'page') {
+            $module = Page::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'content_section') {
+            $module = ContentSection::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'content_category') {
+            $module = ContentCategory::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'content_post') {
+            $module = ContentPost::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'gallery_category') {
+            $module = GalleryCategory::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'gallery_album') {
+            $module = GalleryAlbum::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'document') {
+            $module = DocumentCategory::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'link') {
+            $module = LinkCategory::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'inquiry') {
+            $module = Inquiry::find($data['menuable_id']);
+        }
+
+        if ($data['module'] == 'event') {
+            $module = Event::find($data['menuable_id']);
+        }
+
+        return $menu->menuable()->associate($module);
     }
 
      /**

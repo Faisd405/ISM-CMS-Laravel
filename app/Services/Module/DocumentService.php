@@ -234,6 +234,12 @@ class DocumentService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $category->menus()->update([
+                    'publish' => $category['publish']
+                ]);
+            }
+
             return $this->success($category, __('global.alert.update_success', [
                 'attribute' => __('module/document.category.caption')
             ]));
@@ -325,6 +331,7 @@ class DocumentService
                     ]);
                 }
 
+                $category->menus()->delete();
                 $category->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -361,6 +368,7 @@ class DocumentService
             }
             
             //restore data yang bersangkutan
+            $category->menus()->restore();
             $category->restore();
 
             return $this->success($category, __('global.alert.restore_success', [
@@ -387,6 +395,7 @@ class DocumentService
 
         try {
             
+            $category->menus()->forceDelete();
             $category->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

@@ -6,6 +6,7 @@ use App\Models\Feature\Configuration;
 use App\Models\Master\Media;
 use App\Models\Master\TagType;
 use App\Models\Master\Template;
+use App\Models\Menu\Menu;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Google\Service\Script\Content;
@@ -53,6 +54,11 @@ class ContentPost extends Model
     public function categories()
     {
         return ContentCategory::whereIn('id', $this->category_id)->get();
+    }
+
+    public function menus()
+    {
+        return $this->morphMany(Menu::class, 'menuable');
     }
 
     public function template()

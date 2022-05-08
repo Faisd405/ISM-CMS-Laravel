@@ -172,7 +172,6 @@
                             </select>
                         </div>
                     </div>
-                    {{-- @role('super') --}}
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
                         <div class="col-sm-10">
@@ -185,9 +184,6 @@
                             </select>
                         </div>
                     </div>
-                    {{-- @else
-                    <input type="hidden" name="locked" value="{{ !isset($data['inquiry']) ? 0 : $data['inquiry']['locked'] }}">
-                    @endrole --}}
                     @role('super')
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">

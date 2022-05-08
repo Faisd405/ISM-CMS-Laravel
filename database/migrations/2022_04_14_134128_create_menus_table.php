@@ -19,7 +19,7 @@ class CreateMenusTable extends Migration
             $table->integer('parent')->default(0);
             $table->json('title')->nullable();
             $table->json('config')->nullable();
-            $table->integer('module')->nullable();
+            $table->string('module')->nullable();
             $table->bigInteger('menuable_id')->nullable();
             $table->string('menuable_type')->nullable();
             $table->integer('position')->nullable();

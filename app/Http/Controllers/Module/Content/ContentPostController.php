@@ -289,8 +289,7 @@ class ContentPostController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['posts'] = $this->contentService->getPostList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1,
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
@@ -320,6 +319,13 @@ class ContentPostController extends Controller
             return redirect()->route('home');
         }
 
+        $start = $data['read']['publish_time'];
+        $end = $data['read']['publish_end'];
+        $now = now()->format('Y-m-d H:i');
+
+        if (!empty($end) && $now <= $end->format('Y-m-d H:i'))
+            return abort(404);
+
         if ($data['read']['config']['is_detail'] == 0) {
             return redirect()->route('home');
         }
@@ -341,8 +347,7 @@ class ContentPostController extends Controller
         $data['latest_posts'] = $this->contentService->getPostList([
             'section_id' => $data['read']['section_id'],
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1,
+            'approved' => 1
         ], false)->take(4);
 
         $data['addon_fields'] = $data['read']['addon_fields'];

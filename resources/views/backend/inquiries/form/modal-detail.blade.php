@@ -25,8 +25,8 @@
           <button type="button" class="btn btn-default" data-dismiss="modal" title="@lang('global.close')">
             <i class="las la-times"></i> @lang('global.close')
           </button>
-          @if (!empty($item->fields['email']))
-          <a href="mailto:{{ $item->fields['email'] }}?subject={{ !empty($item->fields['subject']) ? $item->fields['subject'] :  $data['inquiry']->fieldLang('name') }}"
+          @if (isset($item['fields']['email']))
+          <a href="mailto:{{ $item['fields']['email'] }}?subject={{ !empty($item['fields']['subject']) ? $item['fields']['subject'] :  $data['inquiry']->fieldLang('name') }}"
             class="btn btn-primary">
             <i class="las la-reply"></i> @lang('global.reply')
           </a>

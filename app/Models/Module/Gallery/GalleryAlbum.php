@@ -4,6 +4,7 @@ namespace App\Models\Module\Gallery;
 
 use App\Models\Feature\Configuration;
 use App\Models\Master\Template;
+use App\Models\Menu\Menu;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,6 +45,11 @@ class GalleryAlbum extends Model
     public function files()
     {
         return $this->hasMany(GalleryFile::class, 'gallery_album_id');
+    }
+
+    public function menus()
+    {
+        return $this->morphMany(Menu::class, 'menuable');
     }
 
     public function template()

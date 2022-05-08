@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $seed['content'] = ContentSeeder::class;
 
         if (config('cms.module.regional.active') == true) {
-            // $seed['regional'] = RegionalSeeder::class;
+            $seed['regional'] = RegionalSeeder::class;
         }
 
         $this->call($seed);

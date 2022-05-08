@@ -27,6 +27,7 @@
         </table>
         </td>
     </tr>
+    @isset($data['request']['email'])   
     <tr>
         <td align="left">
         <table border="0" cellpadding="0" cellspacing="0">
@@ -38,6 +39,7 @@
         </table>
         </td>
     </tr>
+    @endisset
     </tbody>
 </table>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Models\Module\Content;
 use App\Models\Feature\Configuration;
 use App\Models\IndexingUrl;
 use App\Models\Master\Template;
+use App\Models\Menu\Menu;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,19 +40,24 @@ class ContentSection extends Model
         ContentSection::observe(LogObserver::class);
     }
 
+    public function categories()
+    {
+        return $this->hasMany(ContentCategory::class, 'section_id');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(ContentPost::class, 'section_id');
+    }
+
     public function indexing()
     {
         return $this->morphOne(IndexingUrl::class, 'urlable');
     }
 
-    public function categories()
+    public function menus()
     {
-        return $this->hasMany(Category::class, 'section_id');
-    }
-
-    public function posts()
-    {
-        return $this->hasMany(Post::class, 'section_id');
+        return $this->morphMany(Menu::class, 'menuable');
     }
 
     public function templateList()

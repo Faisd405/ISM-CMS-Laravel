@@ -339,8 +339,7 @@ class InquiryController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['inquiries'] = $this->inquiryService->getInquiryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);

@@ -24,7 +24,7 @@
                 <td>{{ $item['ip_address'] }}</td>
                 @foreach ($field as $field)
                 <td>
-                    {!! preg_replace("/[^a-zA-Z0-9]/", " ", $item->fields[$field->name]) !!}
+                    {!! preg_replace("/[^a-zA-Z0-9]/", " ", $item->fields[$field['name']]) !!}
                 </td>
                 @endforeach
                 <td>{!! $item['submit_time']->format('d F Y (H:i)') !!}</td>

@@ -50,6 +50,13 @@ class RegisterController extends Controller
 
         if ($register['active'] == 0)
             return abort(404);
+
+        $start = $register['start_date'];
+        $end = $register['end_date'];
+        $now = now()->format('Y-m-d H:i');
+    
+        if (!empty($start) && $now >= $start->format('Y-m-d H:i') || !empty($end) && $now <= $end->format('Y-m-d H:i'))
+            return abort(404);
             
         if (empty($register['roles']))
             return abort(404);

@@ -61,7 +61,7 @@ class PassingDataToViews
                 $filter['public'] = 1;
 
             foreach ($this->menu->getCategoryList(['active' => 1], false) as $key => $value) {
-                $filter['menu_category_id'] = $value['id'];
+                $filter['category_id'] = $value['id'];
                 $passingData['menu'][$value['name']] = $this->menu->getMenuList($filter, false);
             }
         }

@@ -56,6 +56,7 @@ class MenuSeeder extends Seeder
                 'menuable_type' => null,
                 'publish' => 1,
                 'public' => 1,
+                'locked' => 1,
                 'config' => [
                     'url' => '/',
                     'target_blank' => false,
@@ -77,6 +78,7 @@ class MenuSeeder extends Seeder
                 'menuable_type' => $item['menuable_type'],
                 'publish' => $item['publish'],
                 'public' => $item['public'],
+                'locked' => $item['locked'],
                 'config' => $item['config'],
                 'position' => $item['position']
             ]);

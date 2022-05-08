@@ -26,7 +26,7 @@
    
 <div class="row"> 
     {{-- counter --}}
-    @if (Auth::user()->can('pages') || config('cms.module.page.active') == true)
+    @if (Auth::user()->can('pages') && config('cms.module.page.active') == true)
     <div class="col-sm-6 col-xl-6">
       <div class="card mb-4">
         <div class="card-body">
@@ -41,7 +41,7 @@
       </div>
     </div>
     @endif
-    @if (Auth::user()->can('content_posts') || config('cms.module.content.post.active') == true)
+    @if (Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
     <div class="col-sm-6 col-xl-6">
         <div class="card mb-4">
           <div class="card-body">
@@ -93,7 +93,7 @@
       @endif
     @endcan
 
-    @if (Auth::user()->can('content_posts') || config('cms.module.content.post.active') == true)
+    @if (Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
     {{-- latest post --}}
     <div class="col-md-6">
         <div class="card mb-4 card-list">
@@ -146,7 +146,7 @@
     </div>
     @endif
 
-    @if (Auth::user()->can('inquiries') || config('cms.module.inquiry.active') == true)
+    @if (Auth::user()->can('inquiries') && config('cms.module.inquiry.active') == true)
     {{-- latest inquiry --}}
     <div class="col-md-6">
         <div class="card mb-4 card-list">
@@ -161,7 +161,7 @@
               <div class="media-body flex-truncate ml-3">
                 <a href="javascript:void(0)">{!! $inquiry['fields']['name'] !!}</a>
                 <span class="text-muted">From</span>
-                <a href="{{ route('inquiry.form', ['inquiryId' => $inquiry['inquiry_id'], 'email' => $inquiry['fields']['email']]) }}">{{ $inquiry['inquiry']->fieldLang('name') }}</a>
+                <a href="{{ route('inquiry.form', ['inquiryId' => $inquiry['inquiry_id'], 'q' => $inquiry['fields']['email']]) }}">{{ $inquiry['inquiry']->fieldLang('name') }}</a>
                 <p class="text-truncate my-1"></p>
                 <div class="clearfix">
                   <span class="float-left text-muted small">{{ $inquiry['submit_time']->diffForHumans() }}</span>
@@ -174,8 +174,8 @@
                 <i>
                   <strong style="color:red;">
                     ! @lang('global.data_attr_empty', [
-                                  'attribute' => __('module/inquiry.caption')
-                              ]) !
+                        'attribute' => __('module/inquiry.caption')
+                    ]) !
                   </strong>
                 </i>
               </div>
@@ -185,9 +185,9 @@
           </div>
           <a href="{{ route('inquiry.index') }}" class="card-footer d-block text-center text-body small font-weight-semibold">@lang('global.show_more')</a>
         </div>
-      </div>
     </div>
     @endif
+</div>
 @endsection
 
 @section('scripts')

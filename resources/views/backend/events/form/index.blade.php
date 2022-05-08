@@ -153,7 +153,7 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td><strong>{{ $item['ip_address'] }}</strong></td>
-                            <td><strong>{{ !empty($item['event']['register_code']) ? $item['event']['register_code'].'-'.sprintf("%03d", $item['register_code']) : sprintf("%03d", $item['register_code']) }}</strong></td>
+                            <td><strong>{{ !empty($item['event']['register_code']) ? $item['event']['register_code'].'-'.$item['register_code'] : $item['register_code'] }}</strong></td>
                             @foreach ($data['fields']->take(3) as $keyF => $field)
                             <td>
                                 {!! $item['fields'][$field['name']] !!}

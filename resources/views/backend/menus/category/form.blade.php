@@ -37,6 +37,18 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
+                        <div class="col-sm-10">
+                            <select class="form-control show-tick" name="locked" data-style="btn-default">
+                                @foreach (__('global.label.optional') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['category']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['category']['locked']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['category']) ? __('global.save_change') : __('global.save') }}">

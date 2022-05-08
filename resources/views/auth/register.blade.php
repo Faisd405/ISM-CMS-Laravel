@@ -10,11 +10,11 @@
 <h5 class="text-center text-muted font-weight-normal mb-4">@lang('auth.register.text')</h5>
 
 @php
-    $start = $data['register']->start_date;
-    $end = $data['register']->end_date;
+    $start = $data['register']['start_date'];
+    $end = $data['register']['end_date'];
     $now = now()->format('Y-m-d H:i');
 @endphp
-@if (empty($start) || !empty($start) && $now >= $start->format('Y-m-d H:i') && $now <= $end->format('Y-m-d H:i'))
+@if (empty($start) || !empty($start) && $now >= $start->format('Y-m-d H:i') || empty($end) || !empty($end) && $now <= $end->format('Y-m-d H:i'))
 <!-- Form -->
 <form class="my-2" action="{{ route('register') }}" method="POST">
     @csrf

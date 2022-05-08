@@ -242,6 +242,12 @@ class GalleryService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $category->menus()->update([
+                    'publish' => $category['publish']
+                ]);
+            }
+
             return $this->success($category, __('global.alert.update_success', [
                 'attribute' => __('module/gallery.category.caption')
             ]));
@@ -334,6 +340,7 @@ class GalleryService
                     ]);
                 }
 
+                $category->menus()->delete();
                 $category->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -370,6 +377,7 @@ class GalleryService
             }
             
             //restore data yang bersangkutan
+            $category->menus()->restore();
             $category->restore();
 
             return $this->success($category, __('global.alert.restore_success', [
@@ -396,6 +404,7 @@ class GalleryService
 
         try {
             
+            $category->menus()->forceDelete();
             $category->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
@@ -622,6 +631,12 @@ class GalleryService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $album['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $album->menus()->update([
+                    'publish' => $album['publish']
+                ]);
+            }
+
             return $this->success($album, __('global.alert.update_success', [
                 'attribute' => __('module/gallery.album.caption')
             ]));
@@ -713,6 +728,7 @@ class GalleryService
                     ]);
                 }
 
+                $album->menus()->delete();
                 $album->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -749,6 +765,7 @@ class GalleryService
             }
             
             //restore data yang bersangkutan
+            $album->menus()->restore();
             $album->restore();
 
             return $this->success($album, __('global.alert.restore_success', [
@@ -775,6 +792,7 @@ class GalleryService
 
         try {
                 
+            $album->menus()->forceDelete();
             $album->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

@@ -7,6 +7,7 @@ return [
         'text' => 'Menu Category List',
         'label' => [
             'field1' => 'Name',
+            'field2' => 'Writing'
         ],
         'placeholder' => [
             'field1' => 'Enter name',

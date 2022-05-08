@@ -4,6 +4,7 @@ namespace App\Models\Module\Link;
 
 use App\Models\Feature\Configuration;
 use App\Models\Master\Template;
+use App\Models\Menu\Menu;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,6 +39,11 @@ class LinkCategory extends Model
     public function medias()
     {
         return $this->hasMany(LinkMedia::class, 'link_category_id');
+    }
+
+    public function menus()
+    {
+        return $this->morphMany(Menu::class, 'menuable');
     }
 
     public function template()

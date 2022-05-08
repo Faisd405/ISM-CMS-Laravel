@@ -89,6 +89,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/menu.category.label.field1')</th>
+                            <th style="width: 210px;">@lang('module/menu.category.label.field2')</th>
                             <th style="width: 80px;" class="text-center">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
@@ -100,8 +101,9 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                {{ Str::replace('_', ' ', Str::upper($item['name'])) }} - <code>{{ $item['name'] }}</code>
+                                {{ Str::replace('_', ' ', Str::upper($item['name'])) }}
                             </td>
+                            <td><code>{{ $item['name'] }}</code></td>
                             <td class="text-center">
                                 @role('super')
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['active'] == 1 ? 'success' : 'secondary' }}"
@@ -151,7 +153,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" align="center">
+                            <td colspan="7" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)

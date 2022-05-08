@@ -246,8 +246,7 @@ class DocumentCategoryController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['categories'] = $this->documentService->getCategoryList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);

@@ -3,6 +3,7 @@
 namespace App\Models\Module\Event;
 
 use App\Models\Feature\Configuration;
+use App\Models\Menu\Menu;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,6 +50,11 @@ class Event extends Model
     public function forms()
     {
         return $this->hasMany(EventForm::class, 'event_id');
+    }
+
+    public function menus()
+    {
+        return $this->morphMany(Menu::class, 'menuable');
     }
 
     public function createBy()

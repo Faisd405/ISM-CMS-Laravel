@@ -280,6 +280,12 @@ class PageService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $page['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $page->menus()->update([
+                    'publish' => $page['publish']
+                ]);
+            }
+
             return $this->success($page, __('global.alert.update_success', [
                 'attribute' => __('module/page.caption')
             ]));
@@ -379,7 +385,8 @@ class PageService
                 }
 
                 $page->medias()->delete();
-                $page->indexing->delete();
+                $page->menus()->delete();
+                // $page->indexing->delete();
                 $page->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -410,7 +417,7 @@ class PageService
             
             $checkSlug = $this->getPage(['slug' => $page['slug']]);
             $checkParent = $this->getPage(['id' => $page['parent']]);
-            if (!empty($checkSlug) || $pagee['parent'] > 0 && empty($checkParent)) {
+            if (!empty($checkSlug) || $page['parent'] > 0 && empty($checkParent)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/page.caption')
                 ]));
@@ -418,7 +425,8 @@ class PageService
             
             //restore data yang bersangkutan
             $page->medias()->restore();
-            $page->indexing()->restore();
+            $page->menus()->restore();
+            // $page->indexing()->restore();
             $page->restore();
 
             return $this->success($page, __('global.alert.restore_success', [
@@ -447,6 +455,7 @@ class PageService
                 
             $page->medias()->forceDelete();
             $page->tags()->delete();
+            $page->menus()->forceDelete();
             $page->indexing()->forceDelete();
             $page->forceDelete();
 

@@ -7,6 +7,7 @@ return [
         'text' => 'List Kategori Menu',
         'label' => [
             'field1' => 'Nama',
+            'field2' => 'Penulisan'
         ],
         'placeholder' => [
             'field1' => 'Masukan nama',

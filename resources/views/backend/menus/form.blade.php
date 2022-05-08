@@ -2,6 +2,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/pages/account.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/select2/select2.css') }}">
 @endsection
 
 @section('content')
@@ -59,6 +60,60 @@
                     @endforeach
                     <div class="card-body">
                         <div class="form-group row">
+                            <div class="col-md-2 text-md-right">
+                            <label class="col-form-label text-sm-right">@lang('module/menu.label.field2')</label>
+                            </div>
+                            <div class="col-md-10">
+                                <label class="switcher switcher-success">
+                                    <input id="not_from_module" type="checkbox" class="switcher-input" name="not_from_module" value="1" 
+                                        {{ !isset($data['menu']) ? '' : ($data['menu']['config']['not_from_module'] == 1 ? 'checked' : '') }}>
+                                    <span class="switcher-indicator">
+                                    <span class="switcher-yes">
+                                        <span class="ion ion-md-checkmark"></span>
+                                    </span>
+                                    <span class="switcher-no">
+                                        <span class="ion ion-md-close"></span>
+                                    </span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div id="internal-link">
+                            <div class="form-group row">
+                                <div class="col-md-2 text-md-right">
+                                    <label class="col-form-label text-sm-right">@lang('module/menu.label.field4') <i class="text-danger">*</i></label>
+                                </div>
+                                <div class="col-md-10">
+                                    <select id="module" class="select2 show-tick @error('module') is-invalid @enderror" name="module" data-style="btn-default">
+                                        <option value="" disabled selected>@lang('global.select')</option>
+                                        @foreach (config('cms.module.menu.mod') as $key => $val)
+                                        <option value="{{ $val }}">{{ Str::replace('_', ' ', Str::upper($val)) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('module')
+                                    <label class="error jquery-validation-error small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-2 text-md-right">
+                                    <label class="col-form-label text-sm-right">@lang('module/menu.label.field5') <i class="text-danger">*</i></label>
+                                </div>
+                                <div class="col-md-10">
+                                    @if(isset($data['menu']) && $data['menu']['config']['not_from_module'] == 0)
+                                    <input type="hidden" name="menuable_id" value="{{ $data['menu']['menuable_id'] }}">
+                                    <input id="menuable" type="text" class="form-control mb-1" value="{!! $data['menu']->module()['title'] !!}" readonly>
+                                    @endif
+                                    <select id="menuable_id" class="select-autocomplete show-tick @error('menuable_id') is-invalid @enderror" name="menuable_id" data-style="btn-default">
+                                        <option value="" disabled selected>@lang('global.select')</option>
+                                    </select>
+                                    @error('menuable_id')
+                                    <label class="error jquery-validation-error small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" id="external-link">
                             <label class="col-form-label col-sm-2 text-sm-right">@lang('module/menu.label.field3') <i class="text-danger">*</i></label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url" 
@@ -183,7 +238,81 @@
 </div>
 @endsection
 
+@section('scripts')
+<script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
+@endsection
+
 @section('jsbody')
+<script>
+    $(function () {
+        $('.select2').select2();
+    });
+</script>
+
+<script>
+    var notFromModule = '';
+    var module = null;
+    @isset ($data['menu'])
+        var notFromModule = "{{ $data['menu']['config']['not_from_module'] }}";
+        var module = "{{ $data['menu']['module'] }}";
+    @endisset
+
+    if (notFromModule == 1) {
+        $("#internal-link").hide();
+        $("#external-link").show();
+    } else {
+        $("#internal-link").show();
+        $("#external-link").hide();
+    }
+
+    $("#not_from_module").change(function() {
+        if (this.checked) {
+            $("#internal-link").hide();
+            $("#external-link").show();
+        } else {
+            $("#internal-link").show();
+            $("#external-link").hide();
+        }
+    });
+
+    if (module != null) {
+        $("#module").val(module);
+        $("#menuable").show();
+    }
+    
+    $("#menuable_id").hide();
+    $("#module").change(function() {
+        $("#menuable_id").show();
+        $("#menuable").hide();
+        var val = $(this).val();
+        
+        $('.select-autocomplete').select2({
+            minimumInputLength: 1,
+            ajax: {
+                url: '/api/menu/module/'+val,
+                dataType: 'json',
+                type: "GET",
+                quietMillis: 50,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data.data, function (item) {
+                            return {
+                                text: item.title,
+                                id: item.id
+                            }
+                        })
+                    };
+                }
+            }
+        });
+    });
+</script>
+
 @if (!Auth::user()->hasRole('super'))
 <script>
     //hide form yang tidak diperlukan

@@ -129,7 +129,7 @@ class ContentService
             $section->position = $this->sectionModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.content.section.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.content.section.approval') == true) {
                     $section->approved = 2;
                 }
                 $section->created_by = Auth::user()['id'];
@@ -247,20 +247,22 @@ class ContentService
             $section->custom_fields = null;
         }
 
-        if (isset($data['af_name'])) {
-            
-            $addonField = [];
-            foreach ($data['af_name'] as $key => $value) {
-                $addonField[$key] = [
-                    'name' => $value,
-                    'type' => $data['af_type'][$key],
-                    'value' => $data['af_value'][$key],
-                ];
-            }
+        if (Auth::user()->hasRole('super')) {
+            if (isset($data['af_name'])) {
+                
+                $addonField = [];
+                foreach ($data['af_name'] as $key => $value) {
+                    $addonField[$key] = [
+                        'name' => $value,
+                        'type' => $data['af_type'][$key],
+                        'value' => $data['af_value'][$key],
+                    ];
+                }
 
-            $section->addon_fields = $addonField;
-        } else {
-            $section->addon_fields = null;
+                $section->addon_fields = $addonField;
+            } else {
+                $section->addon_fields = null;
+            }
         }
 
         $section->post_perpage = $data['post_perpage'] ?? 0;
@@ -284,6 +286,12 @@ class ContentService
                 $field => !$section[$field],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $section['updated_by'],
             ]);
+
+            if ($field == 'publish') {
+                $section->menus()->update([
+                    'publish' => $section['publish']
+                ]);
+            }
 
             return $this->success($section, __('global.alert.update_success', [
                 'attribute' => __('module/content.section.caption')
@@ -377,7 +385,8 @@ class ContentService
                     ]);
                 }
 
-                $section->indexing->delete();
+                $section->menus()->delete();
+                // $section->indexing->delete();
                 $section->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -414,7 +423,8 @@ class ContentService
             }
             
             //restore data yang bersangkutan
-            $section->indexing()->restore();
+            $section->menus()->restore();
+            // $section->indexing()->restore();
             $section->restore();
 
             return $this->success($section, __('global.alert.restore_success', [
@@ -440,7 +450,8 @@ class ContentService
         }
 
         try {
-                
+            
+            $section->menus()->forceDelete();
             $section->indexing()->forceDelete();
             $section->forceDelete();
 
@@ -666,6 +677,12 @@ class ContentService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $category->menus()->update([
+                    'publish' => $category['publish']
+                ]);
+            }
+
             return $this->success($category, __('global.alert.update_success', [
                 'attribute' => __('module/content.category.caption')
             ]));
@@ -758,6 +775,7 @@ class ContentService
                     ]);
                 }
 
+                $category->menus()->delete();
                 $category->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -795,6 +813,7 @@ class ContentService
             }
             
             //restore data yang bersangkutan
+            $category->menus()->restore();
             $category->restore();
 
             return $this->success($category, __('global.alert.restore_success', [
@@ -821,6 +840,7 @@ class ContentService
 
         try {
                 
+            $category->menus()->forceDelete();
             $category->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
@@ -1146,6 +1166,12 @@ class ContentService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $post['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $post->menus()->update([
+                    'publish' => $post['publish']
+                ]);
+            }
+
             return $this->success($post, __('global.alert.update_success', [
                 'attribute' => __('module/content.post.caption')
             ]));
@@ -1237,6 +1263,7 @@ class ContentService
                 }
 
                 $post->medias()->delete();
+                $post->menus()->delete();
                 $post->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -1275,6 +1302,7 @@ class ContentService
             
             //restore data yang bersangkutan
             $post->medias()->restore();
+            $post->menus()->restore();
             $post->restore();
 
             return $this->success($post, __('global.alert.restore_success', [
@@ -1303,6 +1331,7 @@ class ContentService
                 
             $post->medias()->forceDelete();
             $post->tags()->delete();
+            $post->menus()->forceDelete();
             $post->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

@@ -50,7 +50,7 @@ return [
     // REGIONAL
     //---------------
     'regional' => [
-        'active' => true
+        'active' => false
     ],
 
     //---------------
@@ -170,6 +170,16 @@ return [
     'menu' => [
         'approval' => true,
         'mod' => [
+            'page',
+            'content_section',
+            'content_category',
+            'content_post',
+            'gallery_category',
+            'gallery_album',
+            'document',
+            'link',
+            'inquiry',
+            'event'
         ],
     ],
 

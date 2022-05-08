@@ -345,8 +345,7 @@ class EventController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['events'] = $this->eventService->getEventList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
@@ -382,9 +381,9 @@ class EventController extends Controller
         $this->eventService->recordHits(['id' => $data['read']['id']]);
 
         //data
-        $form = $data['read']->forms()->firstWhere('fields->email', $request->input('email', ''));
-        if (!empty($form))
-            $data['form'] = $form;
+        // $form = $data['read']->forms()->firstWhere('fields->email', $request->input('email', ''));
+        // if (!empty($form))
+        //     $data['form'] = $form;
 
         $data['fields'] = $this->eventService->getFieldList([
             'event_id' => $data['read']['id'],
@@ -435,6 +434,13 @@ class EventController extends Controller
         if ($event['config']['hide_form'] == true) {
             return redirect()->back();
         }
+
+        $start = $event['start_date'];
+        $end = $event['end_date'];
+        $now = now()->format('Y-m-d H:i');
+
+        if (!empty($start) && $now >= $start->format('Y-m-d H:i') || !empty($end) && $now <= $end->format('Y-m-d H:i'))
+            return abort(404);
 
         // $unique = $event->forms()->where('fields->email', $request->input('email', ''))
         //     ->where('fields->phone', $request->input('phone', ''))->count();

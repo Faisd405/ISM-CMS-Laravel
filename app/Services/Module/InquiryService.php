@@ -127,7 +127,7 @@ class InquiryService
             $inquiry->position = $this->inquiryModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.inquiry.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.inquiry.approval') == true) {
                     $inquiry->approved = 2;
                 }
                 $inquiry->created_by = Auth::user()['id'];
@@ -288,6 +288,12 @@ class InquiryService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $inquiry['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $inquiry->menus()->update([
+                    'publish' => $inquiry['publish']
+                ]);
+            }
+
             return $this->success($inquiry, __('global.alert.update_success', [
                 'attribute' => __('module/inquiry.caption')
             ]));
@@ -380,7 +386,8 @@ class InquiryService
                     ]);
                 }
 
-                $inquiry->indexing->delete();
+                $inquiry->menus()->delete();
+                // $inquiry->indexing->delete();
                 $inquiry->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -417,7 +424,8 @@ class InquiryService
             }
             
             //restore data yang bersangkutan
-            $inquiry->indexing()->restore();
+            $inquiry->menus()->restore();
+            // $inquiry->indexing()->restore();
             $inquiry->restore();
 
             return $this->success($inquiry, __('global.alert.restore_success', [
@@ -447,6 +455,7 @@ class InquiryService
             $path = resource_path('views/frontend/inquiries/'.$inquiry['slug'].'.blade.php');
                 File::delete($path);
                 
+            $inquiry->menus()->forceDelete();
             $inquiry->indexing()->forceDelete();
             $inquiry->forceDelete();
 
@@ -553,7 +562,7 @@ class InquiryService
             $field->position = $this->inquiryFieldModel->where('inquiry_id', $data['inquiry_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.inquiry.field.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.inquiry.field.approval') == true) {
                     $field->approved = 2;
                 }
                 $field->created_by = Auth::user()['id'];

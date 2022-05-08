@@ -77,6 +77,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/inquiry.field.label.field1')</th>
+                            <th style="width: 210px;">@lang('module/inquiry.field.label.field2')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.deleted')</th>
                             <th class="text-center" style="width: 110px;"></th>
@@ -87,7 +88,10 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                {!! Str::limit($item['label'][App::getLocale()], 30) !!} <code>({{ $item['name'] }})</code>
+                                {!! Str::limit($item['label'][App::getLocale()], 30) !!}
+                            </td>
+                            <td>
+                                <code>{{ $item['name'] }}</code>
                             </td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>
@@ -114,7 +118,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" align="center">
+                            <td colspan="6" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)

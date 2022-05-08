@@ -9,6 +9,7 @@ use App\Services\Feature\LanguageService;
 use App\Services\Master\MediaService;
 use App\Services\Master\TemplateService;
 use App\Services\Module\PageService;
+use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
+    use ApiResponser;
+
     private $pageService, $mediaService, $languageService, $templateService, $configService;
 
     public function __construct(
@@ -260,8 +263,7 @@ class PageController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['pages'] = $this->pageService->getPageList([
             'publish' => 1,
-            'approved' => 1,
-            'is_detail' => 1
+            'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);

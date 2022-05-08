@@ -125,7 +125,7 @@ class EventService
             $event->position = $this->eventModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.event.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.event.approval') == true) {
                     $event->approved = 2;
                 }
                 $event->created_by = Auth::user()['id'];
@@ -283,6 +283,12 @@ class EventService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $event['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $event->menus()->update([
+                    'publish' => $event['publish']
+                ]);
+            }
+
             return $this->success($event, __('global.alert.update_success', [
                 'attribute' => __('module/event.caption')
             ]));
@@ -375,6 +381,7 @@ class EventService
                     ]);
                 }
 
+                $event->menus()->delete();
                 $event->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -411,6 +418,7 @@ class EventService
             }
             
             //restore data yang bersangkutan
+            $event->menus()->restore();
             $event->restore();
 
             return $this->success($event, __('global.alert.restore_success', [
@@ -440,6 +448,7 @@ class EventService
             $path = resource_path('views/frontend/events/'.$event['slug'].'.blade.php');
                 File::delete($path);
                 
+            $event->menus()->forceDelete();
             $event->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
@@ -545,7 +554,7 @@ class EventService
             $field->position = $this->eventFieldModel->where('event_id', $data['event_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.event.field.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.event.field.approval') == true) {
                     $field->approved = 2;
                 }
                 $field->created_by = Auth::user()['id'];
@@ -877,9 +886,11 @@ class EventService
                 $fields[$value['name']] = strip_tags($data[$value['name']]) ?? null;
             }
 
+            $registerNumber = $this->eventFormModel->where('event_id', $data['event_id'])->max('register_code') + 1;
+
             $form = new eventForm;
             $form->event_id = $data['event_id'];
-            $form->register_code = $this->eventFormModel->where('event_id', $data['event_id'])->max('register_code') + 1;
+            $form->register_code = sprintf("%03d", $registerNumber);
             $form->ip_address = request()->ip();
             $form->fields = $fields;
             $form->submit_time = now();
