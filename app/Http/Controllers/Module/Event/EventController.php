@@ -318,14 +318,14 @@ class EventController extends Controller
         return response()->download(storage_path('app/' . $fileName));
     }
 
-    public function statusForm($id)
+    public function statusForm($eventId, $id)
     {
         $event = $this->eventService->statusForm('status', ['id' => $id]);
 
         return $event;
     }
 
-    public function destroyForm($id)
+    public function destroyForm($eventId, $id)
     {
         $event = $this->eventService->deleteForm(['id' => $id]);
 

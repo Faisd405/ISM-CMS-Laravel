@@ -312,14 +312,14 @@ class InquiryController extends Controller
         return response()->download(storage_path('app/' . $fileName));
     }
 
-    public function statusForm($id)
+    public function statusForm($inquiryId, $id)
     {
         $inquiry = $this->inquiryService->statusForm('status', ['id' => $id]);
 
         return $inquiry;
     }
 
-    public function destroyForm($id)
+    public function destroyForm($inquiryId, $id)
     {
         $inquiry = $this->inquiryService->deleteForm(['id' => $id]);
 

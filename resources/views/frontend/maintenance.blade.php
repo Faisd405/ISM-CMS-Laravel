@@ -14,8 +14,8 @@
             @lang('global.maintenance.desc')
 
         </div>
-        <div class="text-center">
-          <img src="{{ $config['logo'] }}" style="width: 30%">
+        <div class="text-center mt-4">
+          <h1 class="font-weight-bolder">{!! $config['website_name'] !!}</h1>
         </div>
       </div>
 
