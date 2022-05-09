@@ -4,7 +4,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-10 col-lg-10 col-md-10">
 
-        @if (isset($data['error']) && is_null(env('ANALYTICS_VIEW_ID')))
+        @if (isset($data['error']) && empty(env('ANALYTICS_VIEW_ID')))
         <div class="alert alert-warning alert-dismissible">
             @lang('feature/configuration.visitor.warning_caption')
         </div>

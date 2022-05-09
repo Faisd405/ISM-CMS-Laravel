@@ -73,7 +73,9 @@
         </li>
         @endif
 
-        @if (Auth::user()->can('regionals') || Auth::user()->can('templates') || Auth::user()->can('tags'))
+        @if (Auth::user()->can('regionals') && config('cms.module.regional.active') == true 
+          || Auth::user()->can('templates') && config('cms.module.master.template.active') == true
+          || Auth::user()->can('tags') && config('cms.module.master.tags.active') == true)
         {{-- Master Data --}}
         <li class="sidenav-divider mb-1"></li>
         <li class="sidenav-header small font-weight-semibold">MASTER DATA</li>
@@ -193,7 +195,9 @@
         </li>
         @endrole
 
-        @if (Auth::user()->can('languages') || Auth::user()->can('registration') || Auth::user()->can('apis'))
+        @if (Auth::user()->can('languages') && config('cms.module.feature.language.active') == true
+          || Auth::user()->can('registration') && config('cms.module.feature.registration.active') == true
+          || Auth::user()->can('apis') && config('cms.module.feature.api.active') == true)
         <li class="sidenav-divider mb-1"></li>
         <li class="sidenav-header small font-weight-semibold">FEATURE</li>
         @endif

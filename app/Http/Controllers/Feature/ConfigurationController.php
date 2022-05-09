@@ -127,115 +127,110 @@ class ConfigurationController extends Controller
      */
     public function visitor(Request $request)
     {
-        try {
+        $data = [];
+        if (!empty(env('ANALYTICS_VIEW_ID'))) {
 
-            $data = [];
-            if (!empty(env('ANALYTICS_VIEW_ID'))) {
+            $filter = $request->input('filter', '');
 
-                $filter = $request->input('filter', '');
-    
-                if ($filter == 'today') {
-                    $start = now()->today();
-                    $end = now()->today();
-                }
-    
-                if ($filter == 'current_week') {
-                    $start = now()->startOfWeek();
-                    $end = now()->endOfWeek();
-                }
-    
-                if ($filter == 'latest_week') {
-                    $start = now()->subWeek()->startOfWeek();
-                    $end = now()->subWeek()->endOfWeek();
-                }
-    
-                if ($filter == 'current_month') {
-                    $start = now()->startOfMonth();
-                    $end = now()->endOfMonth();
-                }
-    
-                if ($filter == 'latest_month') {
-                    $start = now()->parse('-1 months')->startOfMonth();
-                    $end = now()->parse('-1 months')->endOfMonth();
-                }
-    
-                if ($filter == 'current_year') {
-                    $start = now()->startOfYear();
-                    $end = now()->endOfYear();
-                }
-    
-                if ($filter == 'current_year') {
-                    $start = now()->startOfYear();
-                    $end = now()->endOfYear();
-                }
-    
-                if ($filter == 'latest_year') {
-                    $start = now()->parse('-1 years')->startOfYear();
-                    $end = now()->parse('-1 years')->endOfYear();
-                }
-    
-                if ($filter != '') {
-                    $periode = Period::create($start, $end);
-                } else {
-                    $periode = Period::days(7);
-                }
-    
-                $data['total'] = Analytics::fetchTotalVisitorsAndPageViews($periode);
-                $data['n_visitor'] = Analytics::fetchUserTypes($periode);
-                $data['browser'] = Analytics::fetchTopBrowsers($periode);
-                $data['refe'] = Analytics::fetchTopReferrers($periode);
-                $data['top'] = Analytics::fetchMostVisitedPages($periode);
-                $data['vp'] = Analytics::fetchVisitorsAndPageViews($periode);
-                $data['aa'] = Analytics::performQuery(Period::years(1),
-                'ga:sessions', [
-                    'metrics' => 'ga:sessions, ga:pageviews',
-                    'dimensions' => 'ga:yearMonth'
-                ]);
-                
-                //session
-                $sessionLabel = [];
-                $sessionTotal = [];
-                foreach ($data['n_visitor'] as $key => $value) {
-                    $sessionLabel[$key] = $value['type'];
-                    $sessionTotal[$key] = $value['sessions'];
-                }
-    
-                $data['session_visitor'] = [
-                    'label' => $sessionLabel,
-                    'total' => $sessionTotal
-                ];
-    
-                //browser
-                $browserLabel = [];
-                $browserTotal = [];
-                foreach ($data['browser'] as $key => $value) {
-                    $browserLabel[$key] = $value['browser'];
-                    $browserTotal[$key] = $value['sessions'];
-                }
-    
-                $data['browser_visitor'] = [
-                    'label' => $browserLabel,
-                    'total' => $browserTotal
-                ];
-    
-                //visitor total
-                $visitorLabel = [];
-                $visitorTotal = [];
-                foreach ($data['total'] as $key => $value) {
-                    $visitorLabel[$key] = Carbon::parse($value['date'])->format('d F Y');
-                    $visitorTotal[$key] = $value['visitors'];
-                }
-    
-                $data['total_visitor'] = [
-                    'label' => $visitorLabel,
-                    'total' => $visitorTotal
-                ];
-    
+            if ($filter == 'today') {
+                $start = now()->today();
+                $end = now()->today();
             }
 
-        } catch (Exception $e) {
+            if ($filter == 'current_week') {
+                $start = now()->startOfWeek();
+                $end = now()->endOfWeek();
+            }
+
+            if ($filter == 'latest_week') {
+                $start = now()->subWeek()->startOfWeek();
+                $end = now()->subWeek()->endOfWeek();
+            }
+
+            if ($filter == 'current_month') {
+                $start = now()->startOfMonth();
+                $end = now()->endOfMonth();
+            }
+
+            if ($filter == 'latest_month') {
+                $start = now()->parse('-1 months')->startOfMonth();
+                $end = now()->parse('-1 months')->endOfMonth();
+            }
+
+            if ($filter == 'current_year') {
+                $start = now()->startOfYear();
+                $end = now()->endOfYear();
+            }
+
+            if ($filter == 'current_year') {
+                $start = now()->startOfYear();
+                $end = now()->endOfYear();
+            }
+
+            if ($filter == 'latest_year') {
+                $start = now()->parse('-1 years')->startOfYear();
+                $end = now()->parse('-1 years')->endOfYear();
+            }
+
+            if ($filter != '') {
+                $periode = Period::create($start, $end);
+            } else {
+                $periode = Period::days(7);
+            }
+
+            $data['total'] = Analytics::fetchTotalVisitorsAndPageViews($periode);
+            $data['n_visitor'] = Analytics::fetchUserTypes($periode);
+            $data['browser'] = Analytics::fetchTopBrowsers($periode);
+            $data['refe'] = Analytics::fetchTopReferrers($periode);
+            $data['top'] = Analytics::fetchMostVisitedPages($periode);
+            $data['vp'] = Analytics::fetchVisitorsAndPageViews($periode);
+            $data['aa'] = Analytics::performQuery(Period::years(1),
+            'ga:sessions', [
+                'metrics' => 'ga:sessions, ga:pageviews',
+                'dimensions' => 'ga:yearMonth'
+            ]);
             
-            $data['error'] = [];
+            //session
+            $sessionLabel = [];
+            $sessionTotal = [];
+            foreach ($data['n_visitor'] as $key => $value) {
+                $sessionLabel[$key] = $value['type'];
+                $sessionTotal[$key] = $value['sessions'];
+            }
+
+            $data['session_visitor'] = [
+                'label' => $sessionLabel,
+                'total' => $sessionTotal
+            ];
+
+            //browser
+            $browserLabel = [];
+            $browserTotal = [];
+            foreach ($data['browser'] as $key => $value) {
+                $browserLabel[$key] = $value['browser'];
+                $browserTotal[$key] = $value['sessions'];
+            }
+
+            $data['browser_visitor'] = [
+                'label' => $browserLabel,
+                'total' => $browserTotal
+            ];
+
+            //visitor total
+            $visitorLabel = [];
+            $visitorTotal = [];
+            foreach ($data['total'] as $key => $value) {
+                $visitorLabel[$key] = Carbon::parse($value['date'])->format('d F Y');
+                $visitorTotal[$key] = $value['visitors'];
+            }
+
+            $data['total_visitor'] = [
+                'label' => $visitorLabel,
+                'total' => $visitorTotal
+            ];
+
+        } else {
+            $data['error'] = 'Analytics error';
         }
 
         return view('backend.features.configuration.visitor', compact('data'), [
