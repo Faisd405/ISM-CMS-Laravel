@@ -75,11 +75,11 @@
             <i class="las la-plus"></i>
         </a>
         @endcan
-        @can('medias')
+        @if (Auth::user()->can('medias') && config('cms.module.master.media.active') == true)
         <a href="{{ route('media.index', ['moduleId' => $child['id'], 'moduleType' => 'page']) }}" class="btn icon-btn btn-sm btn-info" title="@lang('module/master.media.caption')">
             <i class="las la-folder"></i>
         </a>
-        @endcan
+        @endif
         @can('page_update')
         <a href="{{ route('page.edit', ['id' => $child['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
             'attribute' => __('module/page.caption')
