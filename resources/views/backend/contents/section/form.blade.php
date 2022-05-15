@@ -150,6 +150,12 @@
                                     <small class="text-muted">Checbox field caption format (JSON) : ["Field Caption",{"OPTION_VALUE1":"Option caption 1","OPTION_VALUE2":"Option caption 2"}]</small>
                                 </td>
                             </tr>
+                            <tr>
+                                <th>NAME</th>
+                                <th>TYPE</th>
+                                <th>VALUE</th>
+                                <th></th>
+                            </tr>
                         </tbody>
                         <tbody id="list_addon_field">
                             @if (isset($data['section']) && !empty($data['section']['addon_fields']))
@@ -343,12 +349,13 @@
                     </div>
                 </div>
 
+                @if (!isset($data['section']) && Auth::user()->hasRole('super') || isset($data['section']))
                 {{-- CUSTOM FIELD --}}
                 <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
-                        @role('super')
                         <thead>
+                            @role('super')
                             <tr>
                                 <td colspan="3" class="text-center">
                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
@@ -356,8 +363,13 @@
                                     </button>
                                 </td>
                             </tr>
+                            @endrole
+                            <tr>
+                                <th>NAME</th>
+                                <th>VALUE</th>
+                                <th></th>
+                            </tr>
                         </thead>
-                        @endrole
                         <tbody id="list_field">
                             @if (isset($data['section']) && !empty($data['section']['custom_fields']))
                                 @foreach ($data['section']['custom_fields'] as $key => $val)
@@ -380,6 +392,7 @@
                         </tbody>
                     </table>
                 </div>
+                @endif
 
             </form>
         </div>

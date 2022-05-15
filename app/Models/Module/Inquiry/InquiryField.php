@@ -21,6 +21,7 @@ class InquiryField extends Model
         'label' => 'json',
         'placeholder' => 'json',
         'properties' => 'json',
+        'options' => 'json',
     ];
 
     public static function boot()

@@ -192,6 +192,32 @@
                             <small class="text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field10')</label>
+                        <div class="col-sm-10">
+                            <input class="form-control tags-input mb-1" name="unique_fields" value="{{ isset($data['event']) && !empty($data['event']['unique_fields']) ? old('unique_fields', implode(",", $data['event']['unique_fields'])) : old('unique_fields') }}" placeholder="">
+                            <small class="text-muted">@lang('global.separated_comma')</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-2 text-md-right">
+                        <label class="col-form-label text-sm-right">@lang('module/inquiry.label.lock_form')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="switcher switcher-success">
+                                <input type="checkbox" class="switcher-input" name="lock_form" value="1" 
+                                    {{ !isset($data['event']) ? (old('lock_form', 1) ? 'checked' : '') : (old('lock_form', $data['event']['config']['lock_form']) ? 'checked' : '') }}>
+                                <span class="switcher-indicator">
+                                <span class="switcher-yes">
+                                    <span class="ion ion-md-checkmark"></span>
+                                </span>
+                                <span class="switcher-no">
+                                    <span class="ion ion-md-close"></span>
+                                </span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- SEO --}}
@@ -362,12 +388,13 @@
                     </div>
                 </div>
 
+                @if (!isset($data['event']) && Auth::user()->hasRole('super') || isset($data['event']))
                 {{-- CUSTOM FIELD --}}
                 <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
-                        @role('super')
                         <thead>
+                            @role('super')
                             <tr>
                                 <td colspan="3" class="text-center">
                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
@@ -375,8 +402,13 @@
                                     </button>
                                 </td>
                             </tr>
+                            @endrole
+                            <tr>
+                                <th>NAME</th>
+                                <th>VALUE</th>
+                                <th></th>
+                            </tr>
                         </thead>
-                        @endrole
                         <tbody id="list_field">
                             @if (isset($data['event']) && !empty($data['event']['custom_fields']))
                                 @foreach ($data['event']['custom_fields'] as $key => $val)
@@ -399,6 +431,8 @@
                         </tbody>
                     </table>
                 </div>
+                @endif
+
             </form>
         </div>
         

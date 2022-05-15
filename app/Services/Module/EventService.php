@@ -134,6 +134,12 @@ class EventService
 
             $slug = Str::slug($data['slug'], '-');
 
+            $setPath = 'views/frontend/events/'.$slug.'.blade.php';
+            if (!file_exists(resource_path($setPath))) {
+                File::copy(resource_path('views/frontend/events/detail.blade.php'), 
+                    resource_path($setPath));
+            }
+
             File::copy(resource_path('views/frontend/events/detail.blade.php'), 
                 resource_path('views/frontend/events/'.$slug.'.blade.php'));
 
@@ -224,6 +230,9 @@ class EventService
         if (!empty($data['email'])) {
             $event->email = explode(',', $data['email']);
         }
+        if (!empty($data['unique_fields'])) {
+            $event->unique_fields = explode(',', $data['unique_fields']);
+        }
         $event->cover = [
             'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
             'title' => $data['cover_title'] ?? null,
@@ -241,6 +250,7 @@ class EventService
         $event->config = [
             'is_detail' => (bool)$data['is_detail'],
             'hide_form' => (bool)$data['hide_form'],
+            'lock_form' => (bool)$data['lock_form'],
             'hide_description' => (bool)$data['hide_description'],
             'hide_cover' => (bool)$data['hide_cover'],
             'hide_banner' => (bool)$data['hide_banner'],
@@ -548,6 +558,16 @@ class EventService
     {
         try {
 
+            $checkName = $this->eventFieldModel->firstWhere([
+                'event_id' => $data['event_id'],
+                'name' => $data['name']
+            ]);
+            if (!empty($checkName)) {
+                return $this->error(null,   __('global.alert.exists', [
+                    'attribute' => __('module/inquiry.field.label.field2')
+                ]));
+            }
+
             $field = new EventField;
             $field->event_id = $data['event_id'];
             $this->setField($data, $field);
@@ -582,6 +602,17 @@ class EventService
 
         try {
             
+            $checkName = $this->eventFieldModel->firstWhere([
+                'event_id' => $field['event_id'],
+                'name' => $data['name']
+            ]);
+
+            if ($field['name'] != $data['name'] && !empty($checkName)) {
+                return $this->error(null,   __('global.alert.exists', [
+                    'attribute' => __('module/event.field.label.field2')
+                ]));
+            }
+
             $this->setField($data, $field);
             if (Auth::guard()->check())
                 $field->updated_by = Auth::user()['id'];
@@ -622,15 +653,27 @@ class EventService
         $field->placeholder = $placeholder;
         $field->properties = [
             'type' => $data['property_type'] ?? null,
-            'id' => $data['property_id'] ?? null,
             'class' => $data['property_class'] ?? null,
-            'attr' => $data['property_attr'] ?? null,
+            'attribute' => $data['property_attribute'] ?? null,
         ];
+        $field->options = $data['options'] ?? null;
         $field->validation = $data['validation'] ?? null;
         $field->publish = (bool)$data['publish'];
         $field->public = (bool)$data['public'];
         $field->locked = (bool)$data['locked'];
 
+        if (isset($data['opt_label'])) {
+            
+            $options = [];
+            foreach ($data['opt_label'] as $key => $value) {
+                $options[$value] = $data['opt_value'][$key];
+            }
+
+            $field->options = $options;
+        } else {
+            $field->options = null;
+        }
+        
         return $field;
     }
 

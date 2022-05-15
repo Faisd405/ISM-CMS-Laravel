@@ -14,6 +14,8 @@ return [
         'field7' => 'Tanggal Mulai',
         'field8' => 'Tanggal Selesai',
         'field9' => 'Email (untuk notifikasi submit event)',
+        'field10' => 'Unique Field (validasi pengecekan field uniq di form)',
+        'lock_form' => 'Lock form setelah submit ?'
     ],
     'placeholder' => [
         'field1' => 'Masukan nama',
@@ -41,19 +43,21 @@ return [
             'field7' => 'Attribute',
             'field8' => 'Validasi',
             'field9' => 'Properties',
-            'field10' => 'Placeholder'
+            'field10' => 'Placeholder',
+            'field11' => 'Options',
         ],
         'placeholder' => [
             'field1' => '',
             'field2' => '',
             'field3' => '',
-            'field4' => '',
+            'field4' => 'Tipe input html',
             'field5' => 'id html',
-            'field6' => 'class css html',
-            'field7' => '',
+            'field6' => 'class css html untuk tag form group',
+            'field7' => 'attribute html untuk tag form input',
             'field8' => 'validasi laravel, contoh : required|email etc.',
             'field9' => '',
             'field10' => '',
+            'field11' => '',
         ],
     ],
     'form' => [
@@ -70,5 +74,7 @@ return [
         ],
         'submit_success' => 'Submit form berhasil',
         'unique_warning' => 'Email / Telpon yang anda masukan sudah ada',
+        'form_open_warning' => 'Form belum dibuka',
+        'form_close_warning' => 'Form sudah ditutup',
     ],
 ];

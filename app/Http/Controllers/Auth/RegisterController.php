@@ -55,8 +55,13 @@ class RegisterController extends Controller
         $end = $register['end_date'];
         $now = now()->format('Y-m-d H:i');
     
-        if (!empty($start) && $now >= $start->format('Y-m-d H:i') || !empty($end) && $now <= $end->format('Y-m-d H:i'))
-            return abort(404);
+        if (!empty($start) && $now < $start->format('Y-m-d H:i'))
+            return redirect()->back()->with('warning', __('auth.register.label.form_open', [
+                'attribute' => $start->format('d F Y H:i (A)')
+            ]));
+
+        if (!empty($end) && $now > $end->format('Y-m-d H:i'))
+            return redirect()->back()->with('warning', __('auth.register.label.form_close'));
             
         if (empty($register['roles']))
             return abort(404);

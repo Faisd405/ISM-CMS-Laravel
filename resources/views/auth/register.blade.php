@@ -14,7 +14,20 @@
     $end = $data['register']['end_date'];
     $now = now()->format('Y-m-d H:i');
 @endphp
-@if (empty($start) || !empty($start) && $now >= $start->format('Y-m-d H:i') || empty($end) || !empty($end) && $now <= $end->format('Y-m-d H:i'))
+@if (!empty($start) && $now < $start->format('Y-m-d H:i') || !empty($end) && $now > $end->format('Y-m-d H:i'))
+    @if (!empty($start) && $now < $start->format('Y-m-d H:i'))
+    <div class="alert alert-warning alert-dismissible">
+        @lang('auth.register.label.form_open', [
+            'attribute' => $start->format('d F Y H:i (A)')
+        ])
+    </div>
+    @endif
+    @if (!empty($end) && $now > $end->format('Y-m-d H:i'))
+    <div class="alert alert-warning alert-dismissible">
+        @lang('auth.register.label.form_close')
+    </div>
+    @endif
+@endif
 <!-- Form -->
 <form class="my-2" action="{{ route('register') }}" method="POST">
     @csrf
@@ -100,18 +113,6 @@
     </div>
 
 </form>
-@else
-    @if ($now < $start->format('Y-m-d H:i'))
-    <div class="alert alert-warning alert-dismissible">
-        @lang('feature/alert.form_open')
-    </div>
-    @endif
-    @if ($now > $end->format('Y-m-d H:i'))
-    <div class="alert alert-warning alert-dismissible">
-        @lang('feature/alert.form_close')
-    </div>
-    @endif
-@endif
 @endsection
 
 @section('content-footer')

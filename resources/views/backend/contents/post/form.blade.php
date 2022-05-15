@@ -128,31 +128,6 @@
                 </div>
                 @endif
 
-                {{-- SEO --}}
-                <hr class="m-0">
-                <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SEO</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_title')</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1" name="meta_title" value="{{ !isset($data['post']) ? old('meta_title') : old('meta_title', $data['post']['seo']['title']) }}" placeholder="@lang('global.meta_title')">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_description')</label>
-                        <div class="col-sm-10">
-                            <textarea class="form-control mb-1" name="meta_description" placeholder="@lang('global.meta_description')">{{ !isset($data['post']) ? old('meta_description') : old('meta_description', $data['post']['seo']['description'])  }}</textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_keywords')</label>
-                        <div class="col-sm-10">
-                            <input class="form-control tags-input mb-1" name="meta_keywords" value="{{ !isset($data['post']) ? old('meta_keywords') : old('meta_keywords', $data['post']['seo']['keywords'])  }}" placeholder="">
-                            <small class="text-muted">@lang('global.separated_comma')</small>
-                        </div>
-                    </div>
-                </div>
-
                 {{-- POST SETTING --}}
                 <hr class="m-0">
                 <div class="card-body">
@@ -216,6 +191,31 @@
                                 </div>
                                 @include('components.field-error', ['field' => 'publish_end'])
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- SEO --}}
+                <hr class="m-0">
+                <div class="card-body">
+                    <h6 class="font-weight-semibold mb-4">SEO</h6>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_title')</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control mb-1" name="meta_title" value="{{ !isset($data['post']) ? old('meta_title') : old('meta_title', $data['post']['seo']['title']) }}" placeholder="@lang('global.meta_title')">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_description')</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control mb-1" name="meta_description" placeholder="@lang('global.meta_description')">{{ !isset($data['post']) ? old('meta_description') : old('meta_description', $data['post']['seo']['description'])  }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_keywords')</label>
+                        <div class="col-sm-10">
+                            <input class="form-control tags-input mb-1" name="meta_keywords" value="{{ !isset($data['post']) ? old('meta_keywords') : old('meta_keywords', $data['post']['seo']['keywords'])  }}" placeholder="">
+                            <small class="text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>
                 </div>
@@ -368,8 +368,8 @@
                 <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
-                        @role('super')
-                        <thead class="text-center">
+                        <thead>
+                            @role('super')
                             <tr>
                                 <td colspan="3" class="text-center">
                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
@@ -377,8 +377,13 @@
                                     </button>
                                 </td>
                             </tr>
+                            @endrole
+                            <tr>
+                                <th>NAME</th>
+                                <th>VALUE</th>
+                                <th></th>
+                            </tr>
                         </thead>
-                        @endrole
                         <tbody id="list_field">
                             @if (isset($data['post']) && !empty($data['post']['custom_fields']))
                                 @foreach ($data['post']['custom_fields'] as $key => $val)

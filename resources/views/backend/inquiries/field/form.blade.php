@@ -98,14 +98,14 @@
                                 placeholder="@lang('module/inquiry.field.placeholder.field4')">
                         </div>
                     </div>
-                    <div class="form-group row">
+                    {{-- <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field5')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('property_id') is-invalid @enderror" name="property_id" 
                                 value="{{ !isset($data['field']) ? old('property_id') : old('property_id', $data['field']['properties']['id']) }}" 
                                 placeholder="@lang('module/inquiry.field.placeholder.field5')">
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field6')</label>
                         <div class="col-sm-10">
@@ -117,8 +117,8 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field7')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control @error('property_attr') is-invalid @enderror" name="property_attr" 
-                                value="{{ !isset($data['field']) ? old('property_attr') : old('property_attr', $data['field']['properties']['attr']) }}" 
+                            <input type="text" class="form-control @error('property_attribute') is-invalid @enderror" name="property_attribute" 
+                                value="{{ !isset($data['field']) ? old('property_attribute') : old('property_attribute', $data['field']['properties']['attribute']) }}" 
                                 placeholder="@lang('module/inquiry.field.placeholder.field7')">
                         </div>
                     </div>
@@ -130,6 +130,44 @@
                             placeholder="@lang('module/inquiry.field.placeholder.field8')">
                         </div>
                     </div>
+                </div>
+
+                {{-- CUSTOM FIELD --}}
+                <hr class="m-0">
+                <div class="table-responsive text-center">
+                    <table class="table card-table table-bordered">
+                        <thead>
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
+                                        <i class="las la-plus"></i> @lang('module/inquiry.field.label.field11')
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Label</th>
+                                <th>Value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="list_field">
+                            @if (isset($data['field']) && !empty($data['field']['options']))
+                                @foreach ($data['field']['options'] as $key => $val)
+                                <tr class="num-list" id="delete-{{ $key }}">
+                                    <td>
+                                        <input type="text" class="form-control" name="opt_label[]" placeholder="label" value="{{ $key }}">
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" name="opt_value[]" placeholder="value">{{ $val }}</textarea>
+                                    </td>
+                                    <td style="width: 30px;">
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
 
                  {{-- SETTING --}}
@@ -201,6 +239,48 @@
     //select2
     $(function () {
         $('.select2').select2();
+    });
+
+    //custom field
+    $(function()  {
+
+    @if(isset($data['field']) && !empty($data['field']['options']))
+        var no = {{ count($data['field']['options']) }};
+    @else
+        var no = 1;
+    @endif
+
+    $("#add_field").click(function() {
+        $("#list_field").append(`
+            <tr class="num-list" id="delete-`+no+`">
+                <td>
+                    <input type="text" class="form-control" name="opt_label[]" placeholder="label">
+                </td>
+                <td>
+                    <textarea class="form-control" name="opt_value[]" placeholder="value"></textarea>
+                </td>
+                <td style="width: 30px;">
+                    <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                </td>
+            </tr>
+        `);
+
+        var noOfColumns = $('.num-list').length;
+        var maxNum = 10;
+        if (noOfColumns < maxNum) {
+            $("#add_field").show();
+        } else {
+            $("#add_field").hide();
+        }
+
+        no++;
+    });
+
+    });
+    //remove custom field
+    $(document).on('click', '#remove_field', function() {
+        var id = $(this).attr("data-id");
+        $("#delete-"+id).remove();
     });
 </script>
 @endsection

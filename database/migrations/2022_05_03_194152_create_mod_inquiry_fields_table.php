@@ -21,6 +21,7 @@ class CreateModInquiryFieldsTable extends Migration
             $table->json('label');
             $table->json('placeholder')->nullable();
             $table->json('properties')->nullable();
+            $table->json('options')->nullable();
             $table->text('validation')->nullable();
             $table->integer('position')->nullable();
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');

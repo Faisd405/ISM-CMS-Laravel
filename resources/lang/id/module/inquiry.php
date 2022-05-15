@@ -13,7 +13,9 @@ return [
         'field6' => 'Email (untuk notifikasi pesan)',
         'field7' => 'Tampilkan Map',
         'field8' => 'Longitude',
-        'field9' => 'Latitude'
+        'field9' => 'Latitude',
+        'field10' => 'Unique Field (validasi pengecekan field uniq di form)',
+        'lock_form' => 'Lock form setelah submit ?'
     ],
     'placeholder' => [
         'field1' => 'Masukan nama',
@@ -43,19 +45,21 @@ return [
             'field7' => 'Attribute',
             'field8' => 'Validasi',
             'field9' => 'Properties',
-            'field10' => 'Placeholder'
+            'field10' => 'Placeholder',
+            'field11' => 'Options',
         ],
         'placeholder' => [
             'field1' => '',
             'field2' => '',
             'field3' => '',
-            'field4' => '',
+            'field4' => 'Tipe input html',
             'field5' => 'id html',
-            'field6' => 'class css html',
-            'field7' => '',
+            'field6' => 'class css html untuk tag form group',
+            'field7' => 'attribute html untuk tag form input',
             'field8' => 'validasi laravel, contoh : required|email etc.',
             'field9' => '',
             'field10' => '',
+            'field11' => '',
         ],
     ],
     'form' => [

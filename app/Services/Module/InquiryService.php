@@ -142,8 +142,11 @@ class InquiryService
                 $data['module'] = 'inquiry';
                 $this->indexUrl->storeAssociate($data, $inquiry);
 
-                File::copy(resource_path('views/frontend/inquiries/detail.blade.php'), 
-                    resource_path('views/frontend/inquiries/'.$slug.'.blade.php'));
+                $setPath = 'views/frontend/inquiries/'.$slug.'.blade.php';
+                if (!file_exists(resource_path($setPath))) {
+                    File::copy(resource_path('views/frontend/inquiries/detail.blade.php'), 
+                        resource_path($setPath));
+                }
 
                 return $this->success($inquiry,  __('global.alert.create_success', [
                     'attribute' => __('module/inquiry.caption')
@@ -237,6 +240,9 @@ class InquiryService
         if (!empty($data['email'])) {
             $inquiry->email = explode(',', $data['email']);
         }
+        if (!empty($data['unique_fields'])) {
+            $inquiry->unique_fields = explode(',', $data['unique_fields']);
+        }
         $inquiry->longitude = $data['longitude'] ?? null;
         $inquiry->latitude = $data['latitude'] ?? null;
 
@@ -247,6 +253,7 @@ class InquiryService
             'is_detail' => (bool)$data['is_detail'],
             'hide_map' => (bool)$data['hide_map'],
             'hide_form' => (bool)$data['hide_form'],
+            'lock_form' => (bool)$data['lock_form'],
             'hide_body' => (bool)$data['hide_body'],
             'hide_banner' => (bool)$data['hide_banner'],
         ];
@@ -556,6 +563,16 @@ class InquiryService
     {
         try {
 
+            $checkName = $this->inquiryFieldModel->firstWhere([
+                'inquiry_id' => $data['inquiry_id'],
+                'name' => $data['name']
+            ]);
+            if (!empty($checkName)) {
+                return $this->error(null,   __('global.alert.exists', [
+                    'attribute' => __('module/inquiry.field.label.field2')
+                ]));
+            }
+
             $field = new InquiryField;
             $field->inquiry_id = $data['inquiry_id'];
             $this->setField($data, $field);
@@ -589,6 +606,18 @@ class InquiryService
         $field = $this->getField($where);
 
         try {
+
+            
+            $checkName = $this->inquiryFieldModel->firstWhere([
+                'inquiry_id' => $field['inquiry_id'],
+                'name' => $data['name']
+            ]);
+
+            if ($field['name'] != $data['name'] && !empty($checkName)) {
+                return $this->error(null,   __('global.alert.exists', [
+                    'attribute' => __('module/inquiry.field.label.field2')
+                ]));
+            }
             
             $this->setField($data, $field);
             if (Auth::guard()->check())
@@ -630,14 +659,25 @@ class InquiryService
         $field->placeholder = $placeholder;
         $field->properties = [
             'type' => $data['property_type'] ?? null,
-            'id' => $data['property_id'] ?? null,
             'class' => $data['property_class'] ?? null,
-            'attr' => $data['property_attr'] ?? null,
+            'attribute' => $data['property_attribute'] ?? null,
         ];
         $field->validation = $data['validation'] ?? null;
         $field->publish = (bool)$data['publish'];
         $field->public = (bool)$data['public'];
         $field->locked = (bool)$data['locked'];
+
+        if (isset($data['opt_label'])) {
+            
+            $options = [];
+            foreach ($data['opt_label'] as $key => $value) {
+                $options[$value] = $data['opt_value'][$key];
+            }
+
+            $field->options = $options;
+        } else {
+            $field->options = null;
+        }
 
         return $field;
     }

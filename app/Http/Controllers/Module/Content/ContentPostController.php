@@ -323,8 +323,8 @@ class ContentPostController extends Controller
         $end = $data['read']['publish_end'];
         $now = now()->format('Y-m-d H:i');
 
-        if (!empty($end) && $now <= $end->format('Y-m-d H:i'))
-            return abort(404);
+        if (!empty($end) && $now > $end->format('Y-m-d H:i'))
+            return redirect()->route('home');
 
         if ($data['read']['config']['is_detail'] == 0) {
             return redirect()->route('home');

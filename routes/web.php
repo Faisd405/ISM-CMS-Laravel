@@ -79,6 +79,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     //--- Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+    Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])
+        ->name('dashboard.analytics')
+        ->middleware('permission:visitor');
 
     //--- Logout Backend
     Route::post('/logout', [LoginController::class, 'logoutBackend'])

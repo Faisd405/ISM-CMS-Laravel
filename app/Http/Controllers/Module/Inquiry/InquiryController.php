@@ -123,6 +123,7 @@ class InquiryController extends Controller
         $data['is_detail'] = (bool)$request->is_detail;
         $data['hide_map'] = (bool)$request->hide_map;
         $data['hide_form'] = (bool)$request->hide_form;
+        $data['lock_form'] = (bool)$request->lock_form;
         $data['hide_body'] = (bool)$request->hide_body;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $inquiry = $this->inquiryService->storeInquiry($data);
@@ -157,6 +158,7 @@ class InquiryController extends Controller
         $data['is_detail'] = (bool)$request->is_detail;
         $data['hide_map'] = (bool)$request->hide_map;
         $data['hide_form'] = (bool)$request->hide_form;
+        $data['lock_form'] = (bool)$request->lock_form;
         $data['hide_body'] = (bool)$request->hide_body;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $inquiry = $this->inquiryService->updateInquiry($data, ['id' => $id]);
@@ -280,7 +282,7 @@ class InquiryController extends Controller
     {
         $inquiry = $this->inquiryService->getInquiry(['id' => $inquiryId]);
         $field = $this->inquiryService->getFieldList([
-            'id' => $inquiryId,
+            'inquiry_id' => $inquiryId,
             'publish' => 1,
             'approved' => 1,
         ], false);
@@ -427,11 +429,17 @@ class InquiryController extends Controller
             return redirect()->back();
         }
 
-        // $unique = $inquiry->forms()->where('fields->email', $request->input('email', ''))
-        //     ->where('fields->phone', $request->input('phone', ''))->count();
-        // if ($unique > 0) {
-        //     return redirect()->back()->with('failed', __('module/inquiry.form.unique_warning'));
-        // }
+        if (!empty($inquiry['unique_fields'])) {
+
+            $unique =  $inquiry->forms();
+            foreach ($inquiry['unique_fields'] as $key => $value) {
+                $unique->where('fields->'.$value, $request->input($value, ''));
+            }
+
+            if ($unique->count() > 0) {
+                return redirect()->back()->with('failed', __('module/inquiry.form.unique_warning'));
+            }
+        }
 
         $data = [
             'title' => $inquiry->fieldLang('name'),
@@ -466,7 +474,9 @@ class InquiryController extends Controller
             ]);
         }
 
-        Cookie::queue($inquiry['slug'], $inquiry->fieldLang('name'), 120);
+        if ($inquiry['config']['lock_form'] == true) {
+            Cookie::queue($inquiry['slug'], $inquiry->fieldLang('name'), 120);
+        }
 
         $message = __('module/inquiry.form.submit_success');
         if (!empty($inquiry->fieldLang('after_body'))) {

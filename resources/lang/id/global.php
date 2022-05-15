@@ -122,6 +122,7 @@ return [
         'restore_failed' => ':attribute gagal di kembalikan dikarenakan data utama sudah dihapus',
         'reset_success' => 'reset :attribute berhasil',
         'reset_failed' => 'reset :attribute gagal, silahkan coba lagi',
+        'exists' => ':attribute sudah ada',
         //default alert modal
         'modal_ok_caption' => 'Ok',
         'modal_cancel_caption' => 'Tutup',

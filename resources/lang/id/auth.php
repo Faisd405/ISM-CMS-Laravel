@@ -113,6 +113,8 @@ return [
             'signup' => 'Daftar',
             'already_account' => 'Sudah memiliki akun?',
             'agree' => 'Dengan Mengklik Daftar, Anda menyetujui Syarat & Ketentuan dan Kebijakan Privasi kami.',
+            'form_open' => 'Form akan dibuka pada tanggal :attribute',
+            'form_close' => 'Form sudah ditutup, silahkan kembali nanti'
         ],
         'placeholder' => [
             'field1' => 'Masukan nama',

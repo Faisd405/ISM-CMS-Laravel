@@ -32,8 +32,9 @@ class EventFormMail extends Mailable
     public function build()
     {
         $webname = Configuration::value('website_name');
+        $email = Configuration::value('system_email');
         
-        $from = isset($this->data['request']['email']) ? $this->data['request']['email'] : env('MAIL_FROM_ADDRESS');
+        $from = isset($this->data['request']['email']) ? $this->data['request']['email'] : $email;
         return $this->from($from, $webname)
             ->subject(__('mail.event.title', [
                 'attribute' => $this->data['request']['name']

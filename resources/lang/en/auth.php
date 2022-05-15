@@ -113,6 +113,8 @@ return [
             'signup' => 'Register',
             'already_account' => 'Already have an account?',
             'agree' => 'By Clicking Register, you agree to our Terms & Conditions and Privacy Policy.',
+            'form_open' => 'Form will be opened on :attribute',
+            'form_close' => 'Form has been closed, please come back later'
         ],
         'placeholder' => [
             'field1' => 'Enter name',

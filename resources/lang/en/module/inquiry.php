@@ -13,7 +13,9 @@ return [
         'field6' => 'Email (for message notification)',
         'field7' => 'Show Map',
         'field8' => 'Longitude',
-        'field9' => 'Latitude'
+        'field9' => 'Latitude',
+        'field10' => 'Unique Field (uniq field check validation in the form)',
+        'lock_form' => 'Lock the form after submit?'
     ],
     'placeholder' => [
         'field1' => 'Enter name',
@@ -43,16 +45,17 @@ return [
             'field7' => 'Attribute',
             'field8' => 'Validation',
             'field9' => 'Properties',
-            'field10' => 'Placeholder'
+            'field10' => 'Placeholder',
+            'field11' => 'Options',
         ],
         'placeholder' => [
             'field1' => '',
             'field2' => '',
             'field3' => '',
-            'field4' => '',
+            'field4' => 'Input type html',
             'field5' => 'id html',
-            'field6' => 'class css html',
-            'field7' => '',
+            'field6' => 'class css html for tag form group',
+            'field7' => 'attribute html form tag input',
             'field8' => 'laravel validation, example : required|email etc.',
             'field9' => '',
             'field10' => '',

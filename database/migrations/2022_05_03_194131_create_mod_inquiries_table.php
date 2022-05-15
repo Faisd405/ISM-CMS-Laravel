@@ -23,6 +23,7 @@ class CreateModInquiriesTable extends Migration
             $table->json('email')->nullable();
             $table->string('longitude')->nullable();
             $table->string('latitude')->nullable();
+            $table->json('unique_fields')->nullable();
             $table->json('config');
             $table->json('custom_fields')->nullable();
             $table->json('seo')->nullable();

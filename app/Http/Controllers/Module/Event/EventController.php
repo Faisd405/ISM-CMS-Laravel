@@ -122,6 +122,7 @@ class EventController extends Controller
         $data = $request->all();
         $data['is_detail'] = (bool)$request->is_detail;
         $data['hide_form'] = (bool)$request->hide_form;
+        $data['lock_form'] = (bool)$request->lock_form;
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_cover'] = (bool)$request->hide_cover;
         $data['hide_banner'] = (bool)$request->hide_banner;
@@ -159,6 +160,7 @@ class EventController extends Controller
         $data = $request->all();
         $data['is_detail'] = (bool)$request->is_detail;
         $data['hide_form'] = (bool)$request->hide_form;
+        $data['lock_form'] = (bool)$request->lock_form;
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_cover'] = (bool)$request->hide_cover;
         $data['hide_banner'] = (bool)$request->hide_banner;
@@ -286,7 +288,7 @@ class EventController extends Controller
     {
         $event = $this->eventService->getEvent(['id' => $eventId]);
         $field = $this->eventService->getFieldList([
-            'id' => $eventId,
+            'event_id' => $eventId,
             'publish' => 1,
             'approved' => 1,
         ], false);
@@ -381,9 +383,13 @@ class EventController extends Controller
         $this->eventService->recordHits(['id' => $data['read']['id']]);
 
         //data
-        // $form = $data['read']->forms()->firstWhere('fields->email', $request->input('email', ''));
-        // if (!empty($form))
-        //     $data['form'] = $form;
+        if (!empty($data['read']['unique_fields'])) {
+            $form = $data['read']->forms()->firstWhere('fields->'.$data['read']['unique_fields'][0], 
+                $request->input($data['read']['unique_fields'][0], ''));
+        }
+
+        if (isset($form))
+            $data['form'] = $form;
 
         $data['fields'] = $this->eventService->getFieldList([
             'event_id' => $data['read']['id'],
@@ -442,11 +448,27 @@ class EventController extends Controller
         if (!empty($start) && $now >= $start->format('Y-m-d H:i') || !empty($end) && $now <= $end->format('Y-m-d H:i'))
             return abort(404);
 
-        // $unique = $event->forms()->where('fields->email', $request->input('email', ''))
-        //     ->where('fields->phone', $request->input('phone', ''))->count();
-        // if ($unique > 0) {
-        //     return redirect()->back()->with('failed', __('module/event.form.unique_warning'));
-        // }
+        $start = $event['start_date'];
+        $end = $event['end_date'];
+        $now = now()->format('Y-m-d H:i');
+
+        if (!empty($start) && $now < $start->format('Y-m-d H:i'))
+            return redirect()->back()->with('warning', __('module/event.form.form_open_warning'));
+
+        if (!empty($end) && $now > $end->format('Y-m-d H:i'))
+            return redirect()->back()->with('warning', __('module/event.form.form_close_warning'));
+
+        if (!empty($event['unique_fields'])) {
+
+            $unique =  $event->forms();
+            foreach ($event['unique_fields'] as $key => $value) {
+                $unique->where('fields->'.$value, $request->input($value, ''));
+            }
+
+            if ($unique->count() > 0) {
+                return redirect()->back()->with('failed', __('module/event.form.unique_warning'));
+            }
+        }
 
         $data = [
             'title' => $event->fieldLang('name'),
@@ -481,11 +503,17 @@ class EventController extends Controller
             ]);
         }
 
-        // Cookie::queue($event['slug'], $event->fieldLang('name'), 120);
+        if ($event['config']['lock_form'] == true) {
+            Cookie::queue($event['slug'], $event->fieldLang('name'), 120);
+        }
 
         $message = __('module/event.form.submit_success');
 
-        return redirect()->route('event.read', ['slugEvent' => $event['slug'], 'email' => $request->input('email')])
-            ->with('success', $message);
+        $redirect['slugEvent'] = $event['slug'];
+        if (!empty($event['unique_fields'])) {
+            $redirect[$event['unique_fields'][0]] = $request->input($event['unique_fields'][0]);
+        }
+
+        return redirect()->route('event.read', $redirect)->with('success', $message);
     }
 }

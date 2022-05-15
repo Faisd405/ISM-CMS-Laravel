@@ -218,12 +218,13 @@
                     </div>
                 </div>
 
+                @if (!isset($data['category']) && Auth::user()->hasRole('super') || isset($data['category']))
                 {{-- CUSTOM FIELD --}}
                 <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
-                        @role('super')
                         <thead>
+                            @role('super')
                             <tr>
                                 <td colspan="3" class="text-center">
                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
@@ -231,8 +232,13 @@
                                     </button>
                                 </td>
                             </tr>
+                            @endrole
+                            <tr>
+                                <th>NAME</th>
+                                <th>VALUE</th>
+                                <th></th>
+                            </tr>
                         </thead>
-                        @endrole
                         <tbody id="list_field">
                             @if (isset($data['category']) && !empty($data['category']['custom_fields']))
                                 @foreach ($data['category']['custom_fields'] as $key => $val)
@@ -255,6 +261,7 @@
                         </tbody>
                     </table>
                 </div>
+                @endif
 
             </form>
         </div>

@@ -68,20 +68,14 @@
           <div class="table-responsive">
             <table class="table card-table">
               <thead>
-                <tr>
-                    @foreach($data['latest_visitor'] as $visitor)
-                    <th class="text-center">{{ Carbon\Carbon::parse($visitor['date'])->format('d F') }}</th>
-                    @endforeach
+                <tr id="analytics-head">
+
                 </tr>
               </thead>
               <tbody>
-                  <tr>
-                      @foreach($data['latest_visitor'] as $visitor)
-                      <td class="text-center">
-                        <span class="badge badge-info">{{ $visitor['visitors'] }}</span>
-                      </td>
-                      @endforeach
-                  </tr>
+                <tr id="analytics-body">
+
+                </tr>
               </tbody>
             </table>
           </div>
@@ -201,6 +195,28 @@
             var momentNow = moment();
             $('#timenow').html(momentNow.format('hh:mm:ss A'));
         }, 100);
+
+        $.ajax({
+            url : "/admin/dashboard/analytics",
+            type : "GET",
+            dataType : "json",
+            data : {},
+            success:function(data) {
+              $('#analytics-head').html(' ');
+              $('#analytics-body').html(' ');
+
+              $.each(data.data ,function(index, value) {
+                $('#analytics-head').append(`
+                  <th class="text-center">`+value.date+`</th>
+                `);
+                $('#analytics-body').append(`
+                <td class="text-center">
+                  <span class="badge badge-info">`+value.visitor+`</span>
+                </td>
+                `);
+              });
+            }
+        });
     });
 </script>
 @endsection

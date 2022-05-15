@@ -122,6 +122,7 @@ return [
         'restore_failed' => ':attribute failed to restore because the main data has been deleted',
         'reset_success' => 'reset :attribute successfully',
         'reset_failed' => 'reset :attribute failed, please try again',
+        'exists' => ':attribute already exists',
         //default alert modal
         'modal_ok_caption' => 'Ok',
         'modal_cancel_caption' => 'Close',
