@@ -3,21 +3,22 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
-        
-        @isset($data['parent'])
-        <div class="alert alert-dark alert-dismissible fade show">
-            <i class="las la-thumbtack"></i> @lang('module/user.permission.label.field1') <strong>" {!! Str::replace('_', ' ', Str::upper($data['parent']['name'])) !!} "</strong>
-        </div>
-        @endisset
 
         <div class="card">
+            @isset($data['parent'])
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/user.permission.label.field1')) }} : <b class="text-primary">{!! Str::replace('_', ' ', Str::upper($data['parent']['name'])) !!}</b>
+                </span>
+            </div>
+            @endisset
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/user.permission.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['permission']) ? route('permission.store', ['parent' => Request::get('parent')]) : 
-                route('permission.update', ['id' => $data['permission']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['permission']) ? route('permission.store', $queryParam) : 
+                route('permission.update', array_merge(['id' => $data['permission']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['permission'])
                     @method('PUT')

@@ -85,13 +85,13 @@ class TemplateController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return view('backend.masters.template.form', [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('master/template.caption')
             ]),
-            'routeBack' => route('template.index'),
+            'routeBack' => route('template.index', $request->query()),
             'breadcrumbs' => [
                 __('master/template.caption') => route('template.index'),
                 __('global.add') => '',
@@ -103,6 +103,7 @@ class TemplateController extends Controller
     {
         $data = $request->all();
         $template = $this->templateService->store($data);
+        $data['query'] = $request->query();
 
         if ($template['success'] == true) {
             return $this->redirectForm($data)->with('success', $template['message']);
@@ -111,15 +112,18 @@ class TemplateController extends Controller
         return redirect()->back()->with('failed', $template['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['template'] = $this->templateService->getTemplate(['id' => $id]);
+
+        if (empty($data['template']))
+            return abort(404);
 
         return view('backend.masters.template.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('master/template.caption')
             ]),
-            'routeBack' => route('template.index'),
+            'routeBack' => route('template.index', $request->query()),
             'breadcrumbs' => [
                 __('master/template.caption') => route('template.index'),
                 __('global.edit') => '',
@@ -131,6 +135,7 @@ class TemplateController extends Controller
     {
         $data = $request->all();
         $template = $this->templateService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($template['success'] == true) {
             return $this->redirectForm($data)->with('success', $template['message']);
@@ -166,7 +171,7 @@ class TemplateController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('template.index');
+        $redir = redirect()->route('template.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

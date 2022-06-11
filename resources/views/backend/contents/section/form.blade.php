@@ -18,8 +18,8 @@
                     'attribute' => __('module/content.section.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['section']) ? route('content.section.store') : 
-                route('content.section.update', ['id' => $data['section']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['section']) ? route('content.section.store', $queryParam) : 
+                route('content.section.update', array_merge(['id' => $data['section']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['section'])
                     @method('PUT')

@@ -109,7 +109,7 @@ class InquiryController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/inquiry.caption')
             ]),
-            'routeBack' => route('inquiry.index'),
+            'routeBack' => route('inquiry.index', $request->query()),
             'breadcrumbs' => [
                 __('module/inquiry.caption') => route('inquiry.index'),
                 __('global.add') => '',
@@ -127,6 +127,7 @@ class InquiryController extends Controller
         $data['hide_body'] = (bool)$request->hide_body;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $inquiry = $this->inquiryService->storeInquiry($data);
+        $data['query'] = $request->query();
 
         if ($inquiry['success'] == true) {
             return $this->redirectForm($data)->with('success', $inquiry['message']);
@@ -138,13 +139,16 @@ class InquiryController extends Controller
     public function edit(Request $request, $id)
     {
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $id]);
+        if (empty($data['inquiry']))
+            return abort(404);
+            
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.inquiries.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/inquiry.caption')
             ]),
-            'routeBack' => route('inquiry.index'),
+            'routeBack' => route('inquiry.index', $request->query()),
             'breadcrumbs' => [
                 __('module/inquiry.caption') => route('inquiry.index'),
                 __('global.edit') => '',
@@ -162,6 +166,7 @@ class InquiryController extends Controller
         $data['hide_body'] = (bool)$request->hide_body;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $inquiry = $this->inquiryService->updateInquiry($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($inquiry['success'] == true) {
             return $this->redirectForm($data)->with('success', $inquiry['message']);
@@ -230,7 +235,7 @@ class InquiryController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('inquiry.index');
+        $redir = redirect()->route('inquiry.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }
@@ -260,12 +265,15 @@ class InquiryController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
+        if (empty($data['inquiry']))
+            return abort(404);
+
         $data['forms'] = $this->inquiryService->getFormList($filter, true, 10, false, [], [
             'submit_time' => 'DESC'
         ]);
         $data['no'] = $data['forms']->firstItem();
         $data['forms']->withPath(url()->current().$param);
-        $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
         $data['fields'] = $this->inquiryService->getFieldList(['inquiry_id' => $inquiryId], false);
 
         return view('backend.inquiries.form.index', compact('data'), [

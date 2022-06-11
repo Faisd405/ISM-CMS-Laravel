@@ -9,20 +9,23 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        @if (isset($data['parent']))
-        <div class="alert alert-dark alert-dismissible fade show">
-            <i class="las la-thumbtack"></i> Under <strong>" {!! $data['parent']->fieldLang('title') !!} "</strong>
-        </div>
-        @endif
-
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/menu.category.caption')) }} : <b class="text-primary">{{ Str::upper($data['category']['name']) }}</b>
+                    @if (isset($data['parent']))
+                        <i class="las la-angle-right"></i>
+                        UNDER : <b class="text-primary">{!! $data['parent']->fieldLang('title') !!}</b>
+                    @endif
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/menu.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['menu']) ? route('menu.store', ['categoryId' => $data['category']['id'], 'parent' => Request::get('parent')]) : 
-                route('menu.update', ['categoryId' => $data['category']['id'], 'id' => $data['menu']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['menu']) ? route('menu.store', array_merge(['categoryId' => $data['category']['id'], 'parent' => Request::get('parent')], $queryParam)) : 
+                route('menu.update', array_merge(['categoryId' => $data['category']['id'], 'id' => $data['menu']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['menu'])
                     @method('PUT')

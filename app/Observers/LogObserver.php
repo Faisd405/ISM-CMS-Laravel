@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\UserLog;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LogObserver
 {
@@ -19,6 +20,7 @@ class LogObserver
                 'logable_id' => $data['logable_id'],
                 'logable_type' => $data['logable_type'],
                 'logable_name' => $model->getTable(),
+                'content' => $data['logable'],
                 'ip_address' => request()->ip(),
             ]);
         }
@@ -36,6 +38,7 @@ class LogObserver
                 'logable_id' => $data['logable_id'],
                 'logable_type' => $data['logable_type'],
                 'logable_name' => $model->getTable(),
+                'content' => $data['logable'],
                 'ip_address' => request()->ip(),
             ]);
         }

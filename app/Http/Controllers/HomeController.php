@@ -10,6 +10,7 @@ use App\Services\Module\GalleryService;
 use App\Services\Module\InquiryService;
 use App\Services\Module\LinkService;
 use App\Services\Module\PageService;
+use App\Services\Module\WidgetService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -36,7 +37,15 @@ class HomeController extends Controller
 
     public function home(Request $request)
     {
-        $data['data'] = null;
+        $filter['widget_set'] = 0;
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
+        $data['widgets'] = App::make(WidgetService::class)->getWidgetList($filter, false, 10, false, [], [
+            'position' => 'ASC'
+        ]);
+        foreach ($data['widgets'] as $key => $value) {
+            $data['widgets'][$key]['module'] = App::make(WidgetService::class)->getModuleData($value);
+        }
 
         return view('frontend.index', compact('data'));
     }

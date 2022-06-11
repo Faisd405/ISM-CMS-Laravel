@@ -4,6 +4,7 @@ namespace App\Models\Module\Event;
 
 use App\Models\Feature\Configuration;
 use App\Models\Menu\Menu;
+use App\Models\Module\Widget;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -56,6 +57,11 @@ class Event extends Model
     public function menus()
     {
         return $this->morphMany(Menu::class, 'menuable');
+    }
+
+    public function widgets()
+    {
+        return $this->morphMany(Widget::class, 'moduleable');
     }
 
     public function createBy()

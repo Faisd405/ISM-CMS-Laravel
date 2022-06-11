@@ -69,8 +69,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('master/media.caption')) }} : <b class="text-primary">{{ Str::upper(Str::replace('_', ' ', Request::segment(4))) }}</b>
+                </span>
+            </div>
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('master/media.text') <span class="badge badge-primary">{{ Str::upper(Str::replace('_', ' ', Request::segment(4))) }}</span></h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('master/media.text')</h5>
             </div>
 
             <div class="table-responsive">

@@ -297,6 +297,9 @@ class EventService
                 $event->menus()->update([
                     'publish' => $event['publish']
                 ]);
+                $event->widgets()->update([
+                    'publish' => $event['publish']
+                ]);
             }
 
             return $this->success($event, __('global.alert.update_success', [
@@ -392,6 +395,7 @@ class EventService
                 }
 
                 $event->menus()->delete();
+                $event->widgets()->delete();
                 $event->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -429,6 +433,7 @@ class EventService
             
             //restore data yang bersangkutan
             $event->menus()->restore();
+            $event->widgets()->restore();
             $event->restore();
 
             return $this->success($event, __('global.alert.restore_success', [
@@ -459,6 +464,7 @@ class EventService
                 File::delete($path);
                 
             $event->menus()->forceDelete();
+            $event->widgets()->forceDelete();
             $event->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

@@ -106,7 +106,7 @@ class GalleryCategoryController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/gallery.category.caption')
             ]),
-            'routeBack' => route('gallery.category.index'),
+            'routeBack' => route('gallery.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/gallery.caption') => 'javascript:;',
                 __('module/gallery.category.caption') => route('gallery.category.index'),
@@ -122,6 +122,7 @@ class GalleryCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->galleryService->storeCategory($data);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -133,6 +134,9 @@ class GalleryCategoryController extends Controller
     public function edit(Request $request, $id)
     {
         $data['category'] = $this->galleryService->getCategory(['id' => $id]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'gallery_category'], false);
         $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'gallery_category'], false);
@@ -141,7 +145,7 @@ class GalleryCategoryController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/gallery.category.caption')
             ]),
-            'routeBack' => route('gallery.category.index'),
+            'routeBack' => route('gallery.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/gallery.caption') => 'javascript:;',
                 __('module/gallery.category.caption') => route('gallery.category.index'),
@@ -157,6 +161,7 @@ class GalleryCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->galleryService->updateCategory($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -225,7 +230,7 @@ class GalleryCategoryController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('gallery.category.index');
+        $redir = redirect()->route('gallery.category.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

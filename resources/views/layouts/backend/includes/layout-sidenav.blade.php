@@ -108,7 +108,7 @@
 
         @if (Auth::user()->can('pages') || Auth::user()->can('content_sections') || Auth::user()->can('menus') || Auth::user()->can('banner_categories')
             || Auth::user()->can('gallery_albums') || Auth::user()->can('document_categories') || Auth::user()->can('link_categories')
-            || Auth::user()->can('inquiries') || Auth::user()->can('events'))
+            || Auth::user()->can('inquiries') || Auth::user()->can('events') || Auth::user()->can('widgets'))
         {{-- Module --}}
         <li class="sidenav-divider mb-1"></li>
         <li class="sidenav-header small font-weight-semibold">MODULE</li>
@@ -175,6 +175,14 @@
         <li class="sidenav-item {{ Request::is('admin/event*') ? 'active' : '' }}">
             <a href="{{ route('event.index') }}" class="sidenav-link" title="@lang('module/event.caption')">
               <i class="sidenav-icon las la-calendar"></i><div>@lang('module/event.caption')</div>
+            </a>
+        </li>
+        @endif
+        @if (Auth::user()->can('widgets') && config('cms.module.widget.active') == true)
+        <!-- Widget -->
+        <li class="sidenav-item {{ Request::is('admin/widget*') ? 'active' : '' }}">
+            <a href="{{ route('widget.index') }}" class="sidenav-link" title="@lang('module/widget.caption')">
+              <i class="sidenav-icon las la-layer-group"></i><div>@lang('module/widget.caption')</div>
             </a>
         </li>
         @endif

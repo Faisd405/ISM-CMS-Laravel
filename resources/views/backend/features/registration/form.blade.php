@@ -14,7 +14,8 @@
                     'attribute' => __('feature/registration.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['registration']) ? route('registration.store') : route('registration.update', ['id' => $data['registration']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['registration']) ? route('registration.store', $queryParam) : 
+                route('registration.update', array_merge(['id' => $data['registration']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['registration'])
                     @method('PUT')

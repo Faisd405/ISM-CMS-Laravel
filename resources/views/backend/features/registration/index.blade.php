@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('registration_create')
-                    <a href="{{ route('registration.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('registration.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('feature/registration.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('feature/registration.caption')</span>
@@ -157,7 +157,7 @@
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['active'] == 1 ? 'success' : 'secondary' }}"
                                     title="{{ __('global.label.active.'.$item['active']) }}">
                                     {{ __('global.label.active.'.$item['active']) }}
-                                    <form action="{{ route('registration.activate', ['id' => $item->id]) }}" method="POST">
+                                    <form action="{{ route('registration.activate', array_merge(['id' => $item->id], $queryParam)) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -182,19 +182,21 @@
                             </td>
                             <td class="text-center">
                                 @can('registration_update')
-                                <a href="{{ route('registration.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('registration.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('feature/registration.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can('registration_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('feature/registration.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
                             </td>
                         </tr>

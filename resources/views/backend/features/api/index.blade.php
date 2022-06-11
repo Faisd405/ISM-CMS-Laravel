@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('api_create')
-                    <a href="{{ route('api.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('api.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('feature/api.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('feature/api.caption')</span>
@@ -153,7 +153,7 @@
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['active'] == 1 ? 'success' : 'secondary' }}"
                                     title="{{ __('global.label.active.'.$item['active']) }}">
                                     {{ __('global.label.active.'.$item['active']) }}
-                                    <form action="{{ route('api.activate', ['id' => $item->id]) }}" method="POST">
+                                    <form action="{{ route('api.activate', array_merge(['id' => $item->id], $queryParam)) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -178,19 +178,21 @@
                             </td>
                             <td class="text-center">
                                 @can('api_update')
-                                <a href="{{ route('api.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('api.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('feature/api.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can('api_delete')
+                                @if ($item['locked'] == 0)  
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('feature/api.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
                             </td>
                         </tr>

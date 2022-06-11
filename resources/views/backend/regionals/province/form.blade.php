@@ -10,7 +10,8 @@
                     'attribute' => __('module/regional.province.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['province']) ? route('province.store') : route('province.update', ['id' => $data['province']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['province']) ? route('province.store', $queryParam) : 
+                route('province.update', array_merge(['id' => $data['province']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['province'])
                     @method('PUT')

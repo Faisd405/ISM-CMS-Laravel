@@ -22,7 +22,7 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    <a href="{{ route('role.create') }}" class="btn btn-success icon-btn-only-sm btn-sm" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('role.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/user.role.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/user.role.caption')</span>
@@ -91,17 +91,20 @@
                             <td>{{ $item['created_at']->format('d F Y (H:i A)') }}</td>
                             <td>{{ $item['updated_at']->format('d F Y (H:i A)') }}</td>
                             <td class="text-center">
-                                <a href="{{ route('role.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('role.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('module/user.role.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/user.role.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
+                                
                             </td>
                         </tr>
                         @empty

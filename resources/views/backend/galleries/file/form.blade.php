@@ -11,13 +11,18 @@
 
         @include('components.alert-error')
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/gallery.album.caption')) }} : <b class="text-primary">{{ $data['album']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/gallery.file.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['file']) ? route('gallery.file.store', ['albumId' => $data['album']['id']]) : 
-                route('gallery.file.update', ['albumId' => $data['album']['id'], 'id' => $data['file']['id']]) }}" method="POST" 
+            <form action="{{ !isset($data['file']) ? route('gallery.file.store', array_merge(['albumId' => $data['album']['id']], $queryParam)) : 
+                route('gallery.file.update', array_merge(['albumId' => $data['album']['id'], 'id' => $data['file']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
                 @csrf
                 @isset($data['file'])

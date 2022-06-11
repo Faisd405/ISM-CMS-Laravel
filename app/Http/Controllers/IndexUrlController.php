@@ -72,13 +72,13 @@ class IndexUrlController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return view('backend.url.form', [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/url.caption')
             ]),
-            'routeBack' => route('url.index'),
+            'routeBack' => route('url.index', $request->query()),
             'breadcrumbs' => [
                 __('module/url.caption') => route('url.index'),
                 __('global.add') => '',
@@ -90,6 +90,7 @@ class IndexUrlController extends Controller
     {
         $data = $request->all();
         $indexUrl = $this->indexUrlService->store($data);
+        $data['query'] = $request->query();
 
         if ($indexUrl['success'] == true) {
             return $this->redirectForm($data)->with('success', $indexUrl['message']);
@@ -98,15 +99,17 @@ class IndexUrlController extends Controller
         return redirect()->back()->with('failed', $indexUrl['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['url'] = $this->indexUrlService->getIndexUrl(['id' => $id]);
+        if (empty($data['url']))
+            return abort(404);
 
         return view('backend.url.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('module/url.caption')
             ]),
-            'routeBack' => route('url.index'),
+            'routeBack' => route('url.index', $request),
             'breadcrumbs' => [
                 __('module/url.caption') => route('url.index'),
                 __('global.edit') => '',
@@ -118,6 +121,7 @@ class IndexUrlController extends Controller
     {
         $data = $request->all();
         $indexUrl = $this->indexUrlService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($indexUrl['success'] == true) {
             return $this->redirectForm($data)->with('success', $indexUrl['message']);
@@ -153,7 +157,7 @@ class IndexUrlController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('url.index');
+        $redir = redirect()->route('url.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

@@ -14,7 +14,8 @@
                     'attribute' => __('master/template.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['template']) ? route('template.store') : route('template.update', ['id' => $data['template']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['template']) ? route('template.store', $queryParam) : 
+                route('template.update', array_merge(['id' => $data['template']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['template'])
                     @method('PUT')

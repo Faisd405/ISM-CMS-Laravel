@@ -52,8 +52,12 @@ class DashboardController extends Controller
                 'publish' => 1,
                 'approved' => 1,
                 'is_detail' => 1
-            ], true, 5),
-            'inquiries' => App::make(InquiryService::class)->getFormList([], true, 5),
+            ], true, 5, false, [], [
+                'publish_time' => 'DESC'
+            ]),
+            'inquiries' => App::make(InquiryService::class)->getFormList([], true, 5, false, [], [
+                'submit_time' => 'DESC'
+            ]),
         ];
 
         return view('backend.dashboard.index', compact('data'), [

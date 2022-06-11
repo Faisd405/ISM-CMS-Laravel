@@ -10,7 +10,8 @@
                     'attribute' => __('module/user.role.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['role']) ? route('role.store') : route('role.update', ['id' => $data['role']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['role']) ? route('role.store', $queryParam) : 
+                route('role.update', array_merge(['id' => $data['role']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['role'])
                     @method('PUT')
@@ -21,7 +22,7 @@
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
                                 value="{{ !isset($data['role']) ? old('name') : old('name', $data['role']['name']) }}" 
-                                placeholder="@lang('module/user.role.placeholder.field1')" autofocus>
+                                placeholder="@lang('module/user.role.placeholder.field1')" {{ isset($data['role']) && $data['role']['locked'] == 1 ? 'readonly' : 'autofocus' }}>
                             <small class="text-muted">@lang('global.lower_case')</small>
                             @include('components.field-error', ['field' => 'name'])
                         </div>

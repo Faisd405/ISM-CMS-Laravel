@@ -10,13 +10,18 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/inquiry.caption')) }} : <b class="text-primary">{{ $data['inquiry']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/inquiry.field.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['field']) ? route('inquiry.field.store', ['inquiryId' => $data['inquiry']['id']]) : 
-                route('inquiry.field.update', ['inquiryId' => $data['inquiry']['id'], 'id' => $data['field']['id']]) }}" method="POST" 
+            <form action="{{ !isset($data['field']) ? route('inquiry.field.store', array_merge(['inquiryId' => $data['inquiry']['id']], $queryParam)) : 
+                route('inquiry.field.update', array_merge(['inquiryId' => $data['inquiry']['id'], 'id' => $data['field']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
                 @csrf
                 @isset($data['field'])

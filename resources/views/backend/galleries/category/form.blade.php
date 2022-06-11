@@ -17,8 +17,8 @@
                     'attribute' => __('module/gallery.category.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['category']) ? route('gallery.category.store') : 
-                route('gallery.category.update', ['id' => $data['category']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['category']) ? route('gallery.category.store', $queryParam) : 
+                route('gallery.category.update', array_merge(['id' => $data['category']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['category'])
                     @method('PUT')

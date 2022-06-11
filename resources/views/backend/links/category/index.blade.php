@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can ('link_category_create')
-                    <a href="{{ route('link.category.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('link.category.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/link.category.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/link.category.caption')</span>
@@ -170,7 +170,7 @@
                                 </a>
                                 @endcan
                                 @can('link_category_update')
-                                <a href="{{ route('link.category.edit', ['id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('link.category.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/link.category.caption')
                                 ])">
                                     <i class="las la-pen"></i>

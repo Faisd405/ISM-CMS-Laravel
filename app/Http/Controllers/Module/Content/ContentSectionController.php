@@ -105,7 +105,7 @@ class ContentSectionController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/content.section.caption')
             ]),
-            'routeBack' => route('content.section.index'),
+            'routeBack' => route('content.section.index', $request->query()),
             'breadcrumbs' => [
                 __('module/content.caption') => 'javascript:;',
                 __('module/content.section.caption') => route('content.section.index'),
@@ -121,6 +121,7 @@ class ContentSectionController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $section = $this->contentService->storeSection($data);
+        $data['query'] = $request->query();
 
         if ($section['success'] == true) {
             return $this->redirectForm($data)->with('success', $section['message']);
@@ -132,6 +133,9 @@ class ContentSectionController extends Controller
     public function edit(Request $request, $id)
     {
         $data['section'] = $this->contentService->getSection(['id' => $id]);
+        if (empty($data['section']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'content_section'], false);
         $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'content_section'], false);
@@ -140,7 +144,7 @@ class ContentSectionController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/content.section.caption')
             ]),
-            'routeBack' => route('content.section.index'),
+            'routeBack' => route('content.section.index', $request->query()),
             'breadcrumbs' => [
                 __('module/content.caption') => 'javascript:;',
                 __('module/content.section.caption') => route('content.section.index'),
@@ -156,6 +160,7 @@ class ContentSectionController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $section = $this->contentService->updateSection($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($section['success'] == true) {
             return $this->redirectForm($data)->with('success', $section['message']);
@@ -224,7 +229,7 @@ class ContentSectionController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('content.section.index');
+        $redir = redirect()->route('content.section.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

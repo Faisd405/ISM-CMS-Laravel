@@ -39,12 +39,15 @@ class EventFieldController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
+        if (empty($data['event']))
+            return abort(404);
+            
         $data['fields'] = $this->eventService->getFieldList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
         $data['fields']->withPath(url()->current().$param);
-        $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
 
         return view('backend.events.field.index', compact('data'), [
             'title' => __('module/event.field.title'),
@@ -72,12 +75,15 @@ class EventFieldController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
+        if (empty($data['event']))
+            return abort(404);
+
         $data['fields'] = $this->eventService->getFieldList($filter, true, 10, true, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
         $data['fields']->withPath(url()->current().$param);
-        $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
 
         return view('backend.events.field.trash', compact('data'), [
             'title' => __('module/event.field.title').' - '.__('global.trash'),
@@ -93,13 +99,16 @@ class EventFieldController extends Controller
     public function create(Request $request, $eventId)
     {
         $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
+        if (empty($data['event']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.events.field.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/event.field.caption')
             ]),
-            'routeBack' => route('event.field.index', ['eventId' => $eventId]),
+            'routeBack' => route('event.field.index', array_merge(['eventId' => $eventId], $request->query())),
             'breadcrumbs' => [
                 __('module/event.field.caption') => route('event.field.index', ['eventId' => $eventId]),
                 __('global.add') => '',
@@ -113,6 +122,7 @@ class EventFieldController extends Controller
         
         $data['event_id'] = $eventId;
         $field = $this->eventService->storeField($data);
+        $data['query'] = $request->query();
 
         if ($field['success'] == true) {
             return $this->redirectForm($data)->with('success', $field['message']);
@@ -123,15 +133,21 @@ class EventFieldController extends Controller
 
     public function edit(Request $request, $eventId, $id)
     {
-        $data['field'] = $this->eventService->getField(['id' => $id]);
         $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
+        if (empty($data['event']))
+            return abort(404);
+
+        $data['field'] = $this->eventService->getField(['id' => $id]);
+        if (empty($data['field']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.events.field.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/event.field.caption')
             ]),
-            'routeBack' => route('event.field.index', ['eventId' => $eventId]),
+            'routeBack' => route('event.field.index', array_merge(['eventId' => $eventId], $request->query())),
             'breadcrumbs' => [
                 __('module/event.field.caption') => route('event.field.index', ['eventId' => $eventId]),
                 __('global.edit') => '',
@@ -145,6 +161,7 @@ class EventFieldController extends Controller
 
         $data['event_id'] = $eventId;
         $field = $this->eventService->updateField($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($field['success'] == true) {
             return $this->redirectForm($data)->with('success', $field['message']);
@@ -213,7 +230,7 @@ class EventFieldController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('event.field.index', ['eventId' => $data['event_id']]);
+        $redir = redirect()->route('event.field.index', array_merge(['eventId' => $data['event_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

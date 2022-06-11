@@ -44,12 +44,15 @@ class GalleryFileController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['album'] = $this->galleryService->getAlbum(['id' => $albumId]);
+        if(empty($data['album']))
+            return abort(404);
+
         $data['files'] = $this->galleryService->getFileList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
         $data['files']->withPath(url()->current().$param);
-        $data['album'] = $this->galleryService->getAlbum(['id' => $albumId]);
 
         return view('backend.galleries.file.index', compact('data'), [
             'title' => __('module/gallery.file.title'),
@@ -81,12 +84,15 @@ class GalleryFileController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['album'] = $this->galleryService->getAlbum(['id' => $albumId]);
+        if(empty($data['album']))
+            return abort(404);
+
         $data['files'] = $this->galleryService->getFileList($filter, true, 10, true, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
         $data['files']->withPath(url()->current().$param);
-        $data['album'] = $this->galleryService->getAlbum(['id' => $albumId]);
 
         return view('backend.galleries.file.trash', compact('data'), [
             'title' => __('module/gallery.file.title').' - '.__('global.trash'),
@@ -102,13 +108,16 @@ class GalleryFileController extends Controller
     public function create(Request $request, $albumId)
     {
         $data['album'] = $this->galleryService->getAlbum(['id' => $albumId]);
+        if(empty($data['album']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.galleries.file.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/gallery.file.caption')
             ]),
-            'routeBack' => route('gallery.file.index', ['albumId' => $albumId]),
+            'routeBack' => route('gallery.file.index', array_merge(['albumId' => $albumId], $request->query())),
             'breadcrumbs' => [
                 __('module/gallery.file.caption') => route('gallery.file.index', ['albumId' => $albumId]),
                 __('global.add') => '',
@@ -142,6 +151,7 @@ class GalleryFileController extends Controller
         $data['hide_title'] = (bool)$request->hide_title;
         $data['hide_description'] = (bool)$request->hide_description;
         $galleryFile = $this->galleryService->storeFile($data);
+        $data['query'] = $request->query();
 
         if ($galleryFile['success'] == true) {
             return $this->redirectForm($data)->with('success', $galleryFile['message']);
@@ -175,15 +185,21 @@ class GalleryFileController extends Controller
 
     public function edit(Request $request, $albumId, $id)
     {
-        $data['file'] = $this->galleryService->getFile(['id' => $id]);
         $data['album'] = $this->galleryService->getAlbum(['id' => $albumId]);
+        if(empty($data['album']))
+            return abort(404);
+
+        $data['file'] = $this->galleryService->getFile(['id' => $id]);
+        if(empty($data['file']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.galleries.file.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/gallery.file.caption')
             ]),
-            'routeBack' => route('gallery.file.index', ['albumId' => $albumId]),
+            'routeBack' => route('gallery.file.index', array_merge(['albumId' => $albumId], $request->query())),
             'breadcrumbs' => [
                 __('module/gallery.file.caption') => route('gallery.file.index', ['albumId' => $albumId]),
                 __('global.edit') => '',
@@ -217,6 +233,7 @@ class GalleryFileController extends Controller
         $data['hide_title'] = (bool)$request->hide_title;
         $data['hide_description'] = (bool)$request->hide_description;
         $galleryFile = $this->galleryService->updateFile($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($galleryFile['success'] == true) {
             return $this->redirectForm($data)->with('success', $galleryFile['message']);
@@ -285,7 +302,7 @@ class GalleryFileController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('gallery.file.index', ['albumId' => $data['gallery_album_id']]);
+        $redir = redirect()->route('gallery.file.index', array_merge(['albumId' => $data['gallery_album_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

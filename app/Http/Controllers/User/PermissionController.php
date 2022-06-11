@@ -57,7 +57,7 @@ class PermissionController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/user.permission.caption')
             ]),
-            'routeBack' => route('permission.index'),
+            'routeBack' => route('permission.index', $request->query()),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.acl_caption') => 'javascript:;',
@@ -72,6 +72,7 @@ class PermissionController extends Controller
         $data = $request->all();
         $data['parent'] = $request->parent;
         $permission = $this->userService->storePermission($data);
+        $data['query'] = $request->query();
 
         if ($permission['success'] == true) {
             return $this->redirectForm($data)->with('success', $permission['message']);
@@ -80,9 +81,12 @@ class PermissionController extends Controller
         return redirect()->back()->with('failed', $permission['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['permission'] = $this->userService->getPermission(['id' => $id]);
+        if (empty($data['permission']))
+            return abort(404);
+
         if (!empty($data['permission']['parent'])) {
             $data['parent'] = $this->userService->getPermission(['id' => $data['permission']['parent']]);
         }
@@ -91,7 +95,7 @@ class PermissionController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/user.permission.caption')
             ]),
-            'routeBack' => route('permission.index'),
+            'routeBack' => route('permission.index', $request->query()),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.acl_caption') => 'javascript:;',
@@ -105,6 +109,7 @@ class PermissionController extends Controller
     {
         $data = $request->all();
         $permission = $this->userService->updatePermission($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($permission['success'] == true) {
             return $this->redirectForm($data)->with('success', $permission['message']);
@@ -122,7 +127,7 @@ class PermissionController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('permission.index');
+        $redir = redirect()->route('permission.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = redirect()->back();
         }

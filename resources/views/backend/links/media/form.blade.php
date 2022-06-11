@@ -10,13 +10,18 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/link.category.caption')) }} : <b class="text-primary">{{ $data['category']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/link.media.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['media']) ? route('link.media.store', ['categoryId' => $data['category']['id']]) : 
-                route('link.media.update', ['categoryId' => $data['category']['id'], 'id' => $data['media']['id']]) }}" method="POST" 
+            <form action="{{ !isset($data['media']) ? route('link.media.store', array_merge(['categoryId' => $data['category']['id']], $queryParam)) : 
+                route('link.media.update', array_merge(['categoryId' => $data['category']['id'], 'id' => $data['media']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
                 @csrf
                 @isset($data['media'])

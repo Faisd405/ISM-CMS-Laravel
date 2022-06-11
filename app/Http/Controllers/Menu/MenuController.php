@@ -41,12 +41,15 @@ class MenuController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['menus'] = $this->menuService->getMenuList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['menus']->firstItem();
         $data['menus']->withPath(url()->current().$param);
-        $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
 
         return view('backend.menus.index', compact('data'), [
             'title' => __('module/menu.title'),
@@ -74,12 +77,15 @@ class MenuController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+            
         $data['menus'] = $this->menuService->getMenuList($filter, true, 10, true, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['menus']->firstItem();
         $data['menus']->withPath(url()->current().$param);
-        $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
 
         return view('backend.menus.trash', compact('data'), [
             'title' => __('module/menu.title').' - '.__('global.trash'),
@@ -94,6 +100,9 @@ class MenuController extends Controller
     public function create(Request $request, $categoryId)
     {
         $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         if ($request->input('parent', '') != '') {
@@ -104,7 +113,7 @@ class MenuController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/menu.caption')
             ]),
-            'routeBack' => route('menu.index', ['categoryId' => $categoryId]),
+            'routeBack' => route('menu.index', array_merge(['categoryId' => $categoryId], $request->query())),
             'breadcrumbs' => [
                 __('module/menu.caption') => route('menu.index', ['categoryId' => $categoryId]),
                 __('global.add') => '',
@@ -123,6 +132,7 @@ class MenuController extends Controller
         $data['target_blank'] = (bool)$request->target_blank;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
         $menu = $this->menuService->storeMenu($data);
+        $data['query'] = $request->query();
 
         if ($menu['success'] == true) {
             return $this->redirectForm($data)->with('success', $menu['message']);
@@ -133,15 +143,21 @@ class MenuController extends Controller
 
     public function edit(Request $request, $categoryId, $id)
     {
-        $data['menu'] = $this->menuService->getMenu(['id' => $id]);
         $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
+        $data['menu'] = $this->menuService->getMenu(['id' => $id]);
+        if (empty($data['menu']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.menus.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/menu.caption')
             ]),
-            'routeBack' => route('menu.index', ['categoryId' => $categoryId]),
+            'routeBack' => route('menu.index', array_merge(['categoryId' => $categoryId], $request->query())),
             'breadcrumbs' => [
                 __('module/menu.caption') => route('menu.index', ['categoryId' => $categoryId]),
                 __('global.edit') => '',
@@ -159,6 +175,7 @@ class MenuController extends Controller
         $data['target_blank'] = (bool)$request->target_blank;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
         $menu = $this->menuService->updateMenu($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($menu['success'] == true) {
             return $this->redirectForm($data)->with('success', $menu['message']);
@@ -227,7 +244,7 @@ class MenuController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('menu.index', ['categoryId' => $data['menu_category_id']]);
+        $redir = redirect()->route('menu.index', array_merge(['categoryId' => $data['menu_category_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

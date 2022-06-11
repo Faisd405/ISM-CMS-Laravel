@@ -57,6 +57,11 @@ class Page extends Model
         return $this->morphMany(Menu::class, 'menuable');
     }
 
+    public function widgets()
+    {
+        return $this->morphMany(Widget::class, 'moduleable');
+    }
+
     public function template()
     {
         return $this->belongsTo(Template::class, 'template_id');

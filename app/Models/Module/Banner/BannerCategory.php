@@ -2,6 +2,7 @@
 
 namespace App\Models\Module\Banner;
 
+use App\Models\Module\Widget;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,6 +35,11 @@ class BannerCategory extends Model
     public function banners()
     {
         return $this->hasMany(Banner::class, 'banner_category_id');
+    }
+
+    public function widgets()
+    {
+        return $this->morphMany(Widget::class, 'moduleable');
     }
 
     public function createBy()

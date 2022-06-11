@@ -291,6 +291,9 @@ class ContentService
                 $section->menus()->update([
                     'publish' => $section['publish']
                 ]);
+                $section->widgets()->update([
+                    'publish' => $section['publish']
+                ]);
             }
 
             return $this->success($section, __('global.alert.update_success', [
@@ -386,6 +389,7 @@ class ContentService
                 }
 
                 $section->menus()->delete();
+                $section->widgets()->delete();
                 // $section->indexing->delete();
                 $section->delete();
 
@@ -424,6 +428,7 @@ class ContentService
             
             //restore data yang bersangkutan
             $section->menus()->restore();
+            $section->widgets()->restore();
             // $section->indexing()->restore();
             $section->restore();
 
@@ -452,6 +457,7 @@ class ContentService
         try {
             
             $section->menus()->forceDelete();
+            $section->widgets()->forceDelete();
             $section->indexing()->forceDelete();
             $section->forceDelete();
 
@@ -681,6 +687,9 @@ class ContentService
                 $category->menus()->update([
                     'publish' => $category['publish']
                 ]);
+                $category->widgets()->update([
+                    'publish' => $category['publish']
+                ]);
             }
 
             return $this->success($category, __('global.alert.update_success', [
@@ -776,6 +785,7 @@ class ContentService
                 }
 
                 $category->menus()->delete();
+                $category->widgets()->delete();
                 $category->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -814,6 +824,7 @@ class ContentService
             
             //restore data yang bersangkutan
             $category->menus()->restore();
+            $category->widgets()->restore();
             $category->restore();
 
             return $this->success($category, __('global.alert.restore_success', [
@@ -841,6 +852,7 @@ class ContentService
         try {
                 
             $category->menus()->forceDelete();
+            $category->widgets()->forceDelete();
             $category->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

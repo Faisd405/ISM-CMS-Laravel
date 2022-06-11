@@ -37,10 +37,13 @@ class DistrictController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['city'] = $this->regionalService->getCity(['code' => $cityCode]);
+        if (empty($data['city']))
+            return abort(404);
+
         $data['districts'] = $this->regionalService->getDistrictList($filter, true);
         $data['no'] = $data['districts']->firstItem();
         $data['districts']->withPath(url()->current().$param);
-        $data['city'] = $this->regionalService->getCity(['code' => $cityCode]);
 
         return view('backend.regionals.district.index', compact('data'), [
             'title' => __('module/regional.district.title'),
@@ -69,12 +72,15 @@ class DistrictController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['city'] = $this->regionalService->getCity(['code' => $cityCode]);
+        if (empty($data['city']))
+            return abort(404);
+
         $data['districts'] = $this->regionalService->getDistrictList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['districts']->firstItem();
         $data['districts']->withPath(url()->current().$param);
-        $data['city'] = $this->regionalService->getCity(['code' => $cityCode]);
 
         return view('backend.regionals.district.trash', compact('data'), [
             'title' => __('module/regional.district.title').' - '.__('global.trash'),
@@ -89,15 +95,20 @@ class DistrictController extends Controller
         ]);
     }
 
-    public function create($provinceCode, $cityCode)
+    public function create(Request $request, $provinceCode, $cityCode)
     {
         $data['city'] = $this->regionalService->getCity(['code' => $cityCode]);
+        if (empty($data['city']))
+            return abort(404);
 
         return view('backend.regionals.district.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/regional.district.caption')
             ]),
-            'routeBack' => route('district.index', ['provinceCode' => $provinceCode, 'cityCode' => $cityCode]),
+            'routeBack' => route('district.index', array_merge([
+                'provinceCode' => $provinceCode, 
+                'cityCode' => $cityCode
+            ], $request->query())),
             'breadcrumbs' => [
                 __('module/regional.caption') => 'javascript:;',
                 __('module/regional.district.caption') => route('district.index', ['provinceCode' => $provinceCode, 'cityCode' => $cityCode]),
@@ -112,24 +123,33 @@ class DistrictController extends Controller
         $data['province_code'] = $provinceCode;
         $data['city_code'] = $cityCode;
         $district = $this->regionalService->storeDistrict($data);
+        $data['query'] = $request->query();
 
         if ($district['success'] == true) {
-            return $this->redirectForm($data, $provinceCode, $cityCode)->with('success', $district['message']);
+            return $this->redirectForm($data)->with('success', $district['message']);
         }
 
         return redirect()->back()->with('failed', $district['message']);
     }
 
-    public function edit($provinceCode, $cityCode, $id)
+    public function edit(Request $request, $provinceCode, $cityCode, $id)
     {
-        $data['district'] = $this->regionalService->getDistrict(['id' => $id]);
         $data['city'] = $this->regionalService->getCity(['code' => $cityCode]);
+        if (empty($data['city']))
+            return abort(404);
+
+        $data['district'] = $this->regionalService->getDistrict(['id' => $id]);
+        if (empty($data['district']))
+            return abort(404);
 
         return view('backend.regionals.district.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/regional.district.caption')
             ]),
-            'routeBack' => route('district.index', ['provinceCode' => $provinceCode, 'cityCode' => $cityCode]),
+            'routeBack' => route('district.index', array_merge([
+                'provinceCode' => $provinceCode, 
+                'cityCode' => $cityCode
+            ], $request->query())),
             'breadcrumbs' => [
                 __('module/regional.caption') => 'javascript:;',
                 __('module/regional.district.caption') => route('district.index', ['provinceCode' => $provinceCode, 'cityCode' => $cityCode]),
@@ -144,9 +164,10 @@ class DistrictController extends Controller
         $data['province_code'] = $provinceCode;
         $data['city_code'] = $cityCode;
         $district = $this->regionalService->updateDistrict($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($district['success'] == true) {
-            return $this->redirectForm($data, $provinceCode, $cityCode)->with('success', $district['message']);
+            return $this->redirectForm($data)->with('success', $district['message']);
         }
 
         return redirect()->back()->with('failed', $district['message']);
@@ -177,9 +198,12 @@ class DistrictController extends Controller
         return redirect()->back()->with('failed', $district['message']);
     }
 
-    private function redirectForm($data, $provinceCode, $cityCode)
+    private function redirectForm($data)
     {
-        $redir = redirect()->route('district.index', ['provinceCode' => $provinceCode, 'cityCode' => $cityCode]);
+        $redir = redirect()->route('district.index', array_merge([
+            'provinceCode' => $data['province_code'], 
+            'cityCode' => $data['city_code'],
+        ], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

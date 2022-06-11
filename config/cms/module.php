@@ -292,4 +292,29 @@ return [
             'approval' => true,
         ]
     ],
+
+    //---------------
+    // WIDGET
+    //---------------
+    'widget' => [
+        'active' => true,
+        'approval' => true,
+        'set' => [
+            'home'
+        ],
+        'type' => [
+            'text',
+            'page',
+            'content_section',
+            'content_category',
+            'banner',
+            'gallery_category',
+            'gallery_album',
+            'document',
+            'link',
+            'inquiry',
+            'event'
+        ],
+    ],
+
 ];

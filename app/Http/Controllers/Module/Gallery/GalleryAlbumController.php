@@ -113,7 +113,7 @@ class GalleryAlbumController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/gallery.album.caption')
             ]),
-            'routeBack' => route('gallery.album.index'),
+            'routeBack' => route('gallery.album.index', $request->query()),
             'breadcrumbs' => [
                 __('module/gallery.caption') => 'javascript:;',
                 __('module/gallery.album.caption') => route('gallery.album.index'),
@@ -129,6 +129,7 @@ class GalleryAlbumController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $album = $this->galleryService->storeAlbum($data);
+        $data['query'] = $request->query();
 
         if ($album['success'] == true) {
             return $this->redirectForm($data)->with('success', $album['message']);
@@ -140,6 +141,9 @@ class GalleryAlbumController extends Controller
     public function edit(Request $request, $id)
     {
         $data['album'] = $this->galleryService->getAlbum(['id' => $id]);
+        if (empty($data['album']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'gallery_album'], false);
         $data['categories'] = $this->galleryService->getCategoryList([], false);
@@ -148,7 +152,7 @@ class GalleryAlbumController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/gallery.album.caption')
             ]),
-            'routeBack' => route('gallery.album.index'),
+            'routeBack' => route('gallery.album.index', $request->query()),
             'breadcrumbs' => [
                 __('module/gallery.caption') => 'javascript:;',
                 __('module/gallery.album.caption') => route('gallery.album.index'),
@@ -164,6 +168,7 @@ class GalleryAlbumController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $album = $this->galleryService->updateAlbum($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($album['success'] == true) {
             return $this->redirectForm($data)->with('success', $album['message']);
@@ -232,7 +237,7 @@ class GalleryAlbumController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('gallery.album.index');
+        $redir = redirect()->route('gallery.album.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

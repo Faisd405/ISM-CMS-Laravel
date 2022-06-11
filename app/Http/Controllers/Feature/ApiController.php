@@ -79,13 +79,13 @@ class ApiController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return view('backend.features.api.form', [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('feature/api.caption')
             ]),
-            'routeBack' => route('api.index'),
+            'routeBack' => route('api.index', $request->query()),
             'breadcrumbs' => [
                 __('feature/api.caption') => route('api.index'),
                 __('global.add') => '',
@@ -98,6 +98,7 @@ class ApiController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $api = $this->apiService->store($data);
+        $data['query'] = $request->query();
 
         if ($api['success'] == true) {
             return $this->redirectForm($data)->with('success', $api['message']);
@@ -106,15 +107,17 @@ class ApiController extends Controller
         return redirect()->back()->with('failed', $api['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['api'] = $this->apiService->getApi(['id' => $id]);
+        if (empty($data['api']))
+            return abort(404);
 
         return view('backend.features.api.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('feature/api.caption')
             ]),
-            'routeBack' => route('api.index'),
+            'routeBack' => route('api.index', $request->query()),
             'breadcrumbs' => [
                 __('feature/api.caption') => route('api.index'),
                 __('global.edit') => '',
@@ -127,6 +130,7 @@ class ApiController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $api = $this->apiService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($api['success'] == true) {
             return $this->redirectForm($data)->with('success', $api['message']);
@@ -184,7 +188,7 @@ class ApiController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('api.index');
+        $redir = redirect()->route('api.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

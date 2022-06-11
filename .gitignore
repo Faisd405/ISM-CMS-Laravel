@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /public/design
+/public/images
 /storage/*.key
 /storage/app
 /storage/analytics

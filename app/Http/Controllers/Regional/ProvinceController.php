@@ -78,13 +78,13 @@ class ProvinceController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return view('backend.regionals.province.form', [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/regional.province.caption')
             ]),
-            'routeBack' => route('province.index'),
+            'routeBack' => route('province.index', $request->query()),
             'breadcrumbs' => [
                 __('module/regional.caption') => 'javascript:;',
                 __('module/regional.province.caption') => route('province.index'),
@@ -97,6 +97,7 @@ class ProvinceController extends Controller
     {
         $data = $request->all();
         $province = $this->regionalService->storeProvince($data);
+        $data['query'] = $request->query();
 
         if ($province['success'] == true) {
             return $this->redirectForm($data)->with('success', $province['message']);
@@ -105,15 +106,17 @@ class ProvinceController extends Controller
         return redirect()->back()->with('failed', $province['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['province'] = $this->regionalService->getProvince(['id' => $id]);
+        if (empty($data['province']))
+            return abort(404);
 
         return view('backend.regionals.province.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('module/regional.province.caption')
             ]),
-            'routeBack' => route('province.index'),
+            'routeBack' => route('province.index', $request->query()),
             'breadcrumbs' => [
                 __('module/regional.caption') => 'javascript:;',
                 __('module/regional.province.caption') => route('province.index'),
@@ -126,6 +129,7 @@ class ProvinceController extends Controller
     {
         $data = $request->all();
         $province = $this->regionalService->updateProvince($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($province['success'] == true) {
             return $this->redirectForm($data)->with('success', $province['message']);
@@ -161,7 +165,7 @@ class ProvinceController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('province.index');
+        $redir = redirect()->route('province.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

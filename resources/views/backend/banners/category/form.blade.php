@@ -15,8 +15,8 @@
                     'attribute' => __('module/banner.category.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['category']) ? route('banner.category.store') : 
-                route('banner.category.update', ['id' => $data['category']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['category']) ? route('banner.category.store', $queryParam) : 
+                route('banner.category.update', array_merge(['id' => $data['category']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['category'])
                     @method('PUT')

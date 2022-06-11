@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @role('super')
-                    <a href="{{ route('menu.category.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('menu.category.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/menu.category.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/menu.category.caption')</span>
@@ -137,7 +137,7 @@
                                     <i class="las la-list"></i>
                                 </a>
                                 @role('super')
-                                <a href="{{ route('menu.category.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('menu.category.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('module/menu.category.caption')
                                     ])">
                                     <i class="las la-pen"></i>

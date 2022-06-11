@@ -79,13 +79,13 @@ class LanguageController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return view('backend.features.language.form', [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('feature/language.caption')
             ]),
-            'routeBack' => route('language.index'),
+            'routeBack' => route('language.index', $request->query()),
             'breadcrumbs' => [
                 __('feature/language.caption') => route('language.index'),
                 __('global.add') => '',
@@ -98,6 +98,7 @@ class LanguageController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $language = $this->languageService->store($data);
+        $data['query'] = $request->query();
 
         if ($language['success'] == true) {
             return $this->redirectForm($data)->with('success', $language['message']);
@@ -106,15 +107,17 @@ class LanguageController extends Controller
         return redirect()->back()->with('failed', $language['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['language'] = $this->languageService->getLanguage(['id' => $id]);
+        if (empty($data['language']))
+            return abort(404);
 
         return view('backend.features.language.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('feature/language.caption')
             ]),
-            'routeBack' => route('language.index'),
+            'routeBack' => route('language.index', $request->query()),
             'breadcrumbs' => [
                 __('feature/language.caption') => route('language.index'),
                 __('global.edit') => '',
@@ -127,6 +130,7 @@ class LanguageController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $language = $this->languageService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($language['success'] == true) {
             return $this->redirectForm($data)->with('success', $language['message']);
@@ -173,7 +177,7 @@ class LanguageController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('language.index');
+        $redir = redirect()->route('language.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

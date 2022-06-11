@@ -85,13 +85,13 @@ class TagController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return view('backend.masters.tags.form', [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('master/tags.caption')
             ]),
-            'routeBack' => route('tags.index'),
+            'routeBack' => route('tags.index', $request->query()),
             'breadcrumbs' => [
                 __('master/tags.caption') => route('tags.index'),
                 __('global.add') => '',
@@ -105,6 +105,7 @@ class TagController extends Controller
         $data['flags'] = (bool)$request->flags;
         $data['standar'] = (bool)$request->standar;
         $tags = $this->tagService->store($data);
+        $data['query'] = $request->query();
 
         if ($tags['success'] == true) {
             return $this->redirectForm($data)->with('success', $tags['message']);
@@ -113,15 +114,18 @@ class TagController extends Controller
         return redirect()->back()->with('failed', $tags['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['tag'] = $this->tagService->getTag(['id' => $id]);
+
+        if (empty($data['tag']))
+            return abort(404);
 
         return view('backend.masters.tags.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('master/tags.caption')
             ]),
-            'routeBack' => route('tags.index'),
+            'routeBack' => route('tags.index', $request->query()),
             'breadcrumbs' => [
                 __('master/tags.caption') => route('tags.index'),
                 __('global.edit') => '',
@@ -135,6 +139,7 @@ class TagController extends Controller
         $data['flags'] = (bool)$request->flags;
         $data['standar'] = (bool)$request->standar;
         $tags = $this->tagService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($tags['success'] == true) {
             return $this->redirectForm($data)->with('success', $tags['message']);
@@ -192,7 +197,7 @@ class TagController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('tags.index');
+        $redir = redirect()->route('tags.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

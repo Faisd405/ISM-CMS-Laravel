@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('tag_create')
-                    <a href="{{ route('tags.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('tags.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('master/tags.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('master/tags.caption')</span>
@@ -127,7 +127,7 @@
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['flags'] == 1 ? 'primary' : 'danger' }}"
                                     title="@lang('master/tags.label.field3')">
                                     {{ __('global.label.flags.'.$item['flags']) }}
-                                    <form action="{{ route('tags.flags', ['id' => $item['id']]) }}" method="POST">
+                                    <form action="{{ route('tags.flags', array_merge(['id' => $item['id']], $queryParam)) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -141,7 +141,7 @@
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['standar'] == 1 ? 'info' : 'secondary' }}"
                                     title="@lang('master/tags.label.field4')">
                                     {{ __('global.label.optional.'.$item['standar']) }}
-                                    <form action="{{ route('tags.standar', ['id' => $item['id']]) }}" method="POST">
+                                    <form action="{{ route('tags.standar', array_merge(['id' => $item['id']], $queryParam)) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -167,19 +167,21 @@
                             </td>
                             <td class="text-center">
                                 @can ('tag_update')
-                                <a href="{{ route('tags.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('tags.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                     'attribute' => __('master/tags.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can ('tag_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                     'attribute' => __('master/tags.caption')
                                 ])"
                                     data-id="{{ $item->id }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
                             </td>
                         </tr>

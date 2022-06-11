@@ -17,8 +17,8 @@
                     'attribute' => __('module/gallery.album.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['album']) ? route('gallery.album.store') : 
-                route('gallery.album.update', ['id' => $data['album']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['album']) ? route('gallery.album.store', $queryParam) : 
+                route('gallery.album.update', array_merge(['id' => $data['album']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['album'])
                     @method('PUT')

@@ -29,7 +29,7 @@
                     </a>
                     @endif
                     @can ('content_post_create')
-                    <a href="{{ route('content.post.create', ['sectionId' => $data['section']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('content.post.create', array_merge(['sectionId' => $data['section']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/content.post.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/content.post.caption')</span>
@@ -100,8 +100,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.post.text') <span class="badge badge-primary">{{ $data['section']->fieldLang('name') }}</span></h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.post.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -222,7 +227,7 @@
                                 </a>
                                 @endif
                                 @can('content_post_update')
-                                <a href="{{ route('content.post.edit', ['sectionId' => $item['section_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('content.post.edit', array_merge(['sectionId' => $item['section_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/content.post.caption')
                                 ])">
                                     <i class="las la-pen"></i>

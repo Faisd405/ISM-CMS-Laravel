@@ -157,8 +157,8 @@
                                 <div class="card-body">
                                 @foreach ($data['dev_only'] as $dev)
                                 <div class="form-group">
-                                    @if ($dev['name'] == 'maintenance')
                                     <label class="form-label">{{ $dev['label'] }}</label>
+                                    @if ($dev['name'] == 'maintenance')
                                     <select class="custom-select" name="name[{{ $dev['name'] }}]">
                                         @foreach (__('global.label.optional') as $key => $value)
                                         <option value="{{ $key }}" {{ $dev['value'] == $key ? 'selected' : '' }} 
@@ -166,15 +166,21 @@
                                         @endforeach
                                     </select>
                                     @elseif ($dev['name'] == 'default_lang')
-                                    <label class="form-label">{{ $dev['label'] }}</label>
                                     <select class="custom-select" name="name[{{ $dev['name'] }}]">
                                         @foreach ($data['languages'] as $key => $value)
                                         <option value="{{ $value['iso_codes'] }}" {{ $value['iso_codes'] == App::getLocale() ? 'selected' : '' }} 
                                             title="{{ $value['iso_codes'] }}">{{ $value['name'] }}</option>
                                         @endforeach
                                     </select>
+                                    @elseif ($dev['name'] == 'pwa')
+                                    <select class="custom-select" name="name[{{ $dev['name'] }}]">
+                                        @foreach (__('global.label.optional') as $key => $value)
+                                            <option value="{{ $key }}" {{ $dev['value'] == $key ? 'selected' : '' }}>
+                                                {{ $value }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     @else
-                                    <label class="form-label">{{ $dev['label'] }}</label>
                                     <textarea class="form-control mb-1" name="name[{{ $dev['name'] }}]" 
                                         placeholder="{{ Str::replace('_', ' ', $dev['name']) }}">{!! old($dev['name'], $dev['value']) !!}</textarea> 
                                     @endif

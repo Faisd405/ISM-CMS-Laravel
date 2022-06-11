@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Permission;
@@ -650,6 +651,35 @@ class UserService
     }
 
     /**
+     * Record Log
+     * @param array $data
+     * @param model $model
+     */
+    public function recordLog($data, $model)
+    {
+        try {
+            
+            $log = new UserLog();
+            $logData = $log->logable()->associate($model);
+
+            if (Auth::check() == true) {
+                UserLog::create([
+                    'user_id' => isset($data['user_id']) ? $data['user_id'] : Auth::user()['id'],
+                    'event' => $data['event'],
+                    'content' => isset($data['content']) ? $data['content'] : null,
+                    'logable_id' => $logData['logable_id'],
+                    'logable_type' => $logData['logable_type'],
+                    'logable_name' => isset($data['logable_name']) ? $data['logable_name'] : $model->getTable(),
+                    'ip_address' => request()->ip(),
+                ]);
+            }
+            
+        } catch (Exception $e) {
+            //throw $e;
+        }
+    }
+
+    /**
      * Reset Log Failed (delete all row)
      */
     public function resetLog()
@@ -924,6 +954,12 @@ class UserService
                 $this->syncPermissionRole($data['permission'], $role['id']);
             }
 
+            $this->recordLog([
+                'event' => 1,
+                'content' => $role,
+                'logable_name' => 'role'
+            ], $role);
+
             return $this->success($role, __('global.alert.create_success', [
                 'attribute' => __('module/user.role.caption')
             ]));
@@ -942,6 +978,7 @@ class UserService
     public function updateRole($data, $where)
     {
         $role = $this->getRole($where);
+        $oldData = $this->getRole($where);
 
         if (!empty($data['permission'])) {
             $permission = $data['permission'];
@@ -950,12 +987,21 @@ class UserService
         }
 
         try {
-            
+
             $role->update([
                 'name' => Str::slug($data['name'], '_'),
                 'level' => $data['level'],
                 'guard_name' => 'web'
             ]);
+
+            $this->recordLog([
+                'event' => 2,
+                'content' => [
+                    'old' => $oldData,
+                    'new' => $role
+                ],
+                'logable_name' => 'role'
+            ], $role);
 
             $this->syncPermissionRole($permission, $role['id']);
 
@@ -1003,6 +1049,12 @@ class UserService
 
             if ($role['locked'] == 0 && $hasRole == 0 && $hasPermission == 0 
                 && $registration == 0) {
+
+                $this->recordLog([
+                    'event' => 0,
+                    'content' => $role,
+                    'logable_name' => 'role'
+                ], $role);
         
                 $role->delete();
 
@@ -1097,6 +1149,12 @@ class UserService
                 'name' => Str::slug($data['name'], '_'),
                 'guard_name' => 'web'
             ]);
+            
+            $this->recordLog([
+                'event' => 1,
+                'content' => $permission,
+                'logable_name' => 'permission'
+            ], $permission);
 
             return $this->success($permission,  __('global.alert.create_success', [
                 'attribute' => __('module/user.permission.caption')
@@ -1115,6 +1173,7 @@ class UserService
     public function updatePermission($data, $where)
     {
         $permission = $this->getPermission($where);
+        $oldData = $this->getPermission($where);
 
         try {
             
@@ -1122,6 +1181,15 @@ class UserService
                 'name' => Str::slug($data['name'], '_'),
                 'guard_name' => 'web'
             ]);
+
+            $this->recordLog([
+                'event' => 2,
+                'content' => [
+                    'old' => $oldData,
+                    'new' => $permission
+                ],
+                'logable_name' => 'permission'
+            ], $permission);
 
             return $this->success($permission,  __('global.alert.update_success', [
                 'attribute' => __('module/user.permission.caption')
@@ -1153,6 +1221,12 @@ class UserService
             if ($permission['locked'] == 0 && $roleHasPermission == 0 
                 && $modelHasPermission == 0) {
         
+                $this->recordLog([
+                    'event' => 0,
+                    'content' => $permission,
+                    'logable_name' => 'permission'
+                ], $permission);
+
                 Permission::where('parent', $id)->delete();
                 $permission->delete();
 

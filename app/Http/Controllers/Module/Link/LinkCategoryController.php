@@ -104,7 +104,7 @@ class LinkCategoryController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/link.category.caption')
             ]),
-            'routeBack' => route('link.category.index'),
+            'routeBack' => route('link.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/link.caption') => 'javascript:;',
                 __('module/link.category.caption') => route('link.category.index'),
@@ -119,6 +119,7 @@ class LinkCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->linkService->storeCategory($data);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -130,6 +131,9 @@ class LinkCategoryController extends Controller
     public function edit(Request $request, $id)
     {
         $data['category'] = $this->linkService->getCategory(['id' => $id]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link_category'], false);
 
@@ -137,7 +141,7 @@ class LinkCategoryController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/link.category.caption')
             ]),
-            'routeBack' => route('link.category.index'),
+            'routeBack' => route('link.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/link.caption') => 'javascript:;',
                 __('module/link.category.caption') => route('link.category.index'),
@@ -152,6 +156,7 @@ class LinkCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->linkService->updateCategory($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -220,7 +225,7 @@ class LinkCategoryController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('link.category.index');
+        $redir = redirect()->route('link.category.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

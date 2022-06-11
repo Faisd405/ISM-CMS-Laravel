@@ -125,6 +125,9 @@ class MediaController extends Controller
         $data['media'] = $this->mediaService->getMedia(['id' => $id]);
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
+        if (empty($data['media']))
+            return abort(404);
+
         return view('backend.masters.media.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('master/media.caption')

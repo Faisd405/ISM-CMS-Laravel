@@ -299,6 +299,9 @@ class InquiryService
                 $inquiry->menus()->update([
                     'publish' => $inquiry['publish']
                 ]);
+                $inquiry->widgets()->update([
+                    'publish' => $inquiry['publish']
+                ]);
             }
 
             return $this->success($inquiry, __('global.alert.update_success', [
@@ -394,6 +397,7 @@ class InquiryService
                 }
 
                 $inquiry->menus()->delete();
+                $inquiry->widgets()->delete();
                 // $inquiry->indexing->delete();
                 $inquiry->delete();
 
@@ -432,6 +436,7 @@ class InquiryService
             
             //restore data yang bersangkutan
             $inquiry->menus()->restore();
+            $inquiry->widgets()->restore();
             // $inquiry->indexing()->restore();
             $inquiry->restore();
 
@@ -464,6 +469,7 @@ class InquiryService
                 
             $inquiry->menus()->forceDelete();
             $inquiry->indexing()->forceDelete();
+            $inquiry->widgets()->forceDelete();
             $inquiry->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

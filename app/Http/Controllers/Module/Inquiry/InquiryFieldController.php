@@ -40,12 +40,15 @@ class InquiryFieldController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
+        if (empty($data['inquiry']))
+            return abort(404);
+
         $data['fields'] = $this->inquiryService->getFieldList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
         $data['fields']->withPath(url()->current().$param);
-        $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
 
         return view('backend.inquiries.field.index', compact('data'), [
             'title' => __('module/inquiry.field.title'),
@@ -73,12 +76,15 @@ class InquiryFieldController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
+        if (empty($data['inquiry']))
+            return abort(404);
+
         $data['fields'] = $this->inquiryService->getFieldList($filter, true, 10, true, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
         $data['fields']->withPath(url()->current().$param);
-        $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
 
         return view('backend.inquiries.field.trash', compact('data'), [
             'title' => __('module/inquiry.field.title').' - '.__('global.trash'),
@@ -94,13 +100,16 @@ class InquiryFieldController extends Controller
     public function create(Request $request, $inquiryId)
     {
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
+        if (empty($data['inquiry']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.inquiries.field.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/inquiry.field.caption')
             ]),
-            'routeBack' => route('inquiry.field.index', ['inquiryId' => $inquiryId]),
+            'routeBack' => route('inquiry.field.index', array_merge(['inquiryId' => $inquiryId], $request->query())),
             'breadcrumbs' => [
                 __('module/inquiry.field.caption') => route('inquiry.field.index', ['inquiryId' => $inquiryId]),
                 __('global.add') => '',
@@ -114,6 +123,7 @@ class InquiryFieldController extends Controller
         
         $data['inquiry_id'] = $inquiryId;
         $field = $this->inquiryService->storeField($data);
+        $data['query'] = $request->query();
 
         if ($field['success'] == true) {
             return $this->redirectForm($data)->with('success', $field['message']);
@@ -124,15 +134,21 @@ class InquiryFieldController extends Controller
 
     public function edit(Request $request, $inquiryId, $id)
     {
-        $data['field'] = $this->inquiryService->getField(['id' => $id]);
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
+        if (empty($data['inquiry']))
+        return abort(404);
+        
+        $data['field'] = $this->inquiryService->getField(['id' => $id]);
+        if (empty($data['field']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.inquiries.field.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/inquiry.field.caption')
             ]),
-            'routeBack' => route('inquiry.field.index', ['inquiryId' => $inquiryId]),
+            'routeBack' => route('inquiry.field.index', array_merge(['inquiryId' => $inquiryId], $request->query())),
             'breadcrumbs' => [
                 __('module/inquiry.field.caption') => route('inquiry.field.index', ['inquiryId' => $inquiryId]),
                 __('global.edit') => '',
@@ -146,6 +162,7 @@ class InquiryFieldController extends Controller
 
         $data['inquiry_id'] = $inquiryId;
         $field = $this->inquiryService->updateField($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($field['success'] == true) {
             return $this->redirectForm($data)->with('success', $field['message']);
@@ -214,7 +231,7 @@ class InquiryFieldController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('inquiry.field.index', ['inquiryId' => $data['inquiry_id']]);
+        $redir = redirect()->route('inquiry.field.index', array_merge(['inquiryId' => $data['inquiry_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

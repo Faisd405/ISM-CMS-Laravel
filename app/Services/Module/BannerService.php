@@ -220,6 +220,12 @@ class BannerService
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
             ]);
 
+            if ($field == 'publish') {
+                $category->widgets()->update([
+                    'publish' => $category['publish']
+                ]);
+            }
+
             return $this->success($category, __('global.alert.update_success', [
                 'attribute' => __('module/banner.category.caption')
             ]));
@@ -257,6 +263,7 @@ class BannerService
                     ]);
                 }
 
+                $category->widgets()->delete();
                 $category->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -286,6 +293,7 @@ class BannerService
         try {
             
             //restore data yang bersangkutan
+            $category->widgets()->restore();
             $category->restore();
 
             return $this->success($category, __('global.alert.restore_success', [
@@ -312,6 +320,7 @@ class BannerService
 
         try {
                 
+            $category->widgets()->forceDelete();
             $category->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

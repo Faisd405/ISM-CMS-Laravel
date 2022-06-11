@@ -55,6 +55,9 @@ class ContentPostController extends Controller
         }
 
         $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
         $data['posts'] = $this->contentService->getPostList($filter, true, 10, false, [], [
             $data['section']['ordering']['order_by'] => $data['section']['ordering']['order_seq']
         ]);
@@ -93,12 +96,15 @@ class ContentPostController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
         $data['posts'] = $this->contentService->getPostList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['posts']->firstItem();
         $data['posts']->withPath(url()->current().$param);
-        $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
         $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false);
 
         return view('backend.contents.post.trash', compact('data'), [
@@ -115,6 +121,9 @@ class ContentPostController extends Controller
     public function create(Request $request, $sectionId)
     {
         $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false);
         $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false);
@@ -123,7 +132,7 @@ class ContentPostController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/content.post.caption')
             ]),
-            'routeBack' => route('content.post.index', ['sectionId' => $sectionId]),
+            'routeBack' => route('content.post.index', array_merge(['sectionId' => $sectionId], $request->query())),
             'breadcrumbs' => [
                 __('module/content.caption') => 'javascript:;',
                 __('module/content.post.caption') => route('content.post.index', ['sectionId' => $sectionId]),
@@ -142,6 +151,7 @@ class ContentPostController extends Controller
         $data['hide_cover'] = (bool)$request->hide_cover;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $post = $this->contentService->storePost($data);
+        $data['query'] = $request->query();
 
         if ($post['success'] == true) {
             return $this->redirectForm($data)->with('success', $post['message']);
@@ -152,8 +162,14 @@ class ContentPostController extends Controller
 
     public function edit(Request $request, $sectionId, $id)
     {
-        $data['post'] = $this->contentService->getPost(['id' => $id]);
         $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
+        $data['post'] = $this->contentService->getPost(['id' => $id]);
+        if (empty($data['post']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false);
         $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false);
@@ -170,7 +186,7 @@ class ContentPostController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/content.post.caption')
             ]),
-            'routeBack' => route('content.post.index', ['sectionId' => $sectionId]),
+            'routeBack' => route('content.post.index', array_merge(['sectionId' => $sectionId], $request->query())),
             'breadcrumbs' => [
                 __('module/content.caption') => 'javascript:;',
                 __('module/content.post.caption') => route('content.post.index', ['sectionId' => $sectionId]),
@@ -189,6 +205,7 @@ class ContentPostController extends Controller
         $data['hide_cover'] = (bool)$request->hide_cover;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $post = $this->contentService->updatePost($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($post['success'] == true) {
             return $this->redirectForm($data)->with('success', $post['message']);
@@ -268,7 +285,7 @@ class ContentPostController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('content.post.index', ['sectionId' => $data['section_id']]);
+        $redir = redirect()->route('content.post.index', array_merge(['sectionId' => $data['section_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

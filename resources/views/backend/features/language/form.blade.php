@@ -10,7 +10,8 @@
                     'attribute' => __('feature/language.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['language']) ? route('language.store') : route('language.update', ['id' => $data['language']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['language']) ? route('language.store', $queryParam) : 
+                route('language.update', array_merge(['id' => $data['language']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['language'])
                     @method('PUT')

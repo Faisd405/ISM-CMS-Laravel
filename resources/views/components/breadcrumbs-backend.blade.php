@@ -9,7 +9,7 @@
         </a>
         @endisset
         <h5 class="p-2 pl-4 m-0 d-inline-block text-nowrap font-weight-normal">
-            {{ $title }}
+            {!! $title !!}
         </h5>
     </div>
     <div class="p-2 pr-4 text-right bread-right">

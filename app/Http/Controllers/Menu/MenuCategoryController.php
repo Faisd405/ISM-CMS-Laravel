@@ -80,13 +80,13 @@ class MenuCategoryController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return view('backend.menus.category.form', [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/menu.category.caption')
             ]),
-            'routeBack' => route('menu.category.index'),
+            'routeBack' => route('menu.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/menu.category.caption') => route('menu.category.index'),
                 __('global.add') => '',
@@ -100,6 +100,7 @@ class MenuCategoryController extends Controller
         $data['active'] = (bool)$request->active;
         $data['locked'] = $request->locked ?? 0;
         $menuCategory = $this->menuService->storeCategory($data);
+        $data['query'] = $request->query();
 
         if ($menuCategory['success'] == true) {
             return $this->redirectForm($data)->with('success', $menuCategory['message']);
@@ -108,15 +109,17 @@ class MenuCategoryController extends Controller
         return redirect()->back()->with('failed', $menuCategory['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['category'] = $this->menuService->getCategory(['id' => $id]);
+        if (empty($data['category']))
+            return abort(404);
 
         return view('backend.menus.category.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('module/menu.category.caption')
             ]),
-            'routeBack' => route('menu.category.index'),
+            'routeBack' => route('menu.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/menu.category.caption') => route('menu.category.index'),
                 __('global.edit') => '',
@@ -130,6 +133,7 @@ class MenuCategoryController extends Controller
         $data['active'] = (bool)$request->active;
         $data['locked'] = $request->locked ?? 0;
         $menuCategory = $this->menuService->updateCategory($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($menuCategory['success'] == true) {
             return $this->redirectForm($data)->with('success', $menuCategory['message']);
@@ -176,7 +180,7 @@ class MenuCategoryController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('menu.category.index');
+        $redir = redirect()->route('menu.category.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

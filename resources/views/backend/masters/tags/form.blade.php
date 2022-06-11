@@ -10,7 +10,8 @@
                     'attribute' => __('master/tags.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['tag']) ? route('tags.store') : route('tags.update', ['id' => $data['tag']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['tag']) ? route('tags.store', $queryParam) : 
+                route('tags.update', array_merge(['id' => $data['tag']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['tag'])
                     @method('PUT')

@@ -12,20 +12,21 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        @if (isset($data['parent']))
-        <div class="alert alert-dark alert-dismissible fade show">
-            <i class="las la-thumbtack"></i> Under <strong>" {!! $data['parent']->fieldLang('title') !!} "</strong>
-        </div>
-        @endif
-
         <div class="card">
+            @if (isset($data['parent']))
+            <div class="card-header">
+                <span class="text-muted">
+                    UNDER : <b class="text-primary">{!! $data['parent']->fieldLang('title') !!}</b>
+                </span>
+            </div>
+            @endif
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/page.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['page']) ? route('page.store', ['parent' => Request::get('parent')]) : 
-                route('page.update', ['id' => $data['page']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['page']) ? route('page.store', array_merge(['parent' => Request::get('parent')], $queryParam)) : 
+                route('page.update', array_merge(['id' => $data['page']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['page'])
                     @method('PUT')
@@ -260,6 +261,7 @@
                                     @lang('module/page.label.field3')
                                   </span>
                                 </label>
+                                @if (config('cms.module.master.tags.active') == true)
                                 <label class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="hide_tags" value="1" 
                                     {{ !isset($data['page']) ? (old('hide_tags') ? 'checked' : '') : (old('hide_tags', $data['page']['config']['hide_tags']) ? 'checked' : '') }}>
@@ -267,6 +269,7 @@
                                       @lang('master/tags.caption')
                                     </span>
                                   </label>
+                                @endif
                                 <label class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="hide_cover" value="1" 
                                     {{ !isset($data['page']) ? (old('hide_cover') ? 'checked' : '') : (old('hide_cover', $data['page']['config']['hide_cover']) ? 'checked' : '') }}>

@@ -12,6 +12,10 @@ class UserLog extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'content' => 'json'
+    ];
+
     public function logable()
     {
         return $this->morphTo();

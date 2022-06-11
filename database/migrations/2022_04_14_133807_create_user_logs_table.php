@@ -15,12 +15,13 @@ class CreateUserLogsTable extends Migration
     {
         Schema::create('user_logs', function (Blueprint $table) {
             $table->id();
+            $table->ipAddress('ip_address')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->tinyInteger('event')->comment('0 = hapus, 1 = tambah, 2 = edit');
             $table->string('logable_id')->comment('id relasi');
             $table->string('logable_type')->comment('model relasi');
             $table->string('logable_name')->comment('nama model');
-            $table->ipAddress('ip_address')->nullable();
+            $table->json('content')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')

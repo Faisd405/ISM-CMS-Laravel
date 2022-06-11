@@ -26,7 +26,7 @@
                     <button type="button" class="btn btn-danger icon-btn-only-sm btn-sm" onclick="$(this).find('#form-reset').submit();"
                         title="Reset @lang('module/user.login_failed.caption')">
                         <i class="las la-redo-alt"></i> Reset @lang('module/user.login_failed.caption')
-                        <form action="{{ route('user.login-failed.reset') }}" method="POST" id="form-reset">
+                        <form action="{{ route('user.login-failed.reset', $queryParam) }}" method="POST" id="form-reset">
                             @csrf
                             @method('DELETE')
                         </form>

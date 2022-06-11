@@ -45,12 +45,15 @@ class DocumentFileController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['files'] = $this->documentService->getFileList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
         $data['files']->withPath(url()->current().$param);
-        $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
 
         return view('backend.documents.file.index', compact('data'), [
             'title' => __('module/document.file.title'),
@@ -82,12 +85,15 @@ class DocumentFileController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['files'] = $this->documentService->getFileList($filter, true, 10, true, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
         $data['files']->withPath(url()->current().$param);
-        $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
 
         return view('backend.documents.file.trash', compact('data'), [
             'title' => __('module/document.file.title').' - '.__('global.trash'),
@@ -103,13 +109,16 @@ class DocumentFileController extends Controller
     public function create(Request $request, $categoryId)
     {
         $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.documents.file.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/document.file.caption')
             ]),
-            'routeBack' => route('document.file.index', ['categoryId' => $categoryId]),
+            'routeBack' => route('document.file.index', array_merge(['categoryId' => $categoryId], $request->query())),
             'breadcrumbs' => [
                 __('module/document.file.caption') => route('document.file.index', ['categoryId' => $categoryId]),
                 __('global.add') => '',
@@ -130,6 +139,7 @@ class DocumentFileController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_cover'] = (bool)$request->hide_cover;
         $documentFile = $this->documentService->storeFile($data);
+        $data['query'] = $request->query();
 
         if ($documentFile['success'] == true) {
             return $this->redirectForm($data)->with('success', $documentFile['message']);
@@ -167,15 +177,21 @@ class DocumentFileController extends Controller
 
     public function edit(Request $request, $categoryId, $id)
     {
-        $data['file'] = $this->documentService->getFile(['id' => $id]);
         $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
+        $data['file'] = $this->documentService->getFile(['id' => $id]);
+        if (empty($data['file']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.documents.file.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/document.file.caption')
             ]),
-            'routeBack' => route('document.file.index', ['categoryId' => $categoryId]),
+            'routeBack' => route('document.file.index', array_merge(['categoryId' => $categoryId], $request->query())),
             'breadcrumbs' => [
                 __('module/document.file.caption') => route('document.file.index', ['categoryId' => $categoryId]),
                 __('global.edit') => '',
@@ -196,6 +212,7 @@ class DocumentFileController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_cover'] = (bool)$request->hide_cover;
         $documentFile = $this->documentService->updateFile($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($documentFile['success'] == true) {
             return $this->redirectForm($data)->with('success', $documentFile['message']);
@@ -264,7 +281,7 @@ class DocumentFileController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('document.file.index', ['categoryId' => $data['document_category_id']]);
+        $redir = redirect()->route('document.file.index', array_merge(['categoryId' => $data['document_category_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

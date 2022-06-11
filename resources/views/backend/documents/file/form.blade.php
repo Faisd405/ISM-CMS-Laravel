@@ -11,13 +11,18 @@
 
         @include('components.alert-error')
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/document.category.caption')) }} : <b class="text-primary">{{ $data['category']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/document.file.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['file']) ? route('document.file.store', ['categoryId' => $data['category']['id']]) : 
-                route('document.file.update', ['categoryId' => $data['category']['id'], 'id' => $data['file']['id']]) }}" method="POST" 
+            <form action="{{ !isset($data['file']) ? route('document.file.store', array_merge(['categoryId' => $data['category']['id']], $queryParam)) : 
+                route('document.file.update', array_merge(['categoryId' => $data['category']['id'], 'id' => $data['file']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
                 @csrf
                 @isset($data['file'])

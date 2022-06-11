@@ -92,7 +92,7 @@ class BannerCategoryController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/banner.category.caption')
             ]),
-            'routeBack' => route('banner.category.index'),
+            'routeBack' => route('banner.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/banner.category.caption') => route('banner.category.index'),
                 __('global.add') => '',
@@ -105,6 +105,7 @@ class BannerCategoryController extends Controller
         $data = $request->all();
         $data['hide_description'] = (bool)$request->hide_description;
         $bannerCategory = $this->bannerService->storeCategory($data);
+        $data['query'] = $request->query();
 
         if ($bannerCategory['success'] == true) {
             return $this->redirectForm($data)->with('success', $bannerCategory['message']);
@@ -116,13 +117,16 @@ class BannerCategoryController extends Controller
     public function edit(Request $request, $id)
     {
         $data['category'] = $this->bannerService->getCategory(['id' => $id]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.banners.category.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/banner.category.caption')
             ]),
-            'routeBack' => route('banner.category.index'),
+            'routeBack' => route('banner.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/banner.category.caption') => route('banner.category.index'),
                 __('global.edit') => '',
@@ -135,6 +139,7 @@ class BannerCategoryController extends Controller
         $data = $request->all();
         $data['hide_description'] = (bool)$request->hide_description;
         $bannerCategory = $this->bannerService->updateCategory($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($bannerCategory['success'] == true) {
             return $this->redirectForm($data)->with('success', $bannerCategory['message']);
@@ -192,7 +197,7 @@ class BannerCategoryController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('banner.category.index');
+        $redir = redirect()->route('banner.category.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

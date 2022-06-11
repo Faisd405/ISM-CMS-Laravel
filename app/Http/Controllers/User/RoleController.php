@@ -46,7 +46,7 @@ class RoleController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $data['permissions'] = $this->userService->getPermissionList(['parent' => 0], false);
 
@@ -54,7 +54,7 @@ class RoleController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/user.role.caption')
             ]),
-            'routeBack' => route('role.index'),
+            'routeBack' => route('role.index', $request->query()),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.acl_caption') => 'javascript:;',
@@ -68,6 +68,7 @@ class RoleController extends Controller
     {
         $data = $request->all();
         $role = $this->userService->storeRole($data);
+        $data['query'] = $request->query();
 
         if ($role['success'] == true) {
             return $this->redirectForm($data)->with('success', $role['message']);
@@ -76,9 +77,12 @@ class RoleController extends Controller
         return redirect()->back()->with('failed', $role['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['role'] = $this->userService->getRole(['id' => $id]);
+        if (empty($data['role']))
+            return abort(404);
+
         $data['permissions'] = $this->userService->getPermissionList(['parent' => 0], false);
         $data['permission_ids'] = $data['role']['permissions']->pluck('id')->toArray();
 
@@ -86,7 +90,7 @@ class RoleController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/user.role.caption')
             ]),
-            'routeBack' => route('role.index'),
+            'routeBack' => route('role.index', $request->query()),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.acl_caption') => 'javascript:;',
@@ -100,6 +104,7 @@ class RoleController extends Controller
     {
         $data = $request->all();
         $role = $this->userService->updateRole($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($role['success'] == true) {
             return $this->redirectForm($data)->with('success', $role['message']);
@@ -117,7 +122,7 @@ class RoleController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('role.index');
+        $redir = redirect()->route('role.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

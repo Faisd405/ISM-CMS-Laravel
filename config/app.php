@@ -168,6 +168,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Biscolab\ReCaptcha\ReCaptchaServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Stevebauman\Location\LocationServiceProvider::class,
 
         /*
          * Application Service Providers...

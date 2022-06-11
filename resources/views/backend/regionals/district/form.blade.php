@@ -5,13 +5,20 @@
     <div class="col-xl-8 col-lg-8 col-md-8">
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/regional.province.caption')) }} : <b class="text-primary">{{ $data['city']['province']['name'] }}</b>
+                    <i class="las la-angle-right"></i>
+                    {{ Str::upper(__('module/regional.city.caption')) }} : <b class="text-primary">{{ $data['city']['name'] }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/regional.district.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['district']) ? route('district.store', ['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']]) : 
-                route('district.update', ['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code'], 'id' => $data['district']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['district']) ? route('district.store', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']], $queryParam)) : 
+                route('district.update', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code'], 'id' => $data['district']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['district'])
                     @method('PUT')

@@ -5,13 +5,16 @@
     <div class="col-xl-8 col-lg-8 col-md-8">
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">{{ Str::upper(__('module/regional.province.caption')) }} : <b class="text-primary">{{ $data['province']['name'] }}</b></span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/regional.city.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['city']) ? route('city.store', ['provinceCode' => $data['province']['code']]) : 
-                route('city.update', ['provinceCode' => $data['province']['code'], 'id' => $data['city']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['city']) ? route('city.store', array_merge(['provinceCode' => $data['province']['code']], $queryParam)) : 
+                route('city.update', array_merge(['provinceCode' => $data['province']['code'], 'id' => $data['city']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['city'])
                     @method('PUT')

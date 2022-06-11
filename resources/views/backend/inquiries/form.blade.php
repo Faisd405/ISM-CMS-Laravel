@@ -18,8 +18,8 @@
                     'attribute' => __('module/inquiry.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['inquiry']) ? route('inquiry.store') : 
-                route('inquiry.update', ['id' => $data['inquiry']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['inquiry']) ? route('inquiry.store', $queryParam) : 
+                route('inquiry.update', array_merge(['id' => $data['inquiry']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['inquiry'])
                     @method('PUT')

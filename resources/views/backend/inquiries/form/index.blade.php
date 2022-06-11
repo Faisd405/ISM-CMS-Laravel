@@ -128,8 +128,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/inquiry.caption')) }} : <b class="text-primary">{{ $data['inquiry']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/inquiry.form.text') <span class="badge badge-primary">{!! $data['inquiry']->fieldLang('name') !!}</span></h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/inquiry.form.text')</h5>
             </div>
 
             <div class="table-responsive">

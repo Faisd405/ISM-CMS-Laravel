@@ -11,13 +11,18 @@
 
         @include('components.alert-error')
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/banner.category.caption')) }} : <b class="text-primary">{{ $data['category']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/banner.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['banner']) ? route('banner.store', ['categoryId' => $data['category']['id']]) : 
-                route('banner.update', ['categoryId' => $data['category']['id'], 'id' => $data['banner']['id']]) }}" method="POST" 
+            <form action="{{ !isset($data['banner']) ? route('banner.store', array_merge(['categoryId' => $data['category']['id']], $queryParam)) : 
+                route('banner.update', array_merge(['categoryId' => $data['category']['id'], 'id' => $data['banner']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
                 @csrf
                 @isset($data['banner'])

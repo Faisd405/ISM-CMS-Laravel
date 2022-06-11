@@ -98,7 +98,7 @@
                     <tr>
                         <th colspan="2">@lang('module/content.post.label.field1')</th>
                         <th>@lang('global.hits')</th>
-                        <th></th>
+                        <th style="width: 50px;"></th>
                     </tr>
                 </thead>
                 <tbody>

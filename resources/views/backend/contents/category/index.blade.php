@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can ('content_category_create')
-                    <a href="{{ route('content.category.create', ['sectionId' => $data['section']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('content.category.create', array_merge(['sectionId' => $data['section']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/content.category.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/content.category.caption')</span>
@@ -80,8 +80,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.category.text') <span class="badge badge-primary">{{ $data['section']->fieldLang('name') }}</span></h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.category.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -165,7 +170,7 @@
                             </td>
                             <td class="text-center">
                                 @can('content_category_update')
-                                <a href="{{ route('content.category.edit', ['sectionId' => $item['section_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('content.category.edit', array_merge(['sectionId' => $item['section_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/content.category.caption')
                                 ])">
                                     <i class="las la-pen"></i>

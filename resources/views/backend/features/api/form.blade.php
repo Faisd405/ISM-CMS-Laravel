@@ -10,7 +10,8 @@
                     'attribute' => __('feature/api.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['api']) ? route('api.store') : route('api.update', ['id' => $data['api']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['api']) ? route('api.store', $queryParam) : 
+                route('api.update', array_merge(['id' => $data['api']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['api'])
                     @method('PUT')

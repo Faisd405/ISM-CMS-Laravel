@@ -27,7 +27,7 @@
 
                             <div class="card-body media align-items-center">
                                 <a href="{{ $data['user']->avatars() }}" data-fancybox="gallery">
-                                    <img src="{{ $data['user']->avatars() }}" alt="" class="d-block ui-w-80">
+                                    <img src="{{ $data['user']->avatars() }}" alt="" class="d-block ui-w-80 rounded-circle">
                                 </a>
                                 <div class="media-body ml-4">
                                     <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modal-change-photo" title="@lang('global.change')">

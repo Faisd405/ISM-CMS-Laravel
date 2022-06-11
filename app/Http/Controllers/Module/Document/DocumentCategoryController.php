@@ -109,7 +109,7 @@ class DocumentCategoryController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/document.category.caption')
             ]),
-            'routeBack' => route('document.category.index'),
+            'routeBack' => route('document.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/document.caption') => 'javascript:;',
                 __('module/document.category.caption') => route('document.category.index'),
@@ -125,6 +125,7 @@ class DocumentCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->documentService->storeCategory($data);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -136,6 +137,9 @@ class DocumentCategoryController extends Controller
     public function edit(Request $request, $id)
     {
         $data['category'] = $this->documentService->getCategory(['id' => $id]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document_category'], false);
         $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false);
@@ -144,7 +148,7 @@ class DocumentCategoryController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/document.category.caption')
             ]),
-            'routeBack' => route('document.category.index'),
+            'routeBack' => route('document.category.index', $request->query()),
             'breadcrumbs' => [
                 __('module/document.caption') => 'javascript:;',
                 __('module/document.category.caption') => route('document.category.index'),
@@ -160,6 +164,7 @@ class DocumentCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->documentService->updateCategory($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -228,7 +233,7 @@ class DocumentCategoryController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('document.category.index');
+        $redir = redirect()->route('document.category.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

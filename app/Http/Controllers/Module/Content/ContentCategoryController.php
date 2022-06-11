@@ -47,12 +47,15 @@ class ContentCategoryController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
         $data['categories'] = $this->contentService->getCategoryList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['categories']->firstItem();
         $data['categories']->withPath(url()->current().$param);
-        $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
 
         return view('backend.contents.category.index', compact('data'), [
             'title' => __('module/content.category.title'),
@@ -82,12 +85,15 @@ class ContentCategoryController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
         $data['categories'] = $this->contentService->getCategoryList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['categories']->firstItem();
         $data['categories']->withPath(url()->current().$param);
-        $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
 
         return view('backend.contents.category.trash', compact('data'), [
             'title' => __('module/content.category.title').' - '.__('global.trash'),
@@ -103,6 +109,9 @@ class ContentCategoryController extends Controller
     public function create(Request $request, $sectionId)
     {
         $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_category'], false);
 
@@ -110,7 +119,7 @@ class ContentCategoryController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/content.category.caption')
             ]),
-            'routeBack' => route('content.category.index', ['sectionId' => $sectionId]),
+            'routeBack' => route('content.category.index', array_merge(['sectionId' => $sectionId], $request->query())),
             'breadcrumbs' => [
                 __('module/content.caption') => 'javascript:;',
                 __('module/content.category.caption') => route('content.category.index', ['sectionId' => $sectionId]),
@@ -127,6 +136,7 @@ class ContentCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->contentService->storeCategory($data);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -137,8 +147,14 @@ class ContentCategoryController extends Controller
 
     public function edit(Request $request, $sectionId, $id)
     {
-        $data['category'] = $this->contentService->getCategory(['id' => $id]);
         $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
+        if (empty($data['section']))
+            return abort(404);
+
+        $data['category'] = $this->contentService->getCategory(['id' => $id]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_category'], false);
 
@@ -146,7 +162,7 @@ class ContentCategoryController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/content.category.caption')
             ]),
-            'routeBack' => route('content.category.index', ['sectionId' => $sectionId]),
+            'routeBack' => route('content.category.index', array_merge(['sectionId' => $sectionId], $request->query())),
             'breadcrumbs' => [
                 __('module/content.caption') => 'javascript:;',
                 __('module/content.category.caption') => route('content.category.index', ['sectionId' => $sectionId]),
@@ -163,6 +179,7 @@ class ContentCategoryController extends Controller
         $data['hide_description'] = (bool)$request->hide_description;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $category = $this->contentService->updateCategory($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($category['success'] == true) {
             return $this->redirectForm($data)->with('success', $category['message']);
@@ -231,7 +248,7 @@ class ContentCategoryController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('content.category.index', ['sectionId' => $data['section_id']]);
+        $redir = redirect()->route('content.category.index', array_merge(['sectionId' => $data['section_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

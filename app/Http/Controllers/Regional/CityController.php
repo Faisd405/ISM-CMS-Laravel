@@ -35,10 +35,13 @@ class CityController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['province'] = $this->regionalService->getProvince(['code' => $provinceCode]);
+        if (empty($data['province']))
+            return abort(404);
+
         $data['cities'] = $this->regionalService->getCityList($filter, true);
         $data['no'] = $data['cities']->firstItem();
         $data['cities']->withPath(url()->current().$param);
-        $data['province'] = $this->regionalService->getProvince(['code' => $provinceCode]);
 
         return view('backend.regionals.city.index', compact('data'), [
             'title' => __('module/regional.city.title'),
@@ -64,12 +67,15 @@ class CityController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['province'] = $this->regionalService->getProvince(['code' => $provinceCode]);
+        if (empty($data['province']))
+            return abort(404);
+
         $data['cities'] = $this->regionalService->getCityList($filter, true, 10, true, [], [
             'deleted_by' => 'DESC'
         ]);
         $data['no'] = $data['cities']->firstItem();
         $data['cities']->withPath(url()->current().$param);
-        $data['province'] = $this->regionalService->getProvince(['code' => $provinceCode]);
 
         return view('backend.regionals.city.trash', compact('data'), [
             'title' => __('module/regional.city.title').' - '.__('global.trash'),
@@ -83,15 +89,17 @@ class CityController extends Controller
         ]);
     }
 
-    public function create($provinceCode)
+    public function create(Request $request, $provinceCode)
     {
         $data['province'] = $this->regionalService->getProvince(['code' => $provinceCode]);
+        if (empty($data['province']))
+            return abort(404);
 
         return view('backend.regionals.city.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/regional.city.caption')
             ]),
-            'routeBack' => route('city.index', ['provinceCode' => $provinceCode]),
+            'routeBack' => route('city.index', array_merge(['provinceCode' => $provinceCode], $request->query())),
             'breadcrumbs' => [
                 __('module/regional.caption') => 'javascript:;',
                 __('module/regional.city.caption') => route('city.index', ['provinceCode' => $provinceCode]),
@@ -105,24 +113,30 @@ class CityController extends Controller
         $data = $request->all();
         $data['province_code'] = $provinceCode;
         $city = $this->regionalService->storeCity($data);
+        $data['query'] = $request->query();
 
         if ($city['success'] == true) {
-            return $this->redirectForm($data, $provinceCode)->with('success', $city['message']);
+            return $this->redirectForm($data)->with('success', $city['message']);
         }
 
         return redirect()->back()->with('failed', $city['message']);
     }
 
-    public function edit($provinceCode, $id)
+    public function edit(Request $request, $provinceCode, $id)
     {
-        $data['city'] = $this->regionalService->getCity(['id' => $id]);
         $data['province'] = $this->regionalService->getProvince(['code' => $provinceCode]);
+        if (empty($data['province']))
+            return abort(404);
+
+        $data['city'] = $this->regionalService->getCity(['id' => $id]);
+        if (empty($data['city']))
+            return abort(404);
 
         return view('backend.regionals.city.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/regional.city.caption')
             ]),
-            'routeBack' => route('city.index', ['provinceCode' => $provinceCode]),
+            'routeBack' => route('city.index', array_merge(['provinceCode' => $provinceCode], $request->query())),
             'breadcrumbs' => [
                 __('module/regional.caption') => 'javascript:;',
                 __('module/regional.city.caption') => route('city.index', ['provinceCode' => $provinceCode]),
@@ -136,9 +150,10 @@ class CityController extends Controller
         $data = $request->all();
         $data['province_code'] = $provinceCode;
         $city = $this->regionalService->updateCity($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($city['success'] == true) {
-            return $this->redirectForm($data, $provinceCode)->with('success', $city['message']);
+            return $this->redirectForm($data)->with('success', $city['message']);
         }
 
         return redirect()->back()->with('failed', $city['message']);
@@ -169,9 +184,9 @@ class CityController extends Controller
         return redirect()->back()->with('failed', $city['message']);
     }
 
-    private function redirectForm($data, $provinceCode)
+    private function redirectForm($data)
     {
-        $redir = redirect()->route('city.index', ['provinceCode' => $provinceCode]);
+        $redir = redirect()->route('city.index', array_merge(['provinceCode' => $data['province_code']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

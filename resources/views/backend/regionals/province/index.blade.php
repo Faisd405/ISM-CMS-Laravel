@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('regional_create')
-                    <a href="{{ route('province.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('province.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/regional.province.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/regional.province.caption')</span>
@@ -114,19 +114,21 @@
                                     <i class="las la-map-marker"></i>
                                 </a>
                                 @can('regional_update')
-                                <a href="{{ route('province.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('province.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('module/regional.province.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can('regional_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/regional.province.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
                             </td>
                         </tr>

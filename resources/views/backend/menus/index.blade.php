@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can ('menu_create')
-                    <a href="{{ route('menu.create', ['categoryId' => $data['category']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('menu.create', array_merge(['categoryId' => $data['category']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/menu.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/menu.caption')</span>
@@ -80,6 +80,11 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/menu.category.caption')) }} : <b class="text-primary">{{ Str::upper($data['category']['name']) }}</b>
+                </span>
+            </div>
             <div class="card-header with-elements">
                 <h5 class="card-header-title mt-1 mb-0">@lang('module/menu.text')</h5>
             </div>
@@ -158,7 +163,7 @@
                             </td>
                             <td class="text-center">
                                 @can('menu_create')
-                                <a href="{{ route('menu.create', ['categoryId' => $item['menu_category_id'], 'parent' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success" title="@lang('global.add_attr_new', [
+                                <a href="{{ route('menu.create', array_merge(['categoryId' => $item['menu_category_id'], 'parent' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-success" title="@lang('global.add_attr_new', [
                                     'attribute' => __('module/menu.caption')
                                 ])">
                                     <i class="las la-plus"></i>
@@ -166,7 +171,7 @@
                                 @endcan
                                 @can('menu_update')
                                 @if (Auth::user()->hasRole('super') || !Auth::user()->hasRole('super') && $item['config']['edit_public_menu'] == 1)
-                                <a href="{{ route('menu.edit', ['categoryId' => $item['menu_category_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('menu.edit', array_merge(['categoryId' => $item['menu_category_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/menu.caption')
                                 ])">
                                     <i class="las la-pen"></i>

@@ -11,9 +11,9 @@
 @endsection
 
 @section('content')
-{{-- isi content --}}
-
-{{-- panggil file widget custom disini contoh : @include('frontend.widget.nama-file') --}}
+@foreach ($data['widgets'] as $widget)
+    @include('frontend.widget.'.$widget['template'], ['widget' => $widget])
+@endforeach
 @endsection
 
 @section('scripts')

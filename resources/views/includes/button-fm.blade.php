@@ -2,21 +2,27 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        document.getElementById('button-image').addEventListener('click', (event) => {
-            event.preventDefault();
+        var image1 = document.getElementById('button-image');
+        if (image1 != null) {
+            image1.addEventListener('click', (event) => {
+                event.preventDefault();
 
-            inputId = 'image1';
+                inputId = 'image1';
 
-            window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
-        });
+                window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+            });
+        }
 
-        document.getElementById('button-image2').addEventListener('click', (event) => {
+        var image2 = document.getElementById('button-image2');
+        if (image2 != null) {
+            image2.addEventListener('click', (event) => {
             event.preventDefault();
 
             inputId = 'image2';
 
             window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
         });
+        }
 
     });
 

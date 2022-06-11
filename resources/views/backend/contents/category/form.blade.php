@@ -13,13 +13,18 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/content.category.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['category']) ? route('content.category.store', ['sectionId' => $data['section']['id']]) : 
-                route('content.category.update', ['sectionId' => $data['section']['id'], 'id' => $data['category']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['category']) ? route('content.category.store', array_merge(['sectionId' => $data['section']['id']], $queryParam)) : 
+                route('content.category.update', array_merge(['sectionId' => $data['section']['id'], 'id' => $data['category']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['category'])
                     @method('PUT')

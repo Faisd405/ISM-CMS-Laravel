@@ -238,6 +238,9 @@ class DocumentService
                 $category->menus()->update([
                     'publish' => $category['publish']
                 ]);
+                $category->widgets()->update([
+                    'publish' => $category['publish']
+                ]);
             }
 
             return $this->success($category, __('global.alert.update_success', [
@@ -332,6 +335,7 @@ class DocumentService
                 }
 
                 $category->menus()->delete();
+                $category->widgets()->delete();
                 $category->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
@@ -369,6 +373,7 @@ class DocumentService
             
             //restore data yang bersangkutan
             $category->menus()->restore();
+            $category->widgets()->restore();
             $category->restore();
 
             return $this->success($category, __('global.alert.restore_success', [
@@ -396,6 +401,7 @@ class DocumentService
         try {
             
             $category->menus()->forceDelete();
+            $category->widgets()->forceDelete();
             $category->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

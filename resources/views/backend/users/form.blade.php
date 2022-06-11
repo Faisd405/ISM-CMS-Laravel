@@ -14,7 +14,8 @@
                     'attribute' => __('module/user.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['user']) ? route('user.store') : route('user.update', ['id' => $data['user']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['user']) ? route('user.store', $queryParam) : 
+              route('user.update', array_merge(['id' => $data['user']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset ($data['user'])
                     @method('PUT')

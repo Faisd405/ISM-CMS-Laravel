@@ -15,13 +15,18 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/content.post.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['post']) ? route('content.post.store', ['sectionId' => $data['section']['id']]) : 
-                route('content.post.update', ['sectionId' => $data['section']['id'], 'id' => $data['post']['id']]) }}" method="POST">
+            <form action="{{ !isset($data['post']) ? route('content.post.store', array_merge(['sectionId' => $data['section']['id']], $queryParam)) : 
+                route('content.post.update', array_merge(['sectionId' => $data['section']['id'], 'id' => $data['post']['id']], $queryParam)) }}" method="POST">
                 @csrf
                 @isset($data['post'])
                     @method('PUT')
@@ -337,6 +342,7 @@
                                     @lang('module/page.label.field3')
                                   </span>
                                 </label>
+                                @if (config('cms.module.master.tags.active') == true)
                                 <label class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="hide_tags" value="1" 
                                     {{ !isset($data['post']) ? (old('hide_tags') ? 'checked' : '') : (old('hide_tags', $data['post']['config']['hide_tags']) ? 'checked' : '') }}>
@@ -344,6 +350,7 @@
                                       @lang('master/tags.caption')
                                     </span>
                                   </label>
+                                @endif
                                 <label class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="hide_cover" value="1" 
                                     {{ !isset($data['post']) ? (old('hide_cover') ? 'checked' : '') : (old('hide_cover', $data['post']['config']['hide_cover']) ? 'checked' : '') }}>

@@ -88,7 +88,7 @@ class RegistrationController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false);
 
@@ -96,7 +96,7 @@ class RegistrationController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('feature/registration.caption')
             ]),
-            'routeBack' => route('registration.index'),
+            'routeBack' => route('registration.index', $request->query()),
             'breadcrumbs' => [
                 __('feature/registration.caption') => route('registration.index'),
                 __('global.add') => '',
@@ -109,6 +109,7 @@ class RegistrationController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $registration = $this->registrationService->store($data);
+        $data['query'] = $request->query();
 
         if ($registration['success'] == true) {
             return $this->redirectForm($data)->with('success', $registration['message']);
@@ -117,16 +118,19 @@ class RegistrationController extends Controller
         return redirect()->back()->with('failed', $registration['message']);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['registration'] = $this->registrationService->getRegistration(['id' => $id]);
+        if (empty($data['registration']))
+            return abort(404);
+
         $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false);
 
         return view('backend.features.registration.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('feature/registration.caption')
             ]),
-            'routeBack' => route('registration.index'),
+            'routeBack' => route('registration.index', $request->query()),
             'breadcrumbs' => [
                 __('feature/registration.caption') => route('registration.index'),
                 __('global.edit') => '',
@@ -139,6 +143,7 @@ class RegistrationController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $registration = $this->registrationService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($registration['success'] == true) {
             return $this->redirectForm($data)->with('success', $registration['message']);
@@ -185,7 +190,7 @@ class RegistrationController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('registration.index');
+        $redir = redirect()->route('registration.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

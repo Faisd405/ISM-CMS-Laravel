@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $seed['registration'] = RegistrationSeeder::class;
         $seed['menu'] = MenuSeeder::class;
         $seed['content'] = ContentSeeder::class;
+        $seed['widget'] = WidgetSeeder::class;
 
         if (config('cms.module.regional.active') == true) {
             $seed['regional'] = RegionalSeeder::class;

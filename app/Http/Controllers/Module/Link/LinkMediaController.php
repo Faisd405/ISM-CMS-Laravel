@@ -40,12 +40,15 @@ class LinkMediaController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['category'] = $this->linkService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['medias'] = $this->linkService->getMediaList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['medias']->firstItem();
         $data['medias']->withPath(url()->current().$param);
-        $data['category'] = $this->linkService->getCategory(['id' => $categoryId]);
 
         return view('backend.links.media.index', compact('data'), [
             'title' => __('module/link.media.title'),
@@ -74,12 +77,15 @@ class LinkMediaController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['category'] = $this->linkService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['medias'] = $this->linkService->getMediaList($filter, true, 10, true, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['medias']->firstItem();
         $data['medias']->withPath(url()->current().$param);
-        $data['category'] = $this->linkService->getCategory(['id' => $categoryId]);
 
         return view('backend.links.media.trash', compact('data'), [
             'title' => __('module/link.media.title').' - '.__('global.trash'),
@@ -95,13 +101,16 @@ class LinkMediaController extends Controller
     public function create(Request $request, $categoryId)
     {
         $data['category'] = $this->linkService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.links.media.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/link.media.caption')
             ]),
-            'routeBack' => route('link.media.index', ['categoryId' => $categoryId]),
+            'routeBack' => route('link.media.index', array_merge(['categoryId' => $categoryId], $request->query())),
             'breadcrumbs' => [
                 __('module/link.media.caption') => route('link.media.index', ['categoryId' => $categoryId]),
                 __('global.add') => '',
@@ -119,6 +128,7 @@ class LinkMediaController extends Controller
         $data['hide_banner'] = (bool)$request->hide_banner;
         $data['is_embed'] = (bool)$request->is_embed;
         $linkMedia = $this->linkService->storeMedia($data);
+        $data['query'] = $request->query();
 
         if ($linkMedia['success'] == true) {
             return $this->redirectForm($data)->with('success', $linkMedia['message']);
@@ -129,15 +139,21 @@ class LinkMediaController extends Controller
 
     public function edit(Request $request, $categoryId, $id)
     {
-        $data['media'] = $this->linkService->getMedia(['id' => $id]);
         $data['category'] = $this->linkService->getCategory(['id' => $categoryId]);
+        if (empty($data['category']))
+            return abort(404);
+
+        $data['media'] = $this->linkService->getMedia(['id' => $id]);
+        if (empty($data['media']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.links.media.form', compact('data'), [
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/link.media.caption')
             ]),
-            'routeBack' => route('link.media.index', ['categoryId' => $categoryId]),
+            'routeBack' => route('link.media.index', array_merge(['categoryId' => $categoryId], $request->query())),
             'breadcrumbs' => [
                 __('module/link.media.caption') => route('link.media.index', ['categoryId' => $categoryId]),
                 __('global.edit') => '',
@@ -155,6 +171,7 @@ class LinkMediaController extends Controller
         $data['hide_banner'] = (bool)$request->hide_banner;
         $data['is_embed'] = (bool)$request->is_embed;
         $linkMedia = $this->linkService->updateMedia($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($linkMedia['success'] == true) {
             return $this->redirectForm($data)->with('success', $linkMedia['message']);
@@ -224,7 +241,7 @@ class LinkMediaController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('link.media.index', ['categoryId' => $data['link_category_id']]);
+        $redir = redirect()->route('link.media.index', array_merge(['categoryId' => $data['link_category_id']], $data['query']));
         if ($data['action'] == 'back') {
             $redir = back();
         }

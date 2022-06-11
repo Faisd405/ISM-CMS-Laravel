@@ -109,7 +109,7 @@ class EventController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/event.caption')
             ]),
-            'routeBack' => route('event.index'),
+            'routeBack' => route('event.index', $request->query()),
             'breadcrumbs' => [
                 __('module/event.caption') => route('event.index'),
                 __('global.add') => '',
@@ -130,6 +130,7 @@ class EventController extends Controller
         $data['meeting_id'] = $request->meeting_id;
         $data['meeting_passcode'] = $request->meeting_passcode;
         $event = $this->eventService->storeEvent($data);
+        $data['query'] = $request->query();
 
         if ($event['success'] == true) {
             return $this->redirectForm($data)->with('success', $event['message']);
@@ -141,6 +142,9 @@ class EventController extends Controller
     public function edit(Request $request, $id)
     {
         $data['event'] = $this->eventService->getEvent(['id' => $id]);
+        if (empty($data['event']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.events.form', compact('data'), [
@@ -168,6 +172,7 @@ class EventController extends Controller
         $data['meeting_id'] = $request->meeting_id;
         $data['meeting_passcode'] = $request->meeting_passcode;
         $event = $this->eventService->updateEvent($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($event['success'] == true) {
             return $this->redirectForm($data)->with('success', $event['message']);
@@ -236,7 +241,7 @@ class EventController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('event.index');
+        $redir = redirect()->route('event.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }
@@ -266,12 +271,15 @@ class EventController extends Controller
             $filter['limit'] = $request->input('limit');
         }
 
+        $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
+        if (empty($data['event']))
+            return abort(404);
+
         $data['forms'] = $this->eventService->getFormList($filter, true, 10, false, [], [
             'submit_time' => 'DESC'
         ]);
         $data['no'] = $data['forms']->firstItem();
         $data['forms']->withPath(url()->current().$param);
-        $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
         $data['fields'] = $this->eventService->getFieldList(['event_id' => $eventId], false);
 
         return view('backend.events.form.index', compact('data'), [

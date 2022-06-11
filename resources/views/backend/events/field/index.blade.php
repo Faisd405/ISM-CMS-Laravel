@@ -24,7 +24,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('event_field_create')
-                    <a href="{{ route('event.field.create', ['eventId' => $data['event']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('event.field.create', array_merge(['eventId' => $data['event']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                         'attribute' => __('module/event.field.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/event.field.caption')</span>
@@ -163,7 +163,7 @@
                             </td>
                             <td class="text-center">
                                 @can('event_field_update')
-                                <a href="{{ route('event.field.edit', ['eventId' => $item['event_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('event.field.edit', array_merge(['eventId' => $item['event_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/event.field.caption')
                                 ])">
                                     <i class="las la-pen"></i>

@@ -25,7 +25,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('document_file_create')
-                    <a href="{{ route('document.file.create', ['categoryId' => $data['category']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('document.file.create', array_merge(['categoryId' => $data['category']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                         'attribute' => __('module/document.file.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/document.file.caption')</span>
@@ -113,6 +113,11 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/document.category.caption')) }} : <b class="text-primary">{{ $data['category']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <div class="card-header with-elements">
                 <h5 class="card-header-title mt-1 mb-0">@lang('module/document.file.text')</h5>
             </div>
@@ -212,7 +217,7 @@
                             </td>
                             <td class="text-center">
                                 @can('document_file_update')
-                                <a href="{{ route('document.file.edit', ['categoryId' => $item['document_category_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('document.file.edit', array_merge(['categoryId' => $item['document_category_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/document.file.caption')
                                 ])">
                                     <i class="las la-pen"></i>

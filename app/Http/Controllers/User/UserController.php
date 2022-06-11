@@ -171,7 +171,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $data['roles'] = $this->userService->getRoleByUser(false);
         $data['permissions'] = Auth::user()['roles'][0]['permissions']->where('parent', 0);
@@ -180,7 +180,7 @@ class UserController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/user.caption')
             ]),
-            'routeBack' => route('user.index'),
+            'routeBack' => route('user.index', $request->query()),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.caption') => route('user.index'),
@@ -194,6 +194,7 @@ class UserController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $user = $this->userService->store($data);
+        $data['query'] = $request->query();
 
         if (isset($data['permissions']) && !empty($data['permissions'])) {
             $this->userService->syncPermissionUser($data['permissions'], ['id' => $user['data']['id']]);
@@ -225,9 +226,12 @@ class UserController extends Controller
         return redirect()->back()->with('failed', 'Bypass failed');
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $data['user'] = $this->userService->getUser(['id' => $id]);
+        if (empty($data['user']))
+            return abort(404);
+
         $data['roles'] = $this->userService->getRoleByUser(false);
         $data['permissions'] = Auth::user()['roles'][0]['permissions']->where('parent', 0);
         $data['permission_ids'] = $data['user']['permissions']->pluck('id')->toArray();
@@ -241,7 +245,7 @@ class UserController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/user.caption')
             ]),
-            'routeBack' => route('user.index'),
+            'routeBack' => route('user.index', $request->query()),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.caption') => route('user.index'),
@@ -255,6 +259,7 @@ class UserController extends Controller
         $data = $request->all();
         $data['active'] = (bool)$request->active;
         $user = $this->userService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if (isset($data['permissions']) && !empty($data['permissions'])) {
             $this->userService->syncPermissionUser($data['permissions'], ['id' => $id]);
@@ -341,7 +346,7 @@ class UserController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('user.index');
+        $redir = redirect()->route('user.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }
@@ -360,6 +365,8 @@ class UserController extends Controller
            return redirect()->route('home');
 
         $data['user'] = $this->userService->getUser(['id' => Auth::user()['id']]);
+        if (empty($data['user']))
+            return abort(404);
 
         return view('backend.users.profile', compact('data'), [
             'title' => __('module/user.profile.title'),

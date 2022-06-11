@@ -284,6 +284,9 @@ class PageService
                 $page->menus()->update([
                     'publish' => $page['publish']
                 ]);
+                $page->widgets()->update([
+                    'publish' => $page['publish']
+                ]);
             }
 
             return $this->success($page, __('global.alert.update_success', [
@@ -386,6 +389,7 @@ class PageService
 
                 $page->medias()->delete();
                 $page->menus()->delete();
+                $page->widgets()->delete();
                 // $page->indexing->delete();
                 $page->delete();
 
@@ -426,6 +430,7 @@ class PageService
             //restore data yang bersangkutan
             $page->medias()->restore();
             $page->menus()->restore();
+            $page->widgets()->restore();
             // $page->indexing()->restore();
             $page->restore();
 
@@ -456,6 +461,7 @@ class PageService
             $page->medias()->forceDelete();
             $page->tags()->delete();
             $page->menus()->forceDelete();
+            $page->widgets()->forceDelete();
             $page->indexing()->forceDelete();
             $page->forceDelete();
 

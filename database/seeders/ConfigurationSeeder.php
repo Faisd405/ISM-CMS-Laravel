@@ -373,6 +373,15 @@ class ConfigurationSeeder extends Seeder
                 'is_upload' => false,
                 'show_form' => true,
                 'active' => false
+            ],
+            [
+                'group' => 100,
+                'name' => 'pwa',
+                'label' => 'Progressive Web App',
+                'value' => true,
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
             ]
         ];
 

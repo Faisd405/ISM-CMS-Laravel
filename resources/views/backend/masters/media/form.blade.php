@@ -10,6 +10,11 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('master/media.caption')) }} : <b class="text-primary">{{ Str::upper(Str::replace('_', ' ', Request::segment(4))) }}</b>
+                </span>
+            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('master/media.caption')

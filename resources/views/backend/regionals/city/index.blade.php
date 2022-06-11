@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('regional_create')
-                    <a href="{{ route('city.create', ['provinceCode' => $data['province']['code']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('city.create', array_merge(['provinceCode' => $data['province']['code']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/regional.city.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/regional.city.caption')</span>
@@ -68,8 +68,11 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">{{ Str::upper(__('module/regional.province.caption')) }} : <b class="text-primary">{{ $data['province']['name'] }}</b></span>
+            </div>
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/regional.city.text') <span class="badge badge-primary">{{ $data['province']['name'] }}</span></h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/regional.city.text')</h5>
             </div>
 
             {{-- Table --}}
@@ -114,13 +117,14 @@
                                     <i class="las la-map-marker"></i>
                                 </a>
                                 @can('regional_update')
-                                <a href="{{ route('city.edit', ['provinceCode' => $item['province_code'], 'id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('city.edit', array_merge(['provinceCode' => $item['province_code'], 'id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('module/regional.city.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can('regional_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/regional.city.caption')
                                     ])"
@@ -128,6 +132,7 @@
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
                             </td>
                         </tr>

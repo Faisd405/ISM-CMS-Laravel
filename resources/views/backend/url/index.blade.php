@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @role('super')
-                    <a href="{{ route('url.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('url.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/url.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/url.caption')</span>
@@ -112,17 +112,19 @@
                                 {{ $item['updated_at']->format('d F Y (H:i A)') }}
                             </td>
                             <td class="text-center">
-                                <a href="{{ route('url.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('url.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/url.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
+                                @if ($item['locked'] == 0)  
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                     'attribute' => __('module/url.caption')
                                 ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                             </td>
                         </tr>
                         @empty

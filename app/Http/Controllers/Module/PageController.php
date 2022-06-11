@@ -107,13 +107,15 @@ class PageController extends Controller
 
         if ($request->input('parent', '') != '') {
             $data['parent'] = $this->pageService->getPage(['id' => $request->input('parent')]);
+            if (empty($data['parent']))
+                return abort(404);
         }
 
         return view('backend.pages.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/page.caption')
             ]),
-            'routeBack' => route('page.index'),
+            'routeBack' => route('page.index', $request->query()),
             'breadcrumbs' => [
                 __('module/page.caption') => route('page.index'),
                 __('global.add') => '',
@@ -131,6 +133,7 @@ class PageController extends Controller
         $data['hide_cover'] = (bool)$request->hide_cover;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $page = $this->pageService->store($data);
+        $data['query'] = $request->query();
 
         if ($page['success'] == true) {
             return $this->redirectForm($data)->with('success', $page['message']);
@@ -142,6 +145,9 @@ class PageController extends Controller
     public function edit(Request $request, $id)
     {
         $data['page'] = $this->pageService->getPage(['id' => $id]);
+        if (empty($data['page']))
+            return abort(404);
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'page'], false);
         
@@ -157,7 +163,7 @@ class PageController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/page.caption')
             ]),
-            'routeBack' => route('page.index'),
+            'routeBack' => route('page.index', $request->query()),
             'breadcrumbs' => [
                 __('module/page.caption') => route('page.index'),
                 __('global.edit') => '',
@@ -174,6 +180,7 @@ class PageController extends Controller
         $data['hide_cover'] = (bool)$request->hide_cover;
         $data['hide_banner'] = (bool)$request->hide_banner;
         $page = $this->pageService->update($data, ['id' => $id]);
+        $data['query'] = $request->query();
 
         if ($page['success'] == true) {
             return $this->redirectForm($data)->with('success', $page['message']);
@@ -242,7 +249,7 @@ class PageController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('page.index');
+        $redir = redirect()->route('page.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }

@@ -3,6 +3,7 @@
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/select2/select2.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/backend/fancybox/fancybox.min.css') }}">
 @endsection
 
 @section('content')
@@ -24,7 +25,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can ('user_create')
-                    <a href="{{ route('user.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('user.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/user.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/user.caption')</span>
@@ -102,6 +103,7 @@
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
+                            <th style="width: 40px;"></th>
                             <th>@lang('module/user.label.field1')</th>
                             <th>@lang('module/user.label.field2')</th>
                             <th>@lang('module/user.label.field3')</th>
@@ -117,7 +119,19 @@
                         @forelse ($data['users'] as $item)
                         <tr>
                             <td>{{ $data['no']++ }} </td>
-                            <td><strong>{{ $item['name'] }}</strong></td>
+                            <td>
+                                <a href="{{ $item->avatars() }}" data-fancybox="gallery">
+                                    <img src="{{ $item->avatars() }}" class="d-block ui-w-40 rounded-circle" alt="">
+                                </a>
+                            </td>
+                            <td>
+                                <strong>{{ $item['name'] }}</strong><br>
+                                @if (Cache::has('online-'.$item['id']))
+                                <div class="chat-status small text-muted"><span class="badge badge-dot badge-success"></span>&nbsp; Online</div>
+                                @else
+                                <div class="chat-status small text-muted"><span class="badge badge-dot badge-danger"></span>&nbsp; Offline</div>
+                                @endif
+                            </td>
                             <td>
                                 <a href="mailto:{{ $item['email'] }}">{{ $item['email'] }}</a>
                             </td>
@@ -132,7 +146,7 @@
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['active'] == 1 ? 'success' : 'secondary' }}"
                                     title="{{ __('global.label.active.'.$item['active']) }}">
                                     {{ __('global.label.active.'.$item['active']) }}
-                                    <form action="{{ route('user.activate', ['id' => $item->id]) }}" method="POST">
+                                    <form action="{{ route('user.activate', array_merge(['id' => $item->id], $queryParam)) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -160,14 +174,14 @@
                                 @if ($item->roles[0]['id'] > Auth::user()->roles[0]['id'] && ($item['id'] != Auth::user()['id']))
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-bypass').submit();" class="btn btn-warning icon-btn btn-sm" title="Bypass Login">
                                     <i class="las la-sign-in-alt"></i>
-                                    <form action="{{ route('user.bypass', ['id' => $item['id']]) }}" method="POST" id="form-bypass">
+                                    <form action="{{ route('user.bypass', array_merge(['id' => $item['id']], $queryParam)) }}" method="POST" id="form-bypass">
                                         @csrf
                                         @method('PUT')
                                     </form>
                                 </a>
                                 @endif
                                 @if (Auth::user()->can('user_update') && $item->roles[0]['id'] > Auth::user()->roles[0]['id'] && ($item['id'] != Auth::user()['id']))
-                                <a href="{{ route('user.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('user.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/user.caption')
                                 ])">
                                     <i class="las la-pen"></i>
@@ -184,7 +198,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="10" align="center">
+                            <td colspan="11" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)
@@ -224,6 +238,7 @@
 @section('scripts')
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+<script src="{{ asset('assets/backend/fancybox/fancybox.min.js') }}"></script>
 @endsection
 
 @section('jsbody')

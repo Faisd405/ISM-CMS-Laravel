@@ -24,7 +24,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('link_media_create')
-                    <a href="{{ route('link.media.create', ['categoryId' => $data['category']['id']]) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('link.media.create', array_merge(['categoryId' => $data['category']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                         'attribute' => __('module/link.media.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/link.media.caption')</span>
@@ -81,6 +81,11 @@
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/link.category.caption')) }} : <b class="text-primary">{{ $data['category']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <div class="card-header with-elements">
                 <h5 class="card-header-title mt-1 mb-0">@lang('module/link.media.text')</h5>
             </div>
@@ -165,7 +170,7 @@
                             </td>
                             <td class="text-center">
                                 @can('link_media_update')
-                                <a href="{{ route('link.media.edit', ['categoryId' => $item['link_category_id'], 'id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('link.media.edit', array_merge(['categoryId' => $item['link_category_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/link.media.caption')
                                 ])">
                                     <i class="las la-pen"></i>

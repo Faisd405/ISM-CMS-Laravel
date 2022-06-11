@@ -23,7 +23,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('template_create')
-                    <a href="{{ route('template.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('template.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('master/template.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('master/template.caption')</span>
@@ -139,19 +139,21 @@
                             </td>
                             <td class="text-center">
                                 @can('template_update')
-                                <a href="{{ route('template.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
+                                <a href="{{ route('template.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                     'attribute' => __('master/template.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can('template_delete')
+                                @if ($item['locked'] == 0)    
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                     'attribute' => __('master/template.caption')
                                 ])"
                                     data-id="{{ $item->id }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
                             </td>
                         </tr>

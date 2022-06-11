@@ -5,6 +5,7 @@ namespace App\Models\Module\Inquiry;
 use App\Models\Feature\Configuration;
 use App\Models\IndexingUrl;
 use App\Models\Menu\Menu;
+use App\Models\Module\Widget;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,6 +59,11 @@ class Inquiry extends Model
     public function menus()
     {
         return $this->morphMany(Menu::class, 'menuable');
+    }
+
+    public function widgets()
+    {
+        return $this->morphMany(Widget::class, 'moduleable');
     }
 
     public function createBy()

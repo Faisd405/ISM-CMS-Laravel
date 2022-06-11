@@ -15,8 +15,8 @@
                     'attribute' => __('module/event.field.caption')
                 ])
             </h6>
-            <form action="{{ !isset($data['field']) ? route('event.field.store', ['eventId' => $data['event']['id']]) : 
-                route('event.field.update', ['eventId' => $data['event']['id'], 'id' => $data['field']['id']]) }}" method="POST" 
+            <form action="{{ !isset($data['field']) ? route('event.field.store', array_merge(['eventId' => $data['event']['id']], $queryParam)) : 
+                route('event.field.update', array_merge(['eventId' => $data['event']['id'], 'id' => $data['field']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
                 @csrf
                 @isset($data['field'])
