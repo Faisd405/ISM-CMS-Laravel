@@ -249,6 +249,7 @@ class InquiryService
         $inquiry->publish = (bool)$data['publish'];
         $inquiry->public = (bool)$data['public'];
         $inquiry->locked = (bool)$data['locked'];
+        $inquiry->content_template = isset($data['content_template']) ? $data['content_template'] : null;
         $inquiry->config = [
             'is_detail' => (bool)$data['is_detail'],
             'hide_map' => (bool)$data['hide_map'],

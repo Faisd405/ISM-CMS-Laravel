@@ -1,6 +1,9 @@
 @extends('layouts.frontend.layout')
 
 @section('content')
+@if (!empty($data['read']['content_template']))
+    {!! $data['read']['content_template'] !!}
+@else
 {{-- DETAIL
 
     DATA :
@@ -23,4 +26,5 @@
     {!! $data['creator'] !!}
     
 --}}
+@endif
 @endsection

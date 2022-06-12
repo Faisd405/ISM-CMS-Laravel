@@ -1,6 +1,9 @@
 @extends('layouts.frontend.layout')
 
 @section('content')
+@isset ($data['read']['templateList']['content_template'])
+    {!! $data['read']['templateList']['content_template'] !!}
+@else
 {{-- LIST
 
     DATA :
@@ -14,4 +17,5 @@
     contoh penulisan attribute ada di detail
 
 --}}
+@endisset
 @endsection

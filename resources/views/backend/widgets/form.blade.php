@@ -84,6 +84,12 @@
                             @include('components.field-error', ['field' => 'template'])
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">Content Template</label>
+                        <div class="col-sm-10">
+                            <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['widget']) ? old('content_template') : old('content_template', $data['widget']['content_template']) !!}</textarea>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- MODULE --}}
@@ -203,6 +209,10 @@
 @section('scripts')
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/ace/ace.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/ace/theme-monokai.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/ace/mode-html.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/jquery-ace.min.js') }}"></script>
 @endsection
 
 @section('jsbody')
@@ -244,6 +254,8 @@
             });
         }
     });
+
+    $('.my-code-area').ace({ theme: 'monokai', lang: 'html' });
 </script>
 
 @if (!Auth::user()->hasRole('super'))

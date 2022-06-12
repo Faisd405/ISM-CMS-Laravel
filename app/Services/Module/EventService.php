@@ -247,6 +247,7 @@ class EventService
         $event->publish = (bool)$data['publish'];
         $event->public = (bool)$data['public'];
         $event->locked = (bool)$data['locked'];
+        $event->content_template = isset($data['content_template']) ? $data['content_template'] : null;
         $event->config = [
             'is_detail' => (bool)$data['is_detail'],
             'hide_form' => (bool)$data['hide_form'],

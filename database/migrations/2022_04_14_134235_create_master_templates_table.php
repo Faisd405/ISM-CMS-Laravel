@@ -20,6 +20,7 @@ class CreateMasterTemplatesTable extends Migration
             $table->tinyInteger('type')->comment('0 = custom, 1 = list, 2 = detail');
             $table->text('filepath');
             $table->string('filename');
+            $table->text('content_template')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();

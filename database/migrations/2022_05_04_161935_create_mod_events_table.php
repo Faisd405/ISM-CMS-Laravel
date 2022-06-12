@@ -32,6 +32,7 @@ class CreateModEventsTable extends Migration
             $table->json('config');
             $table->json('custom_fields')->nullable();
             $table->json('seo')->nullable();
+            $table->text('content_template')->nullable();
             $table->integer('position');
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');

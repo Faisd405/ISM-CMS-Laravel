@@ -1,7 +1,10 @@
 @extends('layouts.frontend.layout')
 
 @section('content')
-{{-- DETAIL
+@isset ($data['read']['template']['content_template'])
+    {!! $data['read']['template']['content_template'] !!}
+@else
+    {{-- DETAIL
 
     DATA :
     {!! $data['read']->fieldLang('title') !!} // title
@@ -38,4 +41,5 @@
     $data['share_pinterest']
     
 --}}
+@endisset
 @endsection

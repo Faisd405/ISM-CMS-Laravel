@@ -116,8 +116,17 @@ class TemplateService
                     File::copy(resource_path($templateResource['full'].'/detail.blade.php'), 
                         resource_path($templateResource['full'].'/custom/'.$fileName));
                 } else {
-                    $path = resource_path($setPath);
-                    File::put($path, '');
+
+                    if ($type == 1) {
+                        $tempType = 'list.blade.php';
+                    } else {
+                        $tempType = 'detail.blade.php';
+                    }
+                    
+                    File::copy(resource_path($templateResource['full'].'/'.$tempType), 
+                        resource_path($setPath));
+                    // $path = resource_path($setPath);
+                    // File::put($path, '');
                 }
                 
             } else {
@@ -130,6 +139,7 @@ class TemplateService
                 'type' => $type,
                 'filepath' => $filePath,
                 'filename' => $fileName,
+                'content_template' => isset($data['content_template']) ? $data['content_template'] : null,
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -156,6 +166,7 @@ class TemplateService
             
             $template->update([
                 'name' => $data['name'],
+                'content_template' => isset($data['content_template']) ? $data['content_template'] : null,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $template['updated_by'],
             ]);
 

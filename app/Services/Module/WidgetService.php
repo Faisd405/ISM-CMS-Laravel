@@ -272,6 +272,7 @@ class WidgetService
             $this->setFielWidget($data, $widget);
             $widget->type = $data['type'];
             $widget->template = Str::slug($data['template'], '-');
+            $widget->content_template = isset($data['content_template']) ? $data['content_template'] : null;
             $widget->position = $this->widgtModel->max('position') + 1;
 
             if (Auth::guard()->check())
@@ -283,8 +284,8 @@ class WidgetService
             $widget->save();
 
             if (!file_exists(resource_path($setPath))) {
-                $path = resource_path($setPath);
-                File::put($path, '');
+                File::copy(resource_path('views/frontend/widget/example.blade.php'), 
+                    resource_path($setPath));
             }
 
             return $this->success($widget,  __('global.alert.create_success', [
@@ -310,6 +311,7 @@ class WidgetService
         try {
             
             $widget->template = Str::slug($data['template'], '-');
+            $widget->content_template = isset($data['content_template']) ? $data['content_template'] : null;
             $this->setFielWidget($data, $widget);
             $widget->save();
 

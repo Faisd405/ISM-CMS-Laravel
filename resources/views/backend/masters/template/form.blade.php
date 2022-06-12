@@ -69,6 +69,12 @@
                         </div>
                     </div>
                     @endif
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">Content Template</label>
+                        <div class="col-sm-10">
+                            <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['template']) ? old('content_template') : old('content_template', $data['template']['content_template']) !!}</textarea>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['template']) ? __('global.save_change') : __('global.save') }}">
@@ -90,6 +96,10 @@
 
 @section('scripts')
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/ace/ace.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/ace/theme-monokai.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/ace/mode-html.js') }}"></script>
+<script src="{{ asset('assets/backend/jquery-ace/jquery-ace.min.js') }}"></script>
 @endsection
 
 @section('jsbody')
@@ -115,5 +125,7 @@
     $(function () {
         $('.select2').select2();
     });
+
+    $('.my-code-area').ace({ theme: 'monokai', lang: 'html' });
 </script>
 @endsection
