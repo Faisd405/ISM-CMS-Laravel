@@ -124,6 +124,7 @@ class WidgetController extends Controller
     public function store(WidgetRequest $request, $type)
     {
         $data = $request->all();
+        $data['ordering'] = $request->ordering;
         $data['global'] = (bool)$request->global;
         $data['type'] = $type;
         $widget = $this->widgetService->storeWidget($data);
@@ -165,6 +166,7 @@ class WidgetController extends Controller
     public function update(WidgetRequest $request, $type, $id)
     {
         $data = $request->all();
+        $data['ordering'] = $request->ordering;
         $data['global'] = (bool)$request->global;
         $data['type'] = $type;
         $widget = $this->widgetService->updateWidget($data, ['id' => $id]);

@@ -121,15 +121,23 @@ class WidgetService
     {
         $module = [];
 
+        if (isset($data['content']['ordering'])) {
+            if ($data['content']['ordering'] == 'publish_time') {
+                $orderBy['publish_time'] = 'DESC';
+            } elseif ($data['content']['ordering'] == 'position') {
+                $orderBy['position'] = 'ASC';
+            } else {
+                $orderBy = [];
+            }
+        }
+
         if ($data['type'] == 'page') {
             $filter['parent'] = $data['moduleable_id'];
             $filter['publish'] = 1;
             $filter['approved'] = 1;
             $module = [
                 'page' => App::make(PageService::class)->getPage(['id' => $data['moduleable_id']]),
-                'childs' => App::make(PageService::class)->getPageList($filter, true, $data['content']['child_limit'], false, [], [
-                    'position' => 'ASC'
-                ])
+                'childs' => App::make(PageService::class)->getPageList($filter, true, $data['content']['child_limit'], false, [], $orderBy)
             ];
         }
 
@@ -139,18 +147,14 @@ class WidgetService
             $filter['publish'] = 1;
             $filter['approved'] = 1;
             $filter['section_id'] = $data['moduleable_id'];
-            $module['categories'] = App::make(ContentService::class)->getCategoryList($filter, true, $data['content']['category_limit'], false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['categories'] = App::make(ContentService::class)->getCategoryList($filter, true, $data['content']['category_limit'], false, [], $orderBy);
 
             if ($data['content']['post_selected']) {
                 $filter['selected'] = 1;
             }
 
-            $orderBy['position'] ='ASC';
             if ($data['content']['post_hits']) {
                 $orderBy['hits'] ='DESC';
-                $orderBy['publish_time'] ='DESC';
             }
 
             $module['posts'] = App::make(ContentService::class)->getPostList($filter, true, $data['content']['post_limit'], false, [], $orderBy);
@@ -166,10 +170,8 @@ class WidgetService
                 $filter['selected'] = 1;
             }
 
-            $orderBy['position'] ='ASC';
             if ($data['content']['post_hits']) {
                 $orderBy['hits'] ='DESC';
-                $orderBy['publish_time'] ='DESC';
             }
 
             $module['posts'] = App::make(ContentService::class)->getPostList($filter, true, $data['content']['post_limit'], false, [], $orderBy);
@@ -187,9 +189,7 @@ class WidgetService
                 $limit = $data['content']['banner_limit'];
             }
 
-            $module['banners'] = App::make(BannerService::class)->getBannerList($filter, true, $limit, false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['banners'] = App::make(BannerService::class)->getBannerList($filter, true, $limit, false, [], $orderBy);
         }
 
         if ($data['type'] == 'gallery_category') {
@@ -199,9 +199,7 @@ class WidgetService
             $filter['approved'] = 1;
             $filter['gallery_category_id'] = $data['moduleable_id'];
 
-            $module['albums'] = App::make(GalleryService::class)->getAlbumList($filter, true, $data['content']['album_limit'], false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['albums'] = App::make(GalleryService::class)->getAlbumList($filter, true, $data['content']['album_limit'], false, [], $orderBy);
         }
 
         if ($data['type'] == 'gallery_album') {
@@ -211,9 +209,7 @@ class WidgetService
             $filter['approved'] = 1;
             $filter['gallery_album_id'] = $data['moduleable_id'];
             
-            $module['files'] = App::make(GalleryService::class)->getFileList($filter, true, $data['content']['file_limit'], false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['files'] = App::make(GalleryService::class)->getFileList($filter, true, $data['content']['file_limit'], false, [], $orderBy);
         }
 
         if ($data['type'] == 'document') {
@@ -223,9 +219,7 @@ class WidgetService
             $filter['approved'] = 1;
             $filter['documents_category_id'] = $data['moduleable_id'];
             
-            $module['files'] = App::make(DocumentService::class)->getFileList($filter, true, $data['content']['file_limit'], false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['files'] = App::make(DocumentService::class)->getFileList($filter, true, $data['content']['file_limit'], false, [], $orderBy);
         }
 
         if ($data['type'] == 'link') {
@@ -235,9 +229,7 @@ class WidgetService
             $filter['approved'] = 1;
             $filter['link_category_id'] = $data['moduleable_id'];
             
-            $module['medias'] = App::make(LinkService::class)->getMediaList($filter, true, $data['content']['media_limit'], false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['medias'] = App::make(LinkService::class)->getMediaList($filter, true, $data['content']['media_limit'], false, [], $orderBy);
         }
 
         if ($data['type'] == 'inquiry') {
@@ -247,9 +239,7 @@ class WidgetService
             $filter['approved'] = 1;
             $filter['inquiry_id'] = $data['moduleable_id'];
             
-            $module['fields'] = App::make(InquiryService::class)->getFieldList($filter, false, 0, false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['fields'] = App::make(InquiryService::class)->getFieldList($filter, false, 0, false, [], $orderBy);
         }
 
         if ($data['type'] == 'event') {
@@ -259,9 +249,7 @@ class WidgetService
             $filter['approved'] = 1;
             $filter['event_id'] = $data['moduleable_id'];
             
-            $module['fields'] = App::make(EventService::class)->getFieldList($filter, false, 0, false, [], [
-                'position' => 'ASC'
-            ]);
+            $module['fields'] = App::make(EventService::class)->getFieldList($filter, false, 0, false, [], $orderBy);
         }
 
         return $module;
@@ -377,12 +365,15 @@ class WidgetService
                     'alt' => $data['image_alt'] ?? null,
                 ],
                 'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'page') {
             $widget->content = [
                 'child_limit' => $data['child_limit'] ?? 0,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
@@ -392,6 +383,8 @@ class WidgetService
                 'post_limit' => $data['post_limit'] ?? 0,
                 'post_selected' => isset($data['post_selected']) ? (bool)$data['post_selected'] : false,
                 'post_hits' => isset($data['post_hits']) ? (bool)$data['post_hits'] : false,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
@@ -400,48 +393,62 @@ class WidgetService
                 'post_limit' => $data['post_limit'] ?? 0,
                 'post_selected' => isset($data['post_selected']) ? (bool)$data['post_selected'] : false,
                 'post_hits' => isset($data['post_hits']) ? (bool)$data['post_hits'] : false,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'banner') {
             $widget->content = [
                 'banner_limit' => $data['banner_limit'] ?? 0,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'gallery_category') {
             $widget->content = [
                 'album_limit' => $data['album_limit'] ?? 0,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'gallery_album') {
             $widget->content = [
                 'file_limit' => $data['file_limit'] ?? 0,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'document') {
             $widget->content = [
                 'file_limit' => $data['file_limit'] ?? 0,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'link') {
             $widget->content = [
                 'media_limit' => $data['media_limit'] ?? 0,
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'inquiry') {
             $widget->content = [
-                
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 
         if ($data['type'] == 'event') {
             $widget->content = [
-                
+                'url' => $data['url'],
+                'ordering' => $data['ordering'],
             ];
         }
 

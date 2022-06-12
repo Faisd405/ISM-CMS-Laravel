@@ -91,6 +91,34 @@
                 <div class="card-body">
                     <h6 class="font-weight-semibold mb-4"><b class="text-primary">{{ Str::replace('_', ' ', Str::upper($data['type'])) }}</b></h6>
                     @include('backend.widgets.type.'.$data['type'])
+                    @if ($data['type'] != 'text')
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">Order By</label>
+                        <div class="col-sm-10">
+                            <div class="custom-controls-stacked">
+                                <label class="custom-control custom-radio">
+                                  <input name="ordering" type="radio" value="publish_time" class="custom-control-input" 
+                                     {{ isset($data['widget']) ? (old('ordering', $data['widget']['content']['ordering']) ? 'checked' : '') : 'checked' }}>
+                                  <span class="custom-control-label">Publish Time</span>
+                                </label>
+                                <label class="custom-control custom-radio">
+                                  <input name="ordering" type="radio" value="position" class="custom-control-input"
+                                    {{ isset($data['widget']) ? (old('ordering', $data['widget']['content']['ordering']) ? 'checked' : '') : '' }}>
+                                  <span class="custom-control-label">Position</span>
+                                </label>
+                              </div>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.url')</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url" 
+                                value="{{ !isset($data['widget']) ? old('url') : old('url', $data['widget']['content']['url']) }}" 
+                                placeholder="">
+                            @include('components.field-error', ['field' => 'url'])
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['widget']) ? __('global.save_change') : __('global.save') }}">

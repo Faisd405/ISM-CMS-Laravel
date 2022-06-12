@@ -19,12 +19,3 @@
         </div>
     </div>
 </div>
-<div class="form-group row">
-    <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.url')</label>
-    <div class="col-sm-10">
-        <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url" 
-            value="{{ !isset($data['widget']) ? old('url') : old('url', $data['widget']['content']['url']) }}" 
-            placeholder="">
-        @include('components.field-error', ['field' => 'url'])
-    </div>
-</div>
