@@ -1,4 +1,4 @@
-<div id="layout-sidenav" class="layout-sidenav sidenav-vertical sidenav bg-sidenav-theme">
+<div id="layout-sidenav" class="{{ config('cms.setting.layout') == 1 ? 'layout-sidenav-horizontal sidenav sidenav-horizontal flex-grow-0 bg-dark container-p-x' : 'layout-sidenav sidenav-vertical' }} bg-sidenav-theme">
 
     <!-- Brand demo (see assets/css/demo/demo.css) -->
     <div class="app-brand demo">
@@ -13,7 +13,7 @@
     <div class="sidenav-divider mt-0"></div>
 
     <!-- Inner -->
-    <ul class="sidenav-inner{{ empty($layout_sidenav_horizontal) ? ' py-1' : '' }}">
+    <ul class="sidenav-inner {{ config('cms.setting.layout') == 1 ? '' : 'py-1' }}">
 
         <!-- Dashboard -->
         <li class="sidenav-item {{ Request::is('admin/dashboard') ? 'active' : '' }}">

@@ -11,7 +11,10 @@ return [
             'tabs2' => 'General',
             'tabs3' => 'SEO',
             'tabs4' => 'Sosial Media',
-            'tabs5' => 'Developer Only'
+            'tabs5' => 'Developer Only',
+            'tabs6' => 'Aktivasi Konfig',
+            'show_form' => 'Tampilkan konfig di form backend',
+            'active' => 'Tampilkan konfig di frontend'
         ]
     ],
     'text' => [

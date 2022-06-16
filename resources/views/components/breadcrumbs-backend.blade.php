@@ -19,7 +19,7 @@
             </li>
             @foreach ($breadcrumbs as $key => $val)
             <li class="breadcrumb-item {{ empty($val) ? 'active' : '' }}">
-                <a href="{{ $val }}" title="{{ $key }}">{{ $key }}</a>
+                <a href="{{ $val }}" title="{{ $key }}">{{ Str::limit($key, 15) }}</a>
             </li>
             @endforeach
         </ol>

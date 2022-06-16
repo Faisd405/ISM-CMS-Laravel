@@ -2,20 +2,20 @@
 
     <!-- Brand demo (see assets/css/demo/demo.css) -->
     <a href="{{ route('dashboard') }}" class="navbar-brand app-brand demo d-lg-none py-0 mr-0" title="@lang('module/dashboard.caption')">
-        {{-- <span class="app-brand-logo demo bg-white">
-            <img src="{{ $config['logo'] }}" style="width:50px;height:50px;object-fit:cover" alt="{{ $config['website_name'] }} Logo">
-        </span> --}}
         <span class="app-brand-text demo font-weight-normal ml-2">@lang('global.backend_panel')</span>
     </a>
 
-    <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#layout-navbar-collapse">
+    @if (config('cms.setting.layout') == 1)
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#layout-navbar-collapse">
       <span class="navbar-toggler-icon"></span>
-    </button> -->
+    </button>
+    @else
     <div class="layout-sidenav-toggle navbar-nav d-lg-none align-items-lg-center mr-3">
         <a class="nav-item nav-link text-large px-0 mr-lg-4" href="javascript:void(0)">
         <i class="las la-bars"></i>
         </a>
     </div>
+    @endif
 
     <div class="navbar-collapse collapse" id="layout-navbar-collapse">
         <!-- Divider -->
@@ -23,7 +23,7 @@
         <!-- Sidenav toggle (see assets/css/demo/demo.css) -->
         <div class="navbar-nav align-items-lg-center d-none d-lg-block">
           <!-- Search -->
-          <label class="nav-item navbar-text navbar-search-box p-0 active">
+          <label class="nav-item navbar-text navbar-search-box p-0 active {{ config('cms.setting.layout') == 1 ? 'pl-2' : '' }}">
             @lang('global.view_frontend') &nbsp;
             <a href="{{ route('home') }}" target="_blank" title="@lang('global.view_frontend')">
               <i class="las la-external-link-alt"></i>

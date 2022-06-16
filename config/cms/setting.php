@@ -26,6 +26,8 @@ return [
         100 => '100',
     ],
 
+    'layout' => 0, // 0 = vertical, 1 = horizontal
+
     // Copyright
     'copyright' => [
         'show' => true,
