@@ -101,7 +101,8 @@ class ConfigurationController extends Controller
         $data['lang'] = $this->langService->getLanguage(['iso_codes' => $lang]);
 
         return view('backend.features.configuration.text', compact('data'), [
-            'title' => __('feature/configuration.caption').' - '.__('feature/configuration.text.caption').' : <b class="text-primary">'.Str::upper($data['lang']['name']).'</b>',
+            'title' => __('feature/configuration.caption').' - '.__('feature/configuration.text.caption').
+                ' : <b class="text-primary">'.Str::upper($data['lang']['name']).'</b>',
             'breadcrumbs' => [
                 __('feature/configuration.caption') => 'javascript:;',
                 __('feature/configuration.text.caption') => ''

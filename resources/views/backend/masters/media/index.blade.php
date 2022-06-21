@@ -102,10 +102,10 @@
                                 </a>
                                 @else
                                 <a href="{{ $item->fileSrc() }}" data-fancybox="gallery">
-                                    @if ($item->icon() == 'image')
+                                    @if ($item['icon'] == 'image')
                                     <img src="{{ $item->fileSrc() }}" alt="" style="width: 120px;">
                                     @else
-                                    <i class="las la-file-{{ $item->icon() }} text-secondary"></i>
+                                    <i class="las la-file-{{ $item['icon'] }} text-secondary"></i>
                                     @endif
                                 </a>
                                 @endif

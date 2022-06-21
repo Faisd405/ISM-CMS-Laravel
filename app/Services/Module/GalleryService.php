@@ -33,9 +33,9 @@ class GalleryService
         $this->language = $language;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // GALLERY CATEGORY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Category List
@@ -86,6 +86,10 @@ class GalleryService
         if ($withPaginate == true) {
             $result = $category->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $category->limit($limit);
+
             $result = $category->get();
         }
         
@@ -424,9 +428,9 @@ class GalleryService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // GALLERY ALBUM
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Album List
@@ -480,6 +484,10 @@ class GalleryService
         if ($withPaginate == true) {
             $result = $album->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $album->limit($limit);
+
             $result = $album->get();
         }
         
@@ -818,9 +826,9 @@ class GalleryService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // GALLERY FILE
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get File List
@@ -880,6 +888,10 @@ class GalleryService
         if ($withPaginate == true) {
             $result = $file->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $file->limit($limit);
+
             $result = $file->get();
         }
         

@@ -18,10 +18,10 @@
                 <label class="form-label">@lang('module/user.label.photo') <i class="text-danger">*</i></label>
                 <label class="custom-file-label" for="upload-2"></label>
                 @isset ($data['user']['photo']['filename'])
-                <input type="hidden" name="old_avatars" value="{{ $data['user']['photo']['filename'] }}">
+                <input type="hidden" name="old_avatar" value="{{ $data['user']['photo']['filename'] }}">
                 @endisset
-                <input class="form-control custom-file-input file @error('avatars') is-invalid @enderror" type="file" id="upload-2" lang="en" name="avatars">
-                @include('components.field-error', ['field' => 'avatars'])
+                <input class="form-control custom-file-input file @error('avatar') is-invalid @enderror" type="file" id="upload-2" lang="en" name="avatar">
+                @include('components.field-error', ['field' => 'avatar'])
               </div>
             </div>
         </div>

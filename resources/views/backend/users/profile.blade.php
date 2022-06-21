@@ -26,8 +26,8 @@
                         <div class="tab-pane fade {{ empty(Request::get('tab')) ? 'show active' : '' }}">
 
                             <div class="card-body media align-items-center">
-                                <a href="{{ $data['user']->avatars() }}" data-fancybox="gallery">
-                                    <img src="{{ $data['user']->avatars() }}" alt="" class="d-block ui-w-80 rounded-circle">
+                                <a href="{{ $data['user']['avatar'] }}" data-fancybox="gallery">
+                                    <img src="{{ $data['user']['avatar'] }}" alt="" class="d-block ui-w-80 rounded-circle">
                                 </a>
                                 <div class="media-body ml-4">
                                     <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modal-change-photo" title="@lang('global.change')">
@@ -40,9 +40,9 @@
                                     @endif
                                     <div class="mt-2">
                                         <small class="text-muted">
-                                            Type of file : <strong>{{ Str::upper(config('cms.files.avatars.mimes')) }}</strong> | 
-                                            Pixel : <strong>{{ config('cms.files.avatars.pixel') }}</strong> | 
-                                            Max Size : <strong>{{ config('cms.files.avatars.size') }}</strong>
+                                            Type of file : <strong>{{ Str::upper(config('cms.files.avatar.mimes')) }}</strong> | 
+                                            Pixel : <strong>{{ config('cms.files.avatar.pixel') }}</strong> | 
+                                            Max Size : <strong>{{ config('cms.files.avatar.size') }}</strong>
                                         </small>
                                     </div>
                                 </div>
@@ -223,7 +223,7 @@
   });
 </script>
 
-@error('avatars')
+@error('avatar')
 @include('components.toastr-error')
 @enderror
 @endsection

@@ -13,12 +13,14 @@ return [
             'field2' => 'Penulisan',
             'field3' => 'Guard Name',
             'field4' => 'Level',
+            'field5' => 'Role Register'
         ],
         'placeholder' => [
             'field1' => 'Masukan nama',
             'field2' => '',
             'field3' => '',
             'field4' => '',
+            'field5' => ''
         ],
     ],
 

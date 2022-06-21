@@ -51,6 +51,10 @@ class MenuController extends Controller
         $data['no'] = $data['menus']->firstItem();
         $data['menus']->withPath(url()->current().$param);
 
+        foreach ($data['menus'] as $key => $value) {
+            $data['menus'][$key]['modules'] = $this->menuService->getModuleData($value);
+        }
+
         return view('backend.menus.index', compact('data'), [
             'title' => __('module/menu.title'),
             'routeBack' => route('menu.category.index'),
@@ -151,6 +155,7 @@ class MenuController extends Controller
         if (empty($data['menu']))
             return abort(404);
 
+        $data['menu']['modules'] = $this->menuService->getModuleData($data['menu']);
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.menus.form', compact('data'), [

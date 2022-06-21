@@ -14,7 +14,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
-class ApiMenuController extends Controller
+class ApiModuleController extends Controller
 {
     use ApiResponser;
 

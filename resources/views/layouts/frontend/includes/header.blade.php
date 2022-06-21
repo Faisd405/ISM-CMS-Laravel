@@ -17,9 +17,9 @@
     $languages / $languages->whereNotIn('iso_codes', [App::getLocale()])
 
     ATTRIBUTE DIDALAM LOOPING :
-        $lang->urlSwitcher() //route / url
+        $lang['url_switcher'] //route / url
         $lang['name'] // nama negara
         $lang['iso_codes'] // iso code negara
-        $lang->flags() // icon bendera
+        $lang['flag_icon'] // icon bendera
 
 --}}

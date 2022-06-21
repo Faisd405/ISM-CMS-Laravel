@@ -55,6 +55,10 @@ class NotificationService
         if ($withPaginate == true) {
             $result = $notif->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $notif->limit($limit);
+
             $result = $notif->get();
         }
 
@@ -171,7 +175,8 @@ class NotificationService
     {
         return [
             'id' => $notif['id'],
-            'from' => !empty($notif['user_from']) && !empty($notif['userFrom']) ? $notif['userFrom']['name'] : __('global.visitor'),
+            'from' => !empty($notif['user_from']) && !empty($notif['userFrom']) ? 
+                $notif['userFrom']['name'] : __('global.visitor'),
             'icon' => $notif['attribute']['icon'],
             'color' => $notif['attribute']['color'],
             'title' => $notif['attribute']['title'],

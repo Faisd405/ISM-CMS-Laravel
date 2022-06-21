@@ -32,9 +32,9 @@ class EventService
         $this->language = $language;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // EVENT
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Event List
@@ -88,6 +88,10 @@ class EventService
         if ($withPaginate == true) {
             $result = $event->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $event->limit($limit);
+
             $result = $event->get();
         }
         
@@ -478,9 +482,9 @@ class EventService
         }
     }
 
-    //---------------------------
-    // Event FIELD
-    //---------------------------
+    //--------------------------------------------------------------------------
+    // EVENT FIELD
+    //--------------------------------------------------------------------------
 
     /**
      * Get Field List
@@ -534,6 +538,10 @@ class EventService
         if ($withPaginate == true) {
             $result = $field->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $field->limit($limit);
+
             $result = $field->get();
         }
         
@@ -845,9 +853,9 @@ class EventService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // EVENT FORM
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Form List
@@ -899,6 +907,10 @@ class EventService
         if ($withPaginate == true) {
             $result = $form->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $form->limit($limit);
+
             $result = $form->get();
         }
         

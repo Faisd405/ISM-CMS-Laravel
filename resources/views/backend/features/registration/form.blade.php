@@ -41,7 +41,7 @@
                                         <td class="text-center">
                                             <label class="switcher switcher-success">
                                                 <input type="checkbox" class="switcher-input check-parent" data-id="{{ $item['id'] }}" name="roles[]" value="{{ $item['id'] }}" 
-                                                    {{ isset($data['registration']) && !empty($data['registration']->roles) ? 
+                                                    {{ isset($data['registration']) && !empty($data['registration']['roles']) ? 
                                                         (in_array($item['id'], $data['registration']['roles']) ? 'checked' : '') : '' }}>
                                                 <span class="switcher-indicator">
                                                 <span class="switcher-yes">

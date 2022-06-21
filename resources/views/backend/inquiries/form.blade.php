@@ -254,12 +254,16 @@
                             </div>
                         </div>
                     </div>
+                    @role('super')
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">Content Template</label>
                         <div class="col-sm-10">
                             <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['inquiry']) ? old('content_template') : old('content_template', $data['inquiry']['content_template']) !!}</textarea>
                         </div>
                     </div>
+                    @else
+                    <input type="hidden" name="content_template" value="{{ !isset($data['inquiry']) ? old('content_template') : old('content_template', $data['inquiry']['content_template']) }}">
+                    @endrole
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.hide') Field</label>
                         <div class="col-sm-10">

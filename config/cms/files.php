@@ -2,7 +2,7 @@
 
 return [
     // Profile
-    'avatars' => [
+    'avatar' => [
         'path' => 'public/avatars/',
         'file' => 'assets/dummy/profile.jpg',
         'mimes' => 'jpg,jpeg,png,svg,gif',

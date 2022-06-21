@@ -65,6 +65,10 @@ class RegistrationService
         if ($withPaginate == true) {
             $result = $registration->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $registration->limit($limit);
+
             $result = $registration->get();
         }
 

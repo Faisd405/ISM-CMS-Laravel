@@ -2,7 +2,7 @@
 <tr>
     <td>{{ $loop->iteration }}</td>
     <td>
-        <i>{!! str_repeat('---', $level).' '.Str::limit($child->module()['title'], 65) !!}</i>
+        <i>{!! str_repeat('---', $level).' '.Str::limit($child['modules']['title'], 65) !!}</i>
     </td>
     <td class="text-center">
         @can ('menu_update')

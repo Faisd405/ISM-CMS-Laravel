@@ -105,7 +105,7 @@
                                 <div class="col-md-10">
                                     @if(isset($data['menu']) && $data['menu']['config']['not_from_module'] == 0)
                                     <input type="hidden" name="menuable_id" value="{{ $data['menu']['menuable_id'] }}">
-                                    <input id="menuable" type="text" class="form-control mb-1" value="{!! $data['menu']->module()['title'] !!}" readonly>
+                                    <input id="menuable" type="text" class="form-control mb-1" value="{!! $data['menu']['modules']['title'] !!}" readonly>
                                     @endif
                                     <select id="menuable_id" class="select-autocomplete show-tick @error('menuable_id') is-invalid @enderror" name="menuable_id" data-style="btn-default">
                                         <option value="" disabled selected>@lang('global.select')</option>
@@ -292,7 +292,7 @@
         $('.select-autocomplete').select2({
             minimumInputLength: 1,
             ajax: {
-                url: '/api/menu/module/'+val,
+                url: '/api/module/'+val,
                 dataType: 'json',
                 type: "GET",
                 quietMillis: 50,

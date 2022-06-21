@@ -67,6 +67,10 @@ class TemplateService
         if ($withPaginate == true) {
             $result = $template->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $template->limit($limit);
+
             $result = $template->get();
         }
 

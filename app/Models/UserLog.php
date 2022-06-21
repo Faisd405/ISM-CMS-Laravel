@@ -16,6 +16,10 @@ class UserLog extends Model
         'content' => 'json'
     ];
 
+    protected $appends = [
+        'log_type'
+    ];
+
     public function logable()
     {
         return $this->morphTo();
@@ -26,7 +30,7 @@ class UserLog extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function replaceLogType()
+    public function getLogTypeAttribute()
     {
         $replace1 = Str::replace('mod_', ' ', $this->logable_name);
         $replace2 = Str::replace('_', ' ', $replace1);

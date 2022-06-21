@@ -38,9 +38,9 @@ class MenuService
         $this->language = $language;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // CATEGORY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Category List
@@ -81,6 +81,10 @@ class MenuService
         if ($withPaginate == true) {
             $result = $menuCategory->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $menuCategory->limit($limit);
+
             $result = $menuCategory->get();
         }
 
@@ -271,9 +275,9 @@ class MenuService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // MENU
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Menu List
@@ -326,10 +330,159 @@ class MenuService
         if ($withPaginate == true) {
             $result = $menu->paginate($limit);
         } else {
+            
+            if ($limit > 0)
+                $menu->limit($limit);
+
             $result = $menu->get();
         }
 
         return $result;
+    }
+
+    /**
+     * Get Module Data
+     * @param model $menu
+     */
+    public function getModuleData($menu)
+    {
+        $id = $menu['menuable_id'];
+
+        if ($menu['module'] == 'page') {
+            
+            $model = Page::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['title'][App::getLocale()],
+                'routes' => route('page.read.'.$model['slug']),
+                'active' => '',
+                'is_trash' => Page::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'content_section') {
+            
+            $model = ContentSection::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('content.section.read.'.$model['slug']),
+                'active' => '',
+                'is_trash' => ContentSection::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'content_category') {
+            
+            $model = ContentCategory::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('content.category.read.'.$model['section']['slug'], ['slugCategory' => $model['slug']]),
+                'active' => '',
+                'is_trash' => ContentCategory::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'content_post') {
+            
+            $model = ContentPost::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['title'][App::getLocale()],
+                'routes' => route('content.post.read.'.$model['section']['slug'], ['slugPost' => $model['slug']]),
+                'active' => '',
+                'is_trash' => ContentPost::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'gallery_category') {
+            
+            $model = GalleryCategory::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('gallery.category.read', ['slugCategory' => $model['slug']]),
+                'active' => '',
+                'is_trash' => GalleryCategory::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'gallery_album') {
+            
+            $model = GalleryAlbum::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('gallery.album.read', ['slugAlbum' => $model['slug']]),
+                'active' => '',
+                'is_trash' => GalleryAlbum::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'document') {
+            
+            $model = DocumentCategory::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('document.category.read', ['slugCategory' => $model['slug']]),
+                'active' => '',
+                'is_trash' => DocumentCategory::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'link') {
+            
+            $model = LinkCategory::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('link.category.read', ['slugCategory' => $model['slug']]),
+                'active' => '',
+                'is_trash' => LinkCategory::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'inquiry') {
+            
+            $model = Inquiry::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('inquiry.read.'.$model['slug']),
+                'active' => '',
+                'is_trash' => Inquiry::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == 'event') {
+            
+            $model = Event::withTrashed()->find($id);
+            $module = [
+                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
+                    : $model['name'][App::getLocale()],
+                'routes' => route('event.read', ['slugEvent' => $model['slug']]),
+                'active' => '',
+                'is_trash' => Event::onlyTrashed()->find($id),
+            ];
+        }
+
+        if ($menu['module'] == null) {
+
+            $url = $menu['config']['url'];
+            if (App::getLocale() != config('cms.module.feature.language.default'))
+                $url = '/'.App::getLocale().$menu['config']['url'];
+
+            $module = [
+                'title' => $menu['title'][App::getLocale()],
+                'routes' => $url,
+                'active' => '',
+                'is_trash' => ''
+            ];
+        }
+
+        return $module;
     }
 
     /**

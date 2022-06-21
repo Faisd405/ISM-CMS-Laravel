@@ -20,6 +20,7 @@ class AddColumnsToPermissionsTable extends Migration
 
         Schema::table('roles', function (Blueprint $table) {
             $table->integer('level')->after('name');
+            $table->boolean('is_register')->default(0)->after('level');
             $table->boolean('locked')->default(false)->comment('1 = tidak bisa didelete , 0 = bisa didelete');
         });
     }

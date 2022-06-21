@@ -25,22 +25,26 @@ class UserSeeder extends Seeder
             [
                 'name' => 'super',
                 'level' => 1,
-                'locked' => true
+                'locked' => true,
+                'is_register' => false,
             ],
             [
                 'name' => 'support',
                 'level' => 2,
-                'locked' => true
+                'locked' => true,
+                'is_register' => false,
             ],
             [
                 'name' => 'admin',
                 'level' => 3,
-                'locked' => true
+                'locked' => true,
+                'is_register' => false,
             ],
             [
                 'name' => 'editor',
                 'level' => 4,
-                'locked' => true
+                'locked' => true,
+                'is_register' => false,
             ],
         ];
 
@@ -49,7 +53,8 @@ class UserSeeder extends Seeder
                 'name' => $item['name'],
                 'level' => $item['level'],
                 'guard_name' => 'web',
-                'locked' => $item['locked']
+                'locked' => $item['locked'],
+                'is_register' => $item['is_register']
             ]);
         }
 

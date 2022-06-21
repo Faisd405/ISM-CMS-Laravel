@@ -43,6 +43,19 @@
                             @enderror
                         </div>
                     </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('module/user.role.label.field5')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="is_register" value="1"
+                                {{ !isset($data['role']) ? (old('is_register') ? 'checked' : '') : (old('is_register', $data['role']['is_register']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['role']) ? __('global.save_change') : __('global.save') }}">

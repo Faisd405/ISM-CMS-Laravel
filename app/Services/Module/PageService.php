@@ -91,6 +91,10 @@ class PageService
         if ($withPaginate == true) {
             $result = $page->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $page->limit($limit);
+
             $result = $page->get();
         }
         

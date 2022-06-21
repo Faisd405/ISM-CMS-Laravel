@@ -193,7 +193,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field10')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.label.field10')</label>
                         <div class="col-sm-10">
                             <input class="form-control tags-input mb-1" name="unique_fields" value="{{ isset($data['event']) && !empty($data['event']['unique_fields']) ? old('unique_fields', implode(",", $data['event']['unique_fields'])) : old('unique_fields') }}" placeholder="">
                             <small class="text-muted">@lang('global.separated_comma')</small>
@@ -201,7 +201,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('module/inquiry.label.lock_form')</label>
+                        <label class="col-form-label text-sm-right">@lang('module/event.label.lock_form')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="switcher switcher-success">
@@ -351,12 +351,16 @@
                             </div>
                         </div>
                     </div>
+                    @role('super')
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">Content Template</label>
                         <div class="col-sm-10">
-                            <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['inquiry']) ? old('content_template') : old('content_template', $data['inquiry']['content_template']) !!}</textarea>
+                            <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['event']) ? old('content_template') : old('content_template', $data['event']['content_template']) !!}</textarea>
                         </div>
                     </div>
+                    @else
+                    <input type="hidden" name="content_template" value="{{ !isset($data['event']) ? old('content_template') : old('content_template', $data['event']['content_template']) }}">
+                    @endrole
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.hide') Field</label>
                         <div class="col-sm-10">

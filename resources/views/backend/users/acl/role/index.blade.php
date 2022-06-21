@@ -75,6 +75,7 @@
                             <th>@lang('module/user.role.label.field2')</th>
                             <th>@lang('module/user.role.label.field3')</th>
                             <th style="width: 80px;" class="text-center">@lang('module/user.role.label.field4')</th>
+                            <th style="width: 110px;" class="text-center">@lang('module/user.role.label.field5')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
                             <th class="text-center" style="width: 110px;"></th>
@@ -88,6 +89,9 @@
                             <td><code>{{ $item['name'] }}</code></td>
                             <td>{{ $item['guard_name'] }}</td>
                             <td class="text-center"><span class="badge badge-info">{{ $item['level'] }}</span></td>
+                            <td class="text-center">
+                                <span class="badge badge-{{ $item['is_register'] == 1 ? 'primary' : 'secondary' }}">{{ __('global.label.optional.'.$item['is_register']) }}</span>
+                            </td>
                             <td>{{ $item['created_at']->format('d F Y (H:i A)') }}</td>
                             <td>{{ $item['updated_at']->format('d F Y (H:i A)') }}</td>
                             <td class="text-center">
@@ -109,7 +113,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" align="center">
+                            <td colspan="8" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam)

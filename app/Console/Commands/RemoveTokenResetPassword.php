@@ -44,11 +44,10 @@ class RemoveTokenResetPassword extends Command
 
         foreach ($passwordReset as $key => $value) {
             $createdAt = Carbon::parse($value->created_at)->addHours(3)->format('Y-m-d H');
-            if ($timeNow >= $createdAt) {
+            if ($timeNow >= $createdAt)
                 DB::table('password_resets')->where('token', $value->token)->delete();
                 
-                sleep(rand(1, 5));
-            }
+                // sleep(rand(1, 5));
         }
 
         return 'Delete token expired reset password successfully';

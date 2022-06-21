@@ -90,7 +90,7 @@ class RegistrationController extends Controller
 
     public function create(Request $request)
     {
-        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false);
+        $data['roles'] = $this->userService->getRoleList(['is_register' => 1], false);
 
         return view('backend.features.registration.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -124,7 +124,7 @@ class RegistrationController extends Controller
         if (empty($data['registration']))
             return abort(404);
 
-        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false);
+        $data['roles'] = $this->userService->getRoleList(['is_register' => 1], false);
 
         return view('backend.features.registration.form', compact('data'), [
             'title' => __('global.edit_attr', [

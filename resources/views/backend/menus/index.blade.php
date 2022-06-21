@@ -107,7 +107,7 @@
                         <tr class="table-primary">
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <strong>{!! Str::limit($item->module()['title'], 65) !!}</strong>
+                                <strong>{!! Str::limit($item['modules']['title'], 65) !!}</strong>
                             </td>
                             <td class="text-center">
                                 @can ('menu_update')

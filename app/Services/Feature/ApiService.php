@@ -64,6 +64,10 @@ class ApiService
         if ($withPaginate == true) {
             $result = $api->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $api->limit($limit);
+
             $result = $api->get();
         }
 

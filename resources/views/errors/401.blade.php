@@ -22,7 +22,8 @@
 
       </div>
       <div class="text-center mt-4">
-        <button type="button" onclick="goBack()" class="btn btn-outline-dark">←&nbsp; @lang('global.back')</button>
+        <a href="{{ route('home') }}" class="btn btn-outline-dark">←&nbsp; @lang('global.back')</a>
+        {{-- <button type="button" onclick="goBack()" class="btn btn-outline-dark">←&nbsp; @lang('global.back')</button> --}}
       </div>
     </div>
 

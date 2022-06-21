@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Grouping
+//--- Grouping
 $group = ['middleware' => ['language']];
 $groupAuth = ['middleware' => ['guest', 'language']];
 
@@ -29,9 +29,9 @@ if (config('cms.module.feature.language.needLocale')) {
     $groupAuth['prefix'] = '{locale?}';
 }
 
-//------------
+//------------------------------------------------------------------------------
 // BACKEND
-//------------
+//------------------------------------------------------------------------------
 
 //--- Login Backend
 Route::get('/backend/authentication', [LoginController::class, 'showLoginBackendForm'])
@@ -59,7 +59,6 @@ Route::group($groupAuth, function () {
         ->name('register.activate.send');
     Route::get('/register/activate/{email}/{expired}', [RegisterController::class, 'activate'])
         ->name('register.activate');
-
 
     //--- Forgot Password
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
@@ -93,9 +92,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     
 });
 
-//------------
+//------------------------------------------------------------------------------
 // FRONTEND
-//------------
+//------------------------------------------------------------------------------
 
 //--- Sitemap
 Route::get('/sitemap.xml', [HomeController::class, 'sitemap'])
@@ -125,9 +124,9 @@ Route::group($group, function () {
 
 });
 
-//------------
+//------------------------------------------------------------------------------
 // CACHE
-//------------
+//------------------------------------------------------------------------------
 Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');
     return back()->with('success', 'Cache cleared');

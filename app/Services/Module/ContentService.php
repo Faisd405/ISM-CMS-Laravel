@@ -36,9 +36,9 @@ class ContentService
         $this->indexUrl = $indexUrl;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // SECTION
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Section List
@@ -90,6 +90,10 @@ class ContentService
         if ($withPaginate == true) {
             $result = $section->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $section->limit($limit);
+
             $result = $section->get();
         }
         
@@ -471,9 +475,9 @@ class ContentService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // CATEGORY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Category List
@@ -528,6 +532,10 @@ class ContentService
         if ($withPaginate == true) {
             $result = $category->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $category->limit($limit);
+
             $result = $category->get();
         }
         
@@ -865,9 +873,9 @@ class ContentService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // POST
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Post List
@@ -941,6 +949,10 @@ class ContentService
         if ($withPaginate == true) {
             $result = $post->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $post->limit($limit);
+
             $result = $post->get();
         }
         

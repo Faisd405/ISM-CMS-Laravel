@@ -231,7 +231,7 @@
             $('.select-autocomplete').select2({
                 minimumInputLength: 1,
                 ajax: {
-                    url: '/api/menu/module/'+val,
+                    url: '/api/module/'+val,
                     dataType: 'json',
                     type: "GET",
                     quietMillis: 50,

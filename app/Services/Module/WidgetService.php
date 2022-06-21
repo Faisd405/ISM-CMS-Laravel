@@ -90,6 +90,10 @@ class WidgetService
         if ($withPaginate == true) {
             $result = $widget->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $widget->limit($limit);
+
             $result = $widget->get();
         }
 

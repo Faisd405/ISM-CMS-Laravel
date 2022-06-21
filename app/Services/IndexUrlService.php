@@ -59,6 +59,10 @@ class IndexUrlService
         if ($withPaginate == true) {
             $result = $indexUrl->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $indexUrl->limit($limit);
+
             $result = $indexUrl->get();
         }
         

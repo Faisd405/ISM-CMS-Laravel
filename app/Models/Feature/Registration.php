@@ -23,6 +23,10 @@ class Registration extends Model
         'end_date' => 'datetime',
     ];
 
+    protected $appends = [
+        'role_list'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -50,7 +54,7 @@ class Registration extends Model
         return $query->where('active', 1);
     }
 
-    public function getRoles()
+    public function getRoleListAttribute()
     {
         return Role::whereIn('id', $this->roles)->get();
     }

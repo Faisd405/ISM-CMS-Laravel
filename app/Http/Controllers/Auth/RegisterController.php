@@ -32,6 +32,9 @@ class RegisterController extends Controller
     {
         $data['register'] = $this->registrationService->getRegistration(['type' => 0]);
 
+        if (empty($data['register']))
+            return abort(404);
+
         if ($data['register']['active'] == 0)
             return abort(404);
 
@@ -47,6 +50,9 @@ class RegisterController extends Controller
     {
         $register = $this->registrationService->getRegistration(['type' => 0]);
         $loginAfterRegister = config('cms.module.auth.register.is_login');
+
+        if (empty($register))
+            return abort(404);
 
         if ($register['active'] == 0)
             return abort(404);
@@ -69,14 +75,13 @@ class RegisterController extends Controller
         try {
             
             $data = $request->all();
-            if (count($register['roles']) == 1) {
-                $data['roles'] = $register->getRoles()[0]['name'];
-            }
+            if (count($register['roles']) == 1)
+                $data['roles'] = $register['role_list'][0]['name'];
 
             $data['active'] = 0;
-            if ($loginAfterRegister == true) {
+            if ($loginAfterRegister == true)
                 $data['active'] = 1;
-            }
+
             $register = $this->userService->store($data);
 
             if ($register['success'] == true) {
@@ -97,12 +102,11 @@ class RegisterController extends Controller
                         'link' => route('register.activate', ['email' => $email, 'expired' => $expired]),
                     ];
         
-                    if (config('cms.module.feature.notification.email.activate_account') == true) {
+                    if (config('cms.module.feature.notification.email.activate_account') == true)
                         Mail::to($request->email)->send(new \App\Mail\ActivateAccountMail($data));
-                    }
                 }
 
-                if (config('cms.module.feature.notification.apps.register') == true) {
+                if (config('cms.module.feature.notification.apps.register') == true)
                     $this->notifService->sendNotif([
                         'user_from' => $register['data']['id'],
                         'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3]], false)
@@ -118,7 +122,6 @@ class RegisterController extends Controller
                         'read_by' => [],
                         'link' => 'admin/user?q='.$request->email.'&'
                     ]);
-                }
     
                 return redirect()->route('login.frontend')->with('success', __('auth.register.alert.success'));
     

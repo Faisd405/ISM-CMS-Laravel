@@ -19,6 +19,11 @@ class Language extends Model
     protected $table = 'feature_languages';
     protected $guarded = [];
 
+    protected $appends = [
+        'url_switcher',
+        'flag_icon'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -46,7 +51,7 @@ class Language extends Model
         return $query->where('active', 1);
     }
 
-    public function urlSwitcher()
+    public function getUrlSwitcherAttribute()
     {
         $checkUrl = Str::replaceFirst(url('/'), '', URL::full());
         $replaceUrl = Str::replace(url(''), '', URL::full());
@@ -68,7 +73,7 @@ class Language extends Model
         return $url;
     }
 
-    public function flags()
+    public function getFlagIconAttribute()
     {
         return asset(config('cms.files.lang').$this->iso_codes.'svg');
     }

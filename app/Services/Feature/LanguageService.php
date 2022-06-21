@@ -68,6 +68,10 @@ class LanguageService
         if ($withPaginate == true) {
             $result = $language->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $language->limit($limit);
+
             $result = $language->get();
         }
 

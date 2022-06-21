@@ -29,9 +29,9 @@ class DocumentService
         $this->language = $language;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // DOCUMENT CATEGORY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Category List
@@ -82,6 +82,10 @@ class DocumentService
         if ($withPaginate == true) {
             $result = $category->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $category->limit($limit);
+
             $result = $category->get();
         }
         
@@ -431,9 +435,9 @@ class DocumentService
         return $result;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // DOCUMENT FILE
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get File List
@@ -490,6 +494,10 @@ class DocumentService
         if ($withPaginate == true) {
             $result = $file->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $file->limit($limit);
+
             $result = $file->get();
         }
         

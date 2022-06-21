@@ -45,9 +45,10 @@ class UserService
         $this->userLoginFailedModel = $userLoginFailedModel;
     }
 
-    //---------------------------
-    // AUTHENTICATION
-    //---------------------------
+    //--------------------------------------------------------------------------
+    // AUTHENTICATIONS
+    // manage auth proccess
+    //--------------------------------------------------------------------------
 
     /**
      * Login
@@ -73,7 +74,7 @@ class UserService
                 if ($auth) {
                     
                     $this->setSession($user['session']);
-                    // $auth['token'] = $user->createToken('User Token')->plainTextToken;
+                    // $auth['token'] = $user->createToken('User Token '.$user['id'])->plainTextToken;
     
                     return $this->success($auth, __('auth.login_'.$loginType.'.alert.success'));
                 }
@@ -148,9 +149,10 @@ class UserService
         return true;
     }
 
-    //---------------------------
-    // USER
-    //---------------------------
+    //--------------------------------------------------------------------------
+    // USERS
+    // manage data & proccess user
+    //--------------------------------------------------------------------------
 
     /**
      * Get User List
@@ -209,6 +211,10 @@ class UserService
         if ($withPaginate == true) {
             $result = $user->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $user->limit($limit);
+
             $result = $user->get();
         }
 
@@ -249,9 +255,10 @@ class UserService
             $user->active_at = $data['active'] == 1 ? now() : null;
             $user->phone = $data['phone'] ?? null;
             $user->assignRole($data['roles']);
-            if (Auth::guard()->check()) {
+            
+            if (Auth::guard()->check())
                 $user->created_by = Auth::user()['id'];
-            }
+
             $user->save();
            
             return $this->success($user, __('global.alert.create_success', [
@@ -292,26 +299,24 @@ class UserService
             $user->email = $data['email'];
             $user->username = $data['username'];
 
-            if ($data['email'] != $data['old_email']) {
+            if ($data['email'] != $data['old_email'])
                 $user->email_verified = 0;
                 $user->email_verified_at = null;
-            }
 
-            if ($data['password'] != '') {
+            if ($data['password'] != '')
                 $user->password = Hash::make($data['password']);
-            }
 
-            if ($data['roles'] != 'editor') {
+            if ($data['roles'] != 'editor')
                 $user->permissions()->delete();
-            }
 
             $user->active = (bool)$data['active'];
             $user->active_at = ((bool)$data['active'] == 1) ? now() : null;
             $user->phone = $data['phone'] ?? null;
             $user->syncRoles($data['roles']);
-            if (Auth::guard()->check()) {
+
+            if (Auth::guard()->check())
                 $user->updated_by = Auth::user()['id'];
-            }
+
             $user->save();
 
             return $this->success($user, __('global.alert.update_success', [
@@ -336,9 +341,10 @@ class UserService
             
             $user->active = !$user['active'];
             $user->active_at = $user['active'] == 1 ? now() : null;
-            if (Auth::guard()->check()) {
+
+            if (Auth::guard()->check())
                 $user->updated_by = Auth::user()['id'];
-            }
+
             $user->save();
 
             return $this->success($user, __('module/user.alert.activate_success'));
@@ -361,9 +367,10 @@ class UserService
             
             $user->email_verified = 1;
             $user->email_verified_at = now();
-            if (Auth::guard()->check()) {
+
+            if (Auth::guard()->check())
                 $user->updated_by = Auth::user()['id'];
-            }
+                
             $user->save();
 
             return $this->success($user, __('module/user.alert.verification_success'));
@@ -389,19 +396,18 @@ class UserService
             $user->email = $data['email'];
             $user->username = $data['username'];
 
-            if ($data['email'] != $data['old_email']) {
+            if ($data['email'] != $data['old_email'])
                 $user->email_verified = 0;
                 $user->email_verified_at = null;
-            }
 
-            if ($data['password'] != '') {
+            if ($data['password'] != '')
                 $user->password = Hash::make($data['password']);
-            }
 
             $user->phone = $data['phone'] ?? null;
-            if (Auth::guard()->check()) {
+
+            if (Auth::guard()->check())
                 $user->updated_by = Auth::user()['id'];
-            }
+
             $user->save();
 
             return $this->success($user, __('global.alert.update_success', [
@@ -425,14 +431,14 @@ class UserService
 
         try {
            
-            if ($request->hasFile('avatars')) {
-                $file = $request->file('avatars');
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
                 $name = Str::slug($user['username'], '-');
                 $fileName = $name.'.'.$file->getClientOriginalExtension();
     
-                Storage::delete(config('cms.files.avatars.path').
-                    $request['old_avatars']);
-                Storage::put(config('cms.files.avatars.path').
+                Storage::delete(config('cms.files.avatar.path').
+                    $request['old_avatar']);
+                Storage::put(config('cms.files.avatar.path').
                     $fileName, file_get_contents($file));
     
                 $user->photo = [
@@ -440,13 +446,14 @@ class UserService
                     'filetype' => $file->getClientOriginalExtension(),
                     'filesize' => $file->getSize()
                 ];
-                if (Auth::guard()->check()) {
+
+                if (Auth::guard()->check())
                     $user->updated_by = Auth::user()['id'];
-                }
+
                 $user->save();
         
                 return $this->success($user, __('global.alert.update_success', [
-                    'attribute' => __('module/user.profile.label.photo')
+                    'attribute' => __('module/user.photo.caption')
                 ]));
     
             } else {
@@ -471,16 +478,17 @@ class UserService
 
         try {
 
-            Storage::delete(config('cms.files.avatars.path').
+            Storage::delete(config('cms.files.avatar.path').
                 $user['photo']['filename']);
             $user['photo'] = null;
-            if (Auth::guard()->check()) {
+
+            if (Auth::guard()->check())
                 $user->updated_by = Auth::user()['id'];
-            }
+                
             $user->save();
 
             return $this->success($user, __('global.alert.delete_success', [
-                'attribute' => __('module/user.profile.label.photo')
+                'attribute' => __('module/user.photo.caption')
             ]));
 
         } catch (Exception $e) {
@@ -504,9 +512,9 @@ class UserService
 
             if ($user['locked'] == 0 && $logs == 0) {
                 
-                if (Auth::guard()->check()) {
+                if (Auth::guard()->check())
                     $user->deleted_by = Auth::user()['id'];
-                }
+                    
                 $user->save();
 
                 //hapus data yang bersangkutan
@@ -569,16 +577,14 @@ class UserService
 
             if ($user['locked'] == 0 && $logs == 0) {
                 
-                if (!empty($user['photo'])) {
-                    Storage::delete(config('cms.files.avatars.path').
+                if (!empty($user['photo']))
+                    Storage::delete(config('cms.files.avatar.path').
                         $user['photo']['filename']);
-                }
         
                 //hapus data tabel tambahan jika ada user dengan role berbeda & memiliki tabel tersendiri
-        
-                if (!empty($user['session'])) {
+                if (!empty($user['session']))
                     $user->session()->delete();
-                }
+
                 $user->logs()->delete();
                 $user->permissions()->delete();
                 $user->forceDelete();
@@ -599,9 +605,10 @@ class UserService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // LOGS
-    //---------------------------
+    // manage data & proccess log
+    //--------------------------------------------------------------------------
 
     /**
      * Get Log List
@@ -644,6 +651,10 @@ class UserService
         if ($withPaginate == true) {
             $result = $log->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $log->limit($limit);
+
             $result = $log->get();
         }
 
@@ -688,11 +699,10 @@ class UserService
 
         try {
             
-            if ($log->count() == 0) {
+            if ($log->count() == 0)
                 return $this->error(null,  __('global.data_attr_empty', [
                     'attribute' => __('module/user.log.caption')
                 ]));
-            }
 
             $log->truncate();
 
@@ -728,9 +738,10 @@ class UserService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // LOGIN FAILED
-    //---------------------------
+    // manage data & proccess login failed
+    //--------------------------------------------------------------------------
 
     /**
      * Get Login Failed List
@@ -774,6 +785,10 @@ class UserService
         if ($withPaginate == true) {
             $result = $loginFailed->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $loginFailed->limit($limit);
+            
             $result = $loginFailed->get();
         }
 
@@ -806,11 +821,10 @@ class UserService
 
         try {
             
-            if ($loginFailed->count() == 0) {
+            if ($loginFailed->count() == 0)
                 return $this->error(null,  __('global.data_attr_empty', [
                     'attribute' => __('module/user.login_failed.caption')
                 ]));
-            }
 
             $loginFailed->truncate();
 
@@ -846,9 +860,10 @@ class UserService
         }
     }
 
-    //---------------------------
-    // ROLE
-    //---------------------------
+    //--------------------------------------------------------------------------
+    // ROLES
+    // manage data & proccess role
+    //--------------------------------------------------------------------------
 
     /**
      * Get Role List
@@ -872,6 +887,9 @@ class UserService
         if (isset($filter['level']))
             $role->where('level', $filter['level']);
 
+        if (isset($filter['is_register']))
+            $role->where('is_register', $filter['is_register']);
+
         if (isset($filter['q']))
             $role->when($filter['q'], function ($role, $q) {
                 $role->where('name', 'like', '%'.$q.'%');
@@ -891,6 +909,10 @@ class UserService
         if ($withPaginate == true) {
             $result = $role->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $role->limit($limit);
+
             $result = $role->get();
         }
 
@@ -948,11 +970,12 @@ class UserService
             $role = $this->roleModel->create([
                 'name' => Str::slug($data['name'], '_'),
                 'level' => $data['level'],
+                'is_register' => (bool)$data['is_register'],
                 'guard_name' => 'web'
             ]);
-            if (isset($data['permission'])) {
+
+            if (isset($data['permission']))
                 $this->syncPermissionRole($data['permission'], $role['id']);
-            }
 
             $this->recordLog([
                 'event' => 1,
@@ -991,6 +1014,7 @@ class UserService
             $role->update([
                 'name' => Str::slug($data['name'], '_'),
                 'level' => $data['level'],
+                'is_register' => (bool)$data['is_register'],
                 'guard_name' => 'web'
             ]);
 
@@ -1074,9 +1098,10 @@ class UserService
         }
     }
 
-    //---------------------------
-    // PERMISSION
-    //---------------------------
+    //--------------------------------------------------------------------------
+    // PERMISSIONS
+    // manage data & proccess permission
+    //--------------------------------------------------------------------------
 
         /**
      * Get Permission List
@@ -1113,6 +1138,10 @@ class UserService
         if ($withPaginate == true) {
             $result = $permission->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $permission->limit($limit);
+
             $result = $permission->get();
         }
         

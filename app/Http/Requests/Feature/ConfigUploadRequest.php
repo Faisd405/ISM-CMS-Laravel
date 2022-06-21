@@ -25,7 +25,8 @@ class ConfigUploadRequest extends FormRequest
     public function rules()
     {
         return [
-            $this->name => 'required|max:'.config('cms.files.config.'. $this->name.'.size_byte').'|mimes:'.config('cms.files.config.'.
+            $this->name => 'required|max:'.config('cms.files.config.'. $this->name.'.size_byte').
+                '|mimes:'.config('cms.files.config.'.
             $this->name.'.mimes'),
         ];
     }

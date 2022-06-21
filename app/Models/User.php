@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasPermissions;
@@ -48,6 +49,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'active_at' => 'datetime',
         'photo' => 'json'
+    ];
+
+    protected $appends = [
+        'avatar',
+        'is_online'
     ];
 
     public static function boot()
@@ -97,15 +103,19 @@ class User extends Authenticatable
         return $query->where('active', 1);
     }
 
-    public function avatars()
+    public function getAvatarAttribute()
     {
-        $photo = User::find($this->id)['photo'];
+        $photo = $this->photo;
 
-        $path = asset(config('cms.files.avatars.file'));
-        if (!empty($photo) && isset($photo['filename'])) {
-            $path = Storage::url(config('cms.files.avatars.path').$photo['filename']);
-        }
+        $path = asset(config('cms.files.avatar.file'));
+        if (!empty($photo) && isset($photo['filename']))
+            $path = Storage::url(config('cms.files.avatar.path').$photo['filename']);
 
         return $path;
+    }
+
+    public function getIsOnlineAttribute()
+    {
+        return Cache::has('user-online-'.$this->id);
     }
 }

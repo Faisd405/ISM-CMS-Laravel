@@ -67,6 +67,7 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
         $data = $request->all();
+        $data['is_register'] = (bool)$request->is_register;
         $role = $this->userService->storeRole($data);
         $data['query'] = $request->query();
 
@@ -103,6 +104,7 @@ class RoleController extends Controller
     public function update(RoleRequest $request, $id)
     {
         $data = $request->all();
+        $data['is_register'] = (bool)$request->is_register;
         $role = $this->userService->updateRole($data, ['id' => $id]);
         $data['query'] = $request->query();
 

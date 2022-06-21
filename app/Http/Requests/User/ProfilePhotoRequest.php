@@ -24,15 +24,15 @@ class ProfilePhotoRequest extends FormRequest
     public function rules()
     {
         return [
-            'avatars' => 'required|max:'.config('cms.files.avatars.size_byte').'
-                |mimes:'.config('cms.files.avatars.mimes'),
+            'avatar' => 'required|max:'.config('cms.files.avatar.size_byte').'
+                |mimes:'.config('cms.files.avatar.mimes'),
         ];
     }
 
     public function attributes()
     {
         return [
-            'avatars' => __('module/user.label.photo'),
+            'avatar' => __('module/user.label.photo'),
         ];
     }
 }

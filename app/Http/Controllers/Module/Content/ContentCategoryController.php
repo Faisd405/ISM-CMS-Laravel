@@ -288,7 +288,7 @@ class ContentCategoryController extends Controller
         $slugCat = $request->route('slugCategory');
         $data['section'] = $this->contentService->getSection(['slug' => $slug]);
 
-        if ($data['section']['publish'] == 0 || $data['section']['approved'] != 1) {
+        if (empty($data['section']) || $data['section']['publish'] == 0 || $data['section']['approved'] != 1) {
             return redirect()->route('home');
         }
 
@@ -347,6 +347,18 @@ class ContentCategoryController extends Controller
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }
+
+        //share
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+            "&title=".$data['read']->fieldLang('name')."";
+        $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
+            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.url()->full();
+        $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('name').
+            " ".url()->full()."";
+        $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
+            url()->full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
+        $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
+            $this->configService->getConfigFile('cover_default')."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_id'])) {

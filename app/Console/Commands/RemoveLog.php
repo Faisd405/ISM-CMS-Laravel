@@ -47,11 +47,10 @@ class RemoveLog extends Command
 
         foreach ($logs as $log) {
             $logDate = $log->created_at->addMonths(1)->format('Y-m-d');
-            if ($logDate == $dateNow) {
+            if ($logDate == $dateNow)
                 $log->delete();
 
-                sleep(rand(1, 5));
-            }
+                //sleep(rand(1, 5));
         }
 
         return 'Delete log user successfully';

@@ -36,9 +36,9 @@ class InquiryService
         $this->indexUrl = $indexUrl;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // INQUIRY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Inquiry List
@@ -89,6 +89,10 @@ class InquiryService
         if ($withPaginate == true) {
             $result = $inquiry->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $inquiry->limit($limit);
+
             $result = $inquiry->get();
         }
         
@@ -483,9 +487,9 @@ class InquiryService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // INQUIRY FIELD
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Field List
@@ -539,6 +543,10 @@ class InquiryService
         if ($withPaginate == true) {
             $result = $field->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $field->limit($limit);
+
             $result = $field->get();
         }
         
@@ -850,9 +858,9 @@ class InquiryService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // INQUIRY FORM
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Form List
@@ -903,6 +911,10 @@ class InquiryService
         if ($withPaginate == true) {
             $result = $form->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $form->limit($limit);
+
             $result = $form->get();
         }
         

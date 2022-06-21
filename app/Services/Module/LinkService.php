@@ -28,9 +28,9 @@ class LinkService
         $this->language = $language;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // LINK CATEGORY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Category List
@@ -81,6 +81,10 @@ class LinkService
         if ($withPaginate == true) {
             $result = $category->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $category->limit($limit);
+
             $result = $category->get();
         }
         
@@ -410,9 +414,9 @@ class LinkService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // LINK MEDIA
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Media List
@@ -466,6 +470,10 @@ class LinkService
         if ($withPaginate == true) {
             $result = $media->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $media->limit($limit);
+
             $result = $media->get();
         }
         

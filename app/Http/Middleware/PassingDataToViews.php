@@ -52,7 +52,8 @@ class PassingDataToViews
         }
 
         //--- Language
-        if (config('cms.module.feature.language.multiple') == true && request()->segment(1) != 'backend' || request()->segment(1) != 'admin') {
+        if (config('cms.module.feature.language.multiple') == true && 
+            request()->segment(1) != 'backend' || request()->segment(1) != 'admin') {
             $passingData['languages'] = $this->languange->getLanguageActive();
         }
         
@@ -70,6 +71,9 @@ class PassingDataToViews
                 $passingData['menu'][$value['name']] = $this->menu->getMenuList($filterMenu, false, 10, false, [], [
                     'position' => 'ASC'
                 ]);
+                foreach ($passingData['menu'][$value['name']] as $keyB => $valueB) {
+                    $passingData['menu'][$value['name']][$keyB]['modules'] = $this->menu->getModuleData($valueB);
+                }
             }
 
             //--- Widget Global

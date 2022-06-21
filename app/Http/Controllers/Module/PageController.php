@@ -12,7 +12,6 @@ use App\Services\Module\PageService;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class PageController extends Controller
@@ -354,17 +353,16 @@ class PageController extends Controller
         }
 
         //share
-        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".
-            URL::full()."&title=".$data['read']->fieldLang('title')."";
-        $data['share_twitter'] = "https://twitter.com/intent/tweet?text=".
-            $data['read']->fieldLang('title')."&amp;url=".URL::full()."";
-        $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('title')." 
-            ".URL::full()."";
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+            "&title=".$data['read']->fieldLang('title')."";
+        $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
+            str_replace('#', '', $data['read']->fieldLang('title')).'&url='.url()->full();
+        $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('title').
+            " ".url()->full()."";
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
-            URL::full()."&title=".$data['read']->fieldLang('title')."&source=".request()->root()."";
+            url()->full()."&title=".$data['read']->fieldLang('title')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $data['read']['cover']['filepath']."&url=".URL::full()."&is_video=false&description=".
-            $data['read']->fieldLang('title')."";
+            $data['cover']."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('title')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_id'])) {

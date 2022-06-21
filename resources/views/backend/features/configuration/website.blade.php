@@ -165,13 +165,13 @@
                                             title="{{ $key }}">{{ $value}}</option>
                                         @endforeach
                                     </select>
-                                    @elseif ($dev['name'] == 'default_lang')
+                                    {{-- @elseif ($dev['name'] == 'default_lang')
                                     <select class="custom-select" name="name[{{ $dev['name'] }}]">
                                         @foreach ($data['languages'] as $key => $value)
                                         <option value="{{ $value['iso_codes'] }}" {{ $value['iso_codes'] == App::getLocale() ? 'selected' : '' }} 
                                             title="{{ $value['iso_codes'] }}">{{ $value['name'] }}</option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
                                     @elseif ($dev['name'] == 'pwa')
                                     <select class="custom-select" name="name[{{ $dev['name'] }}]">
                                         @foreach (__('global.label.optional') as $key => $value)

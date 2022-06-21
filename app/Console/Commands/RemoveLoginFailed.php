@@ -51,11 +51,10 @@ class RemoveLoginFailed extends Command
                 $hour = config('cms.module.auth.login.frontend.lock_time');
 
             $failedTime = $value->failed_time->addHours($hour)->format('Y-m-d H');
-            if ($timeNow >= $failedTime) {
+            if ($timeNow >= $failedTime)
                 $value->delete();
                 
-                sleep(rand(1, 5));
-            }
+                // sleep(rand(1, 5));
         }
 
         return 'Delete data failed login successfully';

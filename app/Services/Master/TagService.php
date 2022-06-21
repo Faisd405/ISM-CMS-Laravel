@@ -70,6 +70,10 @@ class TagService
         if ($withPaginate == true) {
             $result = $tag->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $tag->limit($limit);
+
             $result = $tag->get();
         }
 

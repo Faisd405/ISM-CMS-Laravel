@@ -29,9 +29,9 @@ class BannerService
         $this->language = $language;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // CATEGORY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Category List
@@ -82,6 +82,10 @@ class BannerService
         if ($withPaginate == true) {
             $result = $category->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $category->limit($limit);
+
             $result = $category->get();
         }
         
@@ -333,9 +337,9 @@ class BannerService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // BANNER
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get Banner List
@@ -392,6 +396,10 @@ class BannerService
         if ($withPaginate == true) {
             $result = $banner->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $banner->limit($limit);
+
             $result = $banner->get();
         }
         

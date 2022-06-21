@@ -24,6 +24,10 @@ class Media extends Model
         'description' => 'json',
     ];
 
+    protected $appends = [
+        'icon'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -70,12 +74,12 @@ class Media extends Model
         return Storage::url($this->filepath['filename']);
     }
 
-    public function getExtension($file)
+    private function getExtension($file)
     {
         return pathinfo(Storage::url($file))['extension'];
     }
 
-    public function icon()
+    public function getIconAttribute()
     {
         $type = $this->getExtension($this->filepath['filename']);
 

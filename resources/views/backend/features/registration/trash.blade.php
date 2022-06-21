@@ -106,7 +106,7 @@
                             <td>
                                 @if ($item['roles'] != null)
                                     <ul>
-                                        @foreach ($item->getRoles() as $role)
+                                        @foreach ($item['role_list'] as $role)
                                             <li>{{ $role['name'] }}</li>
                                         @endforeach
                                     </ul>

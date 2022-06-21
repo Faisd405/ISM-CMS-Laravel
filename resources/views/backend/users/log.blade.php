@@ -119,7 +119,7 @@
                                 @endswitch
                             </td>
                             <td>
-                                {{ __('global.label.event_log.'.$item['event'].'.desc') }} <strong>'{{ $item->replaceLogType() }}'</strong>
+                                {{ __('global.label.event_log.'.$item['event'].'.desc') }} <strong>'{{ $item['log_type'] }}'</strong>
                                 <span class="badge badge-secondary">ID : {{ $item['logable_id'] }}</span>
                             </td>
                             <td>{{ $item['created_at']->format('d F Y (H:i A)') }}</td>

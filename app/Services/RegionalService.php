@@ -27,9 +27,9 @@ class RegionalService
         $this->districtModel = $districtModel;
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // PROVINCE
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get province List
@@ -75,6 +75,10 @@ class RegionalService
         if ($withPaginate == true) {
             $result = $province->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $province->limit($limit);
+
             $result = $province->get();
         }
         
@@ -241,9 +245,9 @@ class RegionalService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // CITY
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get City List
@@ -292,6 +296,10 @@ class RegionalService
         if ($withPaginate == true) {
             $result = $city->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $city->limit($limit);
+
             $result = $city->get();
         }
         
@@ -466,9 +474,9 @@ class RegionalService
         }
     }
 
-    //---------------------------
+    //--------------------------------------------------------------------------
     // DISTRICT
-    //---------------------------
+    //--------------------------------------------------------------------------
 
     /**
      * Get District List
@@ -520,6 +528,10 @@ class RegionalService
         if ($withPaginate == true) {
             $result = $district->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $district->limit($limit);
+
             $result = $district->get();
         }
         

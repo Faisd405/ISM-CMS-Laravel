@@ -120,13 +120,13 @@
                         <tr>
                             <td>{{ $data['no']++ }} </td>
                             <td>
-                                <a href="{{ $item->avatars() }}" data-fancybox="gallery">
-                                    <img src="{{ $item->avatars() }}" class="d-block ui-w-40 rounded-circle" alt="">
+                                <a href="{{ $item['avatar'] }}" data-fancybox="gallery">
+                                    <img src="{{ $item['avatar'] }}" class="d-block ui-w-40 rounded-circle" alt="">
                                 </a>
                             </td>
                             <td>
                                 <strong>{{ $item['name'] }}</strong><br>
-                                @if (Cache::has('online-'.$item['id']))
+                                @if ($item['is_online'])
                                 <div class="chat-status small text-muted"><span class="badge badge-dot badge-success"></span>&nbsp; Online</div>
                                 @else
                                 <div class="chat-status small text-muted"><span class="badge badge-dot badge-danger"></span>&nbsp; Offline</div>
@@ -142,7 +142,7 @@
                                 @endforeach
                             </td>
                             <td class="text-center">
-                                @if (Auth::user()->can('user_update') && $item->roles[0]['id'] >= Auth::user()->roles[0]['id'] && ($item['id'] != Auth::user()['id']))
+                                @if (Auth::user()->can('user_update') && $item['roles'][0]['id'] >= Auth::user()['roles'][0]['id'] && ($item['id'] != Auth::user()['id']))
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['active'] == 1 ? 'success' : 'secondary' }}"
                                     title="{{ __('global.label.active.'.$item['active']) }}">
                                     {{ __('global.label.active.'.$item['active']) }}

@@ -75,6 +75,10 @@ class MediaService
         if ($withPaginate == true) {
             $result = $media->paginate($limit);
         } else {
+
+            if ($limit > 0)
+                $media->limit($limit);
+
             $result = $media->get();
         }
 
