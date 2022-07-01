@@ -21,6 +21,7 @@ class EventField extends Model
         'label' => 'json',
         'placeholder' => 'json',
         'properties' => 'json',
+        'validation' => 'json',
         'options' => 'json',
     ];
 

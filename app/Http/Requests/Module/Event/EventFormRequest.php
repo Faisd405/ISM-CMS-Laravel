@@ -33,11 +33,15 @@ class EventFormRequest extends FormRequest
      */
     public function rules()
     {
-        $getFields = $this->event->getFieldList(['event_id' => $this->id], false);
+        $getFields = $this->event->getFieldList([
+            'event_id' => $this->id,
+            'publish' => 1,
+            'approved' => 1
+        ], false);
 
         $fields['g-recaptcha-response'] = config('recaptcha.version') == 'v2' ? 'required' : 'nullable';
         foreach ($getFields as $value) {
-            $fields[$value['name']] = $value['validation'] ?? 'nullable';
+            $fields[$value['name']] = !empty($value['validation']) ? implode('|', $value['validation']) : 'nullable';
         }
 
         return $fields;
@@ -45,7 +49,11 @@ class EventFormRequest extends FormRequest
 
     public function attributes()
     {
-        $getFields = $this->event->getFieldList(['event_id' => $this->id], false);
+        $getFields = $this->event->getFieldList([
+            'event_id' => $this->id,
+            'publish' => 1,
+            'approved' => 1
+        ], false);
         
         $fields['g-recaptcha-response'] = 'Recaptcha';
         foreach ($getFields as $value) {

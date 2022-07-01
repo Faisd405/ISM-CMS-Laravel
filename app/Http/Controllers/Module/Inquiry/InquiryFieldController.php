@@ -122,6 +122,7 @@ class InquiryFieldController extends Controller
         $data = $request->all();
         
         $data['inquiry_id'] = $inquiryId;
+        $data['is_unique'] = (bool)$request->is_unique;
         $field = $this->inquiryService->storeField($data);
         $data['query'] = $request->query();
 
@@ -161,6 +162,7 @@ class InquiryFieldController extends Controller
         $data = $request->all();
 
         $data['inquiry_id'] = $inquiryId;
+        $data['is_unique'] = (bool)$request->is_unique;
         $field = $this->inquiryService->updateField($data, ['id' => $id]);
         $data['query'] = $request->query();
 

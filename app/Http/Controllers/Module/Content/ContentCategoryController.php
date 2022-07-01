@@ -113,7 +113,7 @@ class ContentCategoryController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_category'], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_category'], false, 0);
 
         return view('backend.contents.category.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -156,7 +156,7 @@ class ContentCategoryController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_category'], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_category'], false, 0);
 
         return view('backend.contents.category.form', compact('data'), [
             'title' => __('global.edit_attr', [

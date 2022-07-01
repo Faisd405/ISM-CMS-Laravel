@@ -4,7 +4,7 @@
 <h4>{!! $data['title'] !!}</h4>
 <p>
     @lang('mail.event.title', [
-        'attribute' => $data['request']['name']
+        'attribute' => isset($data['request']['name']) ? $data['request']['name'] : __('global.visitor')
     ])
 </p>
 <table border="0" cellpadding="0" cellspacing="0">

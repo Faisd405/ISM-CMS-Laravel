@@ -29,7 +29,6 @@ class Event extends Model
         'email' => 'array',
         'cover' => 'json',
         'banner' => 'json',
-        'unique_fields' => 'json',
         'config' => 'json',
         'custom_fields' => 'json',
         'seo' => 'json',

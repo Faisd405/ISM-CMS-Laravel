@@ -234,9 +234,6 @@ class EventService
         if (!empty($data['email'])) {
             $event->email = explode(',', $data['email']);
         }
-        if (!empty($data['unique_fields'])) {
-            $event->unique_fields = explode(',', $data['unique_fields']);
-        }
         $event->cover = [
             'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
             'title' => $data['cover_title'] ?? null,
@@ -265,7 +262,6 @@ class EventService
             'description' => $data['meta_description'] ?? null,
             'keywords' => $data['meta_keywords'] ?? null,
         ];
-
 
         if (isset($data['cf_name'])) {
             
@@ -672,7 +668,10 @@ class EventService
             'attribute' => $data['property_attribute'] ?? null,
         ];
         $field->options = $data['options'] ?? null;
-        $field->validation = $data['validation'] ?? null;
+        if (isset($data['validation'])) {
+            $field->validation = $data['validation'];
+        }
+        $field->is_unique = (bool)$data['is_unique'];
         $field->publish = (bool)$data['publish'];
         $field->public = (bool)$data['public'];
         $field->locked = (bool)$data['locked'];
@@ -885,12 +884,7 @@ class EventService
 
         if (isset($filter['q']))
             $form->when($filter['q'], function ($form, $q) {
-                $form->where('ip_address', 'like', '%'.$q.'%')
-                    ->orWhere('register_code', 'like', '%'.$q.'%');
-                foreach ($this->eventFieldModel->where('event_id', request()->segment(3))
-                    ->get() as $value) {
-                    $form->orWhereRaw('LOWER(JSON_EXTRACT(fields, "$.'.$value['name'].'")) like ?', ['"%' . strtolower($q) . '%"']);
-                }
+                $form->where('fields', 'like', '%'.$q.'%');
             });
 
         if (isset($filter['limit']))
@@ -942,7 +936,11 @@ class EventService
     {
         try {
             
-            $getFields = $this->getFieldList(['event_id' => $data['event_id']], false);
+            $getFields = $this->getFieldList([
+                'event_id' => $data['event_id'],
+                'publish' => 1,
+                'approved' => 1
+            ], false, 0);
 
             foreach ($getFields as $key => $value) {
                 $fields[$value['name']] = strip_tags($data[$value['name']]) ?? null;

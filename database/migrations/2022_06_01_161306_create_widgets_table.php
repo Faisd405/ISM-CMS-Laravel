@@ -15,7 +15,8 @@ class CreateWidgetsTable extends Migration
     {
         Schema::create('widgets', function (Blueprint $table) {
             $table->id();
-            $table->json('name');
+            $table->string('name');
+            $table->json('title')->nullable();
             $table->json('description')->nullable();
             $table->tinyInteger('widget_set')->default(0);
             $table->string('type')->nullable();

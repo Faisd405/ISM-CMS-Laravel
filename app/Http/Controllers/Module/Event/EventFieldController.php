@@ -121,6 +121,7 @@ class EventFieldController extends Controller
         $data = $request->all();
         
         $data['event_id'] = $eventId;
+        $data['is_unique'] = (bool)$request->is_unique;
         $field = $this->eventService->storeField($data);
         $data['query'] = $request->query();
 
@@ -160,6 +161,7 @@ class EventFieldController extends Controller
         $data = $request->all();
 
         $data['event_id'] = $eventId;
+        $data['is_unique'] = (bool)$request->is_unique;
         $field = $this->eventService->updateField($data, ['id' => $id]);
         $data['query'] = $request->query();
 

@@ -18,7 +18,7 @@ class Widget extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'name' => 'json',
+        'title' => 'json',
         'description' => 'json',
         'content' => 'json',
     ];

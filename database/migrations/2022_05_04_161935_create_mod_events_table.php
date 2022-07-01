@@ -28,7 +28,6 @@ class CreateModEventsTable extends Migration
             $table->json('email')->nullable();
             $table->json('cover')->nullable();
             $table->json('banner')->nullable();
-            $table->json('unique_fields')->nullable();
             $table->json('config');
             $table->json('custom_fields')->nullable();
             $table->json('seo')->nullable();

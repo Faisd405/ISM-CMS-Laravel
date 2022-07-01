@@ -1,8 +1,11 @@
 @foreach ($childs as $child)
+@php
+    $module = app()->make(App\Services\MenuService::class)->getModuleData($child);
+@endphp
 <tr>
     <td>{{ $loop->iteration }}</td>
     <td>
-        <i>{!! str_repeat('---', $level).' '.Str::limit($child['modules']['title'], 65) !!}</i>
+        <i>{!! str_repeat('---', $level).' '.Str::limit($module['title'], 65) !!}</i>
     </td>
     <td class="text-center">
         @can ('menu_update')
@@ -65,11 +68,13 @@
         </a>
         @endcan
         @can('menu_update')
+        @if (Auth::user()->hasRole('super') || !Auth::user()->hasRole('super') && $child['config']['edit_public_menu'] == 1)
         <a href="{{ route('menu.edit', ['categoryId' => $child['menu_category_id'], 'id' => $child['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
             'attribute' => __('module/menu.caption')
         ])">
             <i class="las la-pen"></i>
         </a>
+        @endif
         @endcan
         @can('menu_delete')
         <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [

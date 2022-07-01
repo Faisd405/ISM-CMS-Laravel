@@ -12,23 +12,38 @@ return [
         'ASC',
     ],
     'ordering_post' => [
+        'created_at',
         'publish_time',
         'position'
     ],
     'inquiry_field' => [
         0 => 'Text',
         1 => 'Textarea',
-        2 => 'File',
-        3 => 'Select',
-        4 => 'Checkbox',
-        5 => 'Radiobox',
+        // 2 => 'Date',
+        // 3 => 'Date Time'
+        // 4 => 'Select',
+        // 5 => 'Checkbox',
+        // 6 => 'Radiobox',
+        // 7 => 'File',
+    ],
+    'inquiry_input_type' => [
+        'text' => 'Text',
+        'number' => 'Number',
+        'email' => 'Email'
     ],
     'event_field' => [
         0 => 'Text',
         1 => 'Textarea',
-        2 => 'File',
-        3 => 'Select',
-        4 => 'Checkbox',
-        5 => 'Radiobox',
+        // 2 => 'Date',
+        // 3 => 'Date Time'
+        // 4 => 'Select',
+        // 5 => 'Checkbox',
+        // 6 => 'Radiobox',
+        // 7 => 'File',
+    ],
+    'event_input_type' => [
+        'text' => 'Text',
+        'number' => 'Number',
+        'email' => 'Email'
     ],
 ];

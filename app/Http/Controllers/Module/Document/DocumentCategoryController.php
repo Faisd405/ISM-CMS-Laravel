@@ -102,8 +102,8 @@ class DocumentCategoryController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document_category'], false);
-        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document_category'], false, 0);
+        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false, 0);
 
         return view('backend.documents.category.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -141,8 +141,8 @@ class DocumentCategoryController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document_category'], false);
-        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document_category'], false, 0);
+        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false, 0);
 
         return view('backend.documents.category.form', compact('data'), [
             'title' => __('global.edit_attr', [

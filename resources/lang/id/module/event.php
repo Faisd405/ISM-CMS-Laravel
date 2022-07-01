@@ -14,7 +14,6 @@ return [
         'field7' => 'Tanggal Mulai',
         'field8' => 'Tanggal Selesai',
         'field9' => 'Email (untuk notifikasi submit event)',
-        'field10' => 'Unique Field (validasi pengecekan field uniq di form)',
         'lock_form' => 'Lock form setelah submit ?'
     ],
     'placeholder' => [
@@ -45,6 +44,7 @@ return [
             'field9' => 'Properties',
             'field10' => 'Placeholder',
             'field11' => 'Options',
+            'is_unique' => 'Unique Field (validasi pengecekan field unik)',
         ],
         'placeholder' => [
             'field1' => '',
@@ -58,6 +58,16 @@ return [
             'field9' => '',
             'field10' => '',
             'field11' => '',
+        ],
+        'validations' => [
+            'required' => [
+                'caption' => 'Required',
+                'desc' => 'Field wajib diisi'
+            ],
+            'email' => [
+                'caption' => 'Email',
+                'desc' => 'Field harus isian email'
+            ]
         ],
     ],
     'form' => [

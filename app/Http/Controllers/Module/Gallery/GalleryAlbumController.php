@@ -55,7 +55,7 @@ class GalleryAlbumController extends Controller
         ]);
         $data['no'] = $data['albums']->firstItem();
         $data['albums']->withPath(url()->current().$param);
-        $data['categories'] = $this->galleryService->getCategoryList([], false);
+        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
 
         return view('backend.galleries.album.index', compact('data'), [
             'title' => __('module/gallery.album.title'),
@@ -90,7 +90,7 @@ class GalleryAlbumController extends Controller
         ]);
         $data['no'] = $data['albums']->firstItem();
         $data['albums']->withPath(url()->current().$param);
-        $data['categories'] = $this->galleryService->getCategoryList([], false);
+        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
 
         return view('backend.galleries.album.trash', compact('data'), [
             'title' => __('module/gallery.album.title').' - '.__('global.trash'),
@@ -106,8 +106,8 @@ class GalleryAlbumController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'gallery_album'], false);
-        $data['categories'] = $this->galleryService->getCategoryList([], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'gallery_album'], false, 0);
+        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
 
         return view('backend.galleries.album.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -145,8 +145,8 @@ class GalleryAlbumController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'gallery_album'], false);
-        $data['categories'] = $this->galleryService->getCategoryList([], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'gallery_album'], false, 0);
+        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
 
         return view('backend.galleries.album.form', compact('data'), [
             'title' => __('global.edit_attr', [

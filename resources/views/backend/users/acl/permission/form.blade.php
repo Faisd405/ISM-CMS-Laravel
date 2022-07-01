@@ -18,7 +18,7 @@
                 ])
             </h6>
             <form action="{{ !isset($data['permission']) ? route('permission.store', $queryParam) : 
-                route('permission.update', array_merge(['id' => $data['permission']['id']], $queryParam)) }}" method="POST">
+                route('permission.update', $data['permission']['id']) }}" method="POST">
                 @csrf
                 @isset ($data['permission'])
                     @method('PUT')

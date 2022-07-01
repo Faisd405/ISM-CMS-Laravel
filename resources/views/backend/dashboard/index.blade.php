@@ -108,7 +108,7 @@
                             <img class="ui-w-40" src="{{ $post->coverSrc() }}" alt="">
                         </td>
                         <td class="align-middle">
-                            <a href="javascript:void(0)" class="text-body">{!! Str::limit($post->fieldLang('title'), 40) !!}</a>
+                            <a href="javascript:void(0)" class="text-body">{!! Str::limit($post->fieldLang('title'), 60) !!}</a>
                         </td>
                         <td class="align-middle"><span class="badge badge-info">{{ $post['hits'] }}</span></td>
                         <td class="align-middle">
@@ -148,14 +148,16 @@
             <div class="title-text"><i class="las la-envelope" style="font-size: 1.3em;"></i> @lang('module/dashboard.latest_submit_inquiry')</div>
           </h6>
           <div class="card-body">
-  
             @forelse ($data['list']['inquiries'] as $inquiry)
+            @php
+                $fields = $inquiry->inquiry->fields()->firstWhere(['publish' => 1, 'approved' => 1]);
+            @endphp
             <div class="media pb-1 mb-3">
-              <img src="{{ asset(config('cms.files.avatars.file')) }}" class="d-block ui-w-40 rounded-circle" alt="">
+              <img src="{{ asset(config('cms.files.avatar.file')) }}" class="d-block ui-w-40 rounded-circle" alt="">
               <div class="media-body flex-truncate ml-3">
-                <a href="javascript:void(0)">{!! $inquiry['fields']['name'] !!}</a>
+                <a href="javascript:void(0)">{!! $inquiry['fields'][$fields['name']] !!}</a>
                 <span class="text-muted">From</span>
-                <a href="{{ route('inquiry.form', ['inquiryId' => $inquiry['inquiry_id'], 'q' => $inquiry['fields']['email']]) }}">{{ $inquiry['inquiry']->fieldLang('name') }}</a>
+                <a href="{{ route('inquiry.form', ['inquiryId' => $inquiry['inquiry_id'], 'q' => $inquiry['fields'][$fields['name']]]) }}">{{ $inquiry['inquiry']->fieldLang('name') }}</a>
                 <p class="text-truncate my-1"></p>
                 <div class="clearfix">
                   <span class="float-left text-muted small">{{ $inquiry['submit_time']->diffForHumans() }}</span>

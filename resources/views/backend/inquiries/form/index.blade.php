@@ -159,7 +159,7 @@
                             <td><strong>{{ $item['ip_address'] }}</strong></td>
                             @foreach ($data['fields']->take(3) as $keyF => $field)
                             <td>
-                                {!! $item['fields'][$field['name']] !!}
+                                {!! isset($item['fields'][$field['name']]) ? $item['fields'][$field['name']] : '-' !!}
                             </td>
                             @endforeach
                             <td class="text-center">

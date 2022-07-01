@@ -48,7 +48,7 @@ class RoleController extends Controller
 
     public function create(Request $request)
     {
-        $data['permissions'] = $this->userService->getPermissionList(['parent' => 0], false);
+        $data['permissions'] = $this->userService->getPermissionList(['parent' => 0], false, 0);
 
         return view('backend.users.acl.role.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -84,7 +84,7 @@ class RoleController extends Controller
         if (empty($data['role']))
             return abort(404);
 
-        $data['permissions'] = $this->userService->getPermissionList(['parent' => 0], false);
+        $data['permissions'] = $this->userService->getPermissionList(['parent' => 0], false, 0);
         $data['permission_ids'] = $data['role']['permissions']->pluck('id')->toArray();
 
         return view('backend.users.acl.role.form', compact('data'), [

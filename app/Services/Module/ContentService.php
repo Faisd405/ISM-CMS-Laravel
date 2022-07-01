@@ -985,11 +985,11 @@ class ContentService
             $post->where('approved', $filter['approved']);
 
         if ($type == 'prev') {
-            $post->where('position', '<', $id);
+            $post->where('id', '<', $id);
         }
 
         if ($type == 'next') {
-            $post->where('position', '>', $id);
+            $post->where('id', '>', $id);
         }
 
         $post->whereNotIn('id', [$id]);

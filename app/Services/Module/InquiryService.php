@@ -244,9 +244,6 @@ class InquiryService
         if (!empty($data['email'])) {
             $inquiry->email = explode(',', $data['email']);
         }
-        if (!empty($data['unique_fields'])) {
-            $inquiry->unique_fields = explode(',', $data['unique_fields']);
-        }
         $inquiry->longitude = $data['longitude'] ?? null;
         $inquiry->latitude = $data['latitude'] ?? null;
 
@@ -677,7 +674,10 @@ class InquiryService
             'class' => $data['property_class'] ?? null,
             'attribute' => $data['property_attribute'] ?? null,
         ];
-        $field->validation = $data['validation'] ?? null;
+        if (isset($data['validation'])) {
+            $field->validation = $data['validation'];
+        }
+        $field->is_unique = (bool)$data['is_unique'];
         $field->publish = (bool)$data['publish'];
         $field->public = (bool)$data['public'];
         $field->locked = (bool)$data['locked'];
@@ -890,11 +890,7 @@ class InquiryService
 
         if (isset($filter['q']))
             $form->when($filter['q'], function ($form, $q) {
-                $form->where('ip_address', 'like', '%'.$q.'%');
-                foreach ($this->inquiryFieldModel->where('inquiry_id', request()->segment(3))
-                    ->get() as $value) {
-                    $form->orWhereRaw('LOWER(JSON_EXTRACT(fields, "$.'.$value['name'].'")) like ?', ['"%' . strtolower($q) . '%"']);
-                }
+                $form->where('fields', 'like', '%'.$q.'%');
             });
 
         if (isset($filter['limit']))
@@ -946,7 +942,11 @@ class InquiryService
     {
         try {
             
-            $getFields = $this->getFieldList(['inquiry_id' => $data['inquiry_id']], false);
+            $getFields = $this->getFieldList([
+                'inquiry_id' => $data['inquiry_id'],
+                'publish' => 1,
+                'approved' => 1
+            ], false, 0);
 
             foreach ($getFields as $key => $value) {
                 $fields[$value['name']] = strip_tags($data[$value['name']]) ?? null;

@@ -62,7 +62,7 @@ class ContentPostController extends Controller
         ]);
         $data['no'] = $data['posts']->firstItem();
         $data['posts']->withPath(url()->current().$param);
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false);
+        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
 
         return view('backend.contents.post.index', compact('data'), [
             'title' => __('module/content.post.title'),
@@ -104,7 +104,7 @@ class ContentPostController extends Controller
         ]);
         $data['no'] = $data['posts']->firstItem();
         $data['posts']->withPath(url()->current().$param);
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false);
+        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
 
         return view('backend.contents.post.trash', compact('data'), [
             'title' => __('module/content.post.title').' - '.__('global.trash'),
@@ -124,8 +124,8 @@ class ContentPostController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false);
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false, 0);
+        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
 
         return view('backend.contents.post.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -170,8 +170,8 @@ class ContentPostController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false);
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false, 0);
+        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
 
         if ($data['post']->tags()->count() > 0) {
             foreach ($data['post']->tags as $key => $value) {
@@ -365,6 +365,18 @@ class ContentPostController extends Controller
             'publish' => 1,
             'approved' => 1
         ], false)->take(4);
+
+        $data['prev'] = $this->contentService->postPrevNext($data['read']['id'], [
+            'section_id' => $data['read']['section_id'],
+            'publish' => 1,
+            'approved' => 1
+        ], 'prev');
+
+        $data['next'] = $this->contentService->postPrevNext($data['read']['id'], [
+            'section_id' => $data['read']['section_id'],
+            'publish' => 1,
+            'approved' => 1
+        ], 'next');
 
         $data['addon_fields'] = $data['read']['addon_fields'];
         $data['fields'] = $data['read']['custom_fields'];

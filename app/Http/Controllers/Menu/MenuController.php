@@ -91,6 +91,10 @@ class MenuController extends Controller
         $data['no'] = $data['menus']->firstItem();
         $data['menus']->withPath(url()->current().$param);
 
+        foreach ($data['menus'] as $key => $value) {
+            $data['menus'][$key]['modules'] = $this->menuService->getModuleData($value);
+        }
+
         return view('backend.menus.trash', compact('data'), [
             'title' => __('module/menu.title').' - '.__('global.trash'),
             'routeBack' => route('menu.index', ['categoryId' => $categoryId]),
@@ -117,7 +121,7 @@ class MenuController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/menu.caption')
             ]),
-            'routeBack' => route('menu.index', array_merge(['categoryId' => $categoryId], $request->query())),
+            'routeBack' => route('menu.index', ['categoryId' => $categoryId]),
             'breadcrumbs' => [
                 __('module/menu.caption') => route('menu.index', ['categoryId' => $categoryId]),
                 __('global.add') => '',
@@ -162,7 +166,7 @@ class MenuController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/menu.caption')
             ]),
-            'routeBack' => route('menu.index', array_merge(['categoryId' => $categoryId], $request->query())),
+            'routeBack' => route('menu.index', ['categoryId' => $categoryId]),
             'breadcrumbs' => [
                 __('module/menu.caption') => route('menu.index', ['categoryId' => $categoryId]),
                 __('global.edit') => '',
@@ -249,7 +253,7 @@ class MenuController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('menu.index', array_merge(['categoryId' => $data['menu_category_id']], $data['query']));
+        $redir = redirect()->route('menu.index', ['categoryId' => $data['menu_category_id']]);
         if ($data['action'] == 'back') {
             $redir = back();
         }

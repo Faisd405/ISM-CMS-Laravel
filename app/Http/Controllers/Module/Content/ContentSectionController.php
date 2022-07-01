@@ -98,8 +98,8 @@ class ContentSectionController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'content_section'], false);
-        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'content_section'], false);
+        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'content_section'], false, 0);
+        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'content_section'], false, 0);
 
         return view('backend.contents.section.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -137,8 +137,8 @@ class ContentSectionController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'content_section'], false);
-        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'content_section'], false);
+        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'content_section'], false, 0);
+        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'content_section'], false, 0);
 
         return view('backend.contents.section.form', compact('data'), [
             'title' => __('global.edit_attr', [

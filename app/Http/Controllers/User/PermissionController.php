@@ -57,7 +57,7 @@ class PermissionController extends Controller
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/user.permission.caption')
             ]),
-            'routeBack' => route('permission.index', $request->query()),
+            'routeBack' => route('permission.index'),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.acl_caption') => 'javascript:;',
@@ -95,7 +95,7 @@ class PermissionController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/user.permission.caption')
             ]),
-            'routeBack' => route('permission.index', $request->query()),
+            'routeBack' => route('permission.index'),
             'breadcrumbs' => [
                 __('module/user.user_management_caption') => 'javascript:;',
                 __('module/user.acl_caption') => 'javascript:;',
@@ -127,7 +127,7 @@ class PermissionController extends Controller
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('permission.index', $data['query']);
+        $redir = redirect()->route('permission.index');
         if ($data['action'] == 'back') {
             $redir = redirect()->back();
         }

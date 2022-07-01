@@ -22,7 +22,8 @@ class CreateModEventFieldsTable extends Migration
             $table->json('placeholder')->nullable();
             $table->json('properties')->nullable();
             $table->json('options')->nullable();
-            $table->text('validation')->nullable();
+            $table->json('validation')->nullable();
+            $table->boolean('is_unique')->default(0);
             $table->integer('position')->nullable();
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');

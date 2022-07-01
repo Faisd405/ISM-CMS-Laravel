@@ -24,8 +24,9 @@ class WidgetRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => 'required|max:191',
-            'template' => 'required',
+            'name' => $this->method() == 'POST' ? 'required|unique:widgets,name' : 'required|unique:widgets,name,'.$this->id,
+            // 'title_'.config('cms.module.feature.language.default') => 'required|max:191',
+            // 'template' => 'required',
             'moduleable_id' => $this->type != 'text' ? 'required' : 'nullable',
 
         ];
@@ -34,8 +35,9 @@ class WidgetRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/widget.label.field1'),
-            'template' => __('global.template'),
+            'name' => __('module/widget.label.field1'),
+            // 'title_'.config('cms.module.feature.language.default') => __('module/widget.label.field2'),
+            // 'template' => __('global.template'),
             'moduleable_id' => $this->type
         ];
     }

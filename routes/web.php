@@ -96,9 +96,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 // FRONTEND
 //------------------------------------------------------------------------------
 
-//--- Sitemap
-Route::get('/sitemap.xml', [HomeController::class, 'sitemap'])
+Route::get('/sitemap', [HomeController::class, 'sitemap'])
     ->name('sitemap');
+Route::get('/sitemap.xml', [HomeController::class, 'sitemapXml'])
+    ->name('sitemap.xml');
 
 //--- RSS
 Route::get('/feed', [HomeController::class, 'feed'])

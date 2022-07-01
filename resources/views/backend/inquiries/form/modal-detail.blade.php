@@ -16,7 +16,7 @@
               @foreach ($data['fields'] as $keyF => $field)
               <tr>
                   <th style="width: 240px;">{{ $field->fieldLang('label') }}</th>
-                  <td>{!! $item['fields'][$field['name']] !!}</td>
+                  <td>{!! isset($item['fields'][$field['name']]) ? $item['fields'][$field['name']] : '-' !!}</td>
               </tr>
               @endforeach
           </table>

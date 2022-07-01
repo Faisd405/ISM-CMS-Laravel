@@ -1,227 +1,247 @@
 @extends('layouts.backend.layout')
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('assets/backend/fancybox/fancybox.min.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/pages/account.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/select2/select2.css') }}">
 @endsection
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-xl-12 col-lg-12 col-md-12">
+    <div class="col-xl-9 col-lg-9 col-md-9">
 
-        {{-- Filter --}}
         <div class="card">
-            <div class="card-body d-flex flex-wrap justify-content-between">
-                <div class="d-flex w-100 w-xl-auto">
-                    <button type="button" class="btn btn-dark icon-btn-only-sm btn-sm mr-2" title="@lang('global.filter')" id="filter-btn">
-                        <i class="las la-filter"></i> <span>@lang('global.filter')</span>
-                    </button>
-                    @if ($totalQueryParam > 0)
-                    <a href="{{ url()->current() }}" class="btn btn-warning icon-btn-only-sm btn-sm" title="Clear @lang('global.filter')">
-                        <i class="las la-redo-alt"></i> <span>Clear @lang('global.filter')</span>
-                    </a>
-                    @endif
-                </div>
-                <div class="d-flex w-100 w-xl-auto">
-                    @can('event_field_create')
-                    <a href="{{ route('event.field.create', array_merge(['eventId' => $data['event']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
-                        'attribute' => __('module/event.field.caption')
-                        ])">
-                        <i class="las la-plus"></i> <span>@lang('module/event.field.caption')</span>
-                    </a>
-                    @endcan
-                    @role('super')
-                    <a href="{{ route('event.field.trash', ['eventId' => $data['event']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
-                        <i class="las la-trash"></i> <span>@lang('global.trash')</span>
-                    </a>
-                    @endrole
-                </div>
-            </div>
-            <hr class="m-0">
-            <div class="card-body" id="{{ $totalQueryParam == 0 ? 'filter-form' : '' }}">
-                <form action="" method="GET">
-                    <div class="form-row align-items-center">
-                        <div class="col-md-1">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.limit')</label>
-                                <select class="custom-select" name="limit">
-                                    @foreach (config('cms.setting.limit') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }} 
-                                        title="@lang('global.limit') {{ $val }}">{{ $val }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+            <h6 class="card-header">
+                @lang('global.form_attr', [
+                    'attribute' => __('module/event.field.caption')
+                ])
+            </h6>
+            <form action="{{ !isset($data['field']) ? route('event.field.store', array_merge(['eventId' => $data['event']['id']], $queryParam)) : 
+                route('event.field.update', array_merge(['eventId' => $data['event']['id'], 'id' => $data['field']['id']], $queryParam)) }}" method="POST" 
+                    enctype="multipart/form-data">
+                @csrf
+                @isset($data['field'])
+                    @method('PUT')
+                @endisset
+
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field2') <i class="text-danger">*</i></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
+                            value="{{ !isset($data['field']) ? old('name') : old('name', $data['field']['name']) }}" placeholder="">
+                            @include('components.field-error', ['field' => 'name'])
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.status')</label>
-                                <select class="custom-select" name="status">
-                                    <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('global.label.publish') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }} 
-                                        title="{{ $val }}">{{ $val }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.search')</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="q" value="{{ Request::get('q') }}" placeholder="@lang('global.search_keyword')">
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-dark" title="@lang('global.search')"><i class="las la-search"></i></button>
-                                    </div>
+                    </div>
+                </div>
+
+                 {{-- MAIN --}}
+                 @if (config('cms.module.feature.language.multiple') == true)
+                <div class="list-group list-group-flush account-settings-links flex-row">
+                    @foreach ($data['languages'] as $lang)
+                    <a class="list-group-item list-group-item-action {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'active' : '' }}" 
+                        data-toggle="list" href="#{{ $lang['iso_codes'] }}">
+                        {!! $lang['name'] !!}
+                    </a>
+                    @endforeach
+                </div>
+                @endif
+                <div class="tab-content">
+                    @foreach ($data['languages'] as $lang)
+                    <div class="tab-pane fade {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'show active' : '' }}" id="{{ $lang['iso_codes'] }}">
+                        <div class="card-body pb-2">
+        
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field1') <i class="text-danger">*</i></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control mb-1 @error('label_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                        name="label_{{ $lang['iso_codes'] }}" 
+                                        value="{{ !isset($data['field']) ? old('label_'.$lang['iso_codes']) : old('label_'.$lang['iso_codes'], $data['field']->fieldLang('label', $lang['iso_codes'])) }}" 
+                                        placeholder="@lang('module/event.field.placeholder.field1')">
+                                    @include('components.field-error', ['field' => 'label_'.$lang['iso_codes']])
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field10')</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control mb-1 @error('placeholder_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" name="placeholder_{{ $lang['iso_codes'] }}" 
+                                        value="{{ !isset($data['field']) ? old('placeholder_'.$lang['iso_codes']) : old('placeholder_'.$lang['iso_codes'], $data['field']->fieldLang('placeholder', $lang['iso_codes'])) }}" 
+                                        placeholder="@lang('module/event.field.placeholder.field10')">
+                                    @include('components.field-error', ['field' => 'placeholder_'.$lang['iso_codes']])
+                                </div>
+                            </div>
+        
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
+                    @endforeach
+                </div>
 
-        <div class="card">
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/event.field.text')</h5>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table card-table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width: 10px;">#</th>
-                            <th>@lang('module/event.field.label.field1')</th>
-                            <th style="width: 210px;">@lang('module/event.field.label.field2')</th>
-                            <th class="text-center" style="width: 100px;">@lang('global.status')</th>
-                            <th style="width: 230px;">@lang('global.created')</th>
-                            <th style="width: 230px;">@lang('global.updated')</th>
-                            <th class="text-center" style="width: 110px;"></th>
-                            <th class="text-center" style="width: 140px;"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($data['fields'] as $item)
-                        <tr>
-                            <td>{{ $data['no']++ }}</td>
-                            <td>
-                                {!! Str::limit($item->fieldLang('label'), 30) !!}
-                            </td>
-                            <td>
-                                <code>{{ $item['name'] }}</code>
-                            </td>
-                            <td class="text-center">
-                                @can('event_field_update')
-                                <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}"
-                                    title="{{ __('global.label.publish.'.$item['publish']) }}">
-                                    {{ __('global.label.publish.'.$item['publish']) }}
-                                    <form action="{{ route('event.field.publish', ['eventId' => $item['event_id'], 'id' => $item['id']]) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                    </form>
-                                </a>
-                                @else
-                                <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>
-                                @endcan
-                            </td>
-                            <td>
-                                {{ $item['created_at']->format('d F Y (H:i A)') }}
-                                @if (!empty($item['created_by']))
-                                <br>
-                                <span class="text-muted"> @lang('global.by') : {{ $item['createBy'] != null ? $item['createBy']['name'] : 'User Deleted' }}</span>
-                                @endif
-                            </td>
-                            <td>
-                                {{ $item['updated_at']->format('d F Y (H:i A)') }}
-                                @if (!empty($item['updated_by']))
-                                <br>
-                                <span class="text-muted"> @lang('global.by') : {{ $item['updateBy'] != null ? $item['updateBy']['name'] : 'User Deleted' }}</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                @if (Auth::user()->can('event_field_update') && $item->where('event_id', $item['event_id'])->min('position') != $item['position'])
-                                <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
-                                    <i class="las la-arrow-up"></i>
-                                    <form action="{{ route('event.field.position', ['eventId' => $item['event_id'], 'id' => $item['id'], 'position' => ($item['position'] - 1)]) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                    </form>
-                                </a>
-                                @else
-                                <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-up"></i></button>
-                                @endif
-                                @if (Auth::user()->can('event_field_update') && $item->where('event_id', $item['event_id'])->max('position') != $item['position'])
-                                <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
-                                    <i class="las la-arrow-down"></i>
-                                    <form action="{{ route('event.field.position', ['eventId' => $item['event_id'], 'id' => $item['id'], 'position' => ($item['position'] + 1)]) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                    </form>
-                                </a>
-                                @else
-                                <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                @can('event_field_update')
-                                <a href="{{ route('event.field.edit', array_merge(['eventId' => $item['event_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
-                                    'attribute' => __('module/event.field.caption')
-                                ])">
-                                    <i class="las la-pen"></i>
-                                </a>
-                                @endcan
-                                @can('event_field_delete')
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/event.field.caption')
-                                    ])"
-                                    data-category-id="{{ $item['event_id'] }}"
-                                    data-id="{{ $item['id'] }}">
-                                    <i class="las la-trash-alt"></i>
-                                </button>
-                                @endcan
-                                @if (Auth::user()->hasRole('super') && config('cms.module.event.field.approval') == true)
-                                <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
-                                    <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
-                                    <form action="{{ route('event.field.approved', ['eventId' => $item['event_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
-                                        @csrf
-                                        @method('PUT')
-                                    </form>
-                                </a>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="8" align="center">
-                                <i>
-                                    <strong style="color:red;">
-                                    @if ($totalQueryParam > 0)
-                                    ! @lang('global.data_attr_not_found', [
-                                        'attribute' => __('module/event.field.caption')
-                                    ]) !
-                                    @else
-                                    ! @lang('global.data_attr_empty', [
-                                        'attribute' => __('module/event.field.caption')
-                                    ]) !
-                                    @endif
-                                    </strong>
-                                </i>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-                <div class="card-footer">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['fields']->firstItem() }}</strong> - <strong>{{ $data['fields']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['fields']->total() }}</strong>
+                <hr class="m-0">
+                <div class="card-body">
+                    <h6 class="font-weight-semibold mb-4">FIELD SETTING</h6>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field3')</label>
+                        <div class="col-sm-10">
+                            <select class="select2 show-tick" name="type" data-style="btn-default">
+                                @foreach (config('cms.field.event_field') as $key => $field)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('type') == ''.$key.'' ? 'selected' : '') : (old('type', $data['field']['type']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $field }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
-                        <div class="col-lg-6 m--align-right">
-                            {{ $data['fields']->onEachSide(1)->links() }}
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field4')</label>
+                        <div class="col-sm-10">
+                            <select class="custom-select show-tick" name="property_type" data-style="btn-default">
+                                @foreach (config('cms.field.event_input_type') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('property_type') == ''.$key.'' ? 'selected' : '') : (old('property_type', $data['field']['properties']['type']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field6')</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control @error('property_class') is-invalid @enderror" name="property_class" 
+                                value="{{ !isset($data['field']) ? old('property_class') : old('property_class', $data['field']['properties']['class']) }}" 
+                                placeholder="@lang('module/event.field.placeholder.field6')">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field7')</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control @error('property_attribute') is-invalid @enderror" name="property_attribute" 
+                                value="{{ !isset($data['field']) ? old('property_attribute') : old('property_attribute', $data['field']['properties']['attribute']) }}" 
+                                placeholder="@lang('module/event.field.placeholder.field7')">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field8')</label>
+                        <div class="col-sm-10">
+                            @foreach (__('module/event.field.validations') as $key => $val)
+                            <label class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="validation[]" value="{{ $key }}" 
+                                    {{ isset($data['field']) && !empty($data['field']['validation']) ? (in_array($key, $data['field']['validation']) ? 'checked' : '') : '' }}>
+                                <span class="custom-control-label">{{ $val['caption'] }} <small class="text-muted">({{ $val['desc'] }})</small></span>
+                              </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.is_unique')</label>
+                        <div class="col-sm-10">
+                            <label class="switcher switcher-success">
+                                <input type="checkbox" class="switcher-input" name="is_unique" value="1" 
+                                    {{ !isset($data['field']) ? (old('is_unique') ? 'checked' : '') : (old('is_unique', $data['field']['is_unique']) ? 'checked' : '') }}>
+                                <span class="switcher-indicator">
+                                <span class="switcher-yes">
+                                    <span class="ion ion-md-checkmark"></span>
+                                </span>
+                                <span class="switcher-no">
+                                    <span class="ion ion-md-close"></span>
+                                </span>
+                                </span>
+                            </label>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                 {{-- CUSTOM FIELD --}}
+                 <hr class="m-0">
+                 <div class="table-responsive text-center">
+                     <table class="table card-table table-bordered">
+                         <thead>
+                             <tr>
+                                 <td colspan="3" class="text-center">
+                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
+                                         <i class="las la-plus"></i> @lang('module/event.field.label.field11')
+                                     </button>
+                                 </td>
+                             </tr>
+                             <tr>
+                                 <th>Label</th>
+                                 <th>Value</th>
+                                 <th></th>
+                             </tr>
+                         </thead>
+                         <tbody id="list_field">
+                             @if (isset($data['field']) && !empty($data['field']['options']))
+                                 @foreach ($data['field']['options'] as $key => $val)
+                                 <tr class="num-list" id="delete-{{ $key }}">
+                                     <td>
+                                         <input type="text" class="form-control" name="opt_label[]" placeholder="label" value="{{ $key }}">
+                                     </td>
+                                     <td>
+                                         <textarea class="form-control" name="opt_value[]" placeholder="value">{{ $val }}</textarea>
+                                     </td>
+                                     <td style="width: 30px;">
+                                         <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                     </td>
+                                 </tr>
+                                 @endforeach
+                             @endif
+                         </tbody>
+                     </table>
+                 </div>
+
+                 {{-- SETTING --}}
+                 <hr class="m-0">
+                 <div class="card-body">
+                     <h6 class="font-weight-semibold mb-4">SETTING</h6>
+                     <div class="form-group row">
+                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
+                         <div class="col-sm-10">
+                             <select class="form-control show-tick" name="publish" data-style="btn-default">
+                                 @foreach (__('global.label.publish') as $key => $value)
+                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['field']['publish']) == ''.$key.'' ? 'selected' : '') }}>
+                                         {{ $value }}
+                                     </option>
+                                 @endforeach
+                             </select>
+                         </div>
+                     </div>
+                     <div class="form-group row">
+                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
+                         <div class="col-sm-10">
+                             <select class="form-control show-tick" name="public" data-style="btn-default">
+                                 @foreach (__('global.label.optional') as $key => $value)
+                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['field']['public']) == ''.$key.'' ? 'selected' : '') }}>
+                                         {{ $value }}
+                                     </option>
+                                 @endforeach
+                             </select>
+                         </div>
+                     </div>
+                     <div class="form-group row">
+                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
+                         <div class="col-sm-10">
+                             <select class="form-control show-tick" name="locked" data-style="btn-default">
+                                 @foreach (__('global.label.optional') as $key => $value)
+                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['field']['locked']) == ''.$key.'' ? 'selected' : '') }}>
+                                         {{ $value }}
+                                     </option>
+                                 @endforeach
+                             </select>
+                         </div>
+                     </div>
+                 </div>
+
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['field']) ? __('global.save_change') : __('global.save') }}">
+                        <i class="las la-save"></i> {{ isset($data['field']) ? __('global.save_change') : __('global.save') }}
+                    </button>&nbsp;&nbsp;
+                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['field']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                        <i class="las la-save"></i> {{ isset($data['field']) ? __('global.save_change_exit') : __('global.save_exit') }}
+                    </button>&nbsp;&nbsp;
+                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
+                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
+                    </button>
+                </div>
+            </form>
         </div>
 
     </div>
@@ -229,68 +249,56 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('assets/backend/fancybox/fancybox.min.js') }}"></script>
-<script src="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 @endsection
 
 @section('jsbody')
 <script>
-    //delete
-    $(document).ready(function () {
-        $('.swal-delete').on('click', function () {
-            var eventId = $(this).attr('data-event-id');
-            var id = $(this).attr('data-id');
-            Swal.fire({
-                title: "@lang('global.alert.delete_confirm_title')",
-                text: "@lang('global.alert.delete_confirm_text')",
-                type: "warning",
-                confirmButtonText: "@lang('global.alert.delete_btn_yes')",
-                customClass: {
-                    confirmButton: "btn btn-danger btn-lg",
-                    cancelButton: "btn btn-primary btn-lg"
-                },
-                showLoaderOnConfirm: true,
-                showCancelButton: true,
-                allowOutsideClick: () => !Swal.isLoading(),
-                cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
-                preConfirm: () => {
-                    return $.ajax({
-                        url: '/admin/event/' + eventId + '/field/'+ id +'/soft',
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        dataType: 'json'
-                    }).then(response => {
-                        if (!response.success) {
-                            return new Error(response.message);
-                        }
-                        return response;
-                    }).catch(error => {
-                        swal({
-                            type: 'error',
-                            text: 'Error while deleting data. Error Message: ' + error
-                        })
-                    });
-                }
-            }).then(response => {
-                if (response.value.success) {
-                    Swal.fire({
-                        type: 'success',
-                        text: "@lang('global.alert.delete_success', ['attribute' => __('module/event.field.caption')])"
-                    }).then(() => {
-                        window.location.reload();
-                    })
-                } else {
-                    Swal.fire({
-                        type: 'error',
-                        text: response.value.message
-                    }).then(() => {
-                        window.location.reload();
-                    })
-                }
-            });
-        });
+    //select2
+    $(function () {
+        $('.select2').select2();
+    });
+
+    //custom field
+    $(function()  {
+
+    @if(isset($data['field']) && !empty($data['field']['options']))
+        var no = {{ count($data['field']['options']) }};
+    @else
+        var no = 1;
+    @endif
+
+    $("#add_field").click(function() {
+        $("#list_field").append(`
+            <tr class="num-list" id="delete-`+no+`">
+                <td>
+                    <input type="text" class="form-control" name="opt_label[]" placeholder="label">
+                </td>
+                <td>
+                    <textarea class="form-control" name="opt_value[]" placeholder="value"></textarea>
+                </td>
+                <td style="width: 30px;">
+                    <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                </td>
+            </tr>
+        `);
+
+        var noOfColumns = $('.num-list').length;
+        var maxNum = 10;
+        if (noOfColumns < maxNum) {
+            $("#add_field").show();
+        } else {
+            $("#add_field").hide();
+        }
+
+        no++;
+    });
+
+    });
+    //remove custom field
+    $(document).on('click', '#remove_field', function() {
+        var id = $(this).attr("data-id");
+        $("#delete-"+id).remove();
     });
 </script>
 @endsection

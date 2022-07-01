@@ -28,7 +28,6 @@ class Inquiry extends Model
         'after_body' => 'json',
         'banner' => 'json',
         'email' => 'array',
-        'unique_fields' => 'json',
         'config' => 'json',
         'custom_fields' => 'json',
         'seo' => 'json',

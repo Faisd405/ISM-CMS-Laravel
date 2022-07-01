@@ -70,6 +70,15 @@ class HomeController extends Controller
 
     public function sitemap(Request $request)
     {
+        $data = [];
+
+        return view('frontend.sitemap', compact('data'), [
+            'title' => 'Sitemap'
+        ]);
+    }
+
+    public function sitemapXml(Request $request)
+    {
         $data['pages'] = App::make(PageService::class)->getPageList([
             'publish' => 1,
             'approved' => 1

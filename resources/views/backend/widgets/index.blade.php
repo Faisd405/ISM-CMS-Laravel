@@ -123,7 +123,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/widget.label.field1')</th>
-                            <th class="text-center" style="width: 120px;">@lang('module/widget.label.field3')</th>
+                            <th class="text-center" style="width: 120px;">@lang('module/widget.label.field4')</th>
                             <th class="text-center" style="width: 120px;">@lang('global.type')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
@@ -137,7 +137,7 @@
                         <tr>
                             <td>{{ $data['no']++ }} </td>
                             <td>
-                                <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
+                                <strong>{!! $item['name'] !!}</strong>
                             </td>
                             <td class="text-center">
                                 <span class="badge badge-secondary">{{ Str::upper(config('cms.module.widget.set.'.$item['widget_set'])) }}</span>

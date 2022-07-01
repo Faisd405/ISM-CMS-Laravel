@@ -22,7 +22,7 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    <a href="{{ route('permission.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('permission.create') }}" class="btn btn-success icon-btn-only-sm btn-sm" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/user.permission.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/user.permission.caption')</span>
@@ -97,12 +97,12 @@
                             <td>{{ $item['created_at']->format('d F Y (H:i A)') }}</td>
                             <td>{{ $item['updated_at']->format('d F Y (H:i A)') }}</td>
                             <td class="text-center">
-                                <a href="{{ route('permission.create', array_merge(['parent' => $item['id']], $queryParam)) }}" class="btn btn-success icon-btn btn-sm" title="@lang('global.add_attr_new', [
+                                <a href="{{ route('permission.create', ['parent' => $item['id']]) }}" class="btn btn-success icon-btn btn-sm" title="@lang('global.add_attr_new', [
                                         'attribute' => __('module/user.permission.caption')
                                     ])">
                                     <i class="las la-plus"></i>
                                 </a>
-                                <a href="{{ route('permission.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('lang.edit_attr', [
+                                <a href="{{ route('permission.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('lang.edit_attr', [
                                         'attribute' => __('module/user.permission.caption')
                                     ])">
                                     <i class="las la-pen"></i>
@@ -135,7 +135,7 @@
                                     ])" disabled>
                                     <i class="las la-plus"></i>
                                 </button> --}}
-                                <a href="{{ route('permission.edit', array_merge(['id' => $child['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('lang.edit_attr', [
+                                <a href="{{ route('permission.edit', ['id' => $child['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('lang.edit_attr', [
                                         'attribute' => __('module/user.permission.caption')
                                     ])">
                                     <i class="las la-pen"></i>

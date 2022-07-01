@@ -49,7 +49,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.category.label.field1') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 gen_slug @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                    <input type="text" class="form-control mb-1 {{ !isset($data['category']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="name_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['category']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['category']->fieldLang('name', $lang['iso_codes'])) }}" 
                                         placeholder="@lang('module/content.category.placeholder.field1')">

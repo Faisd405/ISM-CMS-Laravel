@@ -51,7 +51,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.post.label.field1') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 gen_slug @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                    <input type="text" class="form-control mb-1 {{ !isset($data['post']) ? 'gen_slug' : '' }} @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="title_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['post']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['post']->fieldLang('title', $lang['iso_codes'])) }}" 
                                         placeholder="@lang('module/content.post.placeholder.field1')">

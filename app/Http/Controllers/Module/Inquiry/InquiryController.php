@@ -274,7 +274,11 @@ class InquiryController extends Controller
         ]);
         $data['no'] = $data['forms']->firstItem();
         $data['forms']->withPath(url()->current().$param);
-        $data['fields'] = $this->inquiryService->getFieldList(['inquiry_id' => $inquiryId], false);
+        $data['fields'] = $this->inquiryService->getFieldList([
+            'inquiry_id' => $inquiryId,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.inquiries.form.index', compact('data'), [
             'title' => __('module/inquiry.form.title'),
@@ -293,7 +297,7 @@ class InquiryController extends Controller
             'inquiry_id' => $inquiryId,
             'publish' => 1,
             'approved' => 1,
-        ], false);
+        ], false, 0);
 
         $filter['inquiry_id'] = $inquiryId;
         if ($request->input('status', '') != '') {
@@ -303,7 +307,7 @@ class InquiryController extends Controller
             $filter['exported'] = $request->input('exported');
         }
 
-        $data = $this->inquiryService->getFormList($filter, false);
+        $data = $this->inquiryService->getFormList($filter, false, 0);
 
         if ($data->count() == 0) {
             return back()->with('warning', __('global.data_attr_empty', [
@@ -449,11 +453,18 @@ class InquiryController extends Controller
             return redirect()->back();
         }
 
-        if (!empty($inquiry['unique_fields'])) {
+        $fields = $this->inquiryService->getFieldList([
+            'inquiry_id' => $id,
+            'publish' => 1,
+            'approved' => 1,
+            'is_unique' => 1
+        ], false, 0);
+
+        if ($fields->count()) {
 
             $unique =  $inquiry->forms();
-            foreach ($inquiry['unique_fields'] as $key => $value) {
-                $unique->where('fields->'.$value, $request->input($value, ''));
+            foreach ($fields as $key => $value) {
+                $unique->where('fields->'.$value['name'], $request->input($value['name'], ''));
             }
 
             if ($unique->count() > 0) {
@@ -469,6 +480,11 @@ class InquiryController extends Controller
 
         $formData = $request->all();
         $formData['inquiry_id'] = $id;
+        $firstField = $this->inquiryService->getField([
+            'inquiry_id' => $id,
+            'publish' => 1,
+            'approved' => 1
+        ]);
 
         $this->inquiryService->recordForm($formData);
         
@@ -490,7 +506,7 @@ class InquiryController extends Controller
                     ]),
                 ],
                 'read_by' => [],
-                'link' => 'admin/inquiry/'.$id.'/form?q='.$request->email.'&',
+                'link' => 'admin/inquiry/'.$id.'/form?q='.$formData[$firstField['name']].'&',
             ]);
         }
 

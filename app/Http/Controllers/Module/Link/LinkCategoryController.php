@@ -98,7 +98,7 @@ class LinkCategoryController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link_category'], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link_category'], false, 0);
 
         return view('backend.links.category.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -135,7 +135,7 @@ class LinkCategoryController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link_category'], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link_category'], false, 0);
 
         return view('backend.links.category.form', compact('data'), [
             'title' => __('global.edit_attr', [

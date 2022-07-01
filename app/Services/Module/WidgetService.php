@@ -73,7 +73,7 @@ class WidgetService
 
         if (isset($filter['q']))
             $widget->when($filter['q'], function ($widget, $q) {
-                $widget->whereRaw('LOWER(JSON_EXTRACT(name, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"']);
+                $widget->where('name', 'like', '%'.$q.'%');
             });
 
         if (isset($filter['limit']))
@@ -267,7 +267,10 @@ class WidgetService
     {
         try {
 
-            $setPath = 'views/frontend/widget/'.Str::slug($data['template'], '-').'.blade.php';
+            $name = Str::slug($data['name'], '-');
+            $template = !empty($data['template']) ? $data['template'] : $name;
+
+            $setPath = 'views/frontend/widget/'.Str::slug($template, '-').'.blade.php';
             if (file_exists(resource_path($setPath))) {
                 return $this->error(null,  __('module/widget.alert.file_exist'));
             }
@@ -275,7 +278,7 @@ class WidgetService
             $widget = new Widget;
             $this->setFielWidget($data, $widget);
             $widget->type = $data['type'];
-            $widget->template = Str::slug($data['template'], '-');
+            $widget->template = Str::slug($template, '-');
             $widget->content_template = isset($data['content_template']) ? $data['content_template'] : null;
             $widget->position = $this->widgtModel->max('position') + 1;
 
@@ -313,8 +316,11 @@ class WidgetService
         $oldTemplate = $widget['template'];
 
         try {
+
+            $name = Str::slug($data['name'], '-');
+            $template = !empty($data['template']) ? $data['template'] : $name;
             
-            $widget->template = Str::slug($data['template'], '-');
+            $widget->template = Str::slug($template, '-');
             $widget->content_template = isset($data['content_template']) ? $data['content_template'] : null;
             $this->setFielWidget($data, $widget);
             $widget->save();
@@ -349,13 +355,14 @@ class WidgetService
         $langDefault = config('cms.module.feature.language.default');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
-            $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
-                $data['name_'.$langDefault] : $data['name_'.$value['iso_codes']];
+            $title[$value['iso_codes']] = ($data['title_'.$value['iso_codes']] == null) ?
+                $data['title_'.$langDefault] : $data['title_'.$value['iso_codes']];
             $description[$value['iso_codes']] = ($data['description_'.$value['iso_codes']] == null) ?
                 $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
         }
         
-        $widget->name = $name;
+        $widget->name = Str::slug($data['name'], '_');
+        $widget->title = $title;
         $widget->description = $description;
         $widget->widget_set = $data['widget_set'];
 

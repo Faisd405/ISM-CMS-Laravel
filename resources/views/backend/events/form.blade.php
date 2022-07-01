@@ -45,7 +45,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.label.field1') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 gen_slug @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                    <input type="text" class="form-control mb-1 {{ !isset($data['event']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="name_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['event']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['event']->fieldLang('name', $lang['iso_codes'])) }}" 
                                         placeholder="@lang('module/event.placeholder.field1')">
@@ -189,13 +189,6 @@
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.label.field9')</label>
                         <div class="col-sm-10">
                             <input class="form-control tags-input mb-1" name="email" value="{{ isset($data['event']) && !empty($data['event']['email']) ? old('email', implode(",", $data['event']['email'])) : old('email') }}" placeholder="">
-                            <small class="text-muted">@lang('global.separated_comma')</small>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.label.field10')</label>
-                        <div class="col-sm-10">
-                            <input class="form-control tags-input mb-1" name="unique_fields" value="{{ isset($data['event']) && !empty($data['event']['unique_fields']) ? old('unique_fields', implode(",", $data['event']['unique_fields'])) : old('unique_fields') }}" placeholder="">
                             <small class="text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>

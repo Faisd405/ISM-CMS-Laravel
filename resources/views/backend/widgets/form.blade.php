@@ -25,6 +25,18 @@
                     @method('PUT')
                 @endif
 
+                <div class="card-body pb-2">
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field1') <i class="text-danger">*</i></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control mb-1 @error('name') is-invalid @enderror" name="name" 
+                                value="{{ !isset($data['widget']) ? old('name') : old('name', $data['widget']['name']) }}" 
+                                placeholder="@lang('module/widget.placeholder.field1')">
+                            @include('components.field-error', ['field' => 'name'])
+                        </div>
+                    </div>
+                </div>
+
                 {{-- MAIN --}}
                 @if (config('cms.module.feature.language.multiple') == true)
                 <div class="list-group list-group-flush account-settings-links flex-row">
@@ -42,17 +54,17 @@
                         <div class="card-body pb-2">
 
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field1') <i class="text-danger">*</i></label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field2') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 gen_slug @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="name_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['widget']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['widget']->fieldLang('name', $lang['iso_codes'])) }}" 
-                                        placeholder="@lang('module/widget.placeholder.field1')">
-                                    @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
+                                    <input type="text" class="form-control mb-1 gen_slug @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                        name="title_{{ $lang['iso_codes'] }}" 
+                                        value="{{ !isset($data['widget']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['widget']->fieldLang('title', $lang['iso_codes'])) }}" 
+                                        placeholder="@lang('module/widget.placeholder.field2')">
+                                    @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field2')</label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field3')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['widget']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['widget']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
                                 </div>
@@ -64,7 +76,7 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field3')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field4')</label>
                         <div class="col-sm-10">
                             <select class="form-control show-tick" name="widget_set" data-style="btn-default">
                                 @foreach (config('cms.module.widget.set') as $key => $value)
@@ -75,6 +87,7 @@
                             </select>
                         </div>
                     </div>
+                    @role('super')
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">Template <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
@@ -90,6 +103,10 @@
                             <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['widget']) ? old('content_template') : old('content_template', $data['widget']['content_template']) !!}</textarea>
                         </div>
                     </div>
+                    @else
+                    <input type="hidden" name="template" value="{{ !isset($data['widget']) ? old('template') : old('template', $data['widget']['template']) }}">
+                    <input type="hidden" name="content_template" value="{!! !isset($data['widget']) ? old('content_template') : old('content_template', $data['widget']['content_template']) !!}">
+                    @endrole
                 </div>
 
                 {{-- MODULE --}}
@@ -144,7 +161,7 @@
                     <h6 class="font-weight-semibold mb-4">SETTING</h6>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('module/widget.label.field4')</label>
+                        <label class="col-form-label text-sm-right">@lang('module/widget.label.field5')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="switcher switcher-success">

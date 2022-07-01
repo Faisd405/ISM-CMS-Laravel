@@ -40,11 +40,11 @@ class DashboardController extends Controller
             'page' => App::make(PageService::class)->getPageList([
                 'publish' => 1,
                 'approved' => 1
-            ], false)->count(),
+            ], false, 0)->count(),
             'post' => App::make(ContentService::class)->getPostList([
                 'publish' => 1,
                 'approved' => 1
-            ], false)->count(),
+            ], false, 0)->count(),
         ];
 
         $data['list'] = [

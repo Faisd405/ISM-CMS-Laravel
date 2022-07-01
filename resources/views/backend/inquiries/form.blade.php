@@ -45,7 +45,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field1') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 gen_slug @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                    <input type="text" class="form-control mb-1 {{ !isset($data['inquiry']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="name_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['inquiry']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['inquiry']->fieldLang('name', $lang['iso_codes'])) }}" 
                                         placeholder="@lang('module/inquiry.placeholder.field1')">
@@ -114,13 +114,6 @@
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field9')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" name="latitude" value="{{ !isset($data['inquiry']) ? old('latitude') : old('latitude', $data['inquiry']['latitude']) }}" placeholder="">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field10')</label>
-                        <div class="col-sm-10">
-                            <input class="form-control tags-input mb-1" name="unique_fields" value="{{ isset($data['inquiry']) && !empty($data['inquiry']['unique_fields']) ? old('unique_fields', implode(",", $data['inquiry']['unique_fields'])) : old('unique_fields') }}" placeholder="">
-                            <small class="text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>
                     <div class="form-group row">

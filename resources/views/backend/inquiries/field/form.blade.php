@@ -98,19 +98,15 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field4')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control @error('property_type') is-invalid @enderror" name="property_type" 
-                                value="{{ !isset($data['field']) ? old('property_type') : old('property_type', $data['field']['properties']['type']) }}" 
-                                placeholder="@lang('module/inquiry.field.placeholder.field4')">
+                            <select class="custom-select show-tick" name="property_type" data-style="btn-default">
+                                @foreach (config('cms.field.inquiry_input_type') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('property_type') == ''.$key.'' ? 'selected' : '') : (old('property_type', $data['field']['properties']['type']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-                    {{-- <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field5')</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control @error('property_id') is-invalid @enderror" name="property_id" 
-                                value="{{ !isset($data['field']) ? old('property_id') : old('property_id', $data['field']['properties']['id']) }}" 
-                                placeholder="@lang('module/inquiry.field.placeholder.field5')">
-                        </div>
-                    </div> --}}
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field6')</label>
                         <div class="col-sm-10">
@@ -130,9 +126,30 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field8')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control @error('validation') is-invalid @enderror" name="validation" 
-                            value="{{ !isset($data['field']) ? old('validation') : old('validation', $data['field']['validation']) }}" 
-                            placeholder="@lang('module/inquiry.field.placeholder.field8')">
+                            @foreach (__('module/inquiry.field.validations') as $key => $val)
+                            <label class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="validation[]" value="{{ $key }}" 
+                                    {{ isset($data['field']) && !empty($data['field']['validation']) ? (in_array($key, $data['field']['validation']) ? 'checked' : '') : '' }}>
+                                <span class="custom-control-label">{{ $val['caption'] }} <small class="text-muted">({{ $val['desc'] }})</small></span>
+                              </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.is_unique')</label>
+                        <div class="col-sm-10">
+                            <label class="switcher switcher-success">
+                                <input type="checkbox" class="switcher-input" name="is_unique" value="1" 
+                                    {{ !isset($data['field']) ? (old('is_unique') ? 'checked' : '') : (old('is_unique', $data['field']['is_unique']) ? 'checked' : '') }}>
+                                <span class="switcher-indicator">
+                                <span class="switcher-yes">
+                                    <span class="ion ion-md-checkmark"></span>
+                                </span>
+                                <span class="switcher-no">
+                                    <span class="ion ion-md-close"></span>
+                                </span>
+                                </span>
+                            </label>
                         </div>
                     </div>
                 </div>

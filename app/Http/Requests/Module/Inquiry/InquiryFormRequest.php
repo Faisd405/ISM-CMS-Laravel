@@ -17,27 +17,21 @@ class InquiryFormRequest extends FormRequest
     }
 
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
      */
     public function rules()
     {
-        $getFields = $this->inquiry->getFieldList(['inquiry_id' => $this->id], false);
+        $getFields = $this->inquiry->getFieldList([
+            'inquiry_id' => $this->id,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         $fields['g-recaptcha-response'] = config('recaptcha.version') == 'v2' ? 'required' : 'nullable';
         foreach ($getFields as $value) {
-            $fields[$value['name']] = $value['validation'] ?? 'nullable';
+            $fields[$value['name']] = !empty($value['validation']) ? implode('|', $value['validation']) : 'nullable';
         }
 
         return $fields;
@@ -45,7 +39,11 @@ class InquiryFormRequest extends FormRequest
 
     public function attributes()
     {
-        $getFields = $this->inquiry->getFieldList(['inquiry_id' => $this->id], false);
+        $getFields = $this->inquiry->getFieldList([
+            'inquiry_id' => $this->id,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
         
         $fields['g-recaptcha-response'] = 'Recaptcha';
         foreach ($getFields as $value) {

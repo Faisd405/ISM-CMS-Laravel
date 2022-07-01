@@ -102,7 +102,7 @@ class PageController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'page'], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'page'], false, 0);
 
         if ($request->input('parent', '') != '') {
             $data['parent'] = $this->pageService->getPage(['id' => $request->input('parent')]);
@@ -148,7 +148,7 @@ class PageController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'page'], false);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'page'], false, 0);
         
         if ($data['page']->tags()->count() > 0) {
             foreach ($data['page']->tags as $key => $value) {

@@ -99,8 +99,8 @@ class GalleryCategoryController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'gallery_category'], false);
-        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'gallery_category'], false);
+        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'gallery_category'], false, 0);
+        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'gallery_category'], false, 0);
 
         return view('backend.galleries.category.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -138,8 +138,8 @@ class GalleryCategoryController extends Controller
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'gallery_category'], false);
-        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'gallery_category'], false);
+        $data['template_lists'] = $this->templateService->getTemplateList(['type' => 1, 'module' => 'gallery_category'], false, 0);
+        $data['template_details'] = $this->templateService->getTemplateList(['type' => 2, 'module' => 'gallery_category'], false, 0);
 
         return view('backend.galleries.category.form', compact('data'), [
             'title' => __('global.edit_attr', [

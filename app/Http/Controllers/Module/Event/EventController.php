@@ -280,7 +280,11 @@ class EventController extends Controller
         ]);
         $data['no'] = $data['forms']->firstItem();
         $data['forms']->withPath(url()->current().$param);
-        $data['fields'] = $this->eventService->getFieldList(['event_id' => $eventId], false);
+        $data['fields'] = $this->eventService->getFieldList([
+            'event_id' => $eventId,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.events.form.index', compact('data'), [
             'title' => __('module/event.form.title'),
@@ -299,7 +303,7 @@ class EventController extends Controller
             'event_id' => $eventId,
             'publish' => 1,
             'approved' => 1,
-        ], false);
+        ], false, 0);
 
         $filter['event_id'] = $eventId;
         if ($request->input('status', '') != '') {
@@ -309,7 +313,7 @@ class EventController extends Controller
             $filter['exported'] = $request->input('exported');
         }
 
-        $data = $this->eventService->getFormList($filter, false);
+        $data = $this->eventService->getFormList($filter, false, 0);
 
         if ($data->count() == 0) {
             return back()->with('warning', __('global.data_attr_empty', [
@@ -391,9 +395,15 @@ class EventController extends Controller
         $this->eventService->recordHits(['id' => $data['read']['id']]);
 
         //data
-        if (!empty($data['read']['unique_fields'])) {
-            $form = $data['read']->forms()->firstWhere('fields->'.$data['read']['unique_fields'][0], 
-                $request->input($data['read']['unique_fields'][0], ''));
+        $fields = $this->eventService->getFieldList([
+            'event_id' => $data['read']['id'],
+            'publish' => 1,
+            'approved' => 1,
+            'is_unique' => 1
+        ], false, 0);
+        if ($fields->count()) {
+            $form = $data['read']->forms()->firstWhere('fields->'.$fields[0]['name'], 
+                $request->input($fields[0]['name'], ''));
         }
 
         if (isset($form))
@@ -461,28 +471,18 @@ class EventController extends Controller
             return redirect()->back();
         }
 
-        $start = $event['start_date'];
-        $end = $event['end_date'];
-        $now = now()->format('Y-m-d H:i');
+        $fields = $this->eventService->getFieldList([
+            'event_id' => $id,
+            'publish' => 1,
+            'approved' => 1,
+            'is_unique' => 1
+        ], false, 0);
 
-        if (!empty($start) && $now >= $start->format('Y-m-d H:i') || !empty($end) && $now <= $end->format('Y-m-d H:i'))
-            return abort(404);
-
-        $start = $event['start_date'];
-        $end = $event['end_date'];
-        $now = now()->format('Y-m-d H:i');
-
-        if (!empty($start) && $now < $start->format('Y-m-d H:i'))
-            return redirect()->back()->with('warning', __('module/event.form.form_open_warning'));
-
-        if (!empty($end) && $now > $end->format('Y-m-d H:i'))
-            return redirect()->back()->with('warning', __('module/event.form.form_close_warning'));
-
-        if (!empty($event['unique_fields'])) {
+        if ($fields->count()) {
 
             $unique =  $event->forms();
-            foreach ($event['unique_fields'] as $key => $value) {
-                $unique->where('fields->'.$value, $request->input($value, ''));
+            foreach ($fields as $key => $value) {
+                $unique->where('fields->'.$value['name'], $request->input($value['name'], ''));
             }
 
             if ($unique->count() > 0) {
@@ -498,6 +498,11 @@ class EventController extends Controller
 
         $formData = $request->all();
         $formData['event_id'] = $id;
+        $firstField = $this->eventService->getField([
+            'event_id' => $id,
+            'publish' => 1,
+            'approved' => 1
+        ]);
 
         $this->eventService->recordForm($formData);
         
@@ -519,7 +524,7 @@ class EventController extends Controller
                     ]),
                 ],
                 'read_by' => [],
-                'link' => 'admin/event/'.$id.'/form?q='.$request->email.'&',
+                'link' => 'admin/event/'.$id.'/form?q='.$formData[$firstField['name']].'&',
             ]);
         }
 
@@ -530,8 +535,8 @@ class EventController extends Controller
         $message = __('module/event.form.submit_success');
 
         $redirect['slugEvent'] = $event['slug'];
-        if (!empty($event['unique_fields'])) {
-            $redirect[$event['unique_fields'][0]] = $request->input($event['unique_fields'][0]);
+        if ($fields->count()) {
+            $redirect[$fields[0]['name']] = $request->input($fields[0]['name']);
         }
 
         return redirect()->route('event.read', $redirect)->with('success', $message);

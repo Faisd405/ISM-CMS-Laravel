@@ -14,7 +14,6 @@ return [
         'field7' => 'Show Map',
         'field8' => 'Longitude',
         'field9' => 'Latitude',
-        'field10' => 'Unique Field (uniq field check validation in the form)',
         'lock_form' => 'Lock the form after submit?'
     ],
     'placeholder' => [
@@ -47,6 +46,7 @@ return [
             'field9' => 'Properties',
             'field10' => 'Placeholder',
             'field11' => 'Options',
+            'is_unique' => 'Unique Field (uniq field check validation)',
         ],
         'placeholder' => [
             'field1' => '',
@@ -59,6 +59,16 @@ return [
             'field8' => 'laravel validation, example : required|email etc.',
             'field9' => '',
             'field10' => '',
+        ],
+        'validations' => [
+            'required' => [
+                'caption' => 'Required',
+                'desc' => 'Field is required'
+            ],
+            'email' => [
+                'caption' => 'Email',
+                'desc' => 'Field must email type'
+            ]
         ],
     ],
     'form' => [

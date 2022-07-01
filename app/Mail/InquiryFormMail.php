@@ -35,9 +35,10 @@ class InquiryFormMail extends Mailable
         $email = Configuration::value('system_email');
         
         $from = isset($this->data['request']['email']) ? $this->data['request']['email'] : $email;
+        $name = isset($this->data['request']['name']) ? $this->data['request']['name'] : __('global.visitor');
         return $this->from($from, $webname)
             ->subject(__('mail.inquiry.title', [
-                'attribute' => $this->data['request']['name']
+                'attribute' => $name
             ]))->view('mail.inquiry-form');
     }
 }

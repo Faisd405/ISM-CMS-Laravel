@@ -50,14 +50,13 @@ class PassingDataToViews
                 $passingData['config'][$item['name']] = $item->value($item['name']);
             }
         }
-
-        //--- Language
-        if (config('cms.module.feature.language.multiple') == true && 
-            request()->segment(1) != 'backend' || request()->segment(1) != 'admin') {
-            $passingData['languages'] = $this->languange->getLanguageActive();
-        }
         
         if (request()->segment(1) != 'backend' || request()->segment(1) != 'admin') {
+
+            //--- Language
+            if (config('cms.module.feature.language.multiple') == true) {
+                $passingData['languages'] = $this->languange->getLanguageActive();
+            }
             
             //--- Menu Category
             $filterMenu['parent'] = 0;
@@ -80,11 +79,12 @@ class PassingDataToViews
             $filterWidget['global'] = 1;
             $filterWidget['publish'] = 1;
             $filterWidget['approved'] = 1;
-            $passingData['widget_globals'] = $this->widget->getWidgetList($filterWidget, false, 10, false, [], [
+            $widgets = $this->widget->getWidgetList($filterWidget, false, 10, false, [], [
                 'position' => 'ASC'
             ]);
-            foreach ($passingData['widget_globals'] as $key => $value) {
-                $passingData['widget_globals'][$key]['module'] = $this->widget->getModuleData($value);
+            foreach ($widgets as $key => $value) {
+                $passingData['widget_globals'][$value['name']] = $value;
+                $passingData['widget_globals'][$value['name']]['module'] = $this->widget->getModuleData($value);
             }
         }
 
