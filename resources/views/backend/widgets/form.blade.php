@@ -32,6 +32,7 @@
                             <input type="text" class="form-control mb-1 @error('name') is-invalid @enderror" name="name" 
                                 value="{{ !isset($data['widget']) ? old('name') : old('name', $data['widget']['name']) }}" 
                                 placeholder="@lang('module/widget.placeholder.field1')">
+                            <small class="text-muted">@lang('global.lower_case')</small>
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>

@@ -24,10 +24,7 @@ class ProvinceController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
@@ -37,7 +34,7 @@ class ProvinceController extends Controller
 
         $data['provinces'] = $this->regionalService->getProvinceList($filter, true);
         $data['no'] = $data['provinces']->firstItem();
-        $data['provinces']->withPath(url()->current().$param);
+        $data['provinces']->withQueryString();
 
         return view('backend.regionals.province.index', compact('data'), [
             'title' => __('module/regional.province.title'),
@@ -50,10 +47,7 @@ class ProvinceController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
@@ -65,7 +59,7 @@ class ProvinceController extends Controller
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['provinces']->firstItem();
-        $data['provinces']->withPath(url()->current().$param);
+        $data['provinces']->withQueryString();
 
         return view('backend.regionals.province.trash', compact('data'), [
             'title' => __('module/regional.province.title').' - '.__('global.trash'),

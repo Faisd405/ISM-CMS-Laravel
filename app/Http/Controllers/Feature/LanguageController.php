@@ -21,23 +21,20 @@ class LanguageController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
-        }
-        if ($request->input('status', '') != '') {
-            $filter['active'] = $request->input('status');
         }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
         }
+        if ($request->input('status', '') != '') {
+            $filter['active'] = $request->input('status');
+        }
 
         $data['languages'] = $this->languageService->getLanguageList($filter, true);
         $data['no'] = $data['languages']->firstItem();
-        $data['languages']->withPath(url()->current().$param);
+        $data['languages']->withQueryString();
 
         return view('backend.features.language.index', compact('data'), [
             'title' => __('feature/language.title'),
@@ -49,25 +46,22 @@ class LanguageController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('status', '') != '') {
-            $filter['active'] = $request->input('status');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('status', '') != '') {
+            $filter['active'] = $request->input('status');
         }
 
         $data['languages'] = $this->languageService->getLanguageList($filter, true, 10, true, [], [
             'deleted_at' => 'ASC'
         ]);
         $data['no'] = $data['languages']->firstItem();
-        $data['languages']->withPath(url()->current().$param);
+        $data['languages']->withQueryString();
 
         return view('backend.features.language.trash', compact('data'), [
             'title' => __('feature/language.title').' - '.__('global.trash'),

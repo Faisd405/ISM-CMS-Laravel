@@ -10,6 +10,7 @@ use App\Services\Master\TemplateService;
 use App\Services\Module\ContentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class ContentSectionController extends Controller
@@ -33,25 +34,22 @@ class ContentSectionController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['sections'] = $this->contentService->getSectionList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['sections']->firstItem();
-        $data['sections']->withPath(url()->current().$param);
+        $data['sections']->withQueryString();
 
         return view('backend.contents.section.index', compact('data'), [
             'title' => __('module/content.section.title'),
@@ -64,25 +62,22 @@ class ContentSectionController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['sections'] = $this->contentService->getSectionList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['sections']->firstItem();
-        $data['sections']->withPath(url()->current().$param);
+        $data['sections']->withQueryString();
 
         return view('backend.contents.section.trash', compact('data'), [
             'title' => __('module/content.section.title').' - '.__('global.trash'),
@@ -254,6 +249,8 @@ class ContentSectionController extends Controller
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
+        $data['no'] = $data['sections']->firstItem();
+        $data['sections']->withQueryString();
 
         return view('frontend.contents.section.list', compact('data'), [
             'title' => __('module/content.section.title'),
@@ -302,6 +299,8 @@ class ContentSectionController extends Controller
         ], true, $catPerpage, false, [], [
             'position' => 'ASC'
         ]);
+        $data['cat_no'] = $data['categories']->firstItem();
+        $data['categories']->withQueryString();
 
         $data['posts'] = $this->contentService->getPostList([
             'section_id' => $data['read']['id'],
@@ -310,6 +309,8 @@ class ContentSectionController extends Controller
         ], true, $postPerpage, false, [], [
             $data['read']['ordering']['order_by'] => $data['read']['ordering']['order_seq']
         ]);
+        $data['post_no'] = $data['posts']->firstItem();
+        $data['posts']->withQueryString();
 
         $data['fields'] = $data['read']['custom_fields'];
 
@@ -336,16 +337,16 @@ class ContentSectionController extends Controller
         }
 
         //share
-        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".URL::full().
             "&title=".$data['read']->fieldLang('name')."";
         $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
-            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.url()->full();
+            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.URL::full();
         $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('name').
-            " ".url()->full()."";
+            " ".URL::full()."";
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
-            url()->full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
+            URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $this->configService->getConfigFile('cover_default')."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $this->configService->getConfigFile('cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_list_id'])) {

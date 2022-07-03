@@ -26,19 +26,16 @@ class MenuController extends Controller
 
     public function index(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['category_id'] = $categoryId;
         $filter['parent'] = 0;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
@@ -49,7 +46,7 @@ class MenuController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['menus']->firstItem();
-        $data['menus']->withPath(url()->current().$param);
+        $data['menus']->withQueryString();
 
         foreach ($data['menus'] as $key => $value) {
             $data['menus'][$key]['modules'] = $this->menuService->getModuleData($value);
@@ -67,18 +64,15 @@ class MenuController extends Controller
 
     public function trash(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['category_id'] = $categoryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
@@ -89,7 +83,7 @@ class MenuController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['menus']->firstItem();
-        $data['menus']->withPath(url()->current().$param);
+        $data['menus']->withQueryString();
 
         foreach ($data['menus'] as $key => $value) {
             $data['menus'][$key]['modules'] = $this->menuService->getModuleData($value);

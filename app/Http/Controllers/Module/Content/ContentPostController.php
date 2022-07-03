@@ -11,6 +11,7 @@ use App\Services\Master\TemplateService;
 use App\Services\Module\ContentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class ContentPostController extends Controller
@@ -36,21 +37,18 @@ class ContentPostController extends Controller
 
     public function index(Request $request, $sectionId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['section_id'] = $sectionId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('category_id', '') != '') {
             $filter['category_id'] = $request->input('category_id');
         }
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
@@ -61,7 +59,7 @@ class ContentPostController extends Controller
             $data['section']['ordering']['order_by'] => $data['section']['ordering']['order_seq']
         ]);
         $data['no'] = $data['posts']->firstItem();
-        $data['posts']->withPath(url()->current().$param);
+        $data['posts']->withQueryString();
         $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
 
         return view('backend.contents.post.index', compact('data'), [
@@ -77,22 +75,18 @@ class ContentPostController extends Controller
 
     public function trash(Request $request, $sectionId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-        $filter = [];
-
         $filter['section_id'] = $sectionId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('category_id', '') != '') {
             $filter['category_id'] = $request->input('category_id');
         }
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['section'] = $this->contentService->getSection(['id' => $sectionId]);
@@ -103,7 +97,7 @@ class ContentPostController extends Controller
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['posts']->firstItem();
-        $data['posts']->withPath(url()->current().$param);
+        $data['posts']->withQueryString();
         $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
 
         return view('backend.contents.post.trash', compact('data'), [
@@ -309,6 +303,8 @@ class ContentPostController extends Controller
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
+        $data['no'] = $data['posts']->firstItem();
+        $data['posts']->withQueryString();
 
         return view('frontend.contents.post.list', compact('data'), [
             'title' => __('module/content.post.title'),
@@ -412,16 +408,16 @@ class ContentPostController extends Controller
         }
 
         //share
-        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".URL::full().
             "&title=".$data['read']->fieldLang('title')."";
         $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
-            str_replace('#', '', $data['read']->fieldLang('title')).'&url='.url()->full();
+            str_replace('#', '', $data['read']->fieldLang('title')).'&url='.URL::full();
         $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('title').
-            " ".url()->full()."";
+            " ".URL::full()."";
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
-            url()->full()."&title=".$data['read']->fieldLang('title')."&source=".request()->root()."";
+            URL::full()."&title=".$data['read']->fieldLang('title')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $data['cover']."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('title')."";
+            $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('title')."";
 
         $blade = 'post.detail';
         if (!empty($data['read']['template_id'])) {

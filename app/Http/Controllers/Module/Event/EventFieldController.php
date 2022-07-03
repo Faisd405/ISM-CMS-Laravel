@@ -25,18 +25,15 @@ class EventFieldController extends Controller
 
     public function index(Request $request, $eventId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['event_id'] = $eventId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
@@ -47,7 +44,7 @@ class EventFieldController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
-        $data['fields']->withPath(url()->current().$param);
+        $data['fields']->withQueryString();
 
         return view('backend.events.field.index', compact('data'), [
             'title' => __('module/event.field.title'),
@@ -61,18 +58,15 @@ class EventFieldController extends Controller
 
     public function trash(Request $request, $eventId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['event_id'] = $eventId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
@@ -83,7 +77,7 @@ class EventFieldController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
-        $data['fields']->withPath(url()->current().$param);
+        $data['fields']->withQueryString();
 
         return view('backend.events.field.trash', compact('data'), [
             'title' => __('module/event.field.title').' - '.__('global.trash'),

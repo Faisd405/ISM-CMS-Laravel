@@ -21,23 +21,21 @@ class ApiController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
-        }
-        if ($request->input('status', '') != '') {
-            $filter['active'] = $request->input('status');
         }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
         }
 
+        if ($request->input('status', '') != '') {
+            $filter['active'] = $request->input('status');
+        }
+
         $data['apis'] = $this->apiService->getApiList($filter, true);
         $data['no'] = $data['apis']->firstItem();
-        $data['apis']->withPath(url()->current().$param);
+        $data['apis']->withQueryString();
 
         return view('backend.features.api.index', compact('data'), [
             'title' => __('feature/api.title'),
@@ -49,25 +47,23 @@ class ApiController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('status', '') != '') {
-            $filter['active'] = $request->input('status');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+
+        if ($request->input('status', '') != '') {
+            $filter['active'] = $request->input('status');
         }
 
         $data['apis'] = $this->apiService->getApiList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['apis']->firstItem();
-        $data['apis']->withPath(url()->current().$param);
+        $data['apis']->withQueryString();
 
         return view('backend.features.api.trash', compact('data'), [
             'title' => __('feature/api.title').' - '.__('global.trash'),

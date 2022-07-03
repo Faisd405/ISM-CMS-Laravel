@@ -28,21 +28,18 @@ class DocumentFileController extends Controller
 
     public function index(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['document_category_id'] = $categoryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
         }
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
@@ -53,7 +50,7 @@ class DocumentFileController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
-        $data['files']->withPath(url()->current().$param);
+        $data['files']->withQueryString();
 
         return view('backend.documents.file.index', compact('data'), [
             'title' => __('module/document.file.title'),
@@ -68,12 +65,12 @@ class DocumentFileController extends Controller
 
     public function trash(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['document_category_id'] = $categoryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
@@ -81,10 +78,7 @@ class DocumentFileController extends Controller
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
-
+        
         $data['category'] = $this->documentService->getCategory(['id' => $categoryId]);
         if (empty($data['category']))
             return abort(404);
@@ -93,7 +87,7 @@ class DocumentFileController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
-        $data['files']->withPath(url()->current().$param);
+        $data['files']->withQueryString();
 
         return view('backend.documents.file.trash', compact('data'), [
             'title' => __('module/document.file.title').' - '.__('global.trash'),

@@ -195,16 +195,16 @@ class TemplateService
 
         try {
 
-            $pages = $template->pages()->count();
-            $contentSectionLists = $template->contentSectionLists()->count();
-            $contentSectionDetails = $template->contentSectionDetails()->count();
-            $contentCategories = $template->contentCategories()->count();
-            $contentPosts = $template->contentPosts()->count();
-            $galleryCategoryLists = $template->galleryCategoryLists()->count();
-            $galleryCategoryDetails = $template->galleryCategoryDetails()->count();
-            $galleryAlbums = $template->galleryAlbums()->count();
-            $documentCategories = $template->documentCategories()->count();
-            $linkCategories = $template->linkCategories()->count();
+            $pages = $template->pages()->withTrashed()->count();
+            $contentSectionLists = $template->contentSectionLists()->withTrashed()->count();
+            $contentSectionDetails = $template->contentSectionDetails()->withTrashed()->count();
+            $contentCategories = $template->contentCategories()->withTrashed()->count();
+            $contentPosts = $template->contentPosts()->withTrashed()->count();
+            $galleryCategoryLists = $template->galleryCategoryLists()->withTrashed()->count();
+            $galleryCategoryDetails = $template->galleryCategoryDetails()->withTrashed()->count();
+            $galleryAlbums = $template->galleryAlbums()->withTrashed()->count();
+            $documentCategories = $template->documentCategories()->withTrashed()->count();
+            $linkCategories = $template->linkCategories()->withTrashed()->count();
             
             if ($pages == 0 || $contentSectionLists == 0 && $contentSectionDetails == 0
                 || $contentCategories == 0 || $contentPosts == 0 || $galleryCategoryLists == 0

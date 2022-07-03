@@ -25,9 +25,6 @@ class NotificationController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['user_to'] = Auth::user()['id'];
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
@@ -40,7 +37,7 @@ class NotificationController extends Controller
             'created_at' => 'DESC'
         ]);
         $data['no'] = $data['notifications']->firstItem();
-        $data['notifications']->withPath(url()->current().$param);
+        $data['notifications']->withQueryString();
 
         return view('backend.features.notification', compact('data'), [
             'title' => __('feature/notification.title'),

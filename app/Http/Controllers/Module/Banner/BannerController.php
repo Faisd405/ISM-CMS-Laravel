@@ -27,21 +27,18 @@ class BannerController extends Controller
 
     public function index(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['category_id'] = $categoryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
         }
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['category'] = $this->bannerService->getCategory(['id' => $categoryId]);
@@ -52,7 +49,7 @@ class BannerController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['banners']->firstItem();
-        $data['banners']->withPath(url()->current().$param);
+        $data['banners']->withQueryString();
 
         return view('backend.banners.index', compact('data'), [
             'title' => __('module/banner.title'),
@@ -66,21 +63,18 @@ class BannerController extends Controller
 
     public function trash(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['category_id'] = $categoryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
         }
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['category'] = $this->bannerService->getCategory(['id' => $categoryId]);
@@ -91,7 +85,7 @@ class BannerController extends Controller
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['banners']->firstItem();
-        $data['banners']->withPath(url()->current().$param);
+        $data['banners']->withQueryString();
 
         return view('backend.banners.trash', compact('data'), [
             'title' => __('module/banner.title').' - '.__('global.trash'),

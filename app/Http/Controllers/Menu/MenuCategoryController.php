@@ -22,23 +22,20 @@ class MenuCategoryController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
-        }
-        if ($request->input('status', '') != '') {
-            $filter['active'] = $request->input('status');
         }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
         }
+        if ($request->input('status', '') != '') {
+            $filter['active'] = $request->input('status');
+        }
 
         $data['categories'] = $this->menuService->getCategoryList($filter, true);
         $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withPath(url()->current().$param);
+        $data['categories']->withQueryString();
 
         return view('backend.menus.category.index', compact('data'), [
             'title' => __('module/menu.category.title'),
@@ -57,18 +54,18 @@ class MenuCategoryController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('status', '') != '') {
-            $filter['active'] = $request->input('status');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('status', '') != '') {
+            $filter['active'] = $request->input('status');
         }
 
         $data['categories'] = $this->menuService->getCategoryList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withPath(url()->current().$param);
+        $data['categories']->withQueryString();
 
         return view('backend.menus.category.trash', compact('data'), [
             'title' => __('module/menu.category.title').' - '.__('global.trash'),

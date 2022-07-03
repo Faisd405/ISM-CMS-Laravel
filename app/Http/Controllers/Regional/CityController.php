@@ -24,9 +24,6 @@ class CityController extends Controller
 
     public function index(Request $request, $provinceCode)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['province_code'] = $provinceCode;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
@@ -41,7 +38,7 @@ class CityController extends Controller
 
         $data['cities'] = $this->regionalService->getCityList($filter, true);
         $data['no'] = $data['cities']->firstItem();
-        $data['cities']->withPath(url()->current().$param);
+        $data['cities']->withQueryString();
 
         return view('backend.regionals.city.index', compact('data'), [
             'title' => __('module/regional.city.title'),
@@ -56,9 +53,6 @@ class CityController extends Controller
 
     public function trash(Request $request, $provinceCode)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['province_code'] = $provinceCode;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
@@ -75,7 +69,7 @@ class CityController extends Controller
             'deleted_by' => 'DESC'
         ]);
         $data['no'] = $data['cities']->firstItem();
-        $data['cities']->withPath(url()->current().$param);
+        $data['cities']->withQueryString();
 
         return view('backend.regionals.city.trash', compact('data'), [
             'title' => __('module/regional.city.title').' - '.__('global.trash'),

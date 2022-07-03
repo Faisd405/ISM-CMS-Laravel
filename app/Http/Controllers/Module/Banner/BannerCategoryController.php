@@ -26,23 +26,20 @@ class BannerCategoryController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
-        }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
         }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
         }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
+        }
 
         $data['categories'] = $this->bannerService->getCategoryList($filter, true, 10, false);
         $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withPath(url()->current().$param);
+        $data['categories']->withQueryString();
 
         return view('backend.banners.category.index', compact('data'), [
             'title' => __('module/banner.category.title'),
@@ -54,25 +51,22 @@ class BannerCategoryController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['categories'] = $this->bannerService->getCategoryList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withPath(url()->current().$param);
+        $data['categories']->withQueryString();
 
         return view('backend.banners.category.trash', compact('data'), [
             'title' => __('module/banner.category.title').' - '.__('global.trash'),

@@ -12,6 +12,7 @@ use App\Services\Module\PageService;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class PageController extends Controller
@@ -39,25 +40,22 @@ class PageController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['parent'] = 0;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['pages'] = $this->pageService->getPageList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['pages']->firstItem();
-        $data['pages']->withPath(url()->current().$param);
+        $data['pages']->withQueryString();
 
         return view('backend.pages.index', compact('data'), [
             'title' => __('module/page.title'),
@@ -69,25 +67,22 @@ class PageController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['pages'] = $this->pageService->getPageList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['pages']->firstItem();
-        $data['pages']->withPath(url()->current().$param);
+        $data['pages']->withQueryString();
 
         return view('backend.pages.trash', compact('data'), [
             'title' => __('module/page.title').' - '.__('global.trash'),
@@ -273,6 +268,8 @@ class PageController extends Controller
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
+        $data['no'] = $data['pages']->firstItem();
+        $data['pages']->withQueryString();
 
         return view('frontend.pages.list', compact('data'), [
             'title' => __('module/page.title'),
@@ -353,16 +350,16 @@ class PageController extends Controller
         }
 
         //share
-        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".URL::full().
             "&title=".$data['read']->fieldLang('title')."";
         $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
-            str_replace('#', '', $data['read']->fieldLang('title')).'&url='.url()->full();
+            str_replace('#', '', $data['read']->fieldLang('title')).'&url='.URL::full();
         $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('title').
-            " ".url()->full()."";
+            " ".URL::full()."";
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
-            url()->full()."&title=".$data['read']->fieldLang('title')."&source=".request()->root()."";
+            URL::full()."&title=".$data['read']->fieldLang('title')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $data['cover']."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('title')."";
+            $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('title')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_id'])) {

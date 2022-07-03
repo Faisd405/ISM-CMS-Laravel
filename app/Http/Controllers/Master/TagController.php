@@ -21,12 +21,12 @@ class TagController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('flags', '') != '') {
             $filter['flags'] = $request->input('flags');
@@ -34,13 +34,10 @@ class TagController extends Controller
         if ($request->input('standar', '') != '') {
             $filter['standar'] = $request->input('standar');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['tags'] = $this->tagService->getTagList($filter, true);
         $data['no'] = $data['tags']->firstItem();
-        $data['tags']->withPath(url()->current().$param);
+        $data['tags']->withQueryString();
 
         return view('backend.masters.tags.index', compact('data'), [
             'title' => __('master/tags.title'),
@@ -52,12 +49,12 @@ class TagController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('flags', '') != '') {
             $filter['flags'] = $request->input('flags');
@@ -65,15 +62,12 @@ class TagController extends Controller
         if ($request->input('standar', '') != '') {
             $filter['standar'] = $request->input('standar');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['tags'] = $this->tagService->getTagList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['tags']->firstItem();
-        $data['tags']->withPath(url()->current().$param);
+        $data['tags']->withQueryString();
 
         return view('backend.masters.tags.trash', compact('data'), [
             'title' => __('master/tags.title').' - '.__('global.trash'),

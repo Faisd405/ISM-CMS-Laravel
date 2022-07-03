@@ -24,10 +24,7 @@ class DistrictController extends Controller
 
     public function index(Request $request, $provinceCode, $cityCode)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         $filter['province_code'] = $provinceCode;
         $filter['city_code'] = $cityCode;
         if ($request->input('q', '') != '') {
@@ -43,7 +40,7 @@ class DistrictController extends Controller
 
         $data['districts'] = $this->regionalService->getDistrictList($filter, true);
         $data['no'] = $data['districts']->firstItem();
-        $data['districts']->withPath(url()->current().$param);
+        $data['districts']->withQueryString();
 
         return view('backend.regionals.district.index', compact('data'), [
             'title' => __('module/regional.district.title'),
@@ -59,10 +56,7 @@ class DistrictController extends Controller
 
     public function trash(Request $request, $provinceCode, $cityCode)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         $filter['province_code'] = $provinceCode;
         $filter['city_code'] = $cityCode;
         if ($request->input('q', '') != '') {
@@ -80,7 +74,7 @@ class DistrictController extends Controller
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['districts']->firstItem();
-        $data['districts']->withPath(url()->current().$param);
+        $data['districts']->withQueryString();
 
         return view('backend.regionals.district.trash', compact('data'), [
             'title' => __('module/regional.district.title').' - '.__('global.trash'),

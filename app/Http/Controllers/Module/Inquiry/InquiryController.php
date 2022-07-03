@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class InquiryController extends Controller
@@ -41,25 +42,22 @@ class InquiryController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['inquiries'] = $this->inquiryService->getInquiryList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['inquiries']->firstItem();
-        $data['inquiries']->withPath(url()->current().$param);
+        $data['inquiries']->withQueryString();
 
         return view('backend.inquiries.index', compact('data'), [
             'title' => __('module/inquiry.title'),
@@ -71,25 +69,22 @@ class InquiryController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['inquiries'] = $this->inquiryService->getInquiryList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['inquiries']->firstItem();
-        $data['inquiries']->withPath(url()->current().$param);
+        $data['inquiries']->withQueryString();
 
         return view('backend.inquiries.trash', compact('data'), [
             'title' => __('module/inquiry.title').' - '.__('global.trash'),
@@ -248,21 +243,18 @@ class InquiryController extends Controller
      */
     public function form(Request $request, $inquiryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['inquiry_id'] = $inquiryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('status', '') != '') {
             $filter['status'] = $request->input('status');
         }
         if ($request->input('exported', '') != '') {
             $filter['exported'] = $request->input('exported');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
@@ -273,7 +265,7 @@ class InquiryController extends Controller
             'submit_time' => 'DESC'
         ]);
         $data['no'] = $data['forms']->firstItem();
-        $data['forms']->withPath(url()->current().$param);
+        $data['forms']->withQueryString();
         $data['fields'] = $this->inquiryService->getFieldList([
             'inquiry_id' => $inquiryId,
             'publish' => 1,
@@ -357,6 +349,8 @@ class InquiryController extends Controller
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
+        $data['no'] = $data['inquiries']->firstItem();
+        $data['inquiries']->withQueryString();
 
         return view('frontend.inquiries.list', compact('data'), [
             'title' => __('module/inquiry.title'),
@@ -425,16 +419,16 @@ class InquiryController extends Controller
         }
 
         //share
-        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".URL::full().
             "&title=".$data['read']->fieldLang('name')."";
         $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
-            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.url()->full();
+            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.URL::full();
         $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('name').
-            " ".url()->full()."";
+            " ".URL::full()."";
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
-            url()->full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
+            URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $this->configService->getConfigFile('cover_default')."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $this->configService->getConfigFile('cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         return view('frontend.inquiries.'.$data['read']['slug'], compact('data'), [
             'title' => $data['read']->fieldLang('name'),

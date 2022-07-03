@@ -20,10 +20,7 @@ class IndexUrlController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
@@ -33,7 +30,7 @@ class IndexUrlController extends Controller
 
         $data['urls'] = $this->indexUrlService->getIndexUrlList($filter, true);
         $data['no'] = $data['urls']->firstItem();
-        $data['urls']->withPath(url()->current().$param);
+        $data['urls']->withQueryString();
 
         return view('backend.url.index', compact('data'), [
             'title' => __('module/url.title'),
@@ -45,10 +42,7 @@ class IndexUrlController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
@@ -60,7 +54,7 @@ class IndexUrlController extends Controller
             'deleted_at' => 'ASC'
         ]);
         $data['no'] = $data['urls']->firstItem();
-        $data['urls']->withPath(url()->current().$param);
+        $data['urls']->withQueryString();
 
         return view('backend.url.trash', compact('data'), [
             'title' => __('module/url.title').' - '.__('global.trash'),

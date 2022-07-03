@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class EventController extends Controller
@@ -41,25 +42,22 @@ class EventController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['events'] = $this->eventService->getEventList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['events']->firstItem();
-        $data['events']->withPath(url()->current().$param);
+        $data['events']->withQueryString();
 
         return view('backend.events.index', compact('data'), [
             'title' => __('module/event.title'),
@@ -71,25 +69,22 @@ class EventController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['events'] = $this->eventService->getEventList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['events']->firstItem();
-        $data['events']->withPath(url()->current().$param);
+        $data['events']->withQueryString();
 
         return view('backend.events.trash', compact('data'), [
             'title' => __('module/event.title').' - '.__('global.trash'),
@@ -254,21 +249,18 @@ class EventController extends Controller
      */
     public function form(Request $request, $eventId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['event_id'] = $eventId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('status', '') != '') {
             $filter['status'] = $request->input('status');
         }
         if ($request->input('exported', '') != '') {
             $filter['exported'] = $request->input('exported');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
@@ -279,7 +271,7 @@ class EventController extends Controller
             'submit_time' => 'DESC'
         ]);
         $data['no'] = $data['forms']->firstItem();
-        $data['forms']->withPath(url()->current().$param);
+        $data['forms']->withQueryString();
         $data['fields'] = $this->eventService->getFieldList([
             'event_id' => $eventId,
             'publish' => 1,
@@ -363,6 +355,8 @@ class EventController extends Controller
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
+        $data['no'] = $data['events']->firstItem();
+        $data['events']->withQueryString();
 
         return view('frontend.events.list', compact('data'), [
             'title' => __('module/event.title'),
@@ -443,16 +437,16 @@ class EventController extends Controller
         }
 
         //share
-        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".URL::full().
             "&title=".$data['read']->fieldLang('name')."";
         $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
-            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.url()->full();
+            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.URL::full();
         $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('name').
-            " ".url()->full()."";
+            " ".URL::full()."";
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
-            url()->full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
+            URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $data['cover']."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         return view('frontend.events.'.$data['read']['slug'], compact('data'), [
             'title' => $data['read']->fieldLang('name'),

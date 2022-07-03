@@ -10,6 +10,7 @@ use App\Services\Master\TemplateService;
 use App\Services\Module\GalleryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class GalleryAlbumController extends Controller
@@ -33,12 +34,12 @@ class GalleryAlbumController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('category_id', '') != '') {
             $filter['gallery_category_id'] = $request->input('category_id');
@@ -46,15 +47,12 @@ class GalleryAlbumController extends Controller
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['albums'] = $this->galleryService->getAlbumList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
         $data['no'] = $data['albums']->firstItem();
-        $data['albums']->withPath(url()->current().$param);
+        $data['albums']->withQueryString();
         $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
 
         return view('backend.galleries.album.index', compact('data'), [
@@ -68,12 +66,12 @@ class GalleryAlbumController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('category_id', '') != '') {
             $filter['gallery_category_id'] = $request->input('category_id');
@@ -81,15 +79,12 @@ class GalleryAlbumController extends Controller
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['albums'] = $this->galleryService->getAlbumList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['albums']->firstItem();
-        $data['albums']->withPath(url()->current().$param);
+        $data['albums']->withQueryString();
         $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
 
         return view('backend.galleries.album.trash', compact('data'), [
@@ -283,6 +278,8 @@ class GalleryAlbumController extends Controller
         ], true, $filePerpage, false, [], [
             'position' => 'ASC'
         ]);
+        $data['no'] = $data['files']->firstItem();
+        $data['files']->withQueryString();
 
         $data['fields'] = $data['read']['custom_fields'];
 
@@ -299,16 +296,16 @@ class GalleryAlbumController extends Controller
         }
 
         //share
-        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".url()->full().
+        $data['share_facebook'] = "https://www.facebook.com/share.php?u=".URL::full().
             "&title=".$data['read']->fieldLang('name')."";
         $data['share_twitter'] = 'https://twitter.com/intent/tweet?text='.
-            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.url()->full();
+            str_replace('#', '', $data['read']->fieldLang('name')).'&url='.URL::full();
         $data['share_whatsapp'] = "whatsapp://send?text=".$data['read']->fieldLang('name').
-            " ".url()->full()."";
+            " ".URL::full()."";
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
-            url()->full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
+            URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $data['image_preview']."&url=".url()->full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $data['image_preview']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'album.detail';
         if (!empty($data['read']['template_id'])) {

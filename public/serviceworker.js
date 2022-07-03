@@ -3,14 +3,14 @@ var filesToCache = [
     '/offline',
     '/css/app.css',
     '/js/app.js',
-    '/images/icons/icon-72x72.png',
-    '/images/icons/icon-96x96.png',
-    '/images/icons/icon-128x128.png',
-    '/images/icons/icon-144x144.png',
-    '/images/icons/icon-152x152.png',
-    '/images/icons/icon-192x192.png',
-    '/images/icons/icon-384x384.png',
-    '/images/icons/icon-512x512.png',
+    '/assets/favicon/pwa/icon-72x72.png',
+    '/assets/favicon/pwa/icon-96x96.png',
+    '/assets/favicon/pwa/icon-128x128.png',
+    '/assets/favicon/pwa/icon-144x144.png',
+    '/assets/favicon/pwa/icon-152x152.png',
+    '/assets/favicon/pwa/icon-192x192.png',
+    '/assets/favicon/pwa/icon-384x384.png',
+    '/assets/favicon/pwa/icon-512x512.png',
 ];
 
 // Cache on install

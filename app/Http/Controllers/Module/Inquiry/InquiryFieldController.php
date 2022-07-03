@@ -26,18 +26,15 @@ class InquiryFieldController extends Controller
 
     public function index(Request $request, $inquiryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['inquiry_id'] = $inquiryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
@@ -48,7 +45,7 @@ class InquiryFieldController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
-        $data['fields']->withPath(url()->current().$param);
+        $data['fields']->withQueryString();
 
         return view('backend.inquiries.field.index', compact('data'), [
             'title' => __('module/inquiry.field.title'),
@@ -62,18 +59,15 @@ class InquiryFieldController extends Controller
 
     public function trash(Request $request, $inquiryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['inquiry_id'] = $inquiryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
@@ -84,7 +78,7 @@ class InquiryFieldController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['fields']->firstItem();
-        $data['fields']->withPath(url()->current().$param);
+        $data['fields']->withQueryString();
 
         return view('backend.inquiries.field.trash', compact('data'), [
             'title' => __('module/inquiry.field.title').' - '.__('global.trash'),

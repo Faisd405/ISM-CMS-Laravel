@@ -191,7 +191,7 @@ class IndexUrlService
 
         try {
 
-            if ($indexUrl['locked'] == 0) {
+            if ($indexUrl['locked'] == 0 && $indexUrl['module'] == null) {
 
                 $indexUrl->delete();
 

@@ -21,9 +21,6 @@ class PermissionController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['parent'] = 0;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
@@ -34,7 +31,7 @@ class PermissionController extends Controller
 
         $data['permissions'] = $this->userService->getPermissionList($filter, true);
         $data['no'] = $data['permissions']->firstItem();
-        $data['permissions']->withPath(url()->current().$param);
+        $data['permissions']->withQueryString();
 
         return view('backend.users.acl.permission.index', compact('data'), [
             'title' => __('module/user.permission.title'),

@@ -187,7 +187,7 @@ class RegistrationService
         
         try {
             
-            if ($registration['locked'] == 0) {
+            if ($registration['locked'] == 0 && $registration['type'] != 0) {
         
                 if (Auth::guard()->check()) {
                     $registration->update([

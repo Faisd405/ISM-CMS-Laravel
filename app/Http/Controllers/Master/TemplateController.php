@@ -21,12 +21,12 @@ class TemplateController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('module', '') != '') {
             $filter['module'] = $request->input('module');
@@ -34,13 +34,10 @@ class TemplateController extends Controller
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['templates'] = $this->templateService->getTemplateList($filter, true);
         $data['no'] = $data['templates']->firstItem();
-        $data['templates']->withPath(url()->current().$param);
+        $data['templates']->withQueryString();
 
         return view('backend.masters.template.index', compact('data'), [
             'title' => __('master/template.title'),
@@ -52,12 +49,12 @@ class TemplateController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('module', '') != '') {
             $filter['module'] = $request->input('module');
@@ -65,15 +62,12 @@ class TemplateController extends Controller
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['templates'] = $this->templateService->getTemplateList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['templates']->firstItem();
-        $data['templates']->withPath(url()->current().$param);
+        $data['templates']->withQueryString();
 
         return view('backend.masters.template.trash', compact('data'), [
             'title' => __('master/template.title').' - '.__('global.trash'),

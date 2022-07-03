@@ -93,6 +93,13 @@ class UrlSeeder extends Seeder
                 'locked' => true
             ],
             [
+                'slug' => 'offline',
+                'module' => null,
+                'id' => null,
+                'type' => null,
+                'locked' => true
+            ],
+            [
                 'slug' => config('cms.module.feature.language.default'),
                 'module' => null,
                 'id' => null,

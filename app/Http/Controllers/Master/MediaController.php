@@ -26,8 +26,6 @@ class MediaController extends Controller
 
     public function index(Request $request, $moduleId, $moduleType)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $data['params'] = ['moduleId' => $moduleId, 'moduleType' => $moduleType];
         
         $filter['mediable_id'] = $moduleId;
@@ -43,7 +41,7 @@ class MediaController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['medias']->firstItem();
-        $data['medias']->withPath(url()->current().$param);
+        $data['medias']->withQueryString();
 
         return view('backend.masters.media.index', compact('data'), [
             'title' => __('master/media.title'),
@@ -57,8 +55,6 @@ class MediaController extends Controller
 
     public function trash(Request $request, $moduleId, $moduleType)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $data['params'] = ['moduleId' => $moduleId, 'moduleType' => $moduleType];
         
         $filter['module'] = $moduleType;
@@ -74,7 +70,7 @@ class MediaController extends Controller
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['medias']->firstItem();
-        $data['medias']->withPath(url()->current().$param);
+        $data['medias']->withQueryString();
 
         return view('backend.masters.media.trash', compact('data'), [
             'title' => __('master/media.title').' - '.__('global.trash'),

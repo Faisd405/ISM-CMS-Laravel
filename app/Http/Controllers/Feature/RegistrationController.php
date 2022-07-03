@@ -24,12 +24,12 @@ class RegistrationController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
@@ -37,13 +37,10 @@ class RegistrationController extends Controller
         if ($request->input('status', '') != '') {
             $filter['active'] = $request->input('status');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['registrations'] = $this->registrationService->getRegistrationList($filter, true);
         $data['no'] = $data['registrations']->firstItem();
-        $data['registrations']->withPath(url()->current().$param);
+        $data['registrations']->withQueryString();
 
         return view('backend.features.registration.index', compact('data'), [
             'title' => __('feature/registration.title'),
@@ -55,12 +52,12 @@ class RegistrationController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
@@ -68,15 +65,12 @@ class RegistrationController extends Controller
         if ($request->input('status', '') != '') {
             $filter['active'] = $request->input('status');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['registrations'] = $this->registrationService->getRegistrationList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['registrations']->firstItem();
-        $data['registrations']->withPath(url()->current().$param);
+        $data['registrations']->withQueryString();
 
         return view('backend.features.registration.trash', compact('data'), [
             'title' => __('feature/registration.title').' - '.__('global.trash'),

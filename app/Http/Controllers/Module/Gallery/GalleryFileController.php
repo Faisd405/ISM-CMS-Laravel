@@ -27,21 +27,18 @@ class GalleryFileController extends Controller
 
     public function index(Request $request, $albumId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['gallery_album_id'] = $albumId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
         }
         if ($request->input('type', '') != '') {
             $filter['type'] = $request->input('type');
         }
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
-        }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
         }
 
         $data['album'] = $this->galleryService->getAlbum(['id' => $albumId]);
@@ -52,7 +49,7 @@ class GalleryFileController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
-        $data['files']->withPath(url()->current().$param);
+        $data['files']->withQueryString();
 
         return view('backend.galleries.file.index', compact('data'), [
             'title' => __('module/gallery.file.title'),
@@ -67,9 +64,6 @@ class GalleryFileController extends Controller
 
     public function trash(Request $request, $albumId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['gallery_album_id'] = $albumId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
@@ -92,7 +86,7 @@ class GalleryFileController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
-        $data['files']->withPath(url()->current().$param);
+        $data['files']->withQueryString();
 
         return view('backend.galleries.file.trash', compact('data'), [
             'title' => __('module/gallery.file.title').' - '.__('global.trash'),

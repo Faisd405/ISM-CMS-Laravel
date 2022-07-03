@@ -26,18 +26,15 @@ class LinkMediaController extends Controller
 
     public function index(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['link_category_id'] = $categoryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        if ($request->input('publish', '') != '') {
-            $filter['publish'] = $request->input('publish');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('publish', '') != '') {
+            $filter['publish'] = $request->input('publish');
         }
 
         $data['category'] = $this->linkService->getCategory(['id' => $categoryId]);
@@ -48,7 +45,7 @@ class LinkMediaController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['medias']->firstItem();
-        $data['medias']->withPath(url()->current().$param);
+        $data['medias']->withQueryString();
 
         return view('backend.links.media.index', compact('data'), [
             'title' => __('module/link.media.title'),
@@ -63,9 +60,6 @@ class LinkMediaController extends Controller
 
     public function trash(Request $request, $categoryId)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter['link_category_id'] = $categoryId;
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
@@ -85,7 +79,7 @@ class LinkMediaController extends Controller
             'position' => 'ASC'
         ]);
         $data['no'] = $data['medias']->firstItem();
-        $data['medias']->withPath(url()->current().$param);
+        $data['medias']->withQueryString();
 
         return view('backend.links.media.trash', compact('data'), [
             'title' => __('module/link.media.title').' - '.__('global.trash'),

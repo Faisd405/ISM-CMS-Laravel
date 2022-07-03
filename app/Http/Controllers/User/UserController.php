@@ -28,9 +28,13 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
+        if ($request->input('q', '') != '') {
+            $filter['q'] = $request->input('q');
+        }
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
+        }
 
         if (Auth::user()->hasRole('support')) {
             $filter['role_not'] = ['super'];
@@ -38,23 +42,16 @@ class UserController extends Controller
         if (Auth::user()['roles'][0]['id'] >= 3) {
             $filter['role_not'] = ['super', 'support'];
         }
-        if ($request->input('q', '') != '') {
-            $filter['q'] = $request->input('q');
-        }
-        
         if ($request->input('role', '') != '') {
             $filter['role_in'] = [$request->input('role')];
         }
         if ($request->input('status', '') != '') {
             $filter['active'] = $request->input('status');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['users'] = $this->userService->getUserList($filter, true);
         $data['no'] = $data['users']->firstItem();
-        $data['users']->withPath(url()->current().$param);
+        $data['users']->withQueryString();
         $data['roles'] = $this->userService->getRoleByUser();
 
         return view('backend.users.index', compact('data'), [
@@ -68,29 +65,25 @@ class UserController extends Controller
 
     public function trash(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
-
         $filter = [];
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        
+        if ($request->input('limit', '') != '') {
+            $filter['limit'] = $request->input('limit');
+        }
         if ($request->input('role', '') != '') {
             $filter['role_in'] = [$request->input('role')];
         }
         if ($request->input('status', '') != '') {
             $filter['active'] = $request->input('status');
         }
-        if ($request->input('limit', '') != '') {
-            $filter['limit'] = $request->input('limit');
-        }
 
         $data['users'] = $this->userService->getUserList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['users']->firstItem();
-        $data['users']->withPath(url()->current().$param);
+        $data['users']->withQueryString();
         $data['roles'] = $this->userService->getRoleByUser();
 
         return view('backend.users.trash', compact('data'), [
@@ -106,29 +99,25 @@ class UserController extends Controller
 
     public function log(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
-        if (!Auth::user()->hasRole('super')) {
-            $filter['user_id'] = Auth::user()['id'];
-        }
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        
-        if ($request->input('event', '') != '') {
-            $filter['event'] = $request->input('event');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if (!Auth::user()->hasRole('super')) {
+            $filter['user_id'] = Auth::user()['id'];
+        }
+        if ($request->input('event', '') != '') {
+            $filter['event'] = $request->input('event');
         }
 
         $data['logs'] = $this->userService->getLogList($filter, true, 10, [], [
             'created_at' => 'DESC'
         ]);
         $data['no'] = $data['logs']->firstItem();
-        $data['logs']->withPath(url()->current().$param);
+        $data['logs']->withQueryString();
 
         return view('backend.users.log', compact('data'), [
             'title' => __('module/user.log.title'),
@@ -141,26 +130,22 @@ class UserController extends Controller
 
     public function loginFailed(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-        
-        if ($request->input('user_type', '') != '') {
-            $filter['user_type'] = $request->input('user_type');
-        }
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
+        }
+        if ($request->input('user_type', '') != '') {
+            $filter['user_type'] = $request->input('user_type');
         }
 
         $data['login_faileds'] = $this->userService->getLoginFailedList($filter, true, 10, [], [
             'failed_time' => 'DESC'
         ]);
         $data['no'] = $data['login_faileds']->firstItem();
-        $data['login_faileds']->withPath(url()->current().$param);
+        $data['login_faileds']->withQueryString();
 
         return view('backend.users.login-failed', compact('data'), [
             'title' => __('module/user.login_failed.title'),

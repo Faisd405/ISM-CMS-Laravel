@@ -21,10 +21,7 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
-        $url = $request->url();
-        $param = Str::replace($url, '', $request->fullUrl());
         $filter = [];
-
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
@@ -34,7 +31,7 @@ class RoleController extends Controller
 
         $data['roles'] = $this->userService->getRoleList($filter, true);
         $data['no'] = $data['roles']->firstItem();
-        $data['roles']->withPath(url()->current().$param);
+        $data['roles']->withQueryString();
 
         return view('backend.users.acl.role.index', compact('data'), [
             'title' => __('module/user.role.title'),
