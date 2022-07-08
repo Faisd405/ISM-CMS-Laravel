@@ -38,6 +38,7 @@ class HomeController extends Controller
     public function home(Request $request)
     {
         $filter['widget_set'] = 0;
+        $filter['global'] = 0;
         $filter['publish'] = 1;
         $filter['approved'] = 1;
         $data['widgets'] = App::make(WidgetService::class)->getWidgetList($filter, false, 10, false, [], [

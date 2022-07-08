@@ -59,6 +59,9 @@ class WidgetService
         if (isset($filter['type']))
             $widget->where('type', $filter['type']);
 
+        if (isset($filter['global']))
+            $widget->where('global', $filter['global']);
+
         if (isset($filter['publish']))
             $widget->where('publish', $filter['publish']);
 
