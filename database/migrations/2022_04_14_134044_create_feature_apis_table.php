@@ -22,6 +22,7 @@ class CreateFeatureApisTable extends Migration
             $table->json('modules')->nullable()->comment('array');
             $table->json('ip_address')->nullable()->comment('array');
             $table->boolean('active')->default(true);
+            $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();

@@ -24,6 +24,11 @@ class DocumentFile extends Model
         'description' => 'json',
         'cover' => 'json',
         'config' => 'json',
+        'custom_fields' => 'json',
+    ];
+
+    protected $appends = [
+        'cover_src'
     ];
 
     public static function boot()
@@ -33,9 +38,9 @@ class DocumentFile extends Model
         DocumentFile::observe(LogObserver::class);
     }
 
-    public function category()
+    public function document()
     {
-        return $this->belongsTo(DocumentCategory::class, 'document_category_id');
+        return $this->belongsTo(Document::class, 'document_id');
     }
 
     public function createBy()
@@ -82,7 +87,7 @@ class DocumentFile extends Model
         return $query->where('locked', 1);
     }
 
-    public function coverSrc()
+    public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);

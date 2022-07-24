@@ -22,15 +22,15 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @can ('document_category_create')
-                    <a href="{{ route('document.category.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
-                            'attribute' => __('module/document.category.caption')
+                    @can ('link_create')
+                    <a href="{{ route('link.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                            'attribute' => __('module/link.caption')
                         ])">
-                        <i class="las la-plus"></i> <span>@lang('module/document.category.caption')</span>
+                        <i class="las la-plus"></i> <span>@lang('module/link.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
-                    <a href="{{ route('document.category.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
+                    @role('developer|super')
+                    <a href="{{ route('link.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
                     @endrole
@@ -81,7 +81,7 @@
 
         <div class="card">
             <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/document.category.text')</h5>
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/link.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -89,7 +89,7 @@
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th>@lang('module/document.category.label.field1')</th>
+                            <th>@lang('module/link.label.field1')</th>
                             <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
@@ -98,25 +98,25 @@
                             <th class="text-center" style="width: 180px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse ($data['categories'] as $item)
-                        <tr>
+                    <tbody class="{{ $data['links']->total() > 1 && isset(config('cms.module.link.ordering')['position']) ? 'drag' : ''}}">
+                        @forelse ($data['links'] as $item)
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
-                                <a href="{{ route('document.category.read', ['slugCategory' => $item['slug']]) }}" title="@lang('global.view_detail')" target="_blank">
+                                @if ($item['detail'] == 1)
+                                <a href="{{ route('link.read.'.$item['slug']) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
                                 @endif
                             </td>
                             <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>
                             <td class="text-center">
-                                @can ('document_category_update')
+                                @can ('link_update')
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}"
                                     title="@lang('global.status')">
                                     {{ __('global.label.publish.'.$item['publish']) }}
-                                    <form action="{{ route('document.category.publish', ['id' => $item['id']]) }}" method="POST">
+                                    <form action="{{ route('link.publish', ['id' => $item['id']]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -140,10 +140,11 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if (Auth::user()->can('document_category_update') && $item->min('position') != $item['position'])
+                                @if (isset(config('cms.module.link.ordering')['position']))
+                                @if (Auth::user()->can('link_update') && $item->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
-                                    <form action="{{ route('document.category.position', ['id' => $item['id'], 'position' => ($item['position'] - 1)]) }}" method="POST">
+                                    <form action="{{ route('link.position', ['id' => $item['id'], 'position' => ($item['position'] - 1)]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -151,10 +152,10 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-up"></i></button>
                                 @endif
-                                @if (Auth::user()->can('document_category_update') && $item->max('position') != $item['position'])
+                                @if (Auth::user()->can('link_update') && $item->max('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-down"></i>
-                                    <form action="{{ route('document.category.position', ['id' => $item['id'], 'position' => ($item['position'] + 1)]) }}" method="POST">
+                                    <form action="{{ route('link.position', ['id' => $item['id'], 'position' => ($item['position'] + 1)]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -162,32 +163,35 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
+                                @endif
                             </td>
                             <td class="text-center">
-                                @can('document_files')
-                                <a href="{{ route('document.file.index', ['categoryId' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success" title="@lang('module/document.file.caption')">
-                                    <i class="las la-file"></i>
+                                @can('link_medias')
+                                <a href="{{ route('link.media.index', ['linkId' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success" title="@lang('module/link.media.caption')">
+                                    <i class="las la-archive"></i>
                                 </a>
                                 @endcan
-                                @can('document_category_update')
-                                <a href="{{ route('document.category.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
-                                    'attribute' => __('module/document.category.caption')
+                                @can('link_update')
+                                <a href="{{ route('link.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                    'attribute' => __('module/link.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
-                                @can('document_category_delete')
+                                @can('link_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/document.category.caption')
+                                        'attribute' => __('module/link.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.document.category.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.link.category.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
-                                    <form action="{{ route('document.category.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
+                                    <form action="{{ route('link.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -202,11 +206,11 @@
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)
                                     ! @lang('global.data_attr_not_found', [
-                                        'attribute' => __('module/document.category.caption')
+                                        'attribute' => __('module/link.caption')
                                     ]) !
                                     @else
                                     ! @lang('global.data_attr_empty', [
-                                        'attribute' => __('module/document.category.caption')
+                                        'attribute' => __('module/link.caption')
                                     ]) !
                                     @endif
                                     </strong>
@@ -219,11 +223,11 @@
                 <div class="card-footer">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['categories']->firstItem() }}</strong> - <strong>{{ $data['categories']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['categories']->total() }}</strong>
+                            @lang('pagination.showing') : <strong>{{ $data['links']->firstItem() }}</strong> - <strong>{{ $data['links']->lastItem() }}</strong> @lang('pagination.of')
+                            <strong>{{ $data['links']->total() }}</strong>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            {{ $data['categories']->onEachSide(1)->links() }}
+                            {{ $data['links']->onEachSide(1)->links() }}
                         </div>
                     </div>
                 </div>
@@ -239,7 +243,37 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/link/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
@@ -259,7 +293,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/document/category/'+id+'/soft',
+                        url: '/admin/link/'+id+'/soft',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -281,7 +315,7 @@
                 if (response.value.success) {
                     Swal.fire({
                         type: 'success',
-                        text: "@lang('global.alert.delete_success', ['attribute' => __('module/document.category.caption')])"
+                        text: "@lang('global.alert.delete_success', ['attribute' => __('module/link.caption')])"
                     }).then(() => {
                         window.location.reload();
                     })

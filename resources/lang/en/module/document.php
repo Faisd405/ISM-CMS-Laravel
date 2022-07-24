@@ -1,25 +1,22 @@
 <?php
 
 return [
+    'title' => 'Documents',
     'caption' => 'Document',
-    'category' => [
-        'title' => 'Document Category',
-        'caption' => 'Document Category',
-        'text' => 'Document Category List',
-        'label' => [
-            'field1' => 'Name',
-            'field2' => 'Slug',
-            'field3' => 'Description',
-            'field4' => 'Role Download',
-            'field5' => 'File Limit',
-        ],
-        'placeholder' => [
-            'field1' => 'Enter name',
-            'field2' => '',
-            'field3' => '',
-            'field4' => '',
-            'field5' => '',
-        ],
+    'text' => 'Document List',
+    'label' => [
+        'field1' => 'Name',
+        'field2' => 'Slug / URL',
+        'field3' => 'Description',
+        'field4' => 'Role Download',
+        'field5' => 'File Limit',
+    ],
+    'placeholder' => [
+        'field1' => 'Enter name',
+        'field2' => '',
+        'field3' => '',
+        'field4' => '',
+        'field5' => '',
     ],
     'file' => [
         'title' => 'Document File',
@@ -34,11 +31,6 @@ return [
         ],
         'placeholder' => [
             'field1' => 'Enter title',
-        ],
-        'type' => [
-            0 => 'UPLOAD',
-            1 => 'FILEMANAGER',
-            2 => 'URL'
         ],
     ]
 ];

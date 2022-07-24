@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateModDocumentCategoriesTable extends Migration
+class CreateModLinksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,19 @@ class CreateModDocumentCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('mod_document_categories', function (Blueprint $table) {
+        Schema::create('mod_links', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique()->index();
             $table->json('name');
             $table->json('description')->nullable();
-            $table->json('roles')->nullable();
             $table->json('banner')->nullable();
-            $table->integer('file_perpage')->nullable();
             $table->json('config');
             $table->json('custom_fields')->nullable();
             $table->unsignedBigInteger('template_id')->nullable();
             $table->integer('position')->nullable();
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
+            $table->boolean('detail')->default(true)->comment('1 = memiliki halaman, 0 = tidak memiliki halaman');
             $table->tinyInteger('approved')->default(1)->comment('0 = rejected, 1 = approved, 2 = pending');
             $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
             $table->bigInteger('hits')->default(0);
@@ -55,6 +54,6 @@ class CreateModDocumentCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mod_document_categories');
+        Schema::dropIfExists('mod_links');
     }
 }

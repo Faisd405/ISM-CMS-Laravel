@@ -5,6 +5,11 @@
     <div class="col-xl-8 col-lg-8 col-md-8">
 
         <div class="card">
+            <h6 class="card-header">
+                @lang('global.form_attr', [
+                    'attribute' => __('module/user.permission.caption')
+                ])
+            </h6>
             @isset($data['parent'])
             <div class="card-header">
                 <span class="text-muted">
@@ -12,11 +17,6 @@
                 </span>
             </div>
             @endisset
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/user.permission.caption')
-                ])
-            </h6>
             <form action="{{ !isset($data['permission']) ? route('permission.store', $queryParam) : 
                 route('permission.update', $data['permission']['id']) }}" method="POST">
                 @csrf
@@ -30,8 +30,21 @@
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
                                 value="{{ !isset($data['permission']) ? old('name') : old('name', $data['permission']['name']) }}" 
                                 placeholder="@lang('module/user.permission.placeholder.field2')" autofocus>
-                            <small class="text-muted">@lang('global.lower_case')</small>
                             @include('components.field-error', ['field' => 'name'])
+                            <small class="form-text text-muted">@lang('global.lower_case')</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['permission']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['permission']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
                         </div>
                     </div>
                 </div>

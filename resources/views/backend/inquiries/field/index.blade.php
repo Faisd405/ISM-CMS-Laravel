@@ -30,7 +30,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/inquiry.field.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('inquiry.field.trash', ['inquiryId' => $data['inquiry']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -81,13 +81,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header with-elements">
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/inquiry.field.text')</h5>
+            </div>
             <div class="card-header">
                 <span class="text-muted">
                     {{ Str::upper(__('module/inquiry.caption')) }} : <b class="text-primary">{{ $data['inquiry']->fieldLang('name') }}</b>
                 </span>
-            </div>
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/inquiry.field.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -104,9 +104,9 @@
                             <th class="text-center" style="width: 140px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['fields']->total() > 1 ? 'drag' : ''}}">
                         @forelse ($data['fields'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 {!! Str::limit($item->fieldLang('label'), 30) !!}
@@ -175,15 +175,17 @@
                                 </a>
                                 @endcan
                                 @can('inquiry_field_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/inquiry.field.caption')
+                                    'attribute' => __('module/inquiry.field.caption')
                                     ])"
                                     data-category-id="{{ $item['inquiry_id'] }}"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super') && config('cms.module.inquiry.field.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super') && config('cms.module.inquiry.field.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('inquiry.field.approved', ['inquiryId' => $item['inquiry_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -239,7 +241,38 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+     //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                var inquiryId = '{{ $data['inquiry']['id'] }}';
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/inquiry/'+inquiryId+'/field/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

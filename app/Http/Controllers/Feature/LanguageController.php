@@ -91,6 +91,7 @@ class LanguageController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $language = $this->languageService->store($data);
         $data['query'] = $request->query();
 
@@ -123,6 +124,7 @@ class LanguageController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $language = $this->languageService->update($data, ['id' => $id]);
         $data['query'] = $request->query();
 

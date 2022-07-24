@@ -14,32 +14,32 @@ Route::prefix('admin/menu')->name('menu.')->middleware('auth')->group(function (
             ->middleware('permission:menus');
         Route::get('/trash', [MenuCategoryController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [MenuCategoryController::class, 'create'])
             ->name('create')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::post('/store', [MenuCategoryController::class, 'store'])
             ->name('store')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::get('/{id}/edit', [MenuCategoryController::class, 'edit'])
             ->name('edit')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}', [MenuCategoryController::class, 'update'])
             ->name('update')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/activate', [MenuCategoryController::class, 'activate'])
             ->name('activate')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::delete('/{id}/soft', [MenuCategoryController::class, 'softDelete'])
             ->name('delete.soft')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::delete('/{id}/permanent', [MenuCategoryController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [MenuCategoryController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -51,7 +51,7 @@ Route::prefix('admin/menu')->name('menu.')->middleware('auth')->group(function (
             ->middleware('permission:menus');
         Route::get('/trash', [MenuController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
             
         Route::get('/create', [MenuController::class, 'create'])
             ->name('create')
@@ -70,7 +70,7 @@ Route::prefix('admin/menu')->name('menu.')->middleware('auth')->group(function (
             ->middleware('permission:menu_update');
         Route::put('/{id}/approved', [MenuController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/position/{position}', [MenuController::class, 'position'])
             ->name('position')
             ->middleware('permission:menu_update');
@@ -79,10 +79,10 @@ Route::prefix('admin/menu')->name('menu.')->middleware('auth')->group(function (
             ->middleware('permission:menu_delete');
         Route::delete('/{id}/permanent', [MenuController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [MenuController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
         

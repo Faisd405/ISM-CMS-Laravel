@@ -56,10 +56,47 @@ class HomeController extends Controller
         if (config('cms.setting.url.search') == false)
             return redirect()->route('home');
 
-        if ($request->input('keyword', '') == '')
+        $keyword = $request->input('keyword', '');
+        if ($keyword == '')
             return redirect()->route('home');
 
-        $data = null;
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
+        $filter['detail'] = 1;
+        if ($keyword != '') {
+            $filter['q'] = $keyword;
+        }
+
+        $data = [];
+        if (config('cms.module.page.search') == true)
+            $data['pages'] = App::make(PageService::class)->getPageList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.content.section.search') == true)
+            $data['content_sections'] = App::make(ContentService::class)->getSectionList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.content.category.search') == true)
+            $data['content_categories'] = App::make(ContentService::class)->getCategoryList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.content.post.search') == true)
+            $data['content_posts'] = App::make(ContentService::class)->getPostList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.gallery.category.search') == true)
+            $data['gallery_categories'] = App::make(GalleryService::class)->getCategoryList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.gallery.album.search') == true)
+            $data['gallery_albums'] = App::make(GalleryService::class)->getAlbumList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.document.search') == true)
+            $data['documents'] = App::make(DocumentService::class)->getDocumentList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.link.search') == true)
+            $data['links'] = App::make(LinkService::class)->getLinkList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.inquiry.search') == true)
+            $data['inquiries'] = App::make(InquiryService::class)->getInquiryList($filter, false, 3, false, [], []);
+
+        if (config('cms.module.event.search') == true)
+            $data['events'] = App::make(EventService::class)->getEventList($filter, false, 3, false, [], []);
 
         return view('frontend.search', compact('data'), [
             'title' => __('global.search'),
@@ -71,6 +108,9 @@ class HomeController extends Controller
 
     public function sitemap(Request $request)
     {
+        if (config('cms.setting.url.sitemap') == false)
+            return redirect()->route('home');
+
         $data = [];
 
         return view('frontend.sitemap', compact('data'), [
@@ -80,57 +120,22 @@ class HomeController extends Controller
 
     public function sitemapXml(Request $request)
     {
-        $data['pages'] = App::make(PageService::class)->getPageList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
+        $filter['detail'] = 1;
 
-        $data['content_sections'] = App::make(ContentService::class)->getSectionList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
+        $data['pages'] = App::make(PageService::class)->getPageList($filter, false, 0, false, [], []);
+        $data['content_sections'] = App::make(ContentService::class)->getSectionList($filter, false, 0, false, [], []);
+        $data['content_categories'] = App::make(ContentService::class)->getCategoryList($filter, false, 0, false, [], []);
+        $data['content_posts'] = App::make(ContentService::class)->getPostList($filter, false, 0, false, [], []);
+        $data['gallery_categories'] = App::make(GalleryService::class)->getCategoryList($filter, false, 0, false, [], []);
+        $data['gallery_albums'] = App::make(GalleryService::class)->getAlbumList($filter, false, 0, false, [], []);
+        $data['documents'] = App::make(DocumentService::class)->getDocumentList($filter, false, 0, false, [], []);
+        $data['links'] = App::make(LinkService::class)->getLinkList($filter, false, 0, false, [], []);
+        $data['inquiries'] = App::make(InquiryService::class)->getInquiryList($filter, false, 0, false, [], []);
+        $data['events'] = App::make(EventService::class)->getEventList($filter, false, 0, false, [], []);
 
-        $data['content_categories'] = App::make(ContentService::class)->getCategoryList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        $data['content_posts'] = App::make(ContentService::class)->getPostList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        $data['gallery_categories'] = App::make(GalleryService::class)->getCategoryList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        $data['gallery_albums'] = App::make(GalleryService::class)->getAlbumList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        $data['document_categories'] = App::make(DocumentService::class)->getCategoryList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        $data['link_categories'] = App::make(LinkService::class)->getCategoryList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        $data['inquiries'] = App::make(InquiryService::class)->getInquiryList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        $data['events'] = App::make(EventService::class)->getEventList([
-            'publish' => 1,
-            'approved' => 1
-        ], false, 0, false, [], []);
-
-        return response()->view('frontend.sitemap', compact('data'))
+        return response()->view('frontend.sitemap-xml', compact('data'))
             ->header('Content-Type', 'text/xml');
     }
 
@@ -140,7 +145,7 @@ class HomeController extends Controller
         $data['description'] = $this->configService->getConfigValue('meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
-            'approved' => 1
+            'approved' => 1,
         ], false, 0, false, [], []);
 
         return view('frontend.rss.feed', compact('data'));
@@ -160,7 +165,7 @@ class HomeController extends Controller
 
     public function maintenance(Request $request)
     {
-        if ($this->configService->getConfigValue('maintenance') == false) {
+        if ($this->configService->getConfigValue('maintenance') == 0) {
             return redirect()->route('home');
         }
 

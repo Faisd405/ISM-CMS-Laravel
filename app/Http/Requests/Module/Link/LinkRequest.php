@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Module\Document;
+namespace App\Http\Requests\Module\Link;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DocumentCategoryRequest extends FormRequest
+class LinkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,16 +25,16 @@ class DocumentCategoryRequest extends FormRequest
     {
         return [
             'name_'.config('cms.module.feature.language.default') => 'required|max:191',
-            'slug' => $this->method() == 'POST' ? 'required|max:191|unique:mod_document_categories,slug' : 
-                'required|max:191|unique:mod_document_categories,slug,'.$this->id,
+            'slug' => $this->method() == 'POST' ? 'required|max:191|unique:indexing_urls,slug' : 
+                'required|max:191|unique:indexing_urls,slug,'.$this->index_url_id,
         ];
     }
 
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/document.category.label.field1'),
-            'slug' => __('module/document.category.label.field2'),
+            'name_'.config('cms.module.feature.language.default') => __('module/link.label.field1'),
+            'slug' => __('module/link.label.field2'),
         ];
     }
 }

@@ -40,10 +40,10 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-label">@lang('global.status')</label>
-                                <select class="custom-select" name="status">
+                                <select class="custom-select" name="publish">
                                     <option value=" " selected>@lang('global.show_all')</option>
                                     @foreach (__('global.label.publish') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }} 
+                                    <option value="{{ $key }}" {{ Request::get('publish') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
                                 </select>
@@ -70,39 +70,40 @@
                 <h5 class="card-header-title mt-1 mb-0">@lang('global.trash')</h5>
             </div>
 
-             {{-- Table --}}
-             <div class="table-responsive">
+            <div class="table-responsive">
                 <table class="table card-table table-striped table-hover">
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th>@lang('module/banner.category.label.field1')</th>
-                            <th style="width: 80px;" class="text-center">@lang('global.status')</th>
+                            <th>@lang('module/document.label.field1')</th>
+                            <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
+                            <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.deleted')</th>
                             <th class="text-center" style="width: 110px;"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($data['categories'] as $item)
+                        @forelse ($data['documents'] as $item)
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 <strong>{!! Str::limit($item['name'][App::getLocale()], 65) !!}</strong>
                             </td>
+                            <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>
                             </td>
                             <td>
                                 {{ $item['deleted_at']->format('d F Y (H:i A)') }}
                                 @if (!empty($item['deleted_by']))
-                                <br>
-                                <span class="text-muted"> @lang('global.by') : {{ $item['deleteBy'] != null ? $item['deleteBy']['name'] : 'User Deleted' }}</span>
+                                    <br>
+                                    <span class="text-muted">@lang('global.by') : {{ $item['deleteBy'] != null ? $item['deleteBy']['name'] : 'User Deleted' }}</span>
                                 @endif
                             </td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-success icon-btn btn-sm restore" onclick="$(this).find('#form-restore').submit();" title="@lang('global.restore')" data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-restore-alt"></i>
-                                    <form action="{{ route('banner.category.restore', ['id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
+                                    <form action="{{ route('document.restore', ['id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -114,17 +115,17 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" align="center">
+                            <td colspan="6" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)
-                                        ! @lang('global.data_attr_not_found', [
-                                            'attribute' => __('global.trash')
-                                        ]) !
+                                    ! @lang('global.data_attr_not_found', [
+                                        'attribute' => __('global.trash')
+                                    ]) !
                                     @else
-                                        ! @lang('global.data_attr_empty', [
-                                            'attribute' => __('global.trash')
-                                        ]) !
+                                    ! @lang('global.data_attr_empty', [
+                                        'attribute' => __('global.trash')
+                                    ]) !
                                     @endif
                                     </strong>
                                 </i>
@@ -136,15 +137,15 @@
                 <div class="card-footer">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['categories']->firstItem() }}</strong> - <strong>{{ $data['categories']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['categories']->total() }}</strong>
+                            @lang('pagination.showing') : <strong>{{ $data['documents']->firstItem() }}</strong> - <strong>{{ $data['documents']->lastItem() }}</strong> @lang('pagination.of')
+                            <strong>{{ $data['documents']->total() }}</strong>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            {{ $data['categories']->onEachSide(1)->links() }}
+                            {{ $data['documents']->onEachSide(1)->links() }}
                         </div>
                     </div>
                 </div>
-             </div>
+            </div>
         </div>
 
     </div>
@@ -176,7 +177,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/banner/category/' + id + '/permanent?is_trash=yes',
+                        url: '/admin/document/' + id + '/permanent?is_trash=yes',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -198,7 +199,7 @@
                 if (response.value.success) {
                     Swal.fire({
                         type: 'success',
-                        text: "{{ __('global.alert.delete_success', ['attribute' => __('module/banner.category.caption')]) }}"
+                        text: "{{ __('global.alert.delete_success', ['attribute' => __('module/document.caption')]) }}"
                     }).then(() => {
                         window.location.reload();
                     })

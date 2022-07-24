@@ -11,6 +11,7 @@ return [
     'url' => [
         'landing' => true,
         'search' => true,
+        'sitemap' => true
     ],
 
     //icon refernce
@@ -27,6 +28,7 @@ return [
     ],
 
     'layout' => 0, // 0 = vertical, 1 = horizontal
+    'layout_logo' => 1, // 0 = small, 0 = default
 
     // Copyright
     'copyright' => [

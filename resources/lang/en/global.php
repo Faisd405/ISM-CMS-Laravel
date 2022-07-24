@@ -44,6 +44,7 @@ return [
     'restore' => 'Restore',
     'remove' => 'Delete',
     'detail' => 'Detail',
+    'detail_info' => 'Have a detail page',
     'upload' => 'Upload',
     'download' => 'Download',
     'preview' => 'Preview',
@@ -52,7 +53,7 @@ return [
     'template' => 'Template',
     'seo' => 'SEO',
     'meta_title' => 'Meta Title',
-    'meta_description' => 'Meta Dscription',
+    'meta_description' => 'Meta Description',
     'meta_keywords' => 'Meta Keywords',
 
     //label
@@ -67,6 +68,7 @@ return [
     'approved' => 'Approved',
     'reject' => 'Reject',
     'locked' => 'Locked',
+    'locked_info' => 'Data cannot be deleted',
     'position' => 'Position',
     'action' => 'Action',
     'select' => 'Select',

@@ -206,7 +206,7 @@ class TagController extends Controller
             $filter['q'] = $request->input('q');
         }
 
-        $tags = $this->tagService->getTagList($filter, false)->take(5)->pluck('name');
+        $tags = $this->tagService->getTagList($filter, false, 5)->pluck('name');
 
         return response()->json($tags, 200);
     }

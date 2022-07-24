@@ -19,6 +19,9 @@ return [
     'inquiry' => [
         'title' => ':attribute just sent a message',
     ],
+    'inquiry_sender' => [
+        'title' => ':attribute just sent a message',
+    ],
     'event' => [
         'title' => ':attribute just registered',
     ],

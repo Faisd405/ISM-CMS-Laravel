@@ -25,6 +25,8 @@ class CreateWidgetsTable extends Migration
             $table->json('content')->nullable();
             $table->string('template');
             $table->text('content_template')->nullable();
+            $table->json('config');
+            $table->json('custom_fields')->nullable();
             $table->tinyInteger('global')->default(0);
             $table->integer('position');
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');

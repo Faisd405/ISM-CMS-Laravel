@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateModLinkCategoriesTable extends Migration
+class CreateModBannerFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,22 +13,24 @@ class CreateModLinkCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('mod_link_categories', function (Blueprint $table) {
+        Schema::create('mod_banner_files', function (Blueprint $table) {
             $table->id();
-            $table->string('slug')->unique()->index();
-            $table->json('name');
+            $table->unsignedBigInteger('banner_id');
+            $table->json('title')->nullable();
             $table->json('description')->nullable();
-            $table->json('banner')->nullable();
-            $table->integer('media_perpage')->nullable();
-            $table->json('config');
+            $table->tinyInteger('type')->comment('0 = image, 1 = video, 2 = text');
+            $table->tinyInteger('image_type')->nullable()->comment('0 = image upload, 1 = image fileman, 2 = image url');
+            $table->tinyInteger('video_type')->nullable()->comment('0 = video upload, 1 = video youtube');
+            $table->text('file')->nullable();
+            $table->text('thumbnail')->nullable();
+            $table->text('url')->nullable();
+            $table->json('config')->nullable();
             $table->json('custom_fields')->nullable();
-            $table->unsignedBigInteger('template_id')->nullable();
-            $table->integer('position')->nullable();
+            $table->integer('position');
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
             $table->tinyInteger('approved')->default(1)->comment('0 = rejected, 1 = approved, 2 = pending');
             $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
-            $table->bigInteger('hits')->default(0);
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -36,8 +38,9 @@ class CreateModLinkCategoriesTable extends Migration
             $table->timestamps();
             $table->softDeletesTz('deleted_at', 0);
 
-            $table->foreign('template_id')->references('id')->on('master_templates')
-                ->onDelete('SET NULL');
+            $table->foreign('banner_id')->references('id')
+                ->on('mod_banners')
+                ->cascadeOnDelete();
             $table->foreign('created_by')->references('id')->on('users')
                 ->onDelete('SET NULL');
             $table->foreign('updated_by')->references('id')->on('users')
@@ -54,6 +57,6 @@ class CreateModLinkCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mod_link_categories');
+        Schema::dropIfExists('mod_banner_files');
     }
 }

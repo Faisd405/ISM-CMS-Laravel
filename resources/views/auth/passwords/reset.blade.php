@@ -13,9 +13,6 @@
     <div class="form-group">
         <label class="form-label">
             @lang('auth.reset_password.label.field1')
-            <i class="las la-info-circle" data-toggle="popover" data-placement="right" 
-                data-content="@lang('module/user.password_info')" title="Info">
-            </i>
         </label>
         <div class="input-group">
             <input type="password" id="password-field" class="form-control @error('password') is-invalid @enderror" 
@@ -25,6 +22,9 @@
             </div>
             @include('components.field-error', ['field' => 'password'])
         </div>
+        <small class="form-text text-muted">
+            @lang('module/user.password_info')
+        </small>
     </div>
     <div class="form-group">
         <label class="form-label">@lang('auth.reset_password.label.field2')</label>

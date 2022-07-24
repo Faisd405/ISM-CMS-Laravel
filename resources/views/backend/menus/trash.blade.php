@@ -86,7 +86,7 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <strong>{!! Str::limit($item['modules']['title'], 65) !!}</strong>
+                                <strong>{!! Str::limit($item['module_data']['title'], 65) !!}</strong>
                             </td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>

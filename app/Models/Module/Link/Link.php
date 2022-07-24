@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models\Module\Document;
+namespace App\Models\Module\Link;
 
 use App\Models\Feature\Configuration;
+use App\Models\IndexingUrl;
 use App\Models\Master\Template;
 use App\Models\Menu\Menu;
 use App\Models\Module\Widget;
@@ -14,33 +15,41 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
-class DocumentCategory extends Model
+class Link extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'mod_document_categories';
+    protected $table = 'mod_links';
     protected $guarded = [];
 
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
-        'roles' => 'json',
         'banner' => 'json',
-        'custom_fields' => 'json',
         'config' => 'json',
+        'custom_fields' => 'json',
+    ];
+
+    protected $appends = [
+        'banner_src'
     ];
 
     public static function boot()
     {
         parent::boot();
 
-        DocumentCategory::observe(LogObserver::class);
+        Link::observe(LogObserver::class);
     }
 
-    public function files()
+    public function medias()
     {
-        return $this->hasMany(DocumentFile::class, 'document_category_id');
+        return $this->hasMany(LinkMedia::class, 'link_id');
+    }
+
+    public function indexing()
+    {
+        return $this->morphOne(IndexingUrl::class, 'urlable');
     }
 
     public function menus()
@@ -79,7 +88,7 @@ class DocumentCategory extends Model
             $lang = App::getLocale();
         }
 
-        return $this->hasMany(DocumentCategory::class, 'id')->first()[$field][$lang];
+        return $this->hasMany(Link::class, 'id')->first()[$field][$lang];
     }
 
     public function scopePublish($query)
@@ -92,6 +101,11 @@ class DocumentCategory extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -102,7 +116,7 @@ class DocumentCategory extends Model
         return $query->where('locked', 1);
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

@@ -6,7 +6,7 @@ return [
     'text' => 'List Event',
     'label' => [
         'field1' => 'Nama',
-        'field2' => 'Slug',
+        'field2' => 'Slug / URL',
         'field3' => 'Deskripsi',
         'field4' => 'Form Deskripsi',
         'field5' => 'Register Code',
@@ -23,10 +23,6 @@ return [
         'field4' => '',
         'field5' => 'YA',
         'field6' => '',
-    ],
-    'type' => [
-        0 => 'OFFLINE',
-        1 => 'ONLINE'
     ],
     'field' => [
         'title' => 'Fields',

@@ -65,6 +65,7 @@ class RoleController extends Controller
     {
         $data = $request->all();
         $data['is_register'] = (bool)$request->is_register;
+        $data['locked'] = (bool)$request->locked;
         $role = $this->userService->storeRole($data);
         $data['query'] = $request->query();
 
@@ -102,6 +103,7 @@ class RoleController extends Controller
     {
         $data = $request->all();
         $data['is_register'] = (bool)$request->is_register;
+        $data['locked'] = (bool)$request->locked;
         $role = $this->userService->updateRole($data, ['id' => $id]);
         $data['query'] = $request->query();
 

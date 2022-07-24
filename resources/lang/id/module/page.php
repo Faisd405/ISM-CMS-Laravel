@@ -6,7 +6,7 @@ return [
     'text' => 'List Page',
     'label' => [
         'field1' => 'Judul',
-        'field2' => 'Slug',
+        'field2' => 'Slug / URL',
         'field3' => 'Intro',
         'field4' => 'Konten',
         'child' => 'Child',

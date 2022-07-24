@@ -55,7 +55,7 @@
                                 <label class="form-label">@lang('global.type')</label>
                                 <select class="custom-select" name="type">
                                     <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('module/document.file.type') as $key => $val)
+                                    @foreach (config('cms.module.document.file.type') as $key => $val)
                                     <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
@@ -104,7 +104,9 @@
                                 {{ $item['file'] }}
                             </td>
                             <td>
-                                {!! !empty($item['title'][App::getLocale()]) ? Str::limit($item['title'][App::getLocale()], 30) : '-' !!}
+                                {!! !empty($item['title'][App::getLocale()]) ? Str::limit($item['title'][App::getLocale()], 30) : __('global.field_empty_attr', [
+                                    'attribute' => __('module/document.file.label.field1')
+                                    ]) !!}
                                 @if (!empty($item['description'][App::getLocale()]))
                                     <br>
                                     <small class="text-muted">{!! Str::limit($item['description'][App::getLocale()], 45) !!}</small>
@@ -113,13 +115,13 @@
                             <td>
                                 @switch($item['type'])
                                     @case(1)
-                                        <span class="badge badge-danger">{{ __('module/document.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-danger">{{ config('cms.module.document.file.type.'.$item['type']) }}</span>
                                         @break
                                     @case(2)
-                                        <span class="badge badge-secondary">{{ __('module/document.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-secondary">{{ config('cms.module.document.file.type.'.$item['type']) }}</span>
                                         @break
                                     @default
-                                    <span class="badge badge-success">{{ __('module/document.file.type.'.$item['type']) }}</span>
+                                    <span class="badge badge-success">{{ config('cms.module.document.file.type.'.$item['type']) }}</span>
                                 @endswitch
                             </td>
                             <td class="text-center">
@@ -135,12 +137,12 @@
                             <td class="text-center">
                                 <button type="button" class="btn btn-success icon-btn btn-sm restore" onclick="$(this).find('#form-restore').submit();" title="@lang('global.restore')" data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-restore-alt"></i>
-                                    <form action="{{ route('document.file.restore', ['categoryId' => $item['document_category_id'], 'id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
+                                    <form action="{{ route('document.file.restore', ['documentId' => $item['document_id'], 'id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
                                         @csrf
                                         @method('PUT')
                                     </form>
                                 </button>
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-category-id="{{ $item['document_category_id'] }}" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
+                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-document-id="{{ $item['document_id'] }}" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
                                     <i class="las la-ban"></i>
                                 </button>
                             </td>
@@ -194,7 +196,7 @@
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
-            var categoryId = $(this).attr('data-category-id');
+            var documentId = $(this).attr('data-category-id');
             var id = $(this).attr('data-id');
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
@@ -211,7 +213,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/document/category/' + categoryId + '/'+ id +'/permanent?is_trash=yes',
+                        url: '/admin/document/' + documentId + '/file/'+ id +'/permanent?is_trash=yes',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

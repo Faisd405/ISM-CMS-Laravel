@@ -38,16 +38,17 @@
                             </label>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['category']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['category']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
+                    <div class="form-group row hide-form">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['category']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['category']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
                         </div>
                     </div>
                 </div>

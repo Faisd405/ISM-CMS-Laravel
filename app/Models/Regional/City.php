@@ -47,4 +47,9 @@ class City extends Model
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
+
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
+    }
 }

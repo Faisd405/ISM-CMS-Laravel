@@ -32,6 +32,8 @@
         </div>
 
         <div class="navbar-nav align-items-lg-center ml-lg-auto">
+
+          @if (config('cms.module.feature.notification.active') == true)
           <div class="demo-navbar-notifications nav-item dropdown mr-lg-3" id="notif-bar">
             <a class="nav-link dropdown-toggle hide-arrow" href="#" data-toggle="dropdown" id="click-notif">
               <i class="las la-bell navbar-icon align-middle"></i>
@@ -54,6 +56,7 @@
 
           <!-- Divider -->
           <div class="nav-item d-none d-lg-block text-big font-weight-light line-height-1 opacity-25 mr-3 ml-1">|</div>
+          @endif
 
           <div class="demo-navbar-user nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
@@ -68,17 +71,19 @@
                 <i class="las la-user-circle"></i>
                 &nbsp; @lang('module/user.profile.title')
               </a>
+              @if (config('cms.module.feature.notification.active') == true)
               <a href="{{ route('notification') }}" class="dropdown-item" title="@lang('feature/notification.caption')">
                 <i class="las la-bell"></i>
                 &nbsp; @lang('feature/notification.caption')
               </a>
+              @endif
               @can ('configurations')
               <a href="{{ route('configuration.website') }}" class="dropdown-item" title="@lang('feature/configuration.caption')">
                 <i class="las la-cog"></i>
                 &nbsp; @lang('feature/configuration.caption')
               </a>
               @endcan
-              @role ('super')
+              @role ('developer|super')
               <a href="{{ route('cache.clear') }}" class="dropdown-item" title="Clear Cache">
                 <i class="las la-cookie-bite"></i>
                 &nbsp; Clear Cache

@@ -24,7 +24,8 @@ class MenuCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:191',
+            'name' => $this->method() == 'POST' ? 'required|max:191|unique:menu_categories,name' : 
+                'required|max:191|unique:menu_categories,name,'.$this->id,
         ];
     }
 

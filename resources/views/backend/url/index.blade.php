@@ -22,7 +22,7 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('url.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/url.caption')
                         ])">

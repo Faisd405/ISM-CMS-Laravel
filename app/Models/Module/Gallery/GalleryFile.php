@@ -23,6 +23,11 @@ class GalleryFile extends Model
         'title' => 'json',
         'description' => 'json',
         'config' => 'json',
+        'custom_fields' => 'json',
+    ];
+
+    protected $appends = [
+        'file_src',
     ];
 
     public static function boot()
@@ -86,7 +91,7 @@ class GalleryFile extends Model
         return $query->where('locked', 1);
     }
 
-    public function fileSrc()
+    public function getFileSrcAttribute()
     {
         $type = $this->type;
         $imageType = $this->image_type;
@@ -117,18 +122,18 @@ class GalleryFile extends Model
         }
 
         if ($type == '1') {
+
+            $thumbnail = Storage::url(config('cms.files.gallery.thumbnail.path').$this->gallery_album_id.'/'.$this->thumbnail);
+            if (empty($this->thumbnail)) {
+                if (!empty(Configuration::value('cover_default'))) {
+                    $thumbnail = Storage::url(config('cms.files.config.path').
+                    Configuration::value('cover_default'));
+                } else {
+                    $thumbnail = asset(config('cms.files.config.cover_default.file'));
+                }
+            }
             
             if ($videoType == '0') {
-
-                $thumbnail = Storage::url(config('cms.files.gallery.thumbnail.path').$this->gallery_album_id.'/'.$this->thumbnail);
-                if (empty($this->thumbnail)) {
-                    if (!empty(Configuration::value('cover_default'))) {
-                        $thumbnail = Storage::url(config('cms.files.config.path').
-                        Configuration::value('cover_default'));
-                    } else {
-                        $thumbnail = asset(config('cms.files.config.cover_default.file'));
-                    }
-                }
 
                 return [
                     'image' => $thumbnail,
@@ -138,7 +143,7 @@ class GalleryFile extends Model
 
             if ($videoType == '1') {
                 return [
-                    'image' => 'https://i.ytimg.com/vi/'.$this->file.'/mqdefault.jpg',
+                    'image' => !empty($this->thumbnail) ? $thumbnail : 'https://i.ytimg.com/vi/'.$this->file.'/mqdefault.jpg',
                     'video' => 'https://www.youtube.com/embed/'.$this->file.'?rel=0;showinfo=0',
                 ];
             }

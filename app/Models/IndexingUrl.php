@@ -17,4 +17,9 @@ class IndexingUrl extends Model
     {
         return $this->morphTo();
     }
+
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
+    }
 }

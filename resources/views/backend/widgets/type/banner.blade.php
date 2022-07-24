@@ -18,10 +18,10 @@
     </div>
 </div>
 <div class="form-group row">
-    <label class="col-form-label col-sm-2 text-sm-right">Banner Limit</label>
+    <label class="col-form-label col-sm-2 text-sm-right">@lang('module/banner.caption') Limit</label>
     <div class="col-sm-10">
         <input type="number" class="form-control mb-1 @error('banner_limit') is-invalid @enderror" name="banner_limit" 
-            value="{{ !isset($data['widget']) ? old('banner_limit') : old('banner_limit', $data['widget']['content']['banner_limit']) }}" 
+            value="{{ !isset($data['widget']) ? old('banner_limit', 3) : old('banner_limit', $data['widget']['content']['banner_limit']) }}" 
             placeholder="">
         @include('components.field-error', ['field' => 'banner_limit'])
     </div>

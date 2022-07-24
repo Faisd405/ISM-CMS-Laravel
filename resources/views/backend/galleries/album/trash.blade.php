@@ -38,7 +38,7 @@
                                 </select>
                             </div>
                         </div>
-                        @if (config('cms.module.gallery.category.active') == true)
+                        @if (Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true)
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-label">@lang('module/gallery.category.caption')</label>
@@ -91,7 +91,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/gallery.album.label.field1')</th>
-                            @if (config('cms.module.gallery.category.active') == true)   
+                            @if (Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true)
                             <th style="width: 150px;">@lang('module/gallery.category.caption')</th>
                             @endif
                             <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
@@ -107,7 +107,7 @@
                             <td>
                                 <strong>{!! Str::limit($item['name'][App::getLocale()], 65) !!}</strong>
                             </td>
-                            @if (config('cms.module.gallery.category.active') == true)   
+                            @if (Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true)
                             <td>
                                 @if (!empty($item['category']))
                                 <span class="badge badge-secondary">{!! $item['category']->fieldLang('name') !!}</span>

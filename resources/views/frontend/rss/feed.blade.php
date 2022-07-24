@@ -26,7 +26,7 @@
       <guid isPermaLink="false">{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}</guid>
       <description><![CDATA[
                 <p>
-                <img style="float:left;height:150px;width:250px;" src="{{ $post->coverSrc() }}">{!! $post->fieldLang('intro') !!}
+                <img style="float:left;height:150px;width:250px;" src="{{ $post['cover_src'] }}">{!! $post->fieldLang('intro') !!}
                 </p>
 
                 <hr>

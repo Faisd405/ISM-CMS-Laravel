@@ -25,14 +25,14 @@
                     @method('PUT')
                 @endif
 
-                <div class="card-body pb-2">
+                <div class="card-body pb-2 {{ isset($data['widget']) ? 'hide-form' : '' }}">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field1') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control mb-1 @error('name') is-invalid @enderror" name="name" 
                                 value="{{ !isset($data['widget']) ? old('name') : old('name', $data['widget']['name']) }}" 
                                 placeholder="@lang('module/widget.placeholder.field1')">
-                            <small class="text-muted">@lang('global.lower_case')</small>
+                            <small class="form-text text-muted">@lang('global.lower_case')</small>
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field2') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 gen_slug @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                    <input type="text" class="form-control mb-1 @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="title_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['widget']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['widget']->fieldLang('title', $lang['iso_codes'])) }}" 
                                         placeholder="@lang('module/widget.placeholder.field2')">
@@ -75,8 +75,9 @@
                     </div>
                     @endforeach
                 </div>
+
                 <div class="card-body">
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field4')</label>
                         <div class="col-sm-10">
                             <select class="form-control show-tick" name="widget_set" data-style="btn-default">
@@ -88,53 +89,32 @@
                             </select>
                         </div>
                     </div>
-                    @role('super')
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">Template <i class="text-danger">*</i></label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1 @error('template') is-invalid @enderror" name="template" 
-                                value="{{ !isset($data['widget']) ? old('template') : old('template', $data['widget']['template']) }}" 
-                                placeholder="">
-                            @include('components.field-error', ['field' => 'template'])
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">Content Template</label>
-                        <div class="col-sm-10">
-                            <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['widget']) ? old('content_template') : old('content_template', $data['widget']['content_template']) !!}</textarea>
-                        </div>
-                    </div>
-                    @else
-                    <input type="hidden" name="template" value="{{ !isset($data['widget']) ? old('template') : old('template', $data['widget']['template']) }}">
-                    <input type="hidden" name="content_template" value="{!! !isset($data['widget']) ? old('content_template') : old('content_template', $data['widget']['content_template']) !!}">
-                    @endrole
-                </div>
-
-                {{-- MODULE --}}
-                <hr class="m-0">
-                <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4"><b class="text-primary">{{ Str::replace('_', ' ', Str::upper($data['type'])) }}</b></h6>
+                    <h6 class="font-weight-bold text-primary mb-4"><b class="text-primary">{{ Str::replace('_', ' ', Str::upper($data['type'])) }}</b></h6>
                     @include('backend.widgets.type.'.$data['type'])
                     @if ($data['type'] != 'text')
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">Order By</label>
                         <div class="col-sm-10">
-                            <div class="custom-controls-stacked">
-                                <label class="custom-control custom-radio">
-                                  <input name="ordering" type="radio" value="publish_time" class="custom-control-input" 
-                                     {{ isset($data['widget']) ? (old('ordering', $data['widget']['content']['ordering']) ? 'checked' : '') : 'checked' }}>
-                                  <span class="custom-control-label">Publish Time</span>
-                                </label>
-                                <label class="custom-control custom-radio">
-                                  <input name="ordering" type="radio" value="position" class="custom-control-input"
-                                    {{ isset($data['widget']) ? (old('ordering', $data['widget']['content']['ordering']) ? 'checked' : '') : '' }}>
-                                  <span class="custom-control-label">Position</span>
-                                </label>
-                              </div>
+                            <div class="input-group">
+                                <select class="form-control show-tick" name="config_order_by" data-style="btn-default">
+                                    @foreach (config('cms.module.ordering.by') as $key => $value)
+                                        <option value="{{ $key }}" {{ !isset($data['widget']) ? (old('config_order_by') == ''.$key.'' ? 'selected' : '') : (old('config_order_by', $data['widget']['config']['order_by']) == ''.$key.'' ? 'selected' : '') }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <select class="form-control show-tick" name="config_order_type" data-style="btn-default">
+                                    @foreach (config('cms.module.ordering.type') as $key => $value)
+                                        <option value="{{ $key }}" {{ !isset($data['widget']) ? (old('config_order_type') == ''.$key.'' ? 'selected' : '') : (old('config_order_type', $data['widget']['config']['order_type']) == ''.$key.'' ? 'selected' : '') }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                     @endif
-                    <div class="form-group row">
+                    <div class="form-group row {{ isset($data['widget']) && $data['widget']['config']['show_url'] == false ? 'hide-form' : '' }}">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.url')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url" 
@@ -144,6 +124,7 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['widget']) ? __('global.save_change') : __('global.save') }}">
                         <i class="las la-save"></i> {{ isset($data['widget']) ? __('global.save_change') : __('global.save') }}
@@ -159,29 +140,21 @@
                 {{-- SETTING --}}
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                    <div class="form-group row">
-                        <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('module/widget.label.field5')</label>
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-12 hide-form">
+                            <label class="form-label">@lang('global.template')</label>
+                            <input type="text" class="form-control mb-1 @error('template') is-invalid @enderror" name="template" 
+                                value="{{ !isset($data['widget']) ? old('template') : old('template', $data['widget']['template']) }}"
+                                placeholder="template-name">
+                            @include('components.field-error', ['field' => 'template'])
                         </div>
-                        <div class="col-md-10">
-                            <label class="switcher switcher-success">
-                                <input type="checkbox" class="switcher-input" name="global" value="1" 
-                                    {{ !isset($data['widget']) ? (old('global') ? 'checked' : '') : (old('global', $data['widget']['global']) ? 'checked' : '') }}>
-                                <span class="switcher-indicator">
-                                <span class="switcher-yes">
-                                    <span class="ion ion-md-checkmark"></span>
-                                </span>
-                                <span class="switcher-no">
-                                    <span class="ion ion-md-close"></span>
-                                </span>
-                                </span>
-                            </label>
+                        <div class="form-group col-md-12" style="display: none;">
+                            <label class="form-label">Content Template</label>
+                            <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['widget']) ? old('content_template') : old('content_template', $data['widget']['content_template']) !!}</textarea>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
                             <select class="form-control show-tick" name="publish" data-style="btn-default">
                                 @foreach (__('global.label.publish') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['widget']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['widget']['publish']) == ''.$key.'' ? 'selected' : '') }}>
@@ -190,10 +163,8 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
                             <select class="form-control show-tick" name="public" data-style="btn-default">
                                 @foreach (__('global.label.optional') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['widget']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['widget']['public']) == ''.$key.'' ? 'selected' : '') }}>
@@ -203,19 +174,99 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['widget']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['widget']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
+                </div>
+
+                <hr class="border-light m-0">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-2 form-hide">
+                            <label class="form-label">@lang('global.locked')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['widget']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['widget']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                        <div class="form-group col-md-2 form-hide">
+                            <label class="form-label">@lang('module/widget.label.field5')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="global" value="1"
+                                    {{ !isset($data['widget']) ? (old('global') ? 'checked' : '') : (old('global', $data['widget']['global']) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 {{ $data['type'] != 'text' ? 'form-hide' : '' }}">
+                            <label class="form-label">Show Image</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_image" value="1"
+                                    {{ !isset($data['widget']) ? (old('config_show_image') ? 'checked' : '') : (old('config_show_image', $data['widget']['config']['show_image']) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 form-hide">
+                            <label class="form-label">Show URL</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_url" value="1"
+                                    {{ !isset($data['widget']) ? (old('config_show_url') ? 'checked' : '') : (old('config_show_url', $data['widget']['config']['show_url']) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 form-hide">
+                            <label class="form-label">Show Custom Field</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_custom_field" value="1"
+                                    {{ !isset($data['widget']) ? (old('config_show_custom_field') ? 'checked' : '') : (old('config_show_custom_field', $data['widget']['config']['show_custom_field']) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
                         </div>
                     </div>
                 </div>
+
+                @if (Auth::user()->hasRole('developer|super') || isset($data['widget']) && $data['widget']['config']['show_custom_field'] == true && !empty($data['widget']['custom_fields']))
+                {{-- CUSTOM FIELD --}}
+                <hr class="m-0">
+                <div class="table-responsive text-center">
+                    <table class="table card-table table-bordered">
+                        <thead>
+                            @role('developer|super')
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
+                                        <i class="las la-plus"></i> Field
+                                    </button>
+                                </td>
+                            </tr>
+                            @endrole
+                            <tr>
+                                <th>NAME</th>
+                                <th>VALUE</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="list_field">
+                            @if (isset($data['widget']) && !empty($data['widget']['custom_fields']))
+                                @foreach ($data['widget']['custom_fields'] as $key => $val)
+                                <tr class="num-list" id="delete-{{ $key }}">
+                                    <td>
+                                        <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
+                                            value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
+                                    </td>
+                                    @role('developer|super')
+                                    <td style="width: 30px;">
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                    </td>
+                                    @endrole
+                                </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+                @endif
 
             </form>
         </div>
@@ -273,13 +324,54 @@
         }
     });
 
+    //custom field
+    $(function()  {
+
+        @if(isset($data['widget']) && !empty($data['widget']['custom_fields']))
+            var no = {{ count($data['widget']['custom_fields']) }};
+        @else
+            var no = 1;
+        @endif
+        $("#add_field").click(function() {
+            $("#list_field").append(`
+                <tr class="num-list" id="delete-`+no+`">
+                    <td>
+                        <input type="text" class="form-control" name="cf_name[]" placeholder="name">
+                    </td>
+                    <td>
+                        <textarea class="form-control" name="cf_value[]" placeholder="value"></textarea>
+                    </td>
+                    <td style="width: 30px;">
+                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                    </td>
+                </tr>
+            `);
+
+            var noOfColumns = $('.num-list').length;
+            var maxNum = 10;
+            if (noOfColumns < maxNum) {
+                $("#add_field").show();
+            } else {
+                $("#add_field").hide();
+            }
+
+            no++;
+        });
+
+    });
+
+    //remove custom field
+    $(document).on('click', '#remove_field', function() {
+    var id = $(this).attr("data-id");
+    $("#delete-"+id).remove();
+    });
+
     $('.my-code-area').ace({ theme: 'monokai', lang: 'html' });
 </script>
 
-@if (!Auth::user()->hasRole('super'))
+@if (!Auth::user()->hasRole('developer|super'))
 <script>
-    //hide form yang tidak diperlukan
-    $('.hd').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 

@@ -53,13 +53,15 @@
     @endforeach
 @endif
 @if (config('cms.module.gallery.active') == true)
+    @if (config('cms.module.gallery.list_view') == true)
     <sitemap>
         <loc>{{ route('gallery.list') }}</loc>
     </sitemap>
-    @foreach ($data['gallery_categories'] as $cat)
+    @endif
+    @foreach ($data['gallery_categories'] as $category)
     <sitemap>
-        <loc>{{ route('gallery.category.read', ['slugCategory' => $cat['slug']]) }}</loc>
-        <lastmod>{{ $cat['updated_at'] }}</lastmod>
+        <loc>{{ route('gallery.category.read', ['slugCategory' => $category['slug']]) }}</loc>
+        <lastmod>{{ $category['updated_at'] }}</lastmod>
     </sitemap>
     @endforeach
     @foreach ($data['gallery_albums'] as $album)
@@ -75,10 +77,10 @@
         <loc>{{ route('document.list') }}</loc>
     </sitemap>
     @endif
-    @foreach ($data['document_categories'] as $cat)
+    @foreach ($data['documents'] as $document)
     <sitemap>
-        <loc>{{ route('document.category.read', ['slugCategory' => $cat['slug']]) }}</loc>
-        <lastmod>{{ $cat['updated_at'] }}</lastmod>
+        <loc>{{ route('document.read', ['slugDocument' => $document['slug']]) }}</loc>
+        <lastmod>{{ $document['updated_at'] }}</lastmod>
     </sitemap>
     @endforeach
 @endif
@@ -88,10 +90,10 @@
         <loc>{{ route('link.list') }}</loc>
     </sitemap>
     @endif
-    @foreach ($data['link_categories'] as $cat)
+    @foreach ($data['links'] as $link)
     <sitemap>
-        <loc>{{ route('link.category.read', ['slugCategory' => $cat['slug']]) }}</loc>
-        <lastmod>{{ $cat['updated_at'] }}</lastmod>
+        <loc>{{ route('link.read.'.$link['slug']) }}</loc>
+        <lastmod>{{ $link['updated_at'] }}</lastmod>
     </sitemap>
     @endforeach
 @endif
@@ -101,10 +103,10 @@
         <loc>{{ route('inquiry.list') }}</loc>
     </sitemap>
     @endif
-    @foreach ($data['inquiries'] as $inq)
+    @foreach ($data['inquiries'] as $inquiry)
     <sitemap>
-        <loc>{{ route('inquiry.read.'.$inq['slug']) }}</loc>
-        <lastmod>{{ $inq['updated_at'] }}</lastmod>
+        <loc>{{ route('inquiry.read.'.$inquiry['slug']) }}</loc>
+        <lastmod>{{ $inquiry['updated_at'] }}</lastmod>
     </sitemap>
     @endforeach
 @endif

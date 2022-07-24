@@ -32,7 +32,7 @@ class InquiryFormExport implements
 
         return view('backend.inquiries.form.export', [
             'inquiry' => $inquiry,
-            'field' => $this->field,
+            'fields' => $this->field,
             'data' => $this->data
         ]);
     }

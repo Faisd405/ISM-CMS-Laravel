@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
             'name' => 'required|max:191',
             'email' => 'required|email|unique:users,email|max:191',
             'username' => 'required|regex:/^[\w-]*$/|min:5|unique:users,username|max:15',
-            'password' => 'required|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/|confirmed|min:6',
+            'password' => 'required|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@$#%]).*$/|confirmed|min:6',
             'phone' => 'nullable',
             'agree' => config('cms.module.auth.register.agree') == true ? 'required' : 'nullable',
             'g-recaptcha-response' => config('recaptcha.version') == 'v2' ? 'required' : 'nullable'

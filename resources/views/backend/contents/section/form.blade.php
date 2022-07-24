@@ -52,7 +52,7 @@
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row {{ isset($data['section']) && $data['section']['config']['show_description'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.field3')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['section']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['section']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
@@ -62,12 +62,12 @@
                         </div>
                     </div>
                     @endforeach
-                    <div class="card-body">
+                    <div class="card-body hide-form">
                         <div class="form-group row">
                             <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.field2') <i class="text-danger">*</i></label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
-                                    value="{{ !isset($data['section']) ? old('slug') : old('slug', $data['section']['slug']) }}" placeholder="{{ url('/') }}/SLUG">
+                                    value="{{ !isset($data['section']) ? old('slug') : old('slug', $data['section']['slug']) }}" placeholder="{{ url('/') }}/url">
                                 @include('components.field-error', ['field' => 'slug'])
                             </div>
                         </div>
@@ -85,54 +85,273 @@
                     </button>
                 </div>
 
-                {{-- POST SETTING --}}
+                {{-- SEO --}}
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">POST SETTING</h6>
+                    <h6 class="font-weight-bold text-primary mb-4">SEO</h6>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">SORTING BY</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_title')</label>
                         <div class="col-sm-10">
-                            <select class="form-control show-tick" name="order_by" data-style="btn-default">
-                                @foreach (config('cms.field.ordering_post') as $key => $value)
-                                    <option value="{{ $value }}" {{ !isset($data['section']) ? (old('order_by') == ''.$value.'' ? 'selected' : '') : (old('order_by', $data['section']['ordering']['order_by']) == ''.$value.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control mb-1" name="meta_title" value="{{ !isset($data['section']) ? old('meta_title') : old('meta_title', $data['section']['seo']['title']) }}" placeholder="@lang('global.meta_title')">
+
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">SORTING SEQUENCE </label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_description')</label>
                         <div class="col-sm-10">
-                            <select class="form-control show-tick" name="order_seq" data-style="btn-default">
-                                @foreach (config('cms.field.ordering_seq') as $key => $value)
-                                    <option value="{{ $value }}" {{ !isset($data['section']) ? (old('order_seq') == ''.$value.'' ? 'selected' : '') : (old('order_seq', $data['section']['ordering']['order_seq']) == ''.$value.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <textarea class="form-control mb-1" name="meta_description" placeholder="@lang('global.meta_description')">{{ !isset($data['section']) ? old('meta_description') : old('meta_description', $data['section']['seo']['description'])  }}</textarea>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">Category perpage</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_keywords')</label>
                         <div class="col-sm-10">
-                            <input type="number" class="form-control mb-1 @error('category_perpage') is-invalid @enderror" name="category_perpage" 
-                                value="{{ !isset($data['section']) ? old('category_perpage') : old('category_perpage', $data['section']['category_perpage']) }}" 
-                                placeholder="limit list category">
-                            @include('components.field-error', ['field' => 'category_perpage'])
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">Post perpage</label>
-                        <div class="col-sm-10">
-                            <input type="number" class="form-control mb-1 @error('post_perpage') is-invalid @enderror" name="post_perpage" 
-                                value="{{ !isset($data['section']) ? old('post_perpage') : old('post_perpage', $data['section']['post_perpage']) }}" 
-                                placeholder="limit list post">
-                            @include('components.field-error', ['field' => 'post_perpage'])
+                            <input class="form-control tags-input mb-1" name="meta_keywords" value="{{ !isset($data['section']) ? old('meta_keywords') : old('meta_keywords', $data['section']['seo']['keywords'])  }}" placeholder="">
+                            <small class="form-text text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>
                 </div>
-                @role('super')
+
+                {{-- SETTING --}}
+                <hr class="m-0">
+                <div class="card-body">
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
+                            <select class="form-control show-tick" name="publish" data-style="btn-default">
+                                @foreach (__('global.label.publish') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['section']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['section']['publish']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
+                            <select class="form-control show-tick" name="public" data-style="btn-default">
+                                @foreach (__('global.label.optional') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['section']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['section']['public']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6 hide-form">
+                            <label class="form-label">@lang('module/content.section.label.field7')</label>
+                            <select class="select2 show-tick" name="template_list_id" data-style="btn-default">
+                                <option value=" " selected>DEFAULT</option>
+                                @foreach ($data['template_lists'] as $tmpList)
+                                    <option value="{{ $tmpList['id'] }}" {{ !isset($data['section']) ? (old('template_list_id') == $tmpList['id'] ? 'selected' : '') : (old('template_list_id', $data['section']['template_list_id']) == $tmpList['id'] ? 'selected' : '') }}>
+                                        {{ $tmpList['name'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6 hide-form">
+                            <label class="form-label">@lang('module/content.section.label.field8')</label>
+                            <select class="select2 show-tick" name="template_detail_id" data-style="btn-default">
+                                <option value=" " selected>DEFAULT</option>
+                                @foreach ($data['template_details'] as $tmpDetail)
+                                    <option value="{{ $tmpDetail['id'] }}" {{ !isset($data['section']) ? (old('template_detail_id') == $tmpDetail['id'] ? 'selected' : '') : (old('template_detail_id', $data['section']['template_detail_id']) == $tmpDetail['id'] ? 'selected' : '') }}>
+                                        {{ $tmpDetail['name'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12 {{ isset($data['section']) && $data['section']['config']['show_banner'] == false ? 'hide-form' : '' }}">
+                            <label class="form-label">@lang('global.banner')</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file" placeholder="Browse file..."
+                                            value="{{ !isset($data['section']) ? old('banner_file') : old('banner_file', $data['section']['banner']['filepath']) }}">
+                                    <div class="input-group-append" title="browse file">
+                                        <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="banner_title" placeholder="@lang('global.title')"
+                                    value="{{ !isset($data['section']) ? old('banner_title') : old('banner_title', $data['section']['banner']['title']) }}">
+                                <input type="text" class="form-control" name="banner_alt" placeholder="@lang('global.alt')"
+                                    value="{{ !isset($data['section']) ? old('banner_alt') : old('banner_alt', $data['section']['banner']['alt']) }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-light m-0">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">@lang('global.locked')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['section']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['section']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="form-label">@lang('global.detail')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="detail" value="1"
+                                    {{ !isset($data['section']) ? (old('detail') ? 'checked' : 'checked') : (old('detail', $data['section']['detail']) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.detail_info')</small>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Description</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_description" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_description', 1) ? 'checked' : '') : (old('config_show_description', $data['section']['config']['show_description']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Banner</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_banner" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_banner', 1) ? 'checked' : '') : (old('config_show_banner', $data['section']['config']['show_banner']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Category</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_category" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_category') ? 'checked' : '') : (old('config_show_category', $data['section']['config']['show_category']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Multiple Category</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_multiple_category" value="1"
+                                {{ !isset($data['section']) ? (old('config_multiple_category') ? 'checked' : '') : (old('config_multiple_category', $data['section']['config']['multiple_category']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Post</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_post" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_post', 1) ? 'checked' : '') : (old('config_show_post', $data['section']['config']['show_post']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Post Selected</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_post_selected" value="1"
+                                {{ !isset($data['section']) ? (old('config_post_selected') ? 'checked' : '') : (old('config_post_selected', $data['section']['config']['post_selected']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Tags</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_tags" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_tags') ? 'checked' : '') : (old('config_show_tags', $data['section']['config']['show_tags']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Latest Post</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_latest_post" value="1"
+                                {{ !isset($data['section']) ? (old('config_latest_post') ? 'checked' : '') : (old('config_latest_post', $data['section']['config']['latest_post']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Detail Category</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_detail_category" value="1"
+                                {{ !isset($data['section']) ? (old('config_detail_category') ? 'checked' : '') : (old('config_detail_category', $data['section']['config']['detail_category']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Detail Post</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_detail_post" value="1"
+                                {{ !isset($data['section']) ? (old('config_detail_post', 1) ? 'checked' : '') : (old('config_detail_post', $data['section']['config']['detail_post']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Paginate Category</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_paginate_category" value="1"
+                                {{ !isset($data['section']) ? (old('config_paginate_category') ? 'checked' : '') : (old('config_paginate_category', $data['section']['config']['paginate_category']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Paginate Post</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_paginate_post" value="1"
+                                {{ !isset($data['section']) ? (old('config_paginate_post', 1) ? 'checked' : '') : (old('config_paginate_post', $data['section']['config']['paginate_post']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Media Post</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_media" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_media') ? 'checked' : '') : (old('config_show_media', $data['section']['config']['show_media']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Custom Field</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_custom_field" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_custom_field') ? 'checked' : '') : (old('config_show_custom_field', $data['section']['config']['show_custom_field']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-3 hide-form">
+                            <label class="form-label">Category Limit</label>
+                            <input type="number" class="form-control" name="config_category_limit"
+                                 value="{{ !isset($data['section']) ? old('config_category_limit', 6) : old('config_category_limit', $data['section']['config']['category_limit']) }}">
+                        </div>
+                        <div class="form-group col-md-3 hide-form">
+                            <label class="form-label">Post Limit</label>
+                            <input type="number" class="form-control" name="config_post_limit"
+                                 value="{{ !isset($data['section']) ? old('config_post_limit', 6) : old('config_post_limit', $data['section']['config']['post_limit']) }}">
+                        </div>
+                        <div class="form-group col-md-3 hide-form">
+                            <label class="form-label">Latest Post Limit</label>
+                            <input type="number" class="form-control" name="config_latest_post_limit"
+                                 value="{{ !isset($data['section']) ? old('config_latest_post_limit', 4) : old('config_latest_post_limit', $data['section']['config']['latest_post_limit']) }}">
+                        </div>
+                        <div class="form-group col-md-6 hide-form">
+                            <label class="form-label">Post Order By</label>
+                            <div class="input-group">
+                                <select class="form-control show-tick" name="config_post_order_by" data-style="btn-default">
+                                    @foreach (config('cms.module.content.post.ordering') as $key => $value)
+                                        <option value="{{ $key }}" {{ !isset($data['section']) ? (old('config_post_order_by') == ''.$key.'' ? 'selected' : '') : (old('config_post_order_by', $data['section']['config']['post_order_by']) == ''.$key.'' ? 'selected' : '') }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <select class="form-control show-tick" name="config_post_order_type" data-style="btn-default">
+                                    @foreach (config('cms.module.ordering.type') as $key => $value)
+                                        <option value="{{ $key }}" {{ !isset($data['section']) ? (old('config_post_order_type') == ''.$key.'' ? 'selected' : '') : (old('config_post_order_type', $data['section']['config']['post_order_type']) == ''.$key.'' ? 'selected' : '') }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @role('developer|super')
+                {{-- ADDON FIELD --}}
+                <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
                         <thead class="text-center">
@@ -147,7 +366,7 @@
                         <tbody>
                             <tr>
                                 <td colspan="4">
-                                    <small class="text-muted">Checbox field caption format (JSON) : ["Field Caption",{"OPTION_VALUE1":"Option caption 1","OPTION_VALUE2":"Option caption 2"}]</small>
+                                    <small class="form-text text-muted">Checbox field caption format (JSON) : ["Field Caption",{"OPTION_VALUE1":"Option caption 1","OPTION_VALUE2":"Option caption 2"}]</small>
                                 </td>
                             </tr>
                             <tr>
@@ -167,7 +386,7 @@
                                     </td>
                                     <td>
                                         <select class="form-control show-tick" name="af_type[]" data-style="btn-default">
-                                            @foreach (config('cms.field.addon_field') as $keyT => $valT)
+                                            @foreach (config('cms.module.content.section.addon_field') as $keyT => $valT)
                                                 <option value="{{ $valT }}" {{ $valT == $val['type'] ? 'selected' : '' }}>
                                                     {{ $valT }}
                                                 </option>
@@ -188,174 +407,13 @@
                 </div>
                 @endrole
 
-                {{-- SEO --}}
-                <hr class="m-0">
-                <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SEO</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_title')</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1" name="meta_title" value="{{ !isset($data['section']) ? old('meta_title') : old('meta_title', $data['section']['seo']['title']) }}" placeholder="@lang('global.meta_title')">
-
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_description')</label>
-                        <div class="col-sm-10">
-                            <textarea class="form-control mb-1" name="meta_description" placeholder="@lang('global.meta_description')">{{ !isset($data['section']) ? old('meta_description') : old('meta_description', $data['section']['seo']['description'])  }}</textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_keywords')</label>
-                        <div class="col-sm-10">
-                            <input class="form-control tags-input mb-1" name="meta_keywords" value="{{ !isset($data['section']) ? old('meta_keywords') : old('meta_keywords', $data['section']['seo']['keywords'])  }}" placeholder="">
-                            <small class="text-muted">@lang('global.separated_comma')</small>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- SETTING --}}
-                <hr class="m-0">
-                <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="publish" data-style="btn-default">
-                                @foreach (__('global.label.publish') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['section']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['section']['publish']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="public" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['section']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['section']['public']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['section']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['section']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    @role('super')
-                    <div class="form-group row">
-                        <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('global.detail')</label>
-                        </div>
-                        <div class="col-md-10">
-                            <label class="switcher switcher-success">
-                                <input type="checkbox" class="switcher-input" name="is_detail" value="1" 
-                                    {{ !isset($data['section']) ? (old('is_detail', 1) ? 'checked' : '') : (old('is_detail', $data['section']['config']['is_detail']) ? 'checked' : '') }}>
-                                <span class="switcher-indicator">
-                                <span class="switcher-yes">
-                                    <span class="ion ion-md-checkmark"></span>
-                                </span>
-                                <span class="switcher-no">
-                                    <span class="ion ion-md-close"></span>
-                                </span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.field7')</label>
-                        <div class="col-sm-10">
-                            <select class="select2 show-tick" name="template_list_id" data-style="btn-default">
-                                <option value=" " selected>DEFAULT</option>
-                                @foreach ($data['template_lists'] as $tmpList)
-                                    <option value="{{ $tmpList['id'] }}" {{ !isset($data['section']) ? (old('template_list_id') == $tmpList['id'] ? 'selected' : '') : (old('template_list_id', $data['section']['template_list_id']) == $tmpList['id'] ? 'selected' : '') }}>
-                                        {{ $tmpList['name'] }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.field8')</label>
-                        <div class="col-sm-10">
-                            <select class="select2 show-tick" name="template_detail_id" data-style="btn-default">
-                                <option value=" " selected>DEFAULT</option>
-                                @foreach ($data['template_details'] as $tmpDetail)
-                                    <option value="{{ $tmpDetail['id'] }}" {{ !isset($data['section']) ? (old('template_detail_id') == $tmpDetail['id'] ? 'selected' : '') : (old('template_detail_id', $data['section']['template_detail_id']) == $tmpDetail['id'] ? 'selected' : '') }}>
-                                        {{ $tmpDetail['name'] }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    @else
-                    <input type="hidden" name="is_detail" value="{{ !isset($data['section']) ? 1 : $data['section']['config']['is_detail'] }}">
-                    <input type="hidden" name="template_list_id" value="{{ !isset($data['section']) ? null : $data['section']['template_list_id'] }}">
-                    <input type="hidden" name="template_detail_id" value="{{ !isset($data['section']) ? null : $data['section']['template_detail_id'] }}">
-                    @endrole
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.banner')</label>
-                        <div class="col-sm-10">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file"
-                                        value="{{ !isset($data['section']) ? old('banner_file') : old('banner_file', $data['section']['banner']['filepath']) }}">
-                                <div class="input-group-append" title="browse file">
-                                    <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                <input type="text" class="form-control" placeholder="@lang('global.title')" name="banner_title" value="{{ !isset($data['section']) ? old('banner_title') : old('banner_title', $data['section']['banner']['title']) }}">
-                                </div>
-                                <div class="col-sm-6">
-                                <input type="text" class="form-control" placeholder="@lang('global.alt')" name="banner_alt" value="{{ !isset($data['section']) ? old('banner_alt') : old('banner_alt', $data['section']['banner']['alt']) }}">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.hide') Field</label>
-                        <div class="col-sm-10">
-                            <div>
-                                <label class="form-check form-check-inline">
-                                  <input class="form-check-input" type="checkbox" name="hide_description" value="1" 
-                                  {{ !isset($data['section']) ? (old('hide_description') ? 'checked' : '') : (old('hide_description', $data['section']['config']['hide_description']) ? 'checked' : '') }}>
-                                  <span class="form-check-label">
-                                    @lang('module/content.section.label.field3')
-                                  </span>
-                                </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="hide_banner" value="1" 
-                                    {{ !isset($data['section']) ? (old('hide_banner') ? 'checked' : '') : (old('hide_banner', $data['section']['config']['hide_banner']) ? 'checked' : '') }}>
-                                    <span class="form-check-label">
-                                      @lang('global.banner')
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                @if (!isset($data['section']) && Auth::user()->hasRole('super') || isset($data['section']))
+                @if (Auth::user()->hasRole('developer|super') || isset($data['section']) && $data['section']['config']['show_custom_field'] == true && !empty($data['section']['custom_fields']))
                 {{-- CUSTOM FIELD --}}
                 <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
                         <thead>
-                            @role('super')
+                            @role('developer|super')
                             <tr>
                                 <td colspan="3" class="text-center">
                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
@@ -376,12 +434,12 @@
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
                                         <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
-                                            value="{{ $key }}" {{ !Auth::user()->hasRole('super') ? 'readonly' : '' }}>
+                                            value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
                                         <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
                                     </td>
-                                    @role('super')
+                                    @role('developer|super')
                                     <td style="width: 30px;">
                                         <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
                                     </td>
@@ -469,7 +527,7 @@
                     </td>
                     <td>
                         <select class="form-control show-tick" name="af_type[]" data-style="btn-default">
-                            @foreach (config('cms.field.addon_field') as $key => $value)
+                            @foreach (config('cms.module.content.section.addon_field') as $key => $value)
                                 <option value="{{ $value }}">
                                     {{ $value }}
                                 </option>
@@ -511,10 +569,9 @@
     });
 </script>
 
-@if (!Auth::user()->hasRole('super'))
+@if (!Auth::user()->hasRole('developer|super'))
 <script>
-    //hide form yang tidak diperlukan
-    $('.hd').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 

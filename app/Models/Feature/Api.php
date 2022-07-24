@@ -47,4 +47,9 @@ class Api extends Model
     {
         return $query->where('active', 1);
     }
+
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
+    }
 }

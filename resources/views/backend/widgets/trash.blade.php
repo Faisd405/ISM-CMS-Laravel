@@ -100,8 +100,8 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/widget.label.field1')</th>
-                            <th class="text-center" style="width: 120px;">@lang('module/widget.label.field4')</th>
-                            <th class="text-center" style="width: 120px;">@lang('global.type')</th>
+                            <th style="width: 120px;">@lang('module/widget.label.field4')</th>
+                            <th style="width: 120px;">@lang('global.type')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.deleted')</th>
                             <th class="text-center" style="width: 110px;"></th>
@@ -112,12 +112,12 @@
                         <tr>
                             <td>{{ $data['no']++ }} </td>
                             <td>
-                                <strong>{!! $item['name'] !!}</strong>
+                                <strong>{!!  Str::replace('_', ' ', Str::upper($item['name'])) !!}</strong>
                             </td>
-                            <td class="text-center">
+                            <td>
                                 <span class="badge badge-secondary">{{ Str::upper(config('cms.module.widget.set.'.$item['widget_set'])) }}</span>
                             </td>
-                            <td class="text-center">
+                            <td>
                                 <span class="badge badge-success">{{ Str::replace('_', ' ', Str::upper($item['type'])) }}</span>
                             </td>
                             <td class="text-center">

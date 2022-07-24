@@ -24,13 +24,15 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can ('media_create')
+                    @if (Auth::user()->hasRole('developer|super') || $data['module']['config']['action_media'] == true)
                     <a href="{{ route('media.create', $data['params']) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('master/media.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('master/media.caption')</span>
                     </a>
+                    @endif
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('media.trash', $data['params']) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -69,13 +71,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header with-elements">
+                <h5 class="card-header-title mt-1 mb-0">@lang('master/media.text')</h5>
+            </div>
             <div class="card-header">
                 <span class="text-muted">
                     {{ Str::upper(__('master/media.caption')) }} : <b class="text-primary">{{ Str::upper(Str::replace('_', ' ', Request::segment(4))) }}</b>
                 </span>
-            </div>
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('master/media.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -91,9 +93,9 @@
                             <th class="text-center" style="width: 110px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['medias']->total() > 1 ? 'drag' : ''}}">
                         @forelse ($data['medias'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 @if ($item['is_youtube'] == 1)
@@ -101,13 +103,13 @@
                                     <img src="https://img.youtube.com/vi/{{ $item['youtube_id'] }}/mqdefault.jpg" alt="" style="width: 120px;">
                                 </a>
                                 @else
-                                <a href="{{ $item->fileSrc() }}" data-fancybox="gallery">
                                     @if ($item['icon'] == 'image')
-                                    <img src="{{ $item->fileSrc() }}" alt="" style="width: 120px;">
+                                    <a href="{{ $item['file_src'] }}" data-fancybox="gallery">
+                                        <img src="{{ $item['file_src'] }}" alt="" style="width: 120px;">
+                                    </a>
                                     @else
-                                    <i class="las la-file-{{ $item['icon'] }} text-secondary"></i>
+                                    <i class="las la-file-{{ $item['icon'] }} text-secondary" style="font-size: 3em;" title="{{ $item['icon'] }}"></i>
                                     @endif
-                                </a>
                                 @endif
                             </td>
                             <td>
@@ -162,6 +164,7 @@
                                 </a>
                                 @endcan
                                 @can('media_delete')
+                                @if (Auth::user()->hasRole('developer|super') || $item['locked'] == 0 && $data['module']['config']['action_media'] == true)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('master/media.caption')
                                     ])"
@@ -170,6 +173,7 @@
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
                             </td>
                         </tr>
@@ -218,7 +222,39 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                var moduleId = '{{ $data['params']['moduleId'] }}';
+                var moduleType = '{{ $data['params']['moduleType'] }}';
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/media/'+moduleId+'/'+moduleType+'/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            },
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

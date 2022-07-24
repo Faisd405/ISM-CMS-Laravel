@@ -22,10 +22,12 @@ class Media extends Model
         'filepath' => 'json',
         'title' => 'json',
         'description' => 'json',
+        'config' => 'json'
     ];
 
     protected $appends = [
-        'icon'
+        'icon',
+        'file_src'
     ];
 
     public static function boot()
@@ -69,7 +71,7 @@ class Media extends Model
         return $query->where('is_youtube', 1);
     }
 
-    public function fileSrc()
+    public function getFileSrcAttribute()
     {
         return Storage::url($this->filepath['filename']);
     }

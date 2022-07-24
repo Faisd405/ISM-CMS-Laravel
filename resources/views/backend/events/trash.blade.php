@@ -54,7 +54,7 @@
                                 <label class="form-label">@lang('global.type')</label>
                                 <select class="custom-select" name="type">
                                     <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('module/event.type') as $key => $val)
+                                    @foreach (config('cms.module.event.type') as $key => $val)
                                     <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
@@ -93,7 +93,7 @@
                             <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.deleted')</th>
-                            <th class="text-center" style="width: 210px;"></th>
+                            <th class="text-center" style="width: 110px;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,7 +103,7 @@
                             <td>
                                 <strong>{!! Str::limit($item['name'][App::getLocale()], 65) !!}</strong>
                             </td>
-                            <td class="text-center"><span class="badge badge-{{ $item['type'] == 1 ? 'success' : 'secondary' }}">{{ __('module/event.type.'.$item['type']) }}</span></td>
+                            <td class="text-center"><span class="badge badge-{{ $item['type'] == 1 ? 'success' : 'secondary' }}">{{ config('cms.module.event.type.'.$item['type']) }}</span></td>
                             <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>
                             <td>
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>

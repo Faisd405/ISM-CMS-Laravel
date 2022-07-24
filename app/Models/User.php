@@ -103,6 +103,11 @@ class User extends Authenticatable
         return $query->where('active', 1);
     }
 
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
+    }
+
     public function getAvatarAttribute()
     {
         $photo = $this->photo;

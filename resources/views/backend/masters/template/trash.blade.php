@@ -105,7 +105,7 @@
                             <td>
                                 <span class="badge badge-primary">{{ Str::replace('_', ' ', Str::upper($item['module'])) }}</span>
                             </td>
-                            <td><code>{{ config('cms.module.master.template.type.'.$item['type']) }}</code></td>
+                            <td><span class="badge badge-info">{{ config('cms.module.master.template.type.'.$item['type']) }}</span></td>
                             <td><code>{{ $item['filepath'] }}</code></td>
                             <td><code>{{ $item['filename'] }}</code></td>
                             <td>

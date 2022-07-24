@@ -39,7 +39,7 @@
                                     </button>
                                     @endif
                                     <div class="mt-2">
-                                        <small class="text-muted">
+                                        <small class="form-text text-muted">
                                             Type of file : <strong>{{ Str::upper(config('cms.files.avatar.mimes')) }}</strong> | 
                                             Pixel : <strong>{{ config('cms.files.avatar.pixel') }}</strong> | 
                                             Max Size : <strong>{{ config('cms.files.avatar.size') }}</strong>
@@ -78,6 +78,9 @@
                                     <input type="text" class="form-control @error('username') is-invalid @enderror" name="username"
                                         value="{{ old('name', $data['user']['username']) }}" placeholder="@lang('module/user.placeholder.field3')">
                                     @include('components.field-error', ['field' => 'username'])
+                                    <small class="form-text text-muted">
+                                        @lang('module/user.username_info')
+                                    </small>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">@lang('module/user.label.field4')</label>
@@ -104,9 +107,6 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">@lang('module/user.label.field5') <i class="text-danger">*</i>
-                                        <i class="las la-info-circle"  data-toggle="popover" data-placement="right" 
-                                        data-content="@lang('module/user.password_info')" title="Info">
-                                        </i>
                                     </label>
                                     <div class="input-group">
                                         <input type="password" id="password-field" class="form-control gen-field @error('password') is-invalid @enderror" name="password"
@@ -116,6 +116,9 @@
                                         </div>
                                         @include('components.field-error', ['field' => 'password'])
                                     </div>
+                                    <small class="form-text text-muted">
+                                        @lang('module/user.password_info')
+                                    </small>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">@lang('module/user.label.field6') <i class="text-danger">*</i></label>

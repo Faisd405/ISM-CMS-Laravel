@@ -115,6 +115,7 @@ class RegionalService
                 'name' => Str::upper($data['name']),
                 'longitude' => $data['longitude'],
                 'latitude' => $data['latitude'],
+                'locked' => (bool)$data['locked'],
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -144,6 +145,7 @@ class RegionalService
                 'name' => Str::upper($data['name']),
                 'longitude' => $data['longitude'],
                 'latitude' => $data['latitude'],
+                'locked' => (bool)$data['locked'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $province['updated_by'],
             ]);
 
@@ -337,6 +339,7 @@ class RegionalService
                 'name' => Str::upper($data['name']),
                 'longitude' => $data['longitude'],
                 'latitude' => $data['latitude'],
+                'locked' => (bool)$data['locked'],
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -367,6 +370,7 @@ class RegionalService
                 'name' => Str::upper($data['name']),
                 'longitude' => $data['longitude'],
                 'latitude' => $data['latitude'],
+                'locked' => (bool)$data['locked'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $city['updated_by'],
             ]);
 
@@ -570,6 +574,7 @@ class RegionalService
                 'name' => Str::upper($data['name']),
                 'longitude' => $data['longitude'],
                 'latitude' => $data['latitude'],
+                'locked' => (bool)$data['locked'],
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -600,6 +605,7 @@ class RegionalService
                 'name' => Str::upper($data['name']),
                 'longitude' => $data['longitude'],
                 'latitude' => $data['latitude'],
+                'locked' => (bool)$data['locked'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $district['updated_by'],
             ]);
 

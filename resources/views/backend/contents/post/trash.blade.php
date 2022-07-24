@@ -38,7 +38,6 @@
                                 </select>
                             </div>
                         </div>
-                        @if (config('cms.module.content.category.active') == true)   
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-label">@lang('module/content.category.caption')</label>
@@ -51,7 +50,6 @@
                                 </select>
                             </div>
                         </div>
-                        @endif
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-label">@lang('global.status')</label>
@@ -92,9 +90,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/content.post.label.field1')</th>
-                            @if (config('cms.module.content.category.active') == true)   
                             <th style="width: 210px;">@lang('module/content.category.caption')</th>
-                            @endif
                             <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.deleted')</th>
@@ -108,7 +104,6 @@
                             <td>
                                 <strong>{!! Str::limit($item['title'][App::getLocale()], 65) !!}</strong>
                             </td>
-                            @if (config('cms.module.content.category.active') == true)   
                             <td>
                                 @if (!empty($item['category_id']))
                                     @foreach ($item->categories() as $cat)
@@ -120,7 +115,6 @@
                                 ]) }}
                                 @endif
                             </td>
-                            @endif
                             <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>

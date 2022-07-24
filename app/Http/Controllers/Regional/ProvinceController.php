@@ -90,6 +90,7 @@ class ProvinceController extends Controller
     public function store(ProvinceRequest $request)
     {
         $data = $request->all();
+        $data['locked'] = (bool)$request->locked;
         $province = $this->regionalService->storeProvince($data);
         $data['query'] = $request->query();
 
@@ -122,6 +123,7 @@ class ProvinceController extends Controller
     public function update(ProvinceRequest $request, $id)
     {
         $data = $request->all();
+        $data['locked'] = (bool)$request->locked;
         $province = $this->regionalService->updateProvince($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -178,7 +180,7 @@ class ProvinceController extends Controller
             $filter['code'] = $request->input('code');
         }
 
-        $province = $this->regionalService->getProvinceList($filter, false);
+        $province = $this->regionalService->getProvinceList($filter, false, 0);
 
         return $this->success($province);
     }

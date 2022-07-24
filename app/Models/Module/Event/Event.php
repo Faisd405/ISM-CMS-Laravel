@@ -36,6 +36,11 @@ class Event extends Model
         'end_date' => 'datetime'
     ];
 
+    protected $appends = [
+        'cover_src',
+        'banner_src'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -97,6 +102,11 @@ class Event extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -107,7 +117,7 @@ class Event extends Model
         return $query->where('locked', 1);
     }
 
-    public function coverSrc()
+    public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
@@ -123,7 +133,7 @@ class Event extends Model
         return $cover;
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

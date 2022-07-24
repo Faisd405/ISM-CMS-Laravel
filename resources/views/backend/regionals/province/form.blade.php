@@ -53,6 +53,19 @@
                             @include('components.field-error', ['field' => 'longitude'])
                         </div>
                     </div>
+                    <div class="form-group row hide-form">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['province']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['province']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['province']) ? __('global.save_change') : __('global.save') }}">
@@ -70,4 +83,12 @@
 
     </div>
 </div>
+@endsection
+
+@section('jsbody')
+@if(!Auth::user()->hasRole('developer|super'))
+<script>
+  $('.hide-form').hide();
+</script>
+@endif
 @endsection

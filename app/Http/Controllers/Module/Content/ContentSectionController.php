@@ -45,9 +45,9 @@ class ContentSectionController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['sections'] = $this->contentService->getSectionList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
+        $data['sections'] = $this->contentService->getSectionList($filter, true, 10, false, [], 
+            config('cms.module.content.section.ordering'));
+
         $data['no'] = $data['sections']->firstItem();
         $data['sections']->withQueryString();
 
@@ -112,9 +112,23 @@ class ContentSectionController extends Controller
     public function store(ContentSectionRequest $request)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_category'] = (bool)$request->config_show_category;
+        $data['config_multiple_category'] = (bool)$request->config_multiple_category;
+        $data['config_show_post'] = (bool)$request->config_show_post;
+        $data['config_post_selected'] = (bool)$request->config_post_selected;
+        $data['config_show_tags'] = (bool)$request->config_show_tags;
+        $data['config_latest_post'] = (bool)$request->config_latest_post;
+        $data['config_latest_post_limit'] = $request->config_latest_post_limit;
+        $data['config_detail_category'] = (bool)$request->config_detail_category;
+        $data['config_detail_post'] = (bool)$request->config_detail_post;
+        $data['config_paginate_category'] = (bool)$request->config_paginate_category;
+        $data['config_paginate_post'] = (bool)$request->config_paginate_post;
+        $data['config_show_media'] = (bool)$request->config_show_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $section = $this->contentService->storeSection($data);
         $data['query'] = $request->query();
 
@@ -151,9 +165,23 @@ class ContentSectionController extends Controller
     public function update(ContentSectionRequest $request, $id)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_category'] = (bool)$request->config_show_category;
+        $data['config_multiple_category'] = (bool)$request->config_multiple_category;
+        $data['config_show_post'] = (bool)$request->config_show_post;
+        $data['config_post_selected'] = (bool)$request->config_post_selected;
+        $data['config_show_tags'] = (bool)$request->config_show_tags;
+        $data['config_latest_post'] = (bool)$request->config_latest_post;
+        $data['config_latest_post_limit'] = $request->config_latest_post_limit;
+        $data['config_detail_category'] = (bool)$request->config_detail_category;
+        $data['config_detail_post'] = (bool)$request->config_detail_post;
+        $data['config_paginate_category'] = (bool)$request->config_paginate_category;
+        $data['config_paginate_post'] = (bool)$request->config_paginate_post;
+        $data['config_show_media'] = (bool)$request->config_show_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $section = $this->contentService->updateSection($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -184,6 +212,16 @@ class ContentSectionController extends Controller
         }
 
         return redirect()->back()->with('failed', $section['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->contentService->sortSection(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $id, $position)
@@ -247,7 +285,7 @@ class ContentSectionController extends Controller
             'publish' => 1,
             'approved' => 1
         ], true, $limit, false, [], [
-            'position' => 'ASC'
+            config('cms.module.content.section.ordering')
         ]);
         $data['no'] = $data['sections']->firstItem();
         $data['sections']->withQueryString();
@@ -271,51 +309,49 @@ class ContentSectionController extends Controller
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
         if ($data['read']['public'] == 0 && Auth::guard()->check() == false) {
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
-
-        $this->contentService->recordSectionHits(['id' => $data['read']['id']]);
-
-        //limit
-        $catPerpage = $this->configService->getConfigValue('content_limit');
-        $postPerpage = $this->configService->getConfigValue('content_limit');
-        if ($data['read']['category_perpage'] > 0) {
-            $catPerpage = $data['read']['category_perpage'];
-        }
-        if ($data['read']['post_perpage'] > 0) {
-            $postPerpage = $data['read']['post_perpage'];
+        
+        // filtering
+        $categoryId = $request->input('category_id', '');
+        $keyword = $request->input('keyword', '');
+        if ($keyword != '') {
+            $filter['q'] = $keyword;
         }
 
-        //data
-        $data['categories'] = $this->contentService->getCategoryList([
-            'section_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $catPerpage, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['cat_no'] = $data['categories']->firstItem();
-        $data['categories']->withQueryString();
+        $filter['section_id'] = $data['read']['id'];
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
 
-        $data['posts'] = $this->contentService->getPostList([
-            'section_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $postPerpage, false, [], [
-            $data['read']['ordering']['order_by'] => $data['read']['ordering']['order_seq']
-        ]);
-        $data['post_no'] = $data['posts']->firstItem();
-        $data['posts']->withQueryString();
+        // category
+        $data['categories'] = $this->contentService->getCategoryList($filter,
+            $data['read']['config']['paginate_category'], $data['read']['config']['category_limit'], false,
+        [], ['position' => 'ASC']);
+        if ($data['read']['config']['paginate_category'] == true) {
+            $data['no_categories'] = $data['categories']->firstItem();
+            $data['categories']->withQueryString();
+        }
+
+        // post
+        if ($categoryId != '') {
+            $filter['category_id'] = $categoryId;
+        }
+        $data['posts'] = $this->contentService->getPostList($filter,
+            $data['read']['config']['paginate_post'], $data['read']['config']['post_limit'], false,
+        [], [$data['read']['config']['post_order_by'] => $data['read']['config']['post_order_type']]);
+        if ($data['read']['config']['paginate_post'] == true) {
+            $data['no_posts'] = $data['posts']->firstItem();
+            $data['posts']->withQueryString();
+        }
 
         $data['fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
@@ -352,6 +388,9 @@ class ContentSectionController extends Controller
         if (!empty($data['read']['template_list_id'])) {
             $blade = 'list.'.Str::replace('.blade.php', '', $data['read']['templateList']['filename']);
         }
+
+        // record hits
+        $this->contentService->recordSectionHits(['id' => $data['read']['id']]);
 
         return view('frontend.contents.section.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('name'),

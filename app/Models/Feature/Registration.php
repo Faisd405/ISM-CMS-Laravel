@@ -54,6 +54,11 @@ class Registration extends Model
         return $query->where('active', 1);
     }
 
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
+    }
+
     public function getRoleListAttribute()
     {
         return Role::whereIn('id', $this->roles)->get();

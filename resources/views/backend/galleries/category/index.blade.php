@@ -29,7 +29,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/gallery.category.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('gallery.category.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -98,13 +98,13 @@
                             <th class="text-center" style="width: 140px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['categories']->total() > 1 && isset(config('cms.module.gallery.category.ordering')['position']) ? 'drag' : ''}}">
                         @forelse ($data['categories'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
+                                @if ($item['detail'] == 1)
                                 <a href="{{ route('gallery.category.read', ['slugCategory' => $item['slug']]) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
@@ -140,6 +140,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
+                                @if (isset(config('cms.module.gallery.category.ordering')['position']))
                                 @if (Auth::user()->can('gallery_category_update') && $item->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
@@ -162,6 +163,7 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
+                                @endif
                             </td>
                             <td class="text-center">
                                 @can('gallery_category_update')
@@ -172,14 +174,16 @@
                                 </a>
                                 @endcan
                                 @can('gallery_category_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/gallery.category.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.gallery.category.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.gallery.category.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('gallery.category.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -234,7 +238,37 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/gallery/category/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

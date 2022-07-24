@@ -8,7 +8,7 @@ return[
         'text' => 'List Section',
         'label' => [
             'field1' => 'Nama',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Deskripsi',
             'field5' => 'Order Field',
             'field6' => 'Order By',
@@ -39,7 +39,7 @@ return[
         'manage' => 'Manage Kategori',
         'label' => [
             'field1' => 'Nama',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Deskripsi',
         ],
         'placeholder' => [
@@ -52,9 +52,10 @@ return[
         'title' => 'Post',
         'caption' => 'Post',
         'text' => 'List Post',
+        'manage' => 'Manage Post',
         'label' => [
             'field1' => 'Judul',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Intro',
             'field4' => 'Konten',
             'publish_time' => 'Publish Time',

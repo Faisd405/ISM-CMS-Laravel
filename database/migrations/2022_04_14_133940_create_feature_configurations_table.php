@@ -21,6 +21,7 @@ class CreateFeatureConfigurationsTable extends Migration
             $table->boolean('is_upload')->default(false);
             $table->boolean('show_form')->default(true);
             $table->boolean('active')->default(true);
+            $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
         });
     }
 

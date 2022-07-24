@@ -31,7 +31,7 @@
             </a>
 
             <ul class="sidenav-menu">
-                @role('super')
+                @role('developer|super')
                 <!-- ACL -->
                 <li class="sidenav-item {{ Request::is('admin/acl*') ? 'open active' : '' }}">
                     <a href="javascript:void(0)" class="sidenav-link sidenav-toggle" title="@lang('module/user.acl_caption')">
@@ -62,7 +62,7 @@
                         <div>@lang('module/user.log.caption')</div>
                     </a>
                 </li>
-                @role('super')
+                @role('developer|super')
                 <li class="sidenav-item {{ Request::is('admin/user/login-failed*') ? 'active' : '' }}">
                     <a href="{{ route('user.login-failed') }}" class="sidenav-link" title="@lang('module/user.login_failed.caption')">
                         <div>@lang('module/user.login_failed.caption')</div>
@@ -98,7 +98,7 @@
         </li>
         @endif
         @if (Auth::user()->can('tags') && config('cms.module.master.tags.active') == true)
-        <!-- Template -->
+        <!-- Tags -->
         <li class="sidenav-item {{ Request::is('admin/tag*') ? 'active' : '' }}">
             <a href="{{ route('tags.index') }}" class="sidenav-link" title="@lang('master/tags.caption')">
               <i class="sidenav-icon las la-tags"></i><div>@lang('master/tags.caption')</div>
@@ -106,9 +106,9 @@
         </li>
         @endif
 
-        @if (Auth::user()->can('pages') || Auth::user()->can('content_sections') || Auth::user()->can('menus') || Auth::user()->can('banner_categories')
-            || Auth::user()->can('gallery_albums') || Auth::user()->can('document_categories') || Auth::user()->can('link_categories')
-            || Auth::user()->can('inquiries') || Auth::user()->can('events') || Auth::user()->can('widgets'))
+        @if (Auth::user()->can('pages') || Auth::user()->can('content_sections') || Auth::user()->can('banners')
+            || Auth::user()->can('gallery_albums') || Auth::user()->can('documents') || Auth::user()->can('links')
+            || Auth::user()->can('inquiries') || Auth::user()->can('events') || Auth::user()->can('menus') || Auth::user()->can('widgets'))
         {{-- Module --}}
         <li class="sidenav-divider mb-1"></li>
         <li class="sidenav-header small font-weight-semibold">MODULE</li>
@@ -130,10 +130,10 @@
             </a>
         </li>
         @endif
-        @if (Auth::user()->can('banner_categories') && config('cms.module.banner.active') == true)
+        @if (Auth::user()->can('banners') && config('cms.module.banner.active') == true)
         <!-- Banner -->
         <li class="sidenav-item {{ Request::is('admin/banner*') ? 'active' : '' }}">
-            <a href="{{ route('banner.category.index') }}" class="sidenav-link" title="@lang('module/banner.caption')">
+            <a href="{{ route('banner.index') }}" class="sidenav-link" title="@lang('module/banner.caption')">
               <i class="sidenav-icon las la-images"></i><div>@lang('module/banner.caption')</div>
             </a>
         </li>
@@ -146,18 +146,18 @@
             </a>
         </li>
         @endif
-        @if (Auth::user()->can('document_categories') && config('cms.module.document.active') == true)
+        @if (Auth::user()->can('documents') && config('cms.module.document.active') == true)
         <!-- Document -->
         <li class="sidenav-item {{ Request::is('admin/document*') ? 'active' : '' }}">
-            <a href="{{ route('document.category.index') }}" class="sidenav-link" title="@lang('module/document.caption')">
+            <a href="{{ route('document.index') }}" class="sidenav-link" title="@lang('module/document.caption')">
               <i class="sidenav-icon las la-folder"></i><div>@lang('module/document.caption')</div>
             </a>
         </li>
         @endif
-        @if (Auth::user()->can('link_categories') && config('cms.module.link.active') == true)
+        @if (Auth::user()->can('links') && config('cms.module.link.active') == true)
         <!-- Link -->
         <li class="sidenav-item {{ Request::is('admin/link*') ? 'active' : '' }}">
-            <a href="{{ route('link.category.index') }}" class="sidenav-link" title="@lang('module/link.caption')">
+            <a href="{{ route('link.index') }}" class="sidenav-link" title="@lang('module/link.caption')">
               <i class="sidenav-icon las la-link"></i><div>@lang('module/link.caption')</div>
             </a>
         </li>
@@ -194,7 +194,7 @@
             </a>
         </li>
         @endcan
-        @role('super')
+        @role('developer|super')
         <!-- Index URL -->
         <li class="sidenav-item {{ Request::is('admin/url*') ? 'active' : '' }}">
             <a href="{{ route('url.index') }}" class="sidenav-link" title="@lang('module/url.caption')">

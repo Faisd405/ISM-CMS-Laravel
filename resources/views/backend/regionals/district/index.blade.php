@@ -30,7 +30,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/regional.district.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('district.trash', ['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -69,15 +69,15 @@
         </div>
 
         <div class="card">
+            <div class="card-header with-elements">
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/regional.district.text')</h5>
+            </div>
             <div class="card-header">
                 <span class="text-muted">
                     {{ Str::upper(__('module/regional.province.caption')) }} : <b class="text-primary">{{ $data['city']['province']['name'] }}</b>
                     <i class="las la-angle-right"></i>
                     {{ Str::upper(__('module/regional.city.caption')) }} : <b class="text-primary">{{ $data['city']['name'] }}</b>
                 </span>
-            </div>
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/regional.district.text')</h5>
             </div>
 
             {{-- Table --}}

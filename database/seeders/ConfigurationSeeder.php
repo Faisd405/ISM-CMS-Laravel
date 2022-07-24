@@ -108,15 +108,15 @@ class ConfigurationSeeder extends Seeder
                 'show_form' => true,
                 'active' => true
             ],
-            [
-                'group' => 2,
-                'name' => 'banner_limit',
-                'label' => 'Banner Limit',
-                'value' => 3,
-                'is_upload' => false,
-                'show_form' => true,
-                'active' => false
-            ],
+            // [
+            //     'group' => 2,
+            //     'name' => 'banner_limit',
+            //     'label' => 'Banner Limit',
+            //     'value' => 3,
+            //     'is_upload' => false,
+            //     'show_form' => true,
+            //     'active' => false
+            // ],
             [
                 'group' => 2,
                 'name' => 'content_limit',
@@ -346,6 +346,63 @@ class ConfigurationSeeder extends Seeder
                 'show_form' => true,
                 'active' => true
             ],
+
+            // Notification
+            [
+                'group' => 5,
+                'name' => 'notif_email_register',
+                'label' => 'Register (Email)',
+                'value' => true,
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
+            ],
+            [
+                'group' => 5,
+                'name' => 'notif_email_inquiry',
+                'label' => 'Inquiry (Email)',
+                'value' => true,
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
+            ],
+            [
+                'group' => 5,
+                'name' => 'notif_email_event',
+                'label' => 'Event (Email)',
+                'value' => true,
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
+            ],
+            [
+                'group' => 5,
+                'name' => 'notif_apps_register',
+                'label' => 'Register (App)',
+                'value' => true,
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
+            ],
+            [
+                'group' => 5,
+                'name' => 'notif_apps_inquiry',
+                'label' => 'Inquiry (App)',
+                'value' => true,
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
+            ],
+            [
+                'group' => 5,
+                'name' => 'notif_apps_event',
+                'label' => 'Event (App)',
+                'value' => true,
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
+            ],
+            
             // Only Developer
             [
                 'group' => 100,
@@ -394,6 +451,7 @@ class ConfigurationSeeder extends Seeder
                 'is_upload' => $item['is_upload'],
                 'show_form' => $item['show_form'],
                 'active' => $item['active'],
+                'locked' => true
             ]);
         }
     }

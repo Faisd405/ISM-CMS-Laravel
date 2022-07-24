@@ -2,13 +2,14 @@
 
 namespace App\Services\Module;
 
-use App\Models\Module\Document\DocumentCategory;
+use App\Models\Module\Document\Document;
 use App\Models\Module\Document\DocumentFile;
 use App\Services\Feature\LanguageService;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -16,25 +17,25 @@ class DocumentService
 {
     use ApiResponser;
 
-    private $categoryModel, $fileModel, $language;
+    private $documentModel, $fileModel, $language;
 
     public function __construct(
-        DocumentCategory $categoryModel,
+        Document $documentModel,
         DocumentFile $fileModel,
         LanguageService $language
     )
     {
-        $this->categoryModel = $categoryModel;
+        $this->documentModel = $documentModel;
         $this->fileModel = $fileModel;
         $this->language = $language;
     }
 
     //--------------------------------------------------------------------------
-    // DOCUMENT CATEGORY
+    // DOCUMENT
     //--------------------------------------------------------------------------
 
     /**
-     * Get Category List
+     * Get Document List
      * @param array $filter
      * @param booleean $withPaginate
      * @param int $limit
@@ -42,29 +43,32 @@ class DocumentService
      * @param array $with
      * @param array $orderBy
      */
-    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getDocumentList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
-        $category = $this->categoryModel->query();
+        $document = $this->documentModel->query();
 
         if ($isTrash == true)
-            $category->onlyTrashed();
+            $document->onlyTrashed();
 
         if (isset($filter['publish']))
-            $category->where('publish', $filter['publish']);
+            $document->where('publish', $filter['publish']);
 
         if (isset($filter['public']))
-            $category->where('public', $filter['public']);
+            $document->where('public', $filter['public']);
 
         if (isset($filter['approved']))
-            $category->where('approved', $filter['approved']);
+            $document->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $document->where('detail', $filter['detail']);
 
         if (isset($filter['created_by']))
-            $category->where('created_by', $filter['created_by']);
+            $document->where('created_by', $filter['created_by']);
 
         if (isset($filter['q']))
-            $category->when($filter['q'], function ($category, $q) {
-                $category->whereRaw('LOWER(JSON_EXTRACT(name, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
+            $document->when($filter['q'], function ($document, $q) {
+                $document->whereRaw('LOWER(JSON_EXTRACT(name, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
                     ->orWhereRaw('LOWER(JSON_EXTRACT(description, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"']);
             });
 
@@ -72,65 +76,65 @@ class DocumentService
             $limit = $filter['limit'];
 
         if (!empty($with))
-            $category->with($with);
+            $document->with($with);
 
         if (!empty($orderBy))
             foreach ($orderBy as $key => $value) {
-                $category->orderBy($key, $value);
+                $document->orderBy($key, $value);
             }
 
         if ($withPaginate == true) {
-            $result = $category->paginate($limit);
+            $result = $document->paginate($limit);
         } else {
 
             if ($limit > 0)
-                $category->limit($limit);
+                $document->limit($limit);
 
-            $result = $category->get();
+            $result = $document->get();
         }
         
         return $result;
     }
 
     /**
-     * Get Category One
+     * Get Document One
      * @param array $where
      * @param array $with
      */
-    public function getCategory($where, $with = [])
+    public function getDocument($where, $with = [])
     {
-        $category = $this->categoryModel->query();
+        $document = $this->documentModel->query();
         
         if (!empty($with))
-            $category->with($with);
+            $document->with($with);
         
-        $result = $category->firstWhere($where);;
+        $result = $document->firstWhere($where);;
 
         return $result;
     }
 
     /**
-     * Create Category
+     * Create Document
      * @param array $data
      */
-    public function storeCategory($data)
+    public function storeDocument($data)
     {
         try {
 
-            $category = new DocumentCategory;
-            $this->setFieldCategory($data, $category);
-            $category->position = $this->categoryModel->max('position') + 1;
+            $document = new Document;
+            $this->setFieldDocument($data, $document);
+            $document->position = $this->documentModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.document.category.approval') == true) {
-                    $category->approved = 2;
+                if (Auth::user()->hasRole('editor') && config('module.document.approval') == true) {
+                    $document->approved = 2;
                 }
-                $category->created_by = Auth::user()['id'];
+                $document->created_by = Auth::user()['id'];
 
-            $category->save();
+            $document->save();
 
-            return $this->success($category,  __('global.alert.create_success', [
-                'attribute' => __('module/document.category.caption')
+            return $this->success($document,  __('global.alert.create_success', [
+                'attribute' => __('module/document.caption')
             ]));
             
         } catch (Exception $e) {
@@ -140,24 +144,24 @@ class DocumentService
     }
 
     /**
-     * Update Category
+     * Update Document
      * @param array $data
      * @param array $where
      */
-    public function updateCategory($data, $where)
+    public function updateDocument($data, $where)
     {
-        $category = $this->getCategory($where);
+        $document = $this->getDocument($where);
 
         try {
             
-            $this->setFieldCategory($data, $category);
+            $this->setFieldDocument($data, $document);
             if (Auth::guard()->check())
-                $category->updated_by = Auth::user()['id'];
+                $document->updated_by = Auth::user()['id'];
 
-            $category->save();
+            $document->save();
 
-            return $this->success($category,  __('global.alert.update_success', [
-                'attribute' => __('module/document.category.caption')
+            return $this->success($document,  __('global.alert.update_success', [
+                'attribute' => __('module/document.caption')
             ]));
 
         } catch (Exception $e) {
@@ -167,11 +171,11 @@ class DocumentService
     }
 
     /**
-     * Set Field Category
+     * Set Field Document
      * @param array $data
-     * @param model $category
+     * @param model $document
      */
-    private function setFieldCategory($data, $category)
+    private function setFieldDocument($data, $document)
     {
         $multiple = config('cms.module.feature.language.multiple');
         $langDefault = config('cms.module.feature.language.default');
@@ -184,26 +188,33 @@ class DocumentService
                 $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
         }
 
-        $category->slug = Str::slug($data['slug'], '-');
-        $category->name = $name;
-        $category->description = $description;
-        if (isset($data['roles'])) {
-            $category->roles = $data['roles'];
+        $document->slug = Str::slug(strip_tags($data['slug']), '-');
+        $document->name = $name;
+        $document->description = $description;
+        if (isset($data['roles']) && count($data['roles']) > 0) {
+            $document->roles = $data['roles'];
+        } else {
+            $document->roles = null;
         }
-        $category->banner = [
+        $document->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
             'alt' => $data['banner_alt'] ?? null,
         ];
-        $category->publish = (bool)$data['publish'];
-        $category->public = (bool)$data['public'];
-        $category->locked = (bool)$data['locked'];
-        $category->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_banner' => (bool)$data['hide_banner'],
+        $document->publish = (bool)$data['publish'];
+        $document->public = (bool)$data['public'];
+        $document->locked = (bool)$data['locked'];
+        $document->detail = (bool)$data['detail'];
+        $document->config = [
+            'show_description' => (bool)$data['config_show_description'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'paginate_file' => (bool)$data['config_paginate_file'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+            'file_limit' => $data['config_file_limit'],
+            'file_order_by' => $data['config_file_order_by'],
+            'file_order_type' => $data['config_file_order_type'],
         ];
-        $category->template_id = $data['template_id'] ?? null;
+        $document->template_id = $data['template_id'] ?? null;
 
         if (isset($data['cf_name'])) {
             
@@ -212,43 +223,41 @@ class DocumentService
                 $customField[$value] = $data['cf_value'][$key];
             }
 
-            $category->custom_fields = $customField;
+            $document->custom_fields = $customField;
         } else {
-            $category->custom_fields = null;
+            $document->custom_fields = null;
         }
 
-        $category->file_perpage = $data['file_perpage'] ?? 0;
-
-        return $category;
+        return $document;
     }
 
     /**
-     * Status Category (boolean type only)
+     * Status Document (boolean type only)
      * @param string $field
      * @param array $where
      */
-    public function statusCategory($field, $where)
+    public function statusDocument($field, $where)
     {
-        $category = $this->getCategory($where);
+        $document = $this->getDocument($where);
 
         try {
             
-            $category->update([
-                $field => !$category[$field],
-                'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
+            $document->update([
+                $field => !$document[$field],
+                'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $document['updated_by'],
             ]);
 
             if ($field == 'publish') {
-                $category->menus()->update([
-                    'publish' => $category['publish']
+                $document->menus()->update([
+                    'publish' => $document['publish']
                 ]);
-                $category->widgets()->update([
-                    'publish' => $category['publish']
+                $document->widgets()->update([
+                    'publish' => $document['publish']
                 ]);
             }
 
-            return $this->success($category, __('global.alert.update_success', [
-                'attribute' => __('module/document.category.caption')
+            return $this->success($document, __('global.alert.update_success', [
+                'attribute' => __('module/document.caption')
             ]));
             
         } catch (Exception $e) {
@@ -258,36 +267,55 @@ class DocumentService
     }
 
     /**
-     * Set Position Category
+     * Sort Document
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortDocument($where, $position)
+    {
+        $document = $this->getDocument($where);
+
+        $document->position = $position;
+        if (Auth::guard()->check()) {
+            $document->updated_by = Auth::user()['id'];
+        }
+        $document->save();
+
+        return $document;
+    }
+
+    /**
+     * Set Position Document
      * @param array $where
      * @param int $position
      */
-    public function positionCategory($where, $position)
+    public function positionDocument($where, $position)
     {
-        $category = $this->getCategory($where);
+        $document = $this->getDocument($where);
         
         try {
 
             if ($position >= 1) {
     
-                $this->categoryModel->where('position', $position)->update([
-                    'position' => $category['position'],
+                $this->documentModel->where('position', $position)->update([
+                    'position' => $document['position'],
                 ]);
     
-                $category->position = $position;
+                $document->position = $position;
                 if (Auth::guard()->check()) {
-                    $category->updated_by = Auth::user()['id'];
+                    $document->updated_by = Auth::user()['id'];
                 }
-                $category->save();
+                $document->save();
     
-                return $this->success($category, __('global.alert.update_success', [
-                    'attribute' => __('module/document.category.caption')
+                return $this->success($document, __('global.alert.update_success', [
+                    'attribute' => __('module/document.caption')
                 ]));
 
             } else {
 
                 return $this->error(null, __('global.alert.update_failed', [
-                    'attribute' => __('module/document.category.caption')
+                    'attribute' => __('module/document.caption')
                 ]));
             }
             
@@ -298,57 +326,61 @@ class DocumentService
     }
 
      /**
-     * Record Category Hits
+     * Record Document Hits
      * @param array $where
      */
-    public function recordCategoryHits($where)
+    public function recordDocumentHits($where)
     {
-        $category = $this->getCategory($where);
-        $category->update([
-            'hits' => ($category->hits+1)
-        ]);
+        $document = $this->getDocument($where);
 
-        return $category;
+        if (empty(Session::get('documentHits-'.$document['id']))) {
+            Session::put('documentHits-'.$document['id'], $document['id']);
+            $document->hits = ($document->hits+1);
+            $document->timestamps = false;
+            $document->save();
+        }
+
+        return $document;
     }
 
         /**
-     * Trash Category
+     * Trash Document
      * @param array $where
      */
-    public function trashCategory($where)
+    public function trashDocument($where)
     {
-        $category = $this->getCategory($where);
+        $document = $this->getDocument($where);
 
         try {
             
-            $files = $category->files()->count();
+            $files = $document->files()->count();
 
-            if ($category['locked'] == 0 && $files == 0) {
+            if ($document['locked'] == 0 && $files == 0) {
 
                 if (Auth::guard()->check()) {
 
-                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $category['created_by']) {
-                        return $this->error($category,  __('global.alert.delete_failed_used', [
-                            'attribute' => __('module/document.category.caption')
+                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $document['created_by']) {
+                        return $this->error($document,  __('global.alert.delete_failed_used', [
+                            'attribute' => __('module/document.caption')
                         ]));
                     }
 
-                    $category->update([
+                    $document->update([
                         'deleted_by' => Auth::user()['id']
                     ]);
                 }
 
-                $category->menus()->delete();
-                $category->widgets()->delete();
-                $category->delete();
+                $document->menus()->delete();
+                $document->widgets()->delete();
+                $document->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
-                    'attribute' => __('module/document.category.caption')
+                    'attribute' => __('module/document.caption')
                 ]));
     
             } else {
-                return $this->error($category,  __('global.alert.delete_failed_used', [
-                    'attribute' => __('module/document.category.caption')
+                return $this->error($document,  __('global.alert.delete_failed_used', [
+                    'attribute' => __('module/document.caption')
                 ]));
             }
 
@@ -359,29 +391,29 @@ class DocumentService
     }
 
     /**
-     * Restore Category
+     * Restore Document
      * @param array $where
      */
-    public function restoreCategory($where)
+    public function restoreDocument($where)
     {
-        $category = $this->categoryModel->onlyTrashed()->firstWhere($where);
+        $document = $this->documentModel->onlyTrashed()->firstWhere($where);
 
         try {
             
-            $checkSlug = $this->getCategory(['slug' => $category['slug']]);
+            $checkSlug = $this->getDocument(['slug' => $document['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
-                    'attribute' => __('module/document.category.caption')
+                    'attribute' => __('module/document.caption')
                 ]));
             }
             
             //restore data yang bersangkutan
-            $category->menus()->restore();
-            $category->widgets()->restore();
-            $category->restore();
+            $document->menus()->restore();
+            $document->widgets()->restore();
+            $document->restore();
 
-            return $this->success($category, __('global.alert.restore_success', [
-                'attribute' => __('module/document.category.caption')
+            return $this->success($document, __('global.alert.restore_success', [
+                'attribute' => __('module/document.caption')
             ]));
             
         } catch (Exception $e) {
@@ -391,25 +423,25 @@ class DocumentService
     }
 
     /**
-     * Delete Category (Permanent)
+     * Delete Document (Permanent)
      * @param array $where
      */
-    public function deleteCategory($request, $where)
+    public function deleteDocument($request, $where)
     {
         if ($request->get('is_trash') == 'yes') {
-            $category = $this->categoryModel->onlyTrashed()->firstWhere($where);
+            $document = $this->documentModel->onlyTrashed()->firstWhere($where);
         } else {
-            $category = $this->getCategory($where);
+            $document = $this->getDocument($where);
         }
 
         try {
             
-            $category->menus()->forceDelete();
-            $category->widgets()->forceDelete();
-            $category->forceDelete();
+            $document->menus()->forceDelete();
+            $document->widgets()->forceDelete();
+            $document->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
-                'attribute' => __('module/document.category.caption')
+                'attribute' => __('module/document.caption')
             ]));
             
         } catch (Exception $e) {
@@ -425,7 +457,7 @@ class DocumentService
      */
     public function checkRole($where, $role)
     {
-        $query = $this->categoryModel->query();
+        $query = $this->documentModel->query();
 
         $query->where($where);
         $query->whereJsonContains('roles', $role);
@@ -451,32 +483,32 @@ class DocumentService
     public function getFileList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
-        $file = $this->fileModel->query();
+        $documentFile = $this->fileModel->query();
 
         if ($isTrash == true)
-            $file->onlyTrashed();
+            $documentFile->onlyTrashed();
 
-        if (isset($filter['document_category_id']))
-            $file->where('document_category_id', $filter['document_category_id']);
+        if (isset($filter['document_id']))
+            $documentFile->where('document_id', $filter['document_id']);
 
         if (isset($filter['type']))
-            $file->where('type', $filter['type']);
+            $documentFile->where('type', $filter['type']);
 
         if (isset($filter['publish']))
-            $file->where('publish', $filter['publish']);
+            $documentFile->where('publish', $filter['publish']);
 
         if (isset($filter['public']))
-            $file->where('public', $filter['public']);
+            $documentFile->where('public', $filter['public']);
 
         if (isset($filter['approved']))
-            $file->where('approved', $filter['approved']);
+            $documentFile->where('approved', $filter['approved']);
 
         if (isset($filter['created_by']))
-            $file->where('created_by', $filter['created_by']);
+            $documentFile->where('created_by', $filter['created_by']);
 
         if (isset($filter['q']))
-            $file->when($filter['q'], function ($file, $q) {
-                $file->whereRaw('LOWER(JSON_EXTRACT(title, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
+            $documentFile->when($filter['q'], function ($documentFile, $q) {
+                $documentFile->whereRaw('LOWER(JSON_EXTRACT(title, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
                     ->orWhereRaw('LOWER(JSON_EXTRACT(description, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"']);
             });
 
@@ -484,21 +516,21 @@ class DocumentService
             $limit = $filter['limit'];
 
         if (!empty($with))
-            $file->with($with);
+            $documentFile->with($with);
 
         if (!empty($orderBy))
             foreach ($orderBy as $key => $value) {
-                $file->orderBy($key, $value);
+                $documentFile->orderBy($key, $value);
             }
 
         if ($withPaginate == true) {
-            $result = $file->paginate($limit);
+            $result = $documentFile->paginate($limit);
         } else {
 
             if ($limit > 0)
-                $file->limit($limit);
+                $documentFile->limit($limit);
 
-            $result = $file->get();
+            $result = $documentFile->get();
         }
         
         return $result;
@@ -511,12 +543,12 @@ class DocumentService
      */
     public function getFile($where, $with = [])
     {
-        $file = $this->fileModel->query();
+        $documentFile = $this->fileModel->query();
         
         if (!empty($with))
-            $file->with($with);
+            $documentFile->with($with);
         
-        $result = $file->firstWhere($where);;
+        $result = $documentFile->firstWhere($where);;
 
         return $result;
     }
@@ -532,17 +564,17 @@ class DocumentService
             $type = $data['type'];
 
             $documentFile = new DocumentFile;
-            $documentFile->document_category_id = $data['document_category_id'];
+            $documentFile->document_id = $data['document_id'];
 
             $documentFile->type = $type;
             if ($type == '0') {
                 $file = $data['file_document'];
                 $fileName = $file->getClientOriginalName();
-                if (file_exists(storage_path('app/public/document/'.$data['document_category_id'].'/'.$fileName))) {
+                if (file_exists(storage_path('app/public/document/'.$data['document_id'].'/'.$fileName))) {
                     $fileName = Str::random(3).'-'.$file->getClientOriginalName();
                 }
     
-                Storage::put(config('cms.files.document.path').$data['document_category_id'].'/'.$fileName, 
+                Storage::put(config('cms.files.document.path').$data['document_id'].'/'.$fileName, 
                     file_get_contents($file));
                 
                 $documentFile->file = $fileName;
@@ -557,7 +589,7 @@ class DocumentService
             }
 
             $this->setFieldFile($data, $documentFile);
-            $documentFile->position = $this->fileModel->where('document_category_id', $data['document_category_id'])->max('position') + 1;
+            $documentFile->position = $this->fileModel->where('document_id', $data['document_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
                 if (Auth::user()->hasRole('editor') && config('module.document.file.approval') == true) {
@@ -586,23 +618,23 @@ class DocumentService
         try {
 
             $documentFile = new DocumentFile;
-            $documentFile->document_category_id = $data['document_category_id'];
+            $documentFile->document_id = $data['document_id'];
 
             $documentFile->type = '0';
             
             $file = $data['file'];
             $fileName = $file->getClientOriginalName();
-            if (file_exists(storage_path('app/public/document/'.$data['document_category_id'].'/'.$fileName))) {
+            if (file_exists(storage_path('app/public/document/'.$data['document_id'].'/'.$fileName))) {
                 $fileName = Str::random(3).'-'.$file->getClientOriginalName();
             }
 
-            Storage::put(config('cms.files.document.path').$data['document_category_id'].'/'.$fileName, 
+            Storage::put(config('cms.files.document.path').$data['document_id'].'/'.$fileName, 
                 file_get_contents($file));
             
             $documentFile->file = $fileName;
 
             $this->setFieldFile($data, $documentFile);
-            $documentFile->position = $this->fileModel->where('document_category_id', (int)$data['document_category_id'])->max('position') + 1;
+            $documentFile->position = $this->fileModel->where('document_id', (int)$data['document_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
                 if (Auth::user()->hasRole('editor') && config('module.document.file.approval') == true) {
@@ -617,7 +649,6 @@ class DocumentService
             ]));
 
         } catch (Exception $e) {
-            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -636,14 +667,14 @@ class DocumentService
             if ($documentFile['type'] == '0' && isset($data['file_document'])) {
                 $file = $data['file_document'];
                 $fileName = $file->getClientOriginalName();
-                if (file_exists(storage_path('app/public/document/'.$documentFile['document_category_id'].'/'.$fileName))) {
+                if (file_exists(storage_path('app/public/document/'.$documentFile['document_id'].'/'.$fileName))) {
                     $fileName = Str::random(3).'-'.$file->getClientOriginalName();
                 }
 
-                Storage::delete(config('cms.files.document.path').$documentFile['document_category_id'].
+                Storage::delete(config('cms.files.document.path').$documentFile['document_id'].
                     '/'.$data['old_file']);
     
-                Storage::put(config('cms.files.document.path').$documentFile['document_category_id'].'/'.$fileName, 
+                Storage::put(config('cms.files.document.path').$documentFile['document_id'].'/'.$fileName, 
                     file_get_contents($file));
                 
                 $documentFile->file = $fileName;
@@ -702,10 +733,23 @@ class DocumentService
         $documentFile->public = (bool)$data['public'];
         $documentFile->locked = (bool)$data['locked'];
         $documentFile->config = [
-            'hide_title' => (bool)$data['hide_title'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_cover' => (bool)$data['hide_cover']
+            'show_title' => (bool)$data['config_show_title'],
+            'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
         ];
+
+        if (isset($data['cf_name'])) {
+            
+            $customField = [];
+            foreach ($data['cf_name'] as $key => $value) {
+                $customField[$value] = $data['cf_value'][$key];
+            }
+
+            $documentFile->custom_fields = $customField;
+        } else {
+            $documentFile->custom_fields = null;
+        }
 
         return $documentFile;
     }
@@ -737,6 +781,24 @@ class DocumentService
     }
 
     /**
+     * Sort File
+     * @param array $where
+     * @param int $position
+     */
+    public function sortFile($where, $position)
+    {
+        $file = $this->getFile($where);
+
+        $file->position = $position;
+        if (Auth::guard()->check()) {
+            $file->updated_by = Auth::user()['id'];
+        }
+        $file->save();
+
+        return $file;
+    }
+
+    /**
      * Set Position File
      * @param array $where
      * @param int $position
@@ -749,7 +811,7 @@ class DocumentService
 
             if ($position >= 1) {
     
-                $this->fileModel->where('document_category_id', $documentFile['document_category_id'])
+                $this->fileModel->where('document_id', $documentFile['document_id'])
                     ->where('position', $position)->update([
                     'position' => $documentFile['position'],
                 ]);
@@ -859,7 +921,7 @@ class DocumentService
         try {
             
             if ($documentFile['type'] == '0') {
-                Storage::delete(config('cms.files.document.path').$documentFile['document_category_id'].
+                Storage::delete(config('cms.files.document.path').$documentFile['document_id'].
                  '/'.$documentFile['file']);
             }
 
@@ -876,15 +938,19 @@ class DocumentService
     }
 
     /**
-     * Record Download Hits
+     * Record Download
      * @param array $where
      */
-    public function recordDownloadHits($where)
+    public function recordDownload($where)
     {
         $file = $this->getFile($where);
-        $file->update([
-            'download' => ($file->download+1)
-        ]);
+
+        if (empty(Session::get('documentDownload-'.$file['id']))) {
+            Session::put('documentDownload-'.$file['id'], $file['id']);
+            $file->download = ($file->download+1);
+            $file->timestamps = false;
+            $file->save();
+        }
 
         return $file;
     }

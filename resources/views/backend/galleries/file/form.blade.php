@@ -11,16 +11,16 @@
 
         @include('components.alert-error')
         <div class="card">
-            <div class="card-header">
-                <span class="text-muted">
-                    {{ Str::upper(__('module/gallery.album.caption')) }} : <b class="text-primary">{{ $data['album']->fieldLang('name') }}</b>
-                </span>
-            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/gallery.file.caption')
                 ])
             </h6>
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/gallery.album.caption')) }} : <b class="text-primary">{{ $data['album']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <form action="{{ !isset($data['file']) ? route('gallery.file.store', array_merge(['albumId' => $data['album']['id']], $queryParam)) : 
                 route('gallery.file.update', array_merge(['albumId' => $data['album']['id'], 'id' => $data['file']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
@@ -41,10 +41,17 @@
                         <div class="col-sm-10">
                             <select id="type" class="form-control show-tick @error('type') is-invalid @enderror" name="type" data-style="btn-default">
                                 <option value=" " selected disabled>@lang('global.select')</option>
-                                @foreach (__('module/gallery.file.type') as $key => $value)
+                                @foreach (config('cms.module.gallery.file.type') as $key => $value)
+                                    @if ($key == 0 && $data['album']['config']['type_image'] == true)
                                     <option value="{{ $key }}">
                                         {{ $value }}
                                     </option>
+                                    @endif
+                                    @if ($key == 1 && $data['album']['config']['type_video'] == true)
+                                    <option value="{{ $key }}">
+                                        {{ $value }}
+                                    </option>
+                                    @endif
                                 @endforeach
                             </select>
                             @error('type')
@@ -56,7 +63,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.type') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" value="{{ __('module/gallery.file.type.'.$data['file']['type']) }}" readonly>
+                            <input type="text" class="form-control" value="{{ config('cms.module.gallery.file.type.'.$data['file']['type']) }}" readonly>
                         </div>
                     </div>
                     @endif
@@ -68,7 +75,7 @@
                         <div class="col-sm-10">
                             <select id="image-type" class="form-control show-tick @error('image_type') is-invalid @enderror" name="image_type" data-style="btn-default">
                                 <option value=" " selected disabled>@lang('global.select')</option>
-                                @foreach (__('module/gallery.file.type_image') as $key => $value)
+                                @foreach (config('cms.module.gallery.file.type_image') as $key => $value)
                                     <option value="{{ $key }}">
                                         {{ $value }}
                                     </option>
@@ -85,7 +92,7 @@
                         <div class="col-sm-10">
                             <select id="video-type" class="form-control show-tick @error('video_type') is-invalid @enderror" name="video_type" data-style="btn-default">
                                 <option value=" " selected disabled>@lang('global.select')</option>
-                                @foreach (__('module/gallery.file.type_video') as $key => $value)
+                                @foreach (config('cms.module.gallery.file.type_video') as $key => $value)
                                     <option value="{{ $key }}">
                                         {{ $value }}
                                     </option>
@@ -100,14 +107,14 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.file.label.image')  <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" value="{{ __('module/gallery.file.type_image.'.$data['file']['image_type']) }}" readonly>
+                            <input type="text" class="form-control" value="{{ config('cms.module.gallery.file.type_image.'.$data['file']['image_type']) }}" readonly>
                         </div>
                     </div>
                     @elseif ($data['file']['type'] == '1')
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.file.label.video')  <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" value="{{ __('module/gallery.file.type_video.'.$data['file']['video_type']) }}" readonly>
+                            <input type="text" class="form-control" value="{{ config('cms.module.gallery.file.type_video.'.$data['file']['video_type']) }}" readonly>
                         </div>
                     </div>
                     @endif
@@ -135,7 +142,7 @@
                         <div class="col-sm-10">
                             <div class="input-group">
                                 <input type="text" class="form-control @error('filemanager') is-invalid @enderror" id="image1" aria-label="Image" aria-describedby="button-image" name="filemanager"
-                                        value="{{ isset($data['file']) ? old('filemanager', $data['file']['file']) : '' }}">
+                                        value="{{ isset($data['file']) ? old('filemanager', $data['file']['file']) : '' }}" placeholder="@lang('global.browse') file...">
                                 <div class="input-group-append" title="browse file">
                                     <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
                                 </div>
@@ -159,7 +166,6 @@
                     <div id="video-upload">
                         @if (isset($data['file']))
                         <input type="hidden" name="old_file" value="{{ $data['file']['file'] }}">
-                        <input type="hidden" name="old_thumbnail" value="{{ $data['file']['thumbnail'] }}">
                         @endif
                         <div class="form-group row">
                             <div class="col-md-2 text-md-right">
@@ -174,19 +180,6 @@
                                 [<span class="text-muted">Max Size : <strong>{{ config('cms.files.gallery.size') }}</strong></span>]
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <div class="col-md-2 text-md-right">
-                                <label class="col-form-label text-sm-right">@lang('module/gallery.file.label.field4')</label>
-                            </div>
-                            <div class="col-md-10">
-                                <label class="custom-file-label" for="file-2"></label>
-                                <input class="form-control custom-file-input file @error('thumbnail') is-invalid @enderror" type="file" id="file-2" lang="en" name="thumbnail" placeholder="">
-                                @include('components.field-error', ['field' => 'thumbnail'])
-                                [<span class="text-muted">Type of file : <strong>{{ Str::upper(config('cms.files.gallery.thumbnail.mimes')) }}</strong></span>] - 
-                                [<span class="text-muted">Pixel : <strong>{{ config('cms.files.gallery.thumbnail.pixel') }}</strong></span>] - 
-                                [<span class="text-muted">Max Size : <strong>{{ config('cms.files.gallery.thumbnail.size') }}</strong></span>]
-                            </div>
-                        </div>
                     </div>
                     @endif
                     @if (!isset($data['file']) || isset($data['file']) && $data['file']['video_type'] == '1')
@@ -197,6 +190,24 @@
                                 value="{{ isset($data['file']) ? old('file_youtube', $data['file']['file']) : '' }}">
                             <small class="text-muted">https://www.youtube.com/watch?v=<strong>hZK640cDj2s</strong></small>
                             @include('components.field-error', ['field' => 'file_youtube'])
+                        </div>
+                    </div>
+                    @endif
+                    @if (!isset($data['file']) || isset($data['file']) && $data['file']['type'] == '1')
+                    @if (isset($data['file']))
+                    <input type="hidden" name="old_thumbnail" value="{{ $data['file']['thumbnail'] }}">
+                    @endif
+                    <div class="form-group row" id="video-thumbnail">
+                        <div class="col-md-2 text-md-right">
+                            <label class="col-form-label text-sm-right">@lang('module/gallery.file.label.field4')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-file-label" for="file-2"></label>
+                            <input class="form-control custom-file-input file @error('thumbnail') is-invalid @enderror" type="file" id="file-2" lang="en" name="thumbnail" placeholder="">
+                            @include('components.field-error', ['field' => 'thumbnail'])
+                            [<span class="text-muted">Type of file : <strong>{{ Str::upper(config('cms.files.gallery.thumbnail.mimes')) }}</strong></span>] - 
+                            [<span class="text-muted">Pixel : <strong>{{ config('cms.files.gallery.thumbnail.pixel') }}</strong></span>] - 
+                            [<span class="text-muted">Max Size : <strong>{{ config('cms.files.gallery.thumbnail.size') }}</strong></span>]
                         </div>
                     </div>
                     @endif
@@ -219,7 +230,7 @@
                     <div class="tab-pane fade {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'show active' : '' }}" id="{{ $lang['iso_codes'] }}">
                         <div class="card-body pb-2">
         
-                            <div class="form-group row">
+                            <div class="form-group row {{ isset($data['file']) && $data['file']['config']['show_title'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.file.label.field1') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control mb-1 @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
@@ -229,7 +240,7 @@
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row {{ isset($data['file']) && $data['file']['config']['show_description'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.file.label.field2')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['file']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['file']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
@@ -239,69 +250,6 @@
                         </div>
                     </div>
                     @endforeach
-                </div>
-
-                {{-- SETTING --}}
-                <hr class="m-0">
-                <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="publish" data-style="btn-default">
-                                @foreach (__('global.label.publish') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['file']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['file']['publish']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="public" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['file']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['file']['public']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['file']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['file']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.hide') Field</label>
-                        <div class="col-sm-10">
-                            <div>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="hide_title" value="1" 
-                                    {{ !isset($data['file']) ? (old('hide_title') ? 'checked' : '') : (old('hide_title', $data['file']['config']['hide_title']) ? 'checked' : '') }}>
-                                    <span class="form-check-label">
-                                      @lang('module/gallery.file.label.field1')
-                                    </span>
-                                  </label>
-                                <label class="form-check form-check-inline">
-                                  <input class="form-check-input" type="checkbox" name="hide_description" value="1" 
-                                  {{ !isset($data['file']) ? (old('hide_description') ? 'checked' : '') : (old('hide_description', $data['file']['config']['hide_description']) ? 'checked' : '') }}>
-                                  <span class="form-check-label">
-                                    @lang('module/gallery.file.label.field2')
-                                  </span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="card-footer text-center">
@@ -315,6 +263,119 @@
                     <i class="las la-redo-alt"></i> {{ __('global.reset') }}
                     </button>
                 </div>
+
+                {{-- SETTING --}}
+                <hr class="m-0">
+                <div class="card-body">
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
+                            <select class="form-control show-tick" name="publish" data-style="btn-default">
+                                @foreach (__('global.label.publish') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['file']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['file']['publish']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
+                            <select class="form-control show-tick" name="public" data-style="btn-default">
+                                @foreach (__('global.label.optional') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['file']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['file']['public']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-light m-0">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label class="form-label">@lang('global.locked')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['file']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['file']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="form-label">Show Title</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_title" value="1"
+                                {{ !isset($data['file']) ? (old('config_show_title', 1) ? 'checked' : '') : (old('config_show_title', $data['file']['config']['show_title']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="form-label">Show Description</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_description" value="1"
+                                {{ !isset($data['file']) ? (old('config_show_description', 1) ? 'checked' : '') : (old('config_show_description', $data['file']['config']['show_description']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Custom Field</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_custom_field" value="1"
+                                {{ !isset($data['file']) ? (old('config_show_custom_field') ? 'checked' : '') : (old('config_show_custom_field', $data['file']['config']['show_custom_field']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Auth::user()->hasRole('developer|super') || isset($data['file']) && $data['file']['config']['show_custom_field'] == true && !empty($data['file']['custom_fields']))
+                {{-- CUSTOM FIELD --}}
+                <hr class="m-0">
+                <div class="table-responsive text-center">
+                    <table class="table card-table table-bordered">
+                        <thead>
+                            @role('developer|super')
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
+                                        <i class="las la-plus"></i> Field
+                                    </button>
+                                </td>
+                            </tr>
+                            @endrole
+                            <tr>
+                                <th>NAME</th>
+                                <th>VALUE</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="list_field">
+                            @if (isset($data['file']) && !empty($data['file']['custom_fields']))
+                                @foreach ($data['file']['custom_fields'] as $key => $val)
+                                <tr class="num-list" id="delete-{{ $key }}">
+                                    <td>
+                                        <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
+                                            value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
+                                    </td>
+                                    @role('developer|super')
+                                    <td style="width: 30px;">
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                    </td>
+                                    @endrole
+                                </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+                @endif
+
             </form>
         </div>
     </div>
@@ -327,6 +388,7 @@
     //type
     $('#image-type-form').hide();
     $('#video-type-form').hide();
+    $('#video-thumbnail').hide();
     
     $('#type').on('change', function() {
         $('#image-type').prop('selectedIndex', ' ');
@@ -334,6 +396,7 @@
         if (this.value == '0') {
             $('#image-type-form').show();
             $('#video-type-form').hide();
+            $('#video-thumbnail').hide();
 
             $('#video-upload').hide();
             $('#video-youtube').hide();
@@ -384,14 +447,66 @@
         if (this.value == '0') {
             $('#video-upload').show();
             $('#video-youtube').hide();
+            $('#video-thumbnail').show();
         }
 
         if (this.value == '1') {
             $('#video-upload').hide();
             $('#video-youtube').show();
+            $('#video-thumbnail').show();
         }
     });
 </script>    
+@endif
+
+<script>
+    //custom field
+    $(function()  {
+
+        @if(isset($data['file']) && !empty($data['file']['custom_fields']))
+            var no = {{ count($data['file']['custom_fields']) }};
+        @else
+            var no = 1;
+        @endif
+        $("#add_field").click(function() {
+            $("#list_field").append(`
+                <tr class="num-list" id="delete-`+no+`">
+                    <td>
+                        <input type="text" class="form-control" name="cf_name[]" placeholder="name">
+                    </td>
+                    <td>
+                        <textarea class="form-control" name="cf_value[]" placeholder="value"></textarea>
+                    </td>
+                    <td style="width: 30px;">
+                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                    </td>
+                </tr>
+            `);
+
+            var noOfColumns = $('.num-list').length;
+            var maxNum = 10;
+            if (noOfColumns < maxNum) {
+                $("#add_field").show();
+            } else {
+                $("#add_field").hide();
+            }
+
+            no++;
+        });
+
+    });
+
+    //remove custom field
+    $(document).on('click', '#remove_field', function() {
+        var id = $(this).attr("data-id");
+        $("#delete-"+id).remove();
+    });
+</script>
+
+@if (!Auth::user()->hasRole('developer|super'))
+<script>
+    $('.hide-form').hide();
+</script>
 @endif
 
 @include('includes.button-fm')

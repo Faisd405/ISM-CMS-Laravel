@@ -26,7 +26,7 @@ class ApiModuleController extends Controller
             $filter['q'] = $request->input('q');
         }
         
-        $pages = App::make(PageService::class)->getPageList($filter, false, 10, false, [], []);
+        $pages = App::make(PageService::class)->getPageList($filter, false, 5, false, [], []);
         
         $pageMap = [];
         foreach ($pages as $key => $value) {
@@ -152,7 +152,7 @@ class ApiModuleController extends Controller
             $filter['q'] = $request->input('q');
         }
         
-        $documents = App::make(DocumentService::class)->getCategoryList($filter, false, 10, false, [], []);
+        $documents = App::make(DocumentService::class)->getDocumentList($filter, false, 10, false, [], []);
         
         $documentMap = [];
         foreach ($documents as $key => $value) {
@@ -173,7 +173,7 @@ class ApiModuleController extends Controller
             $filter['q'] = $request->input('q');
         }
         
-        $links = App::make(LinkService::class)->getCategoryList($filter, false, 10, false, [], []);
+        $links = App::make(LinkService::class)->getLinkList($filter, false, 10, false, [], []);
         
         $linkMap = [];
         foreach ($links as $key => $value) {

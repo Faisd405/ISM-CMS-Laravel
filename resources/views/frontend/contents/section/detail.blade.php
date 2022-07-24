@@ -1,9 +1,6 @@
 @extends('layouts.frontend.layout')
 
 @section('content')
-@isset ($data['read']['templateDetail']['content_template'])
-    {!! $data['read']['templateDetail']['content_template'] !!}
-@else
 {{-- DETAIL
 
     DATA :
@@ -24,5 +21,4 @@
 
     {!! $data['creator'] !!}
 --}}
-@endisset
 @endsection

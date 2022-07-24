@@ -11,6 +11,7 @@ use App\Services\Feature\LanguageService;
 use App\Services\Feature\NotificationService;
 use App\Services\Module\InquiryService;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
@@ -53,9 +54,8 @@ class InquiryController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['inquiries'] = $this->inquiryService->getInquiryList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
+        $data['inquiries'] = $this->inquiryService->getInquiryList($filter, true, 10, false, [], 
+            config('cms.module.inquiry.ordering'));
         $data['no'] = $data['inquiries']->firstItem();
         $data['inquiries']->withQueryString();
 
@@ -115,12 +115,16 @@ class InquiryController extends Controller
     public function store(InquiryRequest $request)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_map'] = (bool)$request->hide_map;
-        $data['hide_form'] = (bool)$request->hide_form;
-        $data['lock_form'] = (bool)$request->lock_form;
-        $data['hide_body'] = (bool)$request->hide_body;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_body'] = $request->config_show_body;
+        $data['config_show_after_body'] = $request->config_show_after_body;
+        $data['config_show_banner'] = $request->config_show_banner;
+        $data['config_show_map'] = $request->config_show_map;
+        $data['config_show_form'] = $request->config_show_form;
+        $data['config_lock_form'] = $request->config_lock_form;
+        $data['config_send_mail_sender'] = $request->config_send_mail_sender;
+        $data['config_show_custom_field'] = $request->config_show_custom_field;
         $inquiry = $this->inquiryService->storeInquiry($data);
         $data['query'] = $request->query();
 
@@ -154,12 +158,16 @@ class InquiryController extends Controller
     public function update(InquiryRequest $request, $id)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_map'] = (bool)$request->hide_map;
-        $data['hide_form'] = (bool)$request->hide_form;
-        $data['lock_form'] = (bool)$request->lock_form;
-        $data['hide_body'] = (bool)$request->hide_body;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_body'] = $request->config_show_body;
+        $data['config_show_after_body'] = $request->config_show_after_body;
+        $data['config_show_banner'] = $request->config_show_banner;
+        $data['config_show_map'] = $request->config_show_map;
+        $data['config_show_form'] = $request->config_show_form;
+        $data['config_lock_form'] = $request->config_lock_form;
+        $data['config_send_mail_sender'] = $request->config_send_mail_sender;
+        $data['config_show_custom_field'] = $request->config_show_custom_field;
         $inquiry = $this->inquiryService->updateInquiry($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -190,6 +198,16 @@ class InquiryController extends Controller
         }
 
         return redirect()->back()->with('failed', $inquiry['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->inquiryService->sortInquiry(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $id, $position)
@@ -343,13 +361,13 @@ class InquiryController extends Controller
         //data
         $data['banner'] = $this->configService->getConfigFile('banner_default');
         $limit = $this->configService->getConfigValue('content_limit');
+
+        // inquiry
         $data['inquiries'] = $this->inquiryService->getInquiryList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['no'] = $data['inquiries']->firstItem();
+        ], true, $limit, false, [], config('cms.module.inquiry.ordering'));
+        $data['no_inquiries'] = $data['inquiries']->firstItem();
         $data['inquiries']->withQueryString();
 
         return view('frontend.inquiries.list', compact('data'), [
@@ -371,16 +389,13 @@ class InquiryController extends Controller
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
-            
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
         if ($data['read']['public'] == 0 && App::guard()->check() == false) {
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
-
-        $this->inquiryService->recordHits(['id' => $data['read']['id']]);
 
         //data
         $data['fields'] = $this->inquiryService->getFieldList([
@@ -392,9 +407,8 @@ class InquiryController extends Controller
         ]);
 
         $data['custom_fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
@@ -430,6 +444,9 @@ class InquiryController extends Controller
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
             $this->configService->getConfigFile('cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
+        // record hits
+        $this->inquiryService->recordHits(['id' => $data['read']['id']]);
+
         return view('frontend.inquiries.'.$data['read']['slug'], compact('data'), [
             'title' => $data['read']->fieldLang('name'),
             'breadcrumbs' => [
@@ -443,8 +460,8 @@ class InquiryController extends Controller
         $id = $request->route('id');
         $inquiry = $this->inquiryService->getInquiry(['id' => $id]);
 
-        if ($inquiry['config']['hide_form'] == true) {
-            return redirect()->back();
+        if ($inquiry['config']['show_form'] == false) {
+            return abort(404);
         }
 
         $fields = $this->inquiryService->getFieldList([
@@ -470,6 +487,7 @@ class InquiryController extends Controller
             'title' => $inquiry->fieldLang('name'),
             'inquiry' => $inquiry,
             'request' => $request->all(),
+            'webname' => $this->configService->getConfigValue('website_name'),
         ];
 
         $formData = $request->all();
@@ -482,11 +500,8 @@ class InquiryController extends Controller
 
         $this->inquiryService->recordForm($formData);
         
-        if (config('cms.module.feature.notification.email.inquiry') == true && !empty($inquiry['email'])) {
-            Mail::to($inquiry['email'])->send(new \App\Mail\InquiryFormMail($data));
-        }
 
-        if (config('cms.module.feature.notification.apps.inquiry') == true) {
+        if ($this->configService->getConfigValue('notif_apps_inquiry') == 1) {
             $this->notifService->sendNotif([
                 'user_from' => null,
                 'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3]], false)
@@ -513,6 +528,20 @@ class InquiryController extends Controller
             $message = strip_tags($inquiry->fieldLang('after_body'));
         }
 
-        return back()->with('success', $message);
+        try {
+            
+            if ($this->configService->getConfigValue('notif_email_inquiry') == 1 && !empty($inquiry['email'])) {
+                Mail::to($inquiry['email'])->send(new \App\Mail\InquiryFormMail($data));
+            }
+
+            if ($inquiry['config']['send_mail_sender'] == true && $request->input('email', '') != '') {
+                Mail::to($request->input('email'))->send(new \App\Mail\InquirySenderMail($data));
+            }
+
+            return back()->with('success', $message);
+
+        } catch (Exception $e) {
+            return back()->with('warning', $e->getMessage());
+        }
     }
 }

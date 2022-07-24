@@ -1,66 +1,64 @@
 <?php
 
-use App\Http\Controllers\Module\Document\DocumentCategoryController;
+use App\Http\Controllers\Module\Document\DocumentController;
 use App\Http\Controllers\Module\Document\DocumentFileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin/document')->name('document.')->middleware('auth')->group(function () {
 
-    //--- Category
-    Route::prefix('category')->name('category.')->group(function() {
+    Route::get('/', [DocumentController::class, 'index'])
+        ->name('index')
+        ->middleware('permission:documents');
+    Route::get('/trash', [DocumentController::class, 'trash'])
+        ->name('trash')
+        ->middleware('role:developer|super');
 
-        Route::get('/', [DocumentCategoryController::class, 'index'])
-            ->name('index')
-            ->middleware('permission:document_categories');
-        Route::get('/trash', [DocumentCategoryController::class, 'trash'])
-            ->name('trash')
-            ->middleware('role:super');
-
-        Route::get('/create', [DocumentCategoryController::class, 'create'])
-            ->name('create')
-            ->middleware('permission:document_category_create');
-        Route::post('/store', [DocumentCategoryController::class, 'store'])
-            ->name('store')
-            ->middleware('permission:document_category_create');
-        Route::get('/{id}/edit', [DocumentCategoryController::class, 'edit'])
-            ->name('edit')
-            ->middleware('permission:document_category_update');
-        Route::put('/{id}', [DocumentCategoryController::class, 'update'])
-            ->name('update')
-            ->middleware('permission:document_category_update');
-        Route::put('/{id}', [DocumentCategoryController::class, 'update'])
-            ->name('update')
-            ->middleware('permission:document_category_update');
-        Route::put('/{id}/publish', [DocumentCategoryController::class, 'publish'])
-            ->name('publish')
-            ->middleware('permission:document_category_update');
-        Route::put('/{id}/approved', [DocumentCategoryController::class, 'approved'])
-            ->name('approved')
-            ->middleware('role:super|support|admin');
-        Route::put('/{id}/position/{position}', [DocumentCategoryController::class, 'position'])
-            ->name('position')
-            ->middleware('permission:document_category_update');
-        Route::delete('/{id}/soft', [DocumentCategoryController::class, 'softDelete'])
-            ->name('delete.soft')
-            ->middleware('permission:document_category_delete');
-        Route::delete('/{id}/permanent', [DocumentCategoryController::class, 'permanentDelete'])
-            ->name('delete.permanent')
-            ->middleware('role:super');
-        Route::put('/{id}/restore', [DocumentCategoryController::class, 'restore'])
-            ->name('restore')
-            ->middleware('role:super');
-
-    });
+    Route::get('/create', [DocumentController::class, 'create'])
+        ->name('create')
+        ->middleware('permission:document_create');
+    Route::post('/store', [DocumentController::class, 'store'])
+        ->name('store')
+        ->middleware('permission:document_create');
+    Route::get('/{id}/edit', [DocumentController::class, 'edit'])
+        ->name('edit')
+        ->middleware('permission:document_update');
+    Route::put('/{id}', [DocumentController::class, 'update'])
+        ->name('update')
+        ->middleware('permission:document_update');
+    Route::put('/{id}', [DocumentController::class, 'update'])
+        ->name('update')
+        ->middleware('permission:document_update');
+    Route::put('/{id}/publish', [DocumentController::class, 'publish'])
+        ->name('publish')
+        ->middleware('permission:document_update');
+    Route::put('/{id}/approved', [DocumentController::class, 'approved'])
+        ->name('approved')
+        ->middleware('role:developer|super|support|admin');
+    Route::post('/sort', [DocumentController::class, 'sort'])
+        ->name('sort')
+        ->middleware('permission:document_update');
+    Route::put('/{id}/position/{position}', [DocumentController::class, 'position'])
+        ->name('position')
+        ->middleware('permission:document_update');
+    Route::delete('/{id}/soft', [DocumentController::class, 'softDelete'])
+        ->name('delete.soft')
+        ->middleware('permission:document_delete');
+    Route::delete('/{id}/permanent', [DocumentController::class, 'permanentDelete'])
+        ->name('delete.permanent')
+        ->middleware('role:developer|super');
+    Route::put('/{id}/restore', [DocumentController::class, 'restore'])
+        ->name('restore')
+        ->middleware('role:developer|super');
 
     //--- File
-    Route::prefix('category/{categoryId}')->name('file.')->group(function() {
+    Route::prefix('{documentId}/file')->name('file.')->group(function() {
 
         Route::get('/', [DocumentFileController::class, 'index'])
             ->name('index')
             ->middleware('permission:document_files');
         Route::get('/trash', [DocumentFileController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
             
         Route::get('/create', [DocumentFileController::class, 'create'])
             ->name('create')
@@ -82,22 +80,22 @@ Route::prefix('admin/document')->name('document.')->middleware('auth')->group(fu
             ->middleware('permission:document_file_update');
         Route::put('/{id}/approved', [DocumentFileController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
-        Route::put('/{id}/position/{position}', [DocumentFileController::class, 'position'])
-            ->name('position')
-            ->middleware('permission:document_file_update');
+            ->middleware('role:developer|super|support|admin');
         Route::post('/sort', [DocumentFileController::class, 'sort'])
             ->name('sort')
+            ->middleware('permission:document_file_update');
+        Route::put('/{id}/position/{position}', [DocumentFileController::class, 'position'])
+            ->name('position')
             ->middleware('permission:document_file_update');
         Route::delete('/{id}/soft', [DocumentFileController::class, 'softDelete'])
             ->name('delete.soft')
             ->middleware('permission:document_file_delete');
         Route::delete('/{id}/permanent', [DocumentFileController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [DocumentFileController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -115,12 +113,12 @@ if (config('cms.module.feature.language.needLocale')) {
 Route::group($group, function () {
 
     //--- List
-    Route::get('document', [DocumentCategoryController::class, 'list'])
+    Route::get('document', [DocumentController::class, 'list'])
         ->name('document.list');
 
     //--- Category
-    Route::get('document/{slugCategory}', [DocumentCategoryController::class, 'read'])
-        ->name('document.category.read');
+    Route::get('document/{slugDocument}', [DocumentController::class, 'read'])
+        ->name('document.read');
 
 });
 

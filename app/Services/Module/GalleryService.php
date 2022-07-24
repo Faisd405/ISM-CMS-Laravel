@@ -10,6 +10,7 @@ use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -62,6 +63,9 @@ class GalleryService
 
         if (isset($filter['approved']))
             $category->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $category->where('detail', $filter['detail']);
 
         if (isset($filter['created_by']))
             $category->where('created_by', $filter['created_by']);
@@ -188,13 +192,13 @@ class GalleryService
                 $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
         }
 
-        $category->slug = Str::slug($data['slug'], '-');
+        $category->slug = Str::slug(strip_tags($data['slug']), '-');
         $category->name = $name;
         $category->description = $description;
-        $category->image_preview = [
-            'filepath' => Str::replace(url('/storage'), '', $data['image_file']) ?? null,
-            'title' => $data['image_title'] ?? null,
-            'alt' => $data['image_alt'] ?? null,
+        $category->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
         ];
         $category->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
@@ -204,10 +208,16 @@ class GalleryService
         $category->publish = (bool)$data['publish'];
         $category->public = (bool)$data['public'];
         $category->locked = (bool)$data['locked'];
+        $category->detail = (bool)$data['detail'];
         $category->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'paginate_album' => (bool)$data['config_paginate_album'],
+            'paginate_file' => (bool)$data['config_paginate_file'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+            'album_limit' => $data['config_album_limit'],
+            'file_limit' => $data['config_file_limit'],
         ];
         $category->template_list_id = $data['template_list_id'] ?? null;
         $category->template_detail_id = $data['template_detail_id'] ?? null;
@@ -223,9 +233,6 @@ class GalleryService
         } else {
             $category->custom_fields = null;
         }
-
-        $category->album_perpage = $data['album_perpage'] ?? 0;
-        $category->file_perpage = $data['file_perpage'] ?? 0;
 
         return $category;
     }
@@ -264,6 +271,25 @@ class GalleryService
             
             return $this->error(null, $e->getMessage());
         }
+    }
+
+    /**
+     * Sort Category
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortCategory($where, $position)
+    {
+        $category = $this->getCategory($where);
+
+        $category->position = $position;
+        if (Auth::guard()->check()) {
+            $category->updated_by = Auth::user()['id'];
+        }
+        $category->save();
+
+        return $category;
     }
 
     /**
@@ -313,9 +339,13 @@ class GalleryService
     public function recordCategoryHits($where)
     {
         $category = $this->getCategory($where);
-        $category->update([
-            'hits' => ($category->hits+1)
-        ]);
+
+        if (empty(Session::get('galleryCategoryHits-'.$category['id']))) {
+            Session::put('galleryCategoryHits-'.$category['id'], $category['id']);
+            $category->hits = ($category->hits+1);
+            $category->timestamps = false;
+            $category->save();
+        }
 
         return $category;
     }
@@ -461,6 +491,9 @@ class GalleryService
         if (isset($filter['approved']))
             $album->where('approved', $filter['approved']);
 
+        if (isset($filter['detail']))
+            $album->where('detail', $filter['detail']);
+
         if (isset($filter['created_by']))
             $album->where('created_by', $filter['created_by']);
 
@@ -586,17 +619,19 @@ class GalleryService
                 $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
         }
 
-        if (isset($data['gallery_category_id'])) {
+        if (isset($data['gallery_category_id']) && !empty($data['gallery_category_id'])) {
             $album->gallery_category_id = $data['gallery_category_id'];
+        } else {
+            $album->gallery_category_id = null;
         }
 
-        $album->slug = Str::slug($data['slug'], '-');
+        $album->slug = Str::slug(strip_tags($data['slug']), '-');
         $album->name = $name;
         $album->description = $description;
-        $album->image_preview = [
-            'filepath' => Str::replace(url('/storage'), '', $data['image_file']) ?? null,
-            'title' => $data['image_title'] ?? null,
-            'alt' => $data['image_alt'] ?? null,
+        $album->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
         ];
         $album->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
@@ -606,10 +641,18 @@ class GalleryService
         $album->publish = (bool)$data['publish'];
         $album->public = (bool)$data['public'];
         $album->locked = (bool)$data['locked'];
+        $album->detail = (bool)$data['detail'];
         $album->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'type_image' => (bool)$data['config_type_image'],
+            'type_video' => (bool)$data['config_type_video'],
+            'paginate_file' => (bool)$data['config_paginate_file'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+            'file_limit' => $data['config_file_limit'],
+            'file_order_by' => $data['config_file_order_by'],
+            'file_order_type' => $data['config_file_order_type'],
         ];
         $album->template_id = $data['template_id'] ?? null;
 
@@ -624,8 +667,6 @@ class GalleryService
         } else {
             $album->custom_fields = null;
         }
-
-        $album->file_perpage = $data['file_perpage'] ?? 0;
 
         return $album;
     }
@@ -663,6 +704,25 @@ class GalleryService
             
             return $this->error(null, $e->getMessage());
         }
+    }
+
+    /**
+     * Sort Album
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortAlbum($where, $position)
+    {
+        $album = $this->getAlbum($where);
+
+        $album->position = $position;
+        if (Auth::guard()->check()) {
+            $album->updated_by = Auth::user()['id'];
+        }
+        $album->save();
+
+        return $album;
     }
 
     /**
@@ -712,9 +772,13 @@ class GalleryService
     public function recordAlbumHits($where)
     {
         $album = $this->getAlbum($where);
-        $album->update([
-            'hits' => ($album->hits+1)
-        ]);
+
+        if (empty(Session::get('galleryAlbumHits-'.$album['id']))) {
+            Session::put('galleryAlbumHits-'.$album['id'], $album['id']);
+            $album->hits = ($album->hits+1);
+            $album->timestamps = false;
+            $album->save();
+        }
 
         return $album;
     }
@@ -973,25 +1037,24 @@ class GalleryService
                         file_get_contents($file));
                     
                     $galleryFile->file = $fileName;
-
-                    if (isset($data['thumbnail'])) {
-                        
-                        $fileThumb = $data['thumbnail'];
-                        $fileNameThumb = $fileThumb->getClientOriginalName();
-                        if (file_exists(storage_path('app/public/gallery/thumbnail/'.$data['gallery_album_id'].'/'.$fileNameThumb))) {
-                            $fileNameThumb = Str::random(3).'-'.$fileThumb->getClientOriginalName();
-                        }
-            
-                        Storage::put(config('cms.files.gallery.thumbnail.path').$data['gallery_album_id'].'/'.$fileNameThumb, 
-                            file_get_contents($fileThumb));
-
-                        $galleryFile->thumbnail = $fileNameThumb;
-                    }
-
                 }
 
                 if ($videoType == '1') {
                     $galleryFile->file = $data['file_youtube'];
+                }
+
+                if (isset($data['thumbnail'])) {
+                        
+                    $fileThumb = $data['thumbnail'];
+                    $fileNameThumb = $fileThumb->getClientOriginalName();
+                    if (file_exists(storage_path('app/public/gallery/thumbnail/'.$data['gallery_album_id'].'/'.$fileNameThumb))) {
+                        $fileNameThumb = Str::random(3).'-'.$fileThumb->getClientOriginalName();
+                    }
+        
+                    Storage::put(config('cms.files.gallery.thumbnail.path').$data['gallery_album_id'].'/'.$fileNameThumb, 
+                        file_get_contents($fileThumb));
+
+                    $galleryFile->thumbnail = $fileNameThumb;
                 }
             }
 
@@ -1122,27 +1185,27 @@ class GalleryService
                         
                         $galleryFile->file = $fileName;
                     }
-
-                    if (isset($data['thumbnail'])) {
-                        
-                        $fileThumb = $data['thumbnail'];
-                        $fileNameThumb = $fileThumb->getClientOriginalName();
-                        if (file_exists(storage_path('app/public/gallery/thumbnail/'.$galleryFile['gallery_album_id'].'/'.$fileNameThumb))) {
-                            $fileNameThumb = Str::random(3).'-'.$fileThumb->getClientOriginalName();
-                        }
-
-                        Storage::delete(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].
-                            '/'.$data['old_thumbnail']);
-            
-                        Storage::put(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].'/'.$fileNameThumb, 
-                            file_get_contents($fileThumb));
-
-                        $galleryFile->thumbnail = $fileNameThumb;
-                    }
                 }
 
                 if ($galleryFile['video_type'] == '1') {
                     $galleryFile->file = $data['file_youtube'];
+                }
+
+                if (isset($data['thumbnail'])) {
+                        
+                    $fileThumb = $data['thumbnail'];
+                    $fileNameThumb = $fileThumb->getClientOriginalName();
+                    if (file_exists(storage_path('app/public/gallery/thumbnail/'.$galleryFile['gallery_album_id'].'/'.$fileNameThumb))) {
+                        $fileNameThumb = Str::random(3).'-'.$fileThumb->getClientOriginalName();
+                    }
+
+                    Storage::delete(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].
+                        '/'.$data['old_thumbnail']);
+        
+                    Storage::put(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].'/'.$fileNameThumb, 
+                        file_get_contents($fileThumb));
+
+                    $galleryFile->thumbnail = $fileNameThumb;
                 }
             }
             
@@ -1186,9 +1249,22 @@ class GalleryService
         $galleryFile->public = (bool)$data['public'];
         $galleryFile->locked = (bool)$data['locked'];
         $galleryFile->config = [
-            'hide_title' => (bool)$data['hide_title'],
-            'hide_description' => (bool)$data['hide_description']
+            'show_title' => (bool)$data['config_show_title'],
+            'show_description' => (bool)$data['config_show_description'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
         ];
+
+        if (isset($data['cf_name'])) {
+            
+            $customField = [];
+            foreach ($data['cf_name'] as $key => $value) {
+                $customField[$value] = $data['cf_value'][$key];
+            }
+
+            $galleryFile->custom_fields = $customField;
+        } else {
+            $galleryFile->custom_fields = null;
+        }
 
         return $galleryFile;
     }
@@ -1217,6 +1293,24 @@ class GalleryService
             
             return $this->error(null, $e->getMessage());
         }
+    }
+
+    /**
+     * Sort File
+     * @param array $where
+     * @param int $position
+     */
+    public function sortFile($where, $position)
+    {
+        $file = $this->getFile($where);
+
+        $file->position = $position;
+        if (Auth::guard()->check()) {
+            $file->updated_by = Auth::user()['id'];
+        }
+        $file->save();
+
+        return $file;
     }
 
     /**
@@ -1349,11 +1443,11 @@ class GalleryService
             if ($galleryFile['type'] == '1' && $galleryFile['video_type'] == '0') {
                 Storage::delete(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].
                     '/'.$galleryFile['file']);
-                
-                if (!empty($galleryFile['thumbnail'])) {
-                    Storage::delete(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].
-                        '/'.$galleryFile['thumbnail']);
-                }
+            }
+
+            if (!empty($galleryFile['thumbnail'])) {
+                Storage::delete(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].
+                    '/'.$galleryFile['thumbnail']);
             }
 
             $galleryFile->forceDelete();

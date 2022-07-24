@@ -2,15 +2,15 @@
 
 namespace App\Services\Module;
 
-use App\Models\Module\Banner\BannerCategory;
+use App\Models\Module\Banner\Banner;
 use App\Models\Module\Content\ContentCategory;
 use App\Models\Module\Content\ContentSection;
-use App\Models\Module\Document\DocumentCategory;
+use App\Models\Module\Document\Document;
 use App\Models\Module\Event\Event;
 use App\Models\Module\Gallery\GalleryAlbum;
 use App\Models\Module\Gallery\GalleryCategory;
 use App\Models\Module\Inquiry\Inquiry;
-use App\Models\Module\Link\LinkCategory;
+use App\Models\Module\Link\Link;
 use App\Models\Module\Page;
 use App\Models\Module\Widget;
 use App\Services\Feature\LanguageService;
@@ -128,14 +128,9 @@ class WidgetService
     {
         $module = [];
 
-        if (isset($data['content']['ordering'])) {
-            if ($data['content']['ordering'] == 'publish_time') {
-                $orderBy['publish_time'] = 'DESC';
-            } elseif ($data['content']['ordering'] == 'position') {
-                $orderBy['position'] = 'ASC';
-            } else {
-                $orderBy = [];
-            }
+        $orderBy = [];
+        if (isset($data['config']['order_by'])) {
+            $orderBy[$data['config']['order_by']] = $data['config']['order_type'];
         }
 
         if ($data['type'] == 'page') {
@@ -155,15 +150,15 @@ class WidgetService
             $filter['approved'] = 1;
             $filter['section_id'] = $data['moduleable_id'];
             $module['categories'] = App::make(ContentService::class)->getCategoryList($filter, true, $data['content']['category_limit'], false, [], $orderBy);
-
-            if ($data['content']['post_selected']) {
+        
+            if ($data['content']['post_selected'] == true) {
                 $filter['selected'] = 1;
             }
-
-            if ($data['content']['post_hits']) {
-                $orderBy['hits'] ='DESC';
+        
+            if ($data['content']['post_hits'] == true) {
+                $orderBy['hits'] = 'DESC';
             }
-
+        
             $module['posts'] = App::make(ContentService::class)->getPostList($filter, true, $data['content']['post_limit'], false, [], $orderBy);
         }
 
@@ -173,30 +168,25 @@ class WidgetService
             $filter['publish'] = 1;
             $filter['approved'] = 1;
             $filter['section_id'] = $data['moduleable_id'];
-            if ($data['content']['post_selected']) {
+            if ($data['content']['post_selected'] == true) {
                 $filter['selected'] = 1;
             }
-
-            if ($data['content']['post_hits']) {
-                $orderBy['hits'] ='DESC';
+        
+            if ($data['content']['post_hits'] == true) {
+                $orderBy['hits'] = 'DESC';
             }
-
+        
             $module['posts'] = App::make(ContentService::class)->getPostList($filter, true, $data['content']['post_limit'], false, [], $orderBy);
         }
 
         if ($data['type'] == 'banner') {
-            $module['category'] = App::make(BannerService::class)->getCategory(['id' => $data['moduleable_id']]);
+            $module['banner'] = App::make(BannerService::class)->getBanner(['id' => $data['moduleable_id']]);
             
             $filter['publish'] = 1;
             $filter['approved'] = 1;
-            $filter['banner_category_id'] = $data['moduleable_id'];
-
-            $limit = $module['category']['banner_perpage'];
-            if ($data['content']['banner_limit'] > 0) {
-                $limit = $data['content']['banner_limit'];
-            }
-
-            $module['banners'] = App::make(BannerService::class)->getBannerList($filter, true, $limit, false, [], $orderBy);
+            $filter['banner_id'] = $data['moduleable_id'];
+        
+            $module['files'] = App::make(BannerService::class)->getFileList($filter, true, $data['content']['banner_limit'], false, [], $orderBy);
         }
 
         if ($data['type'] == 'gallery_category') {
@@ -205,7 +195,7 @@ class WidgetService
             $filter['publish'] = 1;
             $filter['approved'] = 1;
             $filter['gallery_category_id'] = $data['moduleable_id'];
-
+        
             $module['albums'] = App::make(GalleryService::class)->getAlbumList($filter, true, $data['content']['album_limit'], false, [], $orderBy);
         }
 
@@ -220,21 +210,21 @@ class WidgetService
         }
 
         if ($data['type'] == 'document') {
-            $module['category'] = App::make(DocumentService::class)->getCategory(['id' => $data['moduleable_id']]);
+            $module['document'] = App::make(DocumentService::class)->getDocument(['id' => $data['moduleable_id']]);
             
             $filter['publish'] = 1;
             $filter['approved'] = 1;
-            $filter['documents_category_id'] = $data['moduleable_id'];
+            $filter['document_id'] = $data['moduleable_id'];
             
             $module['files'] = App::make(DocumentService::class)->getFileList($filter, true, $data['content']['file_limit'], false, [], $orderBy);
         }
 
         if ($data['type'] == 'link') {
-            $module['category'] = App::make(LinkService::class)->getCategory(['id' => $data['moduleable_id']]);
+            $module['link'] = App::make(LinkService::class)->getLink(['id' => $data['moduleable_id']]);
             
             $filter['publish'] = 1;
             $filter['approved'] = 1;
-            $filter['link_category_id'] = $data['moduleable_id'];
+            $filter['link_id'] = $data['moduleable_id'];
             
             $module['medias'] = App::make(LinkService::class)->getMediaList($filter, true, $data['content']['media_limit'], false, [], $orderBy);
         }
@@ -273,11 +263,6 @@ class WidgetService
             $name = Str::slug($data['name'], '-');
             $template = !empty($data['template']) ? $data['template'] : $name;
 
-            $setPath = 'views/frontend/widget/'.Str::slug($template, '-').'.blade.php';
-            if (file_exists(resource_path($setPath))) {
-                return $this->error(null,  __('module/widget.alert.file_exist'));
-            }
-
             $widget = new Widget;
             $this->setFielWidget($data, $widget);
             $widget->type = $data['type'];
@@ -292,7 +277,7 @@ class WidgetService
                 $widget->created_by = Auth::user()['id'];
 
             $widget->save();
-
+            $setPath = 'views/frontend/widget/'.Str::slug($template, '-').'.blade.php';
             if (!file_exists(resource_path($setPath))) {
                 File::copy(resource_path('views/frontend/widget/example.blade.php'), 
                     resource_path($setPath));
@@ -326,6 +311,8 @@ class WidgetService
             $widget->template = Str::slug($template, '-');
             $widget->content_template = isset($data['content_template']) ? $data['content_template'] : null;
             $this->setFielWidget($data, $widget);
+            if (Auth::guard()->check())
+                $widget->updated_by = Auth::user()['id'];
             $widget->save();
 
             if ($oldTemplate != $widget['template']) {
@@ -380,8 +367,7 @@ class WidgetService
                     'title' => $data['image_title'] ?? null,
                     'alt' => $data['image_alt'] ?? null,
                 ],
-                'url' => $data['url'],
-                'ordering' => $data['ordering'],
+                'url' => $data['url'] ?? null,
             ];
         }
 
@@ -389,7 +375,6 @@ class WidgetService
             $widget->content = [
                 'child_limit' => $data['child_limit'] ?? 0,
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
 
@@ -400,7 +385,6 @@ class WidgetService
                 'post_selected' => isset($data['post_selected']) ? (bool)$data['post_selected'] : false,
                 'post_hits' => isset($data['post_hits']) ? (bool)$data['post_hits'] : false,
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
 
@@ -409,8 +393,7 @@ class WidgetService
                 'post_limit' => $data['post_limit'] ?? 0,
                 'post_selected' => isset($data['post_selected']) ? (bool)$data['post_selected'] : false,
                 'post_hits' => isset($data['post_hits']) ? (bool)$data['post_hits'] : false,
-                'url' => $data['url'],
-                'ordering' => $data['ordering'],
+                'url' => $data['url']
             ];
         }
 
@@ -418,7 +401,6 @@ class WidgetService
             $widget->content = [
                 'banner_limit' => $data['banner_limit'] ?? 0,
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
 
@@ -426,15 +408,13 @@ class WidgetService
             $widget->content = [
                 'album_limit' => $data['album_limit'] ?? 0,
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
-
+        
         if ($data['type'] == 'gallery_album') {
             $widget->content = [
                 'file_limit' => $data['file_limit'] ?? 0,
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
 
@@ -442,29 +422,25 @@ class WidgetService
             $widget->content = [
                 'file_limit' => $data['file_limit'] ?? 0,
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
-
+        
         if ($data['type'] == 'link') {
             $widget->content = [
                 'media_limit' => $data['media_limit'] ?? 0,
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
-
+        
         if ($data['type'] == 'inquiry') {
             $widget->content = [
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
-
+        
         if ($data['type'] == 'event') {
             $widget->content = [
                 'url' => $data['url'],
-                'ordering' => $data['ordering'],
             ];
         }
 
@@ -472,6 +448,25 @@ class WidgetService
         $widget->publish = (bool)$data['publish'];
         $widget->public = (bool)$data['public'];
         $widget->locked = (bool)$data['locked'];
+        $widget->config = [
+            'order_by' => $data['config_order_by'],
+            'order_type' => $data['config_order_type'],
+            'show_image' => (bool)$data['config_show_image'],
+            'show_url' => (bool)$data['config_show_url'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+        ];
+
+        if (isset($data['cf_name'])) {
+            
+            $customField = [];
+            foreach ($data['cf_name'] as $key => $value) {
+                $customField[$value] = $data['cf_value'][$key];
+            }
+
+            $widget->custom_fields = $customField;
+        } else {
+            $widget->custom_fields = null;
+        }
 
         return $widget;
     }
@@ -496,7 +491,7 @@ class WidgetService
         }
 
         if ($data['type'] == 'banner') {
-            $module = BannerCategory::find($data['moduleable_id']);
+            $module = Banner::find($data['moduleable_id']);
         }
 
         if ($data['type'] == 'gallery_category') {
@@ -508,11 +503,11 @@ class WidgetService
         }
 
         if ($data['type'] == 'document') {
-            $module = DocumentCategory::find($data['moduleable_id']);
+            $module = Document::find($data['moduleable_id']);
         }
 
         if ($data['type'] == 'link') {
-            $module = LinkCategory::find($data['moduleable_id']);
+            $module = Link::find($data['moduleable_id']);
         }
 
         if ($data['type'] == 'inquiry') {
@@ -550,6 +545,24 @@ class WidgetService
             
             return $this->error(null, $e->getMessage());
         }
+    }
+
+    /**
+     * Sort Widget
+     * @param array $where
+     * @param int $position
+     */
+    public function sortWidget($where, $position)
+    {
+        $widget = $this->getWidget($where);
+
+        $widget->position = $position;
+        if (Auth::guard()->check()) {
+            $widget->updated_by = Auth::user()['id'];
+        }
+        $widget->save();
+
+        return $widget;
     }
 
     /**

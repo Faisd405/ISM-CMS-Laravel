@@ -121,20 +121,30 @@ class TemplateService
                         resource_path($templateResource['full'].'/custom/'.$fileName));
                 } else {
 
-                    if ($type == 1) {
-                        $tempType = 'list.blade.php';
-                    } else {
-                        $tempType = 'detail.blade.php';
+                    if ($data['module'] == 'content_section') {
+                        if ($type == 1) {
+                            File::copy(resource_path($templateResource['full'].'/detail.blade.php'), 
+                                resource_path($setPath));
+                        } else {
+                            $templateResourcePath = config('cms.module.master.template.mod.content_post');
+                            File::copy(resource_path($templateResourcePath['full'].'/detail.blade.php'), 
+                                resource_path($setPath));
+                        }
+                    }
+
+                    if ($data['module'] == 'gallery_category') {
+                        if ($type == 1) {
+                            File::copy(resource_path($templateResource['full'].'/detail.blade.php'), 
+                                resource_path($setPath));
+                        } else {
+                            $templateResourcePath = config('cms.module.master.template.mod.gallery_album');
+                            File::copy(resource_path($templateResourcePath['full'].'/detail.blade.php'), 
+                                resource_path($setPath));
+                        }
                     }
                     
-                    File::copy(resource_path($templateResource['full'].'/'.$tempType), 
-                        resource_path($setPath));
-                    // $path = resource_path($setPath);
-                    // File::put($path, '');
                 }
                 
-            } else {
-                return $this->error(null,  __('master/template.alert.file_exist'));
             }
 
             $template = $this->templateModel->create([
@@ -144,6 +154,7 @@ class TemplateService
                 'filepath' => $filePath,
                 'filename' => $fileName,
                 'content_template' => isset($data['content_template']) ? $data['content_template'] : null,
+                'locked' => (bool)$data['locked'],
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -171,6 +182,7 @@ class TemplateService
             $template->update([
                 'name' => $data['name'],
                 'content_template' => isset($data['content_template']) ? $data['content_template'] : null,
+                'locked' => (bool)$data['locked'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $template['updated_by'],
             ]);
 
@@ -203,13 +215,13 @@ class TemplateService
             $galleryCategoryLists = $template->galleryCategoryLists()->withTrashed()->count();
             $galleryCategoryDetails = $template->galleryCategoryDetails()->withTrashed()->count();
             $galleryAlbums = $template->galleryAlbums()->withTrashed()->count();
-            $documentCategories = $template->documentCategories()->withTrashed()->count();
-            $linkCategories = $template->linkCategories()->withTrashed()->count();
+            $documents = $template->documents()->withTrashed()->count();
+            $links = $template->links()->withTrashed()->count();
             
             if ($pages == 0 || $contentSectionLists == 0 && $contentSectionDetails == 0
                 || $contentCategories == 0 || $contentPosts == 0 || $galleryCategoryLists == 0
-                || $galleryCategoryDetails == 0 || $galleryAlbums == 0 || $documentCategories == 0
-                || $linkCategories == 0) {
+                || $galleryCategoryDetails == 0 || $galleryAlbums == 0 || $documents == 0
+                || $links == 0) {
         
                 if (Auth::guard()->check()) {
                     $template->update([

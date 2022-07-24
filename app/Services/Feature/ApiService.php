@@ -107,6 +107,7 @@ class ApiService
                 'modules' => $data['modules'] ?? null,
                 'ip_address' => $data['ip_address'] ?? null,
                 'active' => (bool)$data['active'],
+                'locked' => (bool)$data['locked'],
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -137,6 +138,7 @@ class ApiService
                 'modules' => $data['modules'] ?? null,
                 'ip_address' => $data['ip_address'] ?? null,
                 'active' => (bool)$data['active'],
+                'locked' => (bool)$data['locked'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $api['updated_by'],
             ]);
 

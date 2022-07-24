@@ -7,6 +7,7 @@ use App\Http\Requests\Menu\MenuRequest;
 use App\Services\Feature\LanguageService;
 use App\Services\MenuService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class MenuController extends Controller
@@ -48,10 +49,6 @@ class MenuController extends Controller
         $data['no'] = $data['menus']->firstItem();
         $data['menus']->withQueryString();
 
-        foreach ($data['menus'] as $key => $value) {
-            $data['menus'][$key]['modules'] = $this->menuService->getModuleData($value);
-        }
-
         return view('backend.menus.index', compact('data'), [
             'title' => __('module/menu.title'),
             'routeBack' => route('menu.category.index'),
@@ -80,14 +77,10 @@ class MenuController extends Controller
             return abort(404);
             
         $data['menus'] = $this->menuService->getMenuList($filter, true, 10, true, [], [
-            'position' => 'ASC'
+            'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['menus']->firstItem();
         $data['menus']->withQueryString();
-
-        foreach ($data['menus'] as $key => $value) {
-            $data['menus'][$key]['modules'] = $this->menuService->getModuleData($value);
-        }
 
         return view('backend.menus.trash', compact('data'), [
             'title' => __('module/menu.title').' - '.__('global.trash'),
@@ -107,8 +100,13 @@ class MenuController extends Controller
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
-        if ($request->input('parent', '') != '') {
-            $data['parent'] = $this->menuService->getMenu(['id' => $request->input('parent')]);
+        $parent = $request->input('parent', '');
+        if ($parent != '') {
+            $data['parent'] = $this->menuService->getMenu(['id' => $parent]);
+        }
+
+        if ($parent == '' && !Auth::user()->hasRole('developer|super')) {
+            return abort(403);
         }
 
         return view('backend.menus.form', compact('data'), [
@@ -133,6 +131,8 @@ class MenuController extends Controller
         $data['menuable_id'] = $request->menuable_id;
         $data['target_blank'] = (bool)$request->target_blank;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
+        $data['create_child'] = (bool)$request->create_child;
+        $data['locked'] = (bool)$request->locked;
         $menu = $this->menuService->storeMenu($data);
         $data['query'] = $request->query();
 
@@ -153,7 +153,6 @@ class MenuController extends Controller
         if (empty($data['menu']))
             return abort(404);
 
-        $data['menu']['modules'] = $this->menuService->getModuleData($data['menu']);
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.menus.form', compact('data'), [
@@ -177,6 +176,8 @@ class MenuController extends Controller
         $data['menuable_id'] = $request->menuable_id;
         $data['target_blank'] = (bool)$request->target_blank;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
+        $data['create_child'] = (bool)$request->create_child;
+        $data['locked'] = (bool)$request->locked;
         $menu = $this->menuService->updateMenu($data, ['id' => $id]);
         $data['query'] = $request->query();
 

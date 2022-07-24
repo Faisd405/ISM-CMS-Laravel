@@ -22,7 +22,7 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('menu.category.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/menu.category.caption')
                         ])">
@@ -105,7 +105,7 @@
                             </td>
                             <td><code>{{ $item['name'] }}</code></td>
                             <td class="text-center">
-                                @role('super')
+                                @role('developer|super')
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['active'] == 1 ? 'success' : 'secondary' }}"
                                     title="{{ __('global.label.active.'.$item['active']) }}">
                                     {{ __('global.label.active.'.$item['active']) }}
@@ -136,18 +136,20 @@
                                 <a href="{{ route('menu.index', ['categoryId' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success" title="@lang('module/menu.caption')">
                                     <i class="las la-list"></i>
                                 </a>
-                                @role('super')
+                                @role('developer|super')
                                 <a href="{{ route('menu.category.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('module/menu.category.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/menu.category.caption')
+                                    'attribute' => __('module/menu.category.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endrole
                             </td>
                         </tr>

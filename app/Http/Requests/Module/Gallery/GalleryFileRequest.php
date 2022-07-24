@@ -53,12 +53,13 @@ class GalleryFileRequest extends FormRequest
             if ($videoType == '0') {
                 $rules['file_video'] = $this->method() == 'POST' ? 'required|max:'.config('cms.files.gallery.size_byte').'|mimes:'.config('cms.files.gallery.mimes_video') : 
                     'nullable|max:'.config('cms.files.gallery.size_byte').'|mimes:'.config('cms.files.gallery.mimes_video');
-                $rules['thumbnail'] = 'nullable|max:'.config('cms.files.gallery.thumbnail.size_byte').'|mimes:'.config('cms.files.gallery.thumbnail.mimes');
             }
 
             if ($videoType == '1') {
                 $rules['file_youtube'] = 'required';
             }
+
+            $rules['thumbnail'] = 'nullable|max:'.config('cms.files.gallery.thumbnail.size_byte').'|mimes:'.config('cms.files.gallery.thumbnail.mimes');
         }
 
         return $rules;

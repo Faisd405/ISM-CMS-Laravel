@@ -51,9 +51,8 @@ class PageController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['pages'] = $this->pageService->getPageList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
+        $data['pages'] = $this->pageService->getPageList($filter, true, 10, false, [], 
+            config('cms.module.page.ordering'));
         $data['no'] = $data['pages']->firstItem();
         $data['pages']->withQueryString();
 
@@ -99,17 +98,22 @@ class PageController extends Controller
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'page'], false, 0);
 
-        if ($request->input('parent', '') != '') {
-            $data['parent'] = $this->pageService->getPage(['id' => $request->input('parent')]);
+        $parent = $request->input('parent', '');
+        if ($parent != '') {
+            $data['parent'] = $this->pageService->getPage(['id' => $parent]);
             if (empty($data['parent']))
                 return abort(404);
+        }
+
+        if ($parent == '' && !Auth::user()->hasRole('developer|super')) {
+            return abort(403);
         }
 
         return view('backend.pages.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('module/page.caption')
             ]),
-            'routeBack' => route('page.index', $request->query()),
+            'routeBack' => route('page.index'),
             'breadcrumbs' => [
                 __('module/page.caption') => route('page.index'),
                 __('global.add') => '',
@@ -121,11 +125,20 @@ class PageController extends Controller
     {
         $data = $request->all();
         $data['parent'] = $request->parent;
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_intro'] = (bool)$request->hide_intro;
-        $data['hide_tags'] = (bool)$request->hide_tags;
-        $data['hide_cover'] = (bool)$request->hide_cover;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_intro'] = (bool)$request->config_show_intro;
+        $data['config_show_content'] = (bool)$request->config_show_content;
+        $data['config_show_tags'] = (bool)$request->config_show_tags;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_create_child'] = (bool)$request->config_create_child;
+        $data['config_detail_child'] = (bool)$request->config_detail_child;
+        $data['config_paginate_child'] = (bool)$request->config_paginate_child;
+        $data['config_show_media'] = (bool)$request->config_show_media;
+        $data['config_action_media'] = (bool)$request->config_action_media;
+        $data['config_paginate_media'] = (bool)$request->config_paginate_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $page = $this->pageService->store($data);
         $data['query'] = $request->query();
 
@@ -157,7 +170,7 @@ class PageController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' => __('module/page.caption')
             ]),
-            'routeBack' => route('page.index', $request->query()),
+            'routeBack' => route('page.index'),
             'breadcrumbs' => [
                 __('module/page.caption') => route('page.index'),
                 __('global.edit') => '',
@@ -168,11 +181,21 @@ class PageController extends Controller
     public function update(PageRequest $request, $id)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_intro'] = (bool)$request->hide_intro;
-        $data['hide_tags'] = (bool)$request->hide_tags;
-        $data['hide_cover'] = (bool)$request->hide_cover;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_is_detail'] = (bool)$request->config_is_detail;
+        $data['config_show_intro'] = (bool)$request->config_show_intro;
+        $data['config_show_content'] = (bool)$request->config_show_content;
+        $data['config_show_tags'] = (bool)$request->config_show_tags;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_create_child'] = (bool)$request->config_create_child;
+        $data['config_detail_child'] = (bool)$request->config_detail_child;
+        $data['config_paginate_child'] = (bool)$request->config_paginate_child;
+        $data['config_show_media'] = (bool)$request->config_show_media;
+        $data['config_action_media'] = (bool)$request->config_action_media;
+        $data['config_paginate_media'] = (bool)$request->config_paginate_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $page = $this->pageService->update($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -264,9 +287,9 @@ class PageController extends Controller
         $limit = $this->configService->getConfigValue('content_limit');
         $data['pages'] = $this->pageService->getPageList([
             'publish' => 1,
-            'approved' => 1
+            'approved' => 1,
         ], true, $limit, false, [], [
-            'position' => 'ASC'
+            config('cms.module.page.ordering')
         ]);
         $data['no'] = $data['pages']->firstItem();
         $data['pages']->withQueryString();
@@ -290,7 +313,7 @@ class PageController extends Controller
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
+        if ($data['read']['detail'] == 0) {
             
             return redirect()->route('home');
             if ($data['read']['parent'] > 0) {
@@ -302,30 +325,36 @@ class PageController extends Controller
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
 
-        $this->pageService->recordHits(['id' => $data['read']['id']]);
-
-        //data
-        $data['childs'] = $this->pageService->getPageList([
-            'parent' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1,
-        ], false, 0, false, [], [
-            'position' => 'ASC'
+        // child
+        $filterChild['parent'] = $data['read']['id'];
+        $filterChild['publish'] = 1;
+        $filterChild['approved'] = 1;
+        $data['childs'] = $this->pageService->getPageList($filterChild, 
+            $data['read']['config']['paginate_child'], $data['read']['config']['child_limit'], false, [], [
+            $data['read']['config']['child_order_by'] => $data['read']['config']['child_order_type']
         ]);
+        if ($data['read']['config']['paginate_child'] == true) {
+            $data['no_childs'] = $data['childs']->firstItem();
+            $data['childs']->withQueryString();
+        }
         
+        // media
         $data['medias'] = $this->mediaService->getMediaList([
             'module' => 'page',
             'mediable_id' => $data['read']['id']
-        ], false, 0, false, [], [
+        ], $data['read']['config']['paginate_media'], $data['read']['config']['media_limit'], false, [], [
             'position' => 'ASC'
         ]);
+        if ($data['read']['config']['paginate_media'] == true) {
+            $data['no_medias'] = $data['medias']->firstItem();
+            $data['medias']->withQueryString();
+        }
 
         $data['fields'] = $data['read']['custom_fields'];
         $data['tags'] = $data['read']->tags();
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['cover'] = $data['read']->coverSrc();
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['cover'] = $data['read']['cover_src'];
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('title');
@@ -365,6 +394,9 @@ class PageController extends Controller
         if (!empty($data['read']['template_id'])) {
             $blade = 'custom.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
         }
+
+        // record hits
+        $this->pageService->recordHits(['id' => $data['read']['id']]);
 
         return view('frontend.pages.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('title'),

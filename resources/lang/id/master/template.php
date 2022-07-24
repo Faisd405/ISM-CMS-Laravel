@@ -13,7 +13,7 @@ return [
     'placeholder' => [
         'field1' => 'Masukan nama',
         'field2' => '',
-        'field3' => 'Masukan filename',
+        'field3' => 'Contoh : template-view',
     ],
     'alert' => [
         'file_exist' => 'Nama File sudah ada'

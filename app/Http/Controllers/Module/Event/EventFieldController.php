@@ -74,7 +74,7 @@ class EventFieldController extends Controller
             return abort(404);
 
         $data['fields'] = $this->eventService->getFieldList($filter, true, 10, true, [], [
-            'position' => 'ASC'
+            'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['fields']->firstItem();
         $data['fields']->withQueryString();
@@ -116,6 +116,7 @@ class EventFieldController extends Controller
         
         $data['event_id'] = $eventId;
         $data['is_unique'] = (bool)$request->is_unique;
+        $data['locked'] = (bool)$request->locked;
         $field = $this->eventService->storeField($data);
         $data['query'] = $request->query();
 
@@ -156,6 +157,7 @@ class EventFieldController extends Controller
 
         $data['event_id'] = $eventId;
         $data['is_unique'] = (bool)$request->is_unique;
+        $data['locked'] = (bool)$request->locked;
         $field = $this->eventService->updateField($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -186,6 +188,16 @@ class EventFieldController extends Controller
         }
 
         return redirect()->back()->with('failed', $field['message']);
+    }
+
+    public function sort(Request $request, $eventId)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->eventService->sortField(['id' => $value, 'event_id' => $eventId], $i);
+        }
     }
 
     public function position(Request $request, $eventId, $id, $position)

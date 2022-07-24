@@ -35,6 +35,11 @@ class Page extends Model
         'custom_fields' => 'json'
     ];
 
+    protected $appends = [
+        'cover_src',
+        'banner_src'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -44,7 +49,12 @@ class Page extends Model
 
     public function childs()
     {
-        return $this->hasMany(Page::class, 'parent', 'id')->orderBy('position', 'ASC');
+        return $this->hasMany(Page::class, 'parent', 'id');
+    }
+
+    public function childRecursive()
+    {
+        return $this->childs()->with('childs');
     }
 
     public function indexing()
@@ -94,7 +104,7 @@ class Page extends Model
 
     public function getParent()
     {
-        return $this->fisrtWhere('id', $this->parent);
+        return $this->firstWhere('id', $this->parent);
     }
 
     public function fieldLang($field, $lang = null)
@@ -115,6 +125,11 @@ class Page extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -125,7 +140,7 @@ class Page extends Model
         return $query->where('locked', 1);
     }
 
-    public function coverSrc()
+    public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
@@ -141,7 +156,7 @@ class Page extends Model
         return $cover;
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

@@ -3,7 +3,7 @@
 namespace App\Services\Master;
 
 use App\Models\Master\Media;
-use App\Models\Module\Content\Post;
+use App\Models\Module\Content\ContentPost;
 use App\Models\Module\Page;
 use App\Services\Feature\LanguageService;
 use App\Traits\ApiResponser;
@@ -116,8 +116,8 @@ class MediaService
             }
 
             if ($data['module_type'] == 'content_post') {
-                $classes = Post::class;
-                $module = Post::firstWhere('id', $data['module_id']);
+                $classes = ContentPost::class;
+                $module = ContentPost::firstWhere('id', $data['module_id']);
             }
 
             $isYoutube = (bool)$data['is_youtube'];
@@ -226,7 +226,34 @@ class MediaService
 
         $media->title = $title;
         $media->description = $description;
+
+        $media->locked = (bool)$data['locked'];
+        $media->config = [];
         
+        return $media;
+    }
+
+    /**
+     * Sort Media
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sort($where, $position)
+    {
+        $getMedia = $this->getMedia($where);
+
+        $media = $this->mediaModel->firstWhere([
+            'id' => $getMedia['id'],
+            'mediable_id' => $getMedia['mediable_id'],
+            'mediable_type' => $getMedia['mediable_type']
+        ]);
+        $media->position = $position;
+        if (Auth::guard()->check()) {
+            $media->updated_by = Auth::user()['id'];
+        }
+        $media->save();
+
         return $media;
     }
 

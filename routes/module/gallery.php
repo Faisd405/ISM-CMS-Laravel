@@ -15,7 +15,7 @@ Route::prefix('admin/gallery')->name('gallery.')->middleware('auth')->group(func
             ->middleware('permission:gallery_categories');
         Route::get('/trash', [GalleryCategoryController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [GalleryCategoryController::class, 'create'])
             ->name('create')
@@ -37,7 +37,10 @@ Route::prefix('admin/gallery')->name('gallery.')->middleware('auth')->group(func
             ->middleware('permission:gallery_category_update');
         Route::put('/{id}/approved', [GalleryCategoryController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:developer|super|support|admin');
+        Route::post('/sort', [GalleryCategoryController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:gallery_category_update');
         Route::put('/{id}/position/{position}', [GalleryCategoryController::class, 'position'])
             ->name('position')
             ->middleware('permission:gallery_category_update');
@@ -46,10 +49,10 @@ Route::prefix('admin/gallery')->name('gallery.')->middleware('auth')->group(func
             ->middleware('permission:gallery_category_delete');
         Route::delete('/{id}/permanent', [GalleryCategoryController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [GalleryCategoryController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -61,7 +64,7 @@ Route::prefix('admin/gallery')->name('gallery.')->middleware('auth')->group(func
             ->middleware('permission:gallery_albums');
         Route::get('/trash', [GalleryAlbumController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [GalleryAlbumController::class, 'create'])
             ->name('create')
@@ -83,7 +86,10 @@ Route::prefix('admin/gallery')->name('gallery.')->middleware('auth')->group(func
             ->middleware('permission:gallery_album_update');
         Route::put('/{id}/approved', [GalleryAlbumController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:developer|super|support|admin');
+        Route::post('/sort', [GalleryAlbumController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:gallery_album_update');
         Route::put('/{id}/position/{position}', [GalleryAlbumController::class, 'position'])
             ->name('position')
             ->middleware('permission:gallery_album_update');
@@ -92,22 +98,22 @@ Route::prefix('admin/gallery')->name('gallery.')->middleware('auth')->group(func
             ->middleware('permission:gallery_album_delete');
         Route::delete('/{id}/permanent', [GalleryAlbumController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [GalleryAlbumController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
     //--- File
-    Route::prefix('album/{albumId}')->name('file.')->group(function() {
+    Route::prefix('album/{albumId}/file')->name('file.')->group(function() {
 
         Route::get('/', [GalleryFileController::class, 'index'])
             ->name('index')
             ->middleware('permission:gallery_files');
         Route::get('/trash', [GalleryFileController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
             
         Route::get('/create', [GalleryFileController::class, 'create'])
             ->name('create')
@@ -129,22 +135,22 @@ Route::prefix('admin/gallery')->name('gallery.')->middleware('auth')->group(func
             ->middleware('permission:gallery_file_update');
         Route::put('/{id}/approved', [GalleryFileController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
-        Route::put('/{id}/position/{position}', [GalleryFileController::class, 'position'])
-            ->name('position')
-            ->middleware('permission:gallery_file_update');
+            ->middleware('role:developer|super|support|admin');
         Route::post('/sort', [GalleryFileController::class, 'sort'])
             ->name('sort')
+            ->middleware('permission:gallery_file_update');
+        Route::put('/{id}/position/{position}', [GalleryFileController::class, 'position'])
+            ->name('position')
             ->middleware('permission:gallery_file_update');
         Route::delete('/{id}/soft', [GalleryFileController::class, 'softDelete'])
             ->name('delete.soft')
             ->middleware('permission:gallery_file_delete');
         Route::delete('/{id}/permanent', [GalleryFileController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [GalleryFileController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 

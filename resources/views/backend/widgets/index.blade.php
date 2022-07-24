@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('widget.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -123,8 +123,8 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/widget.label.field1')</th>
-                            <th class="text-center" style="width: 120px;">@lang('module/widget.label.field4')</th>
-                            <th class="text-center" style="width: 120px;">@lang('global.type')</th>
+                            <th style="width: 120px;">@lang('module/widget.label.field4')</th>
+                            <th style="width: 120px;">@lang('global.type')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
@@ -132,17 +132,17 @@
                             <th class="text-center" style="width: 210px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['widgets']->total() > 1 ? 'drag' : ''}}">
                         @forelse ($data['widgets'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }} </td>
                             <td>
-                                <strong>{!! $item['name'] !!}</strong>
+                                <strong>{!!  Str::replace('_', ' ', Str::upper($item['name'])) !!}</strong>
                             </td>
-                            <td class="text-center">
+                            <td>
                                 <span class="badge badge-secondary">{{ Str::upper(config('cms.module.widget.set.'.$item['widget_set'])) }}</span>
                             </td>
-                            <td class="text-center">
+                            <td>
                                 <span class="badge badge-success">{{ Str::replace('_', ' ', Str::upper($item['type'])) }}</span>
                             </td>
                             <td class="text-center">
@@ -206,14 +206,16 @@
                                 </a>
                                 @endcan
                                 @can('widget_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/widget.caption')
+                                    'attribute' => __('module/widget.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
                                 @endcan
-                                @if (Auth::user()->hasRole('super') && config('cms.module.widget.approval') == true)
+                                @endif
+                                @if (Auth::user()->hasRole('developer|super') && config('cms.module.widget.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('widget.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -268,7 +270,37 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/widget/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

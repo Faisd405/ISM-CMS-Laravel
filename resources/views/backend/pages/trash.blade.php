@@ -86,7 +86,7 @@
                     @forelse ($data['pages'] as $item)
                         <tr>
                             <td>{{ $data['no']++ }}</td>
-                            <td><strong>{!! Str::limit($item['title'][App::getLocale()], 65) !!}</strong></td>
+                            <td><strong>{!! Str::limit($item['title'][App::getLocale()], 60) !!}</strong></td>
                             <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>

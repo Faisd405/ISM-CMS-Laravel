@@ -23,7 +23,9 @@ class CreateMasterMediasTable extends Migration
             $table->string('youtube_id')->nullable();
             $table->json('title')->nullable();
             $table->json('description')->nullable();
+            $table->json('config')->nullable();
             $table->integer('position');
+            $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();

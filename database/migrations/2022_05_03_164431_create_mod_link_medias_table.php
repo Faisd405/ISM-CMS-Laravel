@@ -15,13 +15,14 @@ class CreateModLinkMediasTable extends Migration
     {
         Schema::create('mod_link_medias', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('link_category_id');
+            $table->unsignedBigInteger('link_id');
             $table->json('title')->nullable();
             $table->json('description')->nullable();
             $table->text('url');
             $table->json('cover')->nullable();
             $table->json('banner')->nullable();
             $table->json('config');
+            $table->json('custom_fields')->nullable();
             $table->integer('position')->nullable();
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
@@ -34,7 +35,7 @@ class CreateModLinkMediasTable extends Migration
             $table->timestamps();
             $table->softDeletesTz('deleted_at', 0);
 
-            $table->foreign('link_category_id')->references('id')->on('mod_link_categories')
+            $table->foreign('link_id')->references('id')->on('mod_links')
                 ->cascadeOnDelete();
             $table->foreign('created_by')->references('id')->on('users')
                 ->onDelete('SET NULL');

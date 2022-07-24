@@ -1,7 +1,6 @@
 @extends('layouts.backend.layout')
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('assets/backend/fancybox/fancybox.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.css') }}">
 @endsection
 
@@ -50,18 +49,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.type')</label>
-                                <select class="custom-select" name="type">
-                                    <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('module/banner.type') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
-                                        title="{{ $val }}">{{ $val }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
                         <div class="col-md">
                             <div class="form-group">
                                 <label class="form-label">@lang('global.search')</label>
@@ -83,15 +70,14 @@
                 <h5 class="card-header-title mt-1 mb-0">@lang('global.trash')</h5>
             </div>
 
-            <div class="table-responsive">
+             {{-- Table --}}
+             <div class="table-responsive">
                 <table class="table card-table table-striped table-hover">
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th style="width: 210px;">@lang('module/banner.label.image')</th>
                             <th>@lang('module/banner.label.field1')</th>
-                            <th style="width: 100px;">@lang('global.type')</th>
-                            <th class="text-center" style="width: 100px;">@lang('global.status')</th>
+                            <th style="width: 80px;" class="text-center">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.deleted')</th>
                             <th class="text-center" style="width: 110px;"></th>
                         </tr>
@@ -101,32 +87,7 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                @if ($item['type'] != '2')
-                                <a href="{{ $item['type'] == '1' && $item['video_type'] == '1' ? $item->fileSrc()['video'] : $item->fileSrc()['image'] }}" data-fancybox="gallery">
-                                    <img src="{{ $item->fileSrc()['image'] }}" alt="" style="width: 120px;">
-                                </a>
-                                @else
-                                    Strip Text
-                                @endif
-                            </td>
-                            <td>
-                                {!! !empty($item['title'][App::getLocale()]) ? Str::limit($item['title'][App::getLocale()], 30) : '-' !!}
-                                @if (!empty($item['description'][App::getLocale()]))
-                                    <br>
-                                    <small class="text-muted">{!! Str::limit($item['description'][App::getLocale()], 45) !!}</small>
-                                @endif
-                            </td>
-                            <td>
-                                @switch($item['type'])
-                                    @case(1)
-                                        <span class="badge badge-danger">{{ __('module/banner.type.'.$item['type']) }}</span>
-                                        @break
-                                    @case(2)
-                                        <span class="badge badge-secondary">{{ __('module/banner.type.'.$item['type']) }}</span>
-                                        @break
-                                    @default
-                                    <span class="badge badge-success">{{ __('module/banner.type.'.$item['type']) }}</span>
-                                @endswitch
+                                <strong>{!! Str::limit($item['name'][App::getLocale()], 65) !!}</strong>
                             </td>
                             <td class="text-center">
                                 <span class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}">{{ __('global.label.publish.'.$item['publish']) }}</span>
@@ -141,29 +102,29 @@
                             <td class="text-center">
                                 <button type="button" class="btn btn-success icon-btn btn-sm restore" onclick="$(this).find('#form-restore').submit();" title="@lang('global.restore')" data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-restore-alt"></i>
-                                    <form action="{{ route('banner.restore', ['categoryId' => $item['banner_category_id'], 'id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
+                                    <form action="{{ route('banner.restore', ['id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
                                         @csrf
                                         @method('PUT')
                                     </form>
                                 </button>
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-category-id="{{ $item['banner_category_id'] }}" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
+                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
                                     <i class="las la-ban"></i>
                                 </button>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" align="center">
+                            <td colspan="5" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)
-                                    ! @lang('global.data_attr_not_found', [
-                                        'attribute' => __('global.trash')
-                                    ]) !
+                                        ! @lang('global.data_attr_not_found', [
+                                            'attribute' => __('global.trash')
+                                        ]) !
                                     @else
-                                    ! @lang('global.data_attr_empty', [
-                                        'attribute' => __('global.trash')
-                                    ]) !
+                                        ! @lang('global.data_attr_empty', [
+                                            'attribute' => __('global.trash')
+                                        ]) !
                                     @endif
                                     </strong>
                                 </i>
@@ -183,7 +144,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+             </div>
         </div>
 
     </div>
@@ -191,7 +152,6 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('assets/backend/fancybox/fancybox.min.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
 @endsection
 
@@ -200,7 +160,6 @@
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
-            var categoryId = $(this).attr('data-category-id');
             var id = $(this).attr('data-id');
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
@@ -217,7 +176,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/banner/' + categoryId + '/'+ id +'/permanent?is_trash=yes',
+                        url: '/admin/banner/' + id + '/permanent?is_trash=yes',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

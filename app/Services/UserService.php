@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Feature\Configuration;
 use App\Models\Feature\Registration;
 use App\Models\User;
 use App\Models\UserLog;
@@ -68,6 +69,11 @@ class UserService
         try {
             
             if ($checkRole) {
+
+                $isMaintenance = Configuration::firstWhere('name', 'maintenance')['value'];
+                if ($isMaintenance == true && $user->roles[0]['level'] > 3) {
+                    return $this->error(null, __('auth.login_'.$loginType.'.alert.failed'));
+                }
 
                 $remember = $data['remember'] ? true : false;
                 $auth = Auth::attempt($data['forms'], $remember);
@@ -254,6 +260,10 @@ class UserService
             $user->active = $data['active'] ?? 0;
             $user->active_at = $data['active'] == 1 ? now() : null;
             $user->phone = $data['phone'] ?? null;
+
+            if (isset($data['locked']))
+                $user->locked = (bool)$data['locked'];
+
             $user->assignRole($data['roles']);
             
             if (Auth::guard()->check())
@@ -312,6 +322,10 @@ class UserService
             $user->active = (bool)$data['active'];
             $user->active_at = ((bool)$data['active'] == 1) ? now() : null;
             $user->phone = $data['phone'] ?? null;
+
+            if (isset($data['locked']))
+                $user->locked = (bool)$data['locked'];
+
             $user->syncRoles($data['roles']);
 
             if (Auth::guard()->check())
@@ -929,12 +943,12 @@ class UserService
         $role = $this->roleModel->query();
 
         if ($allRole == false) {
-            $role->where('id', '>=', Auth::user()->roles[0]->id);
+            $role->where('level', '>=', Auth::user()->roles[0]->level);
             // $role->whereNotIn('name', ['member']);
         }
 
-        if ($allRole == true && !Auth::user()->hasRole('super|support')) {
-            $role->whereNotIn('name', ['super', 'support']);
+        if ($allRole == true && !Auth::user()->hasRole('developer|super|support')) {
+            $role->where('level', '>=', 4);
         }
 
         $result = $role->get();
@@ -971,7 +985,8 @@ class UserService
                 'name' => Str::slug($data['name'], '_'),
                 'level' => $data['level'],
                 'is_register' => (bool)$data['is_register'],
-                'guard_name' => 'web'
+                'guard_name' => 'web',
+                'locked' => (bool)$data['locked'],
             ]);
 
             if (isset($data['permission']))
@@ -1015,7 +1030,8 @@ class UserService
                 'name' => Str::slug($data['name'], '_'),
                 'level' => $data['level'],
                 'is_register' => (bool)$data['is_register'],
-                'guard_name' => 'web'
+                'guard_name' => 'web',
+                'locked' => (bool)$data['locked'],
             ]);
 
             $this->recordLog([
@@ -1176,7 +1192,8 @@ class UserService
             $permission = $this->permissionModel->create([
                 'parent' => $data['parent'] ?? 0,
                 'name' => Str::slug($data['name'], '_'),
-                'guard_name' => 'web'
+                'guard_name' => 'web',
+                'locked' => (bool)$data['locked'],
             ]);
             
             $this->recordLog([
@@ -1208,7 +1225,8 @@ class UserService
             
             $permission->update([
                 'name' => Str::slug($data['name'], '_'),
-                'guard_name' => 'web'
+                'guard_name' => 'web',
+                'locked' => (bool)$data['locked'],
             ]);
 
             $this->recordLog([

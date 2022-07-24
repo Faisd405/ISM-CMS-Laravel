@@ -29,7 +29,7 @@
                         <i class="las la-plus"></i> <span>@lang('master/template.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('template.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -120,7 +120,7 @@
                             <td>
                                 <span class="badge badge-primary">{{ Str::replace('_', ' ', Str::upper($item['module'])) }}</span>
                             </td>
-                            <td><code>{{ config('cms.module.master.template.type.'.$item['type']) }}</code></td>
+                            <td><span class="badge badge-info">{{ config('cms.module.master.template.type.'.$item['type']) }}</span></td>
                             <td><code>{{ $item['filepath'] }}</code></td>
                             <td><code>{{ $item['filename'] }}</code></td>
                             <td>

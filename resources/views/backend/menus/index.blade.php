@@ -22,14 +22,12 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @can ('menu_create')
+                    @role('developer|super')
                     <a href="{{ route('menu.create', array_merge(['categoryId' => $data['category']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/menu.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/menu.caption')</span>
                     </a>
-                    @endcan
-                    @role('super')
                     <a href="{{ route('menu.trash', ['categoryId' => $data['category']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -80,13 +78,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header with-elements">
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/menu.text')</h5>
+            </div>
             <div class="card-header">
                 <span class="text-muted">
                     {{ Str::upper(__('module/menu.category.caption')) }} : <b class="text-primary">{{ Str::upper($data['category']['name']) }}</b>
                 </span>
-            </div>
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/menu.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -107,7 +105,7 @@
                         <tr class="table-primary">
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <strong>{!! Str::limit($item['modules']['title'], 65) !!}</strong>
+                                <strong>{!! Str::limit($item['module_data']['title'], 65) !!}</strong>
                             </td>
                             <td class="text-center">
                                 @can ('menu_update')
@@ -163,14 +161,16 @@
                             </td>
                             <td class="text-center">
                                 @can('menu_create')
+                                @if (Auth::user()->hasRole('developer|super') || !Auth::user()->hasRole('developer|super') && $item['config']['create_child'] == true)  
                                 <a href="{{ route('menu.create', array_merge(['categoryId' => $item['menu_category_id'], 'parent' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-success" title="@lang('global.add_attr_new', [
                                     'attribute' => __('module/menu.caption')
                                 ])">
                                     <i class="las la-plus"></i>
                                 </a>
+                                @endif
                                 @endcan
                                 @can('menu_update')
-                                @if (Auth::user()->hasRole('super') || !Auth::user()->hasRole('super') && $item['config']['edit_public_menu'] == 1)
+                                @if (Auth::user()->hasRole('developer|super') || !Auth::user()->hasRole('developer|super') && $item['config']['edit_public_menu'] == true)
                                 <a href="{{ route('menu.edit', array_merge(['categoryId' => $item['menu_category_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/menu.caption')
                                 ])">
@@ -179,15 +179,17 @@
                                 @endif
                                 @endcan
                                 @can('menu_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/menu.caption')
+                                    'attribute' => __('module/menu.caption')
                                     ])"
                                     data-category-id="{{ $item['menu_category_id'] }}"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super') && config('cms.module.menu.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super') && config('cms.module.menu.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('menu.approved', ['categoryId' => $item['menu_category_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">

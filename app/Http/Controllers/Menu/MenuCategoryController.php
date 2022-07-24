@@ -95,7 +95,7 @@ class MenuCategoryController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
-        $data['locked'] = $request->locked ?? 0;
+        $data['locked'] = (bool)$request->locked;
         $menuCategory = $this->menuService->storeCategory($data);
         $data['query'] = $request->query();
 
@@ -128,7 +128,7 @@ class MenuCategoryController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
-        $data['locked'] = $request->locked ?? 0;
+        $data['locked'] = (bool)$request->locked;
         $menuCategory = $this->menuService->updateCategory($data, ['id' => $id]);
         $data['query'] = $request->query();
 

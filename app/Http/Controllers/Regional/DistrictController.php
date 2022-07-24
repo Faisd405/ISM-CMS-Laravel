@@ -116,6 +116,7 @@ class DistrictController extends Controller
         $data = $request->all();
         $data['province_code'] = $provinceCode;
         $data['city_code'] = $cityCode;
+        $data['locked'] = (bool)$request->locked;
         $district = $this->regionalService->storeDistrict($data);
         $data['query'] = $request->query();
 
@@ -157,6 +158,7 @@ class DistrictController extends Controller
         $data = $request->all();
         $data['province_code'] = $provinceCode;
         $data['city_code'] = $cityCode;
+        $data['locked'] = (bool)$request->locked;
         $district = $this->regionalService->updateDistrict($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -222,7 +224,7 @@ class DistrictController extends Controller
             $filter['code'] = $request->input('code');
         }
 
-        $district = $this->regionalService->getDistrictList($filter, false);
+        $district = $this->regionalService->getDistrictList($filter, false, 0);
 
         return $this->success($district);
     }

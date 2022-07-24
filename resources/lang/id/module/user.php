@@ -10,7 +10,7 @@ return [
         'text' => 'List Role',
         'label' => [
             'field1' => 'Nama',
-            'field2' => 'Penulisan',
+            'field2' => 'Kode',
             'field3' => 'Guard Name',
             'field4' => 'Level',
             'field5' => 'Role Register'
@@ -20,7 +20,7 @@ return [
             'field2' => '',
             'field3' => '',
             'field4' => '',
-            'field5' => ''
+            'field5' => 'Tampilkan role saat registrasi user'
         ],
     ],
 
@@ -32,7 +32,7 @@ return [
         'label' => [
             'field1' => 'Parent',
             'field2' => 'Nama',
-            'field3' => 'Penulisan',
+            'field3' => 'Kode',
             'field4' => 'Guard Name'
         ],
         'placeholder' => [
@@ -126,6 +126,6 @@ return [
     ],
 
     //info
-    'password_info' => 'password minimal harus menggunakan 1 huruf besar & kecil, angka & karakter. Contoh : adMin123#',
-    'username_info' => 'username harus menggunakan huruf kecil & tidak menggunakan spasi. Contoh : johndoe',
+    'password_info' => 'Password minimal harus menggunakan 1 huruf besar & kecil, angka & karakter(!@$#%). Contoh : adMin123#',
+    'username_info' => 'Username harus menggunakan huruf kecil & tidak menggunakan spasi. Contoh : johndoe',
 ];

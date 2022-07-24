@@ -4,7 +4,7 @@ namespace App\Http\Requests\Module\Banner;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BannerCategoryRequest extends FormRequest
+class BannerFileMultipleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,14 +24,14 @@ class BannerCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'file' => 'required|max:'.config('cms.files.banner.size_byte').'|mimes:'.config('cms.files.banner.mimes'),
         ];
     }
 
-    public function attributes()
-    {
-        return [
-            'name_'.config('cms.module.feature.language.default') => __('module/banner.category.label.field1'),
-        ];
-    }
+    // public function attributes()
+    // {
+    //     return [
+    //         'file' => __('module/banner.label.field5'),
+    //     ];
+    // }
 }

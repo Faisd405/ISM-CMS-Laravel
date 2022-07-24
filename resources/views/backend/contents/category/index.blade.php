@@ -22,6 +22,11 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
+                    @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true && $data['section']['config']['show_post'] == true)
+                    <a href="{{ route('content.post.index', ['sectionId' => $data['section']['id']]) }}" class="btn btn-primary icon-btn-only-sm btn-sm mr-2" title="@lang('module/content.post.manage')">
+                        <i class="las la-list"></i> <span>@lang('module/content.post.manage')</span>
+                    </a>
+                    @endif
                     @can ('content_category_create')
                     <a href="{{ route('content.category.create', array_merge(['sectionId' => $data['section']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                             'attribute' => __('module/content.category.caption')
@@ -29,7 +34,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/content.category.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('content.category.trash', ['sectionId' => $data['section']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -80,13 +85,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header with-elements">
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.category.text')</h5>
+            </div>
             <div class="card-header">
                 <span class="text-muted">
                     {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
                 </span>
-            </div>
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.category.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -103,13 +108,13 @@
                             <th class="text-center" style="width: 140px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['categories']->total() > 1 ? 'drag' : ''}}">
                         @forelse ($data['categories'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
+                                @if ($item['detail'] == 1)
                                 <a href="{{ route('content.category.read.'.$item['section']['slug'], ['slugCategory' => $item['slug']]) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
@@ -177,15 +182,17 @@
                                 </a>
                                 @endcan
                                 @can('content_category_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/content.category.caption')
-                                    ])"
-                                    data-section-id="{{ $item['section_id'] }}"
-                                    data-id="{{ $item['id'] }}">
-                                    <i class="las la-trash-alt"></i>
+                                    'attribute' => __('module/content.category.caption')
+                                ])"
+                                data-section-id="{{ $item['section_id'] }}"
+                                data-id="{{ $item['id'] }}">
+                                <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.content.category.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.content.category.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('content.category.approved', ['sectionId' => $item['section_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -240,7 +247,38 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                var sectionId = '{{ $data['section']['id'] }}';
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/content/'+sectionId+'/category/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

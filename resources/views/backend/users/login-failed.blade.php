@@ -22,7 +22,6 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @if (Auth::user()->hasRole('super'))
                     <button type="button" class="btn btn-danger icon-btn-only-sm btn-sm" onclick="$(this).find('#form-reset').submit();"
                         title="Reset @lang('module/user.login_failed.caption')">
                         <i class="las la-redo-alt"></i> Reset @lang('module/user.login_failed.caption')
@@ -31,7 +30,6 @@
                             @method('DELETE')
                         </form>
                     </button>
-                    @endif
                 </div>
             </div>
             <hr class="m-0">

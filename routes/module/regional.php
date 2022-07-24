@@ -15,7 +15,7 @@ Route::prefix('admin/regional')->middleware('auth')->group(function () {
             ->middleware('permission:regionals');
         Route::get('/trash', [ProvinceController::class, 'trash'])
             ->name('province.trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         
         Route::get('/create', [ProvinceController::class, 'create'])
             ->name('province.create')
@@ -34,10 +34,10 @@ Route::prefix('admin/regional')->middleware('auth')->group(function () {
             ->middleware('permission:regional_delete');
         Route::delete('/{id}/permanent', [ProvinceController::class, 'permanentDelete'])
             ->name('province.delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [ProvinceController::class, 'restore'])
             ->name('province.restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         //--- City
         Route::prefix('{provinceCode}/city')->group(function () {
@@ -47,7 +47,7 @@ Route::prefix('admin/regional')->middleware('auth')->group(function () {
                 ->middleware('permission:regionals');
             Route::get('/trash', [CityController::class, 'trash'])
                 ->name('city.trash')
-                ->middleware('role:super');
+                ->middleware('role:developer|super');
 
             Route::get('/create', [CityController::class, 'create'])
                 ->name('city.create')
@@ -66,10 +66,10 @@ Route::prefix('admin/regional')->middleware('auth')->group(function () {
                 ->middleware('permission:regional_delete');
             Route::delete('/{id}/permanent', [CityController::class, 'permanentDelete'])
                 ->name('city.delete.permanent')
-                ->middleware('role:super');
+                ->middleware('role:developer|super');
             Route::put('/{id}/restore', [CityController::class, 'restore'])
                 ->name('city.restore')
-                ->middleware('role:super');
+                ->middleware('role:developer|super');
 
             //--- District
             Route::prefix('{cityCode}/district')->group(function () {
@@ -79,7 +79,7 @@ Route::prefix('admin/regional')->middleware('auth')->group(function () {
                     ->middleware('permission:regionals');
                 Route::get('/trash', [DistrictController::class, 'trash'])
                     ->name('district.trash')
-                    ->middleware('role:super');
+                    ->middleware('role:developer|super');
 
                 Route::get('/create', [DistrictController::class, 'create'])
                     ->name('district.create')
@@ -98,10 +98,10 @@ Route::prefix('admin/regional')->middleware('auth')->group(function () {
                     ->middleware('permission:regional_delete');
                 Route::delete('/{id}/permanent', [DistrictController::class, 'permanentDelete'])
                     ->name('district.delete.permanent')
-                    ->middleware('role:super');
+                    ->middleware('role:developer|super');
                 Route::put('/{id}/restore', [DistrictController::class, 'restore'])
                     ->name('district.restore')
-                    ->middleware('role:super');
+                    ->middleware('role:developer|super');
             });
 
         });

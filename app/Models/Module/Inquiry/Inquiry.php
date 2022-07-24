@@ -33,6 +33,10 @@ class Inquiry extends Model
         'seo' => 'json',
     ];
 
+    protected $appends = [
+        'banner_src'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -99,6 +103,11 @@ class Inquiry extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -109,7 +118,7 @@ class Inquiry extends Model
         return $query->where('locked', 1);
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

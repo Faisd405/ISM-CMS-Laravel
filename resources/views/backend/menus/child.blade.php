@@ -1,11 +1,8 @@
 @foreach ($childs as $child)
-@php
-    $module = app()->make(App\Services\MenuService::class)->getModuleData($child);
-@endphp
 <tr>
     <td>{{ $loop->iteration }}</td>
     <td>
-        <i>{!! str_repeat('---', $level).' '.Str::limit($module['title'], 65) !!}</i>
+        <i>{!! str_repeat('---', $level).' '.Str::limit($child['module_data']['title'], 65) !!}</i>
     </td>
     <td class="text-center">
         @can ('menu_update')
@@ -61,14 +58,16 @@
     </td>
     <td class="text-center">
         @can('menu_create')
+        @if (Auth::user()->hasRole('developer|super') || !Auth::user()->hasRole('developer|super') && $child['config']['create_child'] == true)  
         <a href="{{ route('menu.create', ['categoryId' => $child['menu_category_id'], 'parent' => $child['id']]) }}" class="btn icon-btn btn-sm btn-success" title="@lang('global.add_attr_new', [
             'attribute' => __('module/menu.caption')
         ])">
             <i class="las la-plus"></i>
         </a>
+        @endif
         @endcan
         @can('menu_update')
-        @if (Auth::user()->hasRole('super') || !Auth::user()->hasRole('super') && $child['config']['edit_public_menu'] == 1)
+        @if (Auth::user()->hasRole('super') || !Auth::user()->hasRole('super') && $child['config']['edit_public_menu'] == true)
         <a href="{{ route('menu.edit', ['categoryId' => $child['menu_category_id'], 'id' => $child['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
             'attribute' => __('module/menu.caption')
         ])">
@@ -77,6 +76,7 @@
         @endif
         @endcan
         @can('menu_delete')
+        @if ($child['locked'] == 0)
         <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                 'attribute' => __('module/menu.caption')
             ])"
@@ -84,8 +84,9 @@
             data-id="{{ $child['id'] }}">
             <i class="las la-trash-alt"></i>
         </button>
+        @endif
         @endcan
-        @if (Auth::user()->hasRole('super') && config('cms.module.menu.approval') == true)
+        @if (Auth::user()->hasRole('developer|super') && config('cms.module.menu.approval') == true)
         <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $child['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $child['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
             <i class="las la-{{ $child['approved'] == 1 ? 'times' : 'check' }}"></i>
             <form action="{{ route('menu.approved', ['categoryId' => $child['menu_category_id'], 'id' => $child['id']]) }}" method="POST" id="form-approval">

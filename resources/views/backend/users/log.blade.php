@@ -22,7 +22,7 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @if (Auth::user()->hasRole('super'))
+                    @role ('developer|super')
                     <button type="button" class="btn btn-danger icon-btn-only-sm btn-sm" onclick="$(this).find('#form-reset').submit();"
                         title="Reset @lang('module/user.log.caption')">
                         <i class="las la-redo-alt"></i> Reset @lang('module/user.log.caption')
@@ -31,7 +31,7 @@
                             @method('DELETE')
                         </form>
                     </button>
-                    @endif
+                    @endrole
                 </div>
             </div>
             <hr class="m-0">
@@ -92,7 +92,7 @@
                             <th style="width: 120px;">@lang('module/user.log.label.field2')</th>
                             <th>@lang('module/user.log.label.field3')</th>
                             <th style="width: 230px;">@lang('module/user.log.label.field4')</th>
-                            @role ('super')
+                            @role ('developer|super')
                             <th style="width: 80px;" class="text-center">@lang('global.action')</th>
                             @endrole
                         </tr>
@@ -123,7 +123,7 @@
                                 <span class="badge badge-secondary">ID : {{ $item['logable_id'] }}</span>
                             </td>
                             <td>{{ $item['created_at']->format('d F Y (H:i A)') }}</td>
-                            @role ('super')
+                            @role ('developer|super')
                             <td class="text-center">
                                 <button type="button" data-id="{{ $item['id'] }}" class="btn icon-btn btn-sm btn-danger swal-delete" title="@lang('global.delete_attr', [
                                     'attribute' => __('module/user.log.caption')

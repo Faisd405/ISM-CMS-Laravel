@@ -29,7 +29,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/event.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('event.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -68,7 +68,7 @@
                                 <label class="form-label">@lang('global.type')</label>
                                 <select class="custom-select" name="type">
                                     <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('module/event.type') as $key => $val)
+                                    @foreach (config('cms.module.event.type') as $key => $val)
                                     <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
@@ -111,19 +111,19 @@
                             <th class="text-center" style="width: 210px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['events']->total() > 1 && isset(config('cms.module.event.ordering')['position']) ? 'drag' : ''}}">
                         @forelse ($data['events'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
+                                @if ($item['detail'] == 1)
                                 <a href="{{ route('event.read', ['slugEvent' => $item['slug']]) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
                                 @endif
                             </td>
-                            <td class="text-center"><span class="badge badge-{{ $item['type'] == 1 ? 'success' : 'secondary' }}">{{ __('module/event.type.'.$item['type']) }}</span></td>
+                            <td class="text-center"><span class="badge badge-{{ $item['type'] == 1 ? 'success' : 'secondary' }}">{{ config('cms.module.event.type.'.$item['type']) }}</span></td>
                             <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>
                             <td class="text-center">
                                 @can ('event_update')
@@ -154,6 +154,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
+                                @if (isset(config('cms.module.event.ordering')['position']))    
                                 @if (Auth::user()->can('event_update') && $item->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
@@ -176,8 +177,10 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
+                                @endif
                             </td>
                             <td class="text-center">
+                                @if ($item['config']['show_form'] == true)
                                 <a href="{{ route('event.form', ['eventId' => $item['id']]) }}" class="btn icon-btn btn-sm btn-warning" title="@lang('module/event.form.caption')">
                                     <i class="las la-edit"></i>
                                 </a>
@@ -186,6 +189,7 @@
                                     <i class="las la-list"></i>
                                 </a>
                                 @endcan
+                                @endif
                                 @can('event_update')
                                 <a href="{{ route('event.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/event.caption')
@@ -194,14 +198,16 @@
                                 </a>
                                 @endcan
                                 @can('event_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/event.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super') && config('cms.module.event.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super') && config('cms.module.event.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('event.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -256,7 +262,37 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/event/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

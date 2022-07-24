@@ -57,7 +57,7 @@ class ContentCategoryController extends Controller
 
         return view('backend.contents.category.index', compact('data'), [
             'title' => __('module/content.category.title'),
-            'routeBack' => route('content.post.index', ['sectionId' => $sectionId]),
+            'routeBack' => route('content.section.index'),
             'breadcrumbs' => [
                 __('module/content.caption') => 'javascript:;',
                 __('module/content.section.caption') => route('content.section.index'),
@@ -126,9 +126,13 @@ class ContentCategoryController extends Controller
     {
         $data = $request->all();
         $data['section_id'] = $sectionId;
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_post'] = (bool)$request->config_paginate_post;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $category = $this->contentService->storeCategory($data);
         $data['query'] = $request->query();
 
@@ -169,9 +173,13 @@ class ContentCategoryController extends Controller
     {
         $data = $request->all();
         $data['section_id'] = $sectionId;
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_post'] = (bool)$request->config_paginate_post;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $category = $this->contentService->updateCategory($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -202,6 +210,16 @@ class ContentCategoryController extends Controller
         }
 
         return redirect()->back()->with('failed', $category['message']);
+    }
+
+    public function sort(Request $request, $sectionId)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->contentService->sortCategory(['id' => $value, 'section_id' => $sectionId], $i);
+        }
     }
 
     public function position(Request $request, $sectionId, $id, $position)
@@ -265,7 +283,7 @@ class ContentCategoryController extends Controller
             'publish' => 1,
             'approved' => 1
         ], true, $limit, false, [], [
-            'position' => 'ASC'
+            'created_at' => 'DESC'
         ]);
         $data['no'] = $data['categories']->firstItem();
         $data['categories']->withQueryString();
@@ -295,7 +313,7 @@ class ContentCategoryController extends Controller
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
@@ -303,29 +321,28 @@ class ContentCategoryController extends Controller
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
 
-        $this->contentService->recordCategoryHits(['id' => $data['read']['id']]);
-
-        //limit
-        $postPerpage = $this->configService->getConfigValue('content_limit');
-        if ($data['read']['post_perpage'] > 0) {
-            $postPerpage = $data['read']['post_perpage'];
+        // filtering
+        $keyword = $request->input('keyword', '');
+        if ($keyword != '') {
+            $filter['q'] = $keyword;
         }
 
-        //data
-        $data['posts'] = $data['posts'] = $this->contentService->getPostList([
-            'category_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $postPerpage, false, [], [
-            $data['section']['ordering']['order_by'] => $data['section']['ordering']['order_seq']
-        ]);
-        $data['no'] = $data['posts']->firstItem();
-        $data['posts']->withQueryString();
+        $filter['category_id'] = $data['read']['id'];
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
+
+        //post
+        $data['posts'] = $this->contentService->getPostList($filter,
+            $data['read']['config']['paginate_post'], $data['read']['config']['post_limit'], false,
+        [], [$data['section']['config']['post_order_by'] => $data['section']['config']['post_order_type']]);
+        if ($data['read']['config']['paginate_post'] == true) {
+            $data['no_posts'] = $data['posts']->firstItem();
+            $data['posts']->withQueryString();
+        }
 
         $data['fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
@@ -362,6 +379,9 @@ class ContentCategoryController extends Controller
         if (!empty($data['read']['template_id'])) {
             $blade = 'list.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
         }
+
+        // record hits
+        $this->contentService->recordCategoryHits(['id' => $data['read']['id']]);
 
         return view('frontend.contents.category.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('name'),

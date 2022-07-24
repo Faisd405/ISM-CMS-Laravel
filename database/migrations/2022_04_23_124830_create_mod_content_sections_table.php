@@ -19,10 +19,7 @@ class CreateModContentSectionsTable extends Migration
             $table->json('name');
             $table->json('description')->nullable();
             $table->json('banner')->nullable();
-            $table->json('ordering');
             $table->json('addon_fields')->nullable();
-            $table->integer('post_perpage')->nullable();
-            $table->integer('category_perpage')->nullable();
             $table->json('config');
             $table->json('custom_fields')->nullable();
             $table->json('seo')->nullable();
@@ -31,6 +28,7 @@ class CreateModContentSectionsTable extends Migration
             $table->integer('position');
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
+            $table->boolean('detail')->default(true)->comment('1 = memiliki halaman, 0 = tidak memiliki halaman');
             $table->tinyInteger('approved')->default(1)->comment('0 = rejected, 1 = approved, 2 = pending');
             $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
             $table->bigInteger('hits')->default(0);

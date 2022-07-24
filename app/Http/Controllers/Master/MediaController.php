@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Master;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\MediaRequest;
 use App\Models\Module\Content\ContentPost;
+use App\Models\Module\Page;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\MediaService;
 use Illuminate\Http\Request;
@@ -42,6 +43,12 @@ class MediaController extends Controller
         ]);
         $data['no'] = $data['medias']->firstItem();
         $data['medias']->withQueryString();
+
+        if ($moduleType == 'page') {
+            $data['module'] = Page::find($moduleId);
+        } else {
+            $data['module'] = ContentPost::find($moduleId);
+        }
 
         return view('backend.masters.media.index', compact('data'), [
             'title' => __('master/media.title'),
@@ -105,6 +112,7 @@ class MediaController extends Controller
         $data['module_id'] = $moduleId;
         $data['module_type'] = $moduleType;
         $data['is_youtube'] = (bool)$request->is_youtube;
+        $data['locked'] = (bool)$request->locked;
         $media = $this->mediaService->store($data);
 
         if ($media['success'] == true) {
@@ -142,6 +150,7 @@ class MediaController extends Controller
         $data['module_id'] = $moduleId;
         $data['module_type'] = $moduleType;
         $data['is_youtube'] = (bool)$request->is_youtube;
+        $data['locked'] = (bool)$request->locked;
         $media = $this->mediaService->update($data, ['id' => $id]);
 
         if ($media['success'] == true) {
@@ -149,6 +158,16 @@ class MediaController extends Controller
         }
 
         return redirect()->back()->with('failed', $media['message']);
+    }
+
+    public function sort(Request $request, $moduleId, $moduleType)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->mediaService->sort(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $moduleId, $moduleType, $id, $position)

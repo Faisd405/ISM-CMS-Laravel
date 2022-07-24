@@ -105,18 +105,16 @@
                     @forelse ($data['list']['posts'] as $post)
                     <tr>
                         <td class="align-middle" style="width: 75px">
-                            <img class="ui-w-40" src="{{ $post->coverSrc() }}" alt="">
+                            <img class="ui-w-40" src="{{ $post['cover_src'] }}" alt="">
                         </td>
                         <td class="align-middle">
                             <a href="javascript:void(0)" class="text-body">{!! Str::limit($post->fieldLang('title'), 60) !!}</a>
                         </td>
                         <td class="align-middle"><span class="badge badge-info">{{ $post['hits'] }}</span></td>
                         <td class="align-middle">
-                          @if ($post['config']['is_detail'] == true)
-                            <a href="{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.view_detail')">
-                                <i class="las la-external-link-alt"></i>
-                            </a>
-                          @endif
+                          <a href="{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.view_detail')" target="_blank">
+                              <i class="las la-external-link-alt"></i>
+                          </a>
                         </td>
                     </tr>
                     @empty

@@ -80,13 +80,13 @@
                                     <img src="https://img.youtube.com/vi/{{ $item['youtube_id'] }}/mqdefault.jpg" alt="" style="width: 120px;">
                                 </a>
                                 @else
-                                <a href="{{ $item->fileSrc() }}" data-fancybox="gallery">
                                     @if ($item['icon'] == 'image')
-                                    <img src="{{ $item->fileSrc() }}" alt="" style="width: 120px;">
+                                    <a href="{{ $item['file_src'] }}" data-fancybox="gallery">
+                                        <img src="{{ $item['file_src'] }}" alt="" style="width: 120px;">
+                                    </a>
                                     @else
-                                    <i class="las la-file-{{ $item['icon'] }} text-secondary"></i>
+                                    <i class="las la-file-{{ $item['icon'] }} text-secondary" style="font-size: 3em;" title="{{ $item['icon'] }}"></i>
                                     @endif
-                                </a>
                                 @endif
                             </td>
                             <td>

@@ -19,6 +19,9 @@ return [
     'inquiry' => [
         'title' => ':attribute baru saja mengirim pesan',
     ],
+    'inquiry_sender' => [
+        'title' => ':attribute baru saja mengirim pesan',
+    ],
     'event' => [
         'title' => ':attribute baru saja mendaftar',
     ],

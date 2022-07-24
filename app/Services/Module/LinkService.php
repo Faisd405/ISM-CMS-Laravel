@@ -2,38 +2,43 @@
 
 namespace App\Services\Module;
 
-use App\Models\Module\Link\LinkCategory;
+use App\Models\Module\Link\Link;
 use App\Models\Module\Link\LinkMedia;
 use App\Services\Feature\LanguageService;
+use App\Services\IndexUrlService;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class LinkService
 {
     use ApiResponser;
 
-    private $categoryModel, $mediaModel, $language;
+    private $linkModel, $mediaModel, $language, $indexUrl;
 
     public function __construct(
-        LinkCategory $categoryModel,
+        Link $linkModel,
         LinkMedia $mediaModel,
-        LanguageService $language
+        LanguageService $language,
+        IndexUrlService $indexUrl
     )
     {
-        $this->categoryModel = $categoryModel;
+        $this->linkModel = $linkModel;
         $this->mediaModel = $mediaModel;
         $this->language = $language;
+        $this->indexUrl = $indexUrl;
     }
 
     //--------------------------------------------------------------------------
-    // LINK CATEGORY
+    // LINK
     //--------------------------------------------------------------------------
 
     /**
-     * Get Category List
+     * Get Link List
      * @param array $filter
      * @param booleean $withPaginate
      * @param int $limit
@@ -41,29 +46,32 @@ class LinkService
      * @param array $with
      * @param array $orderBy
      */
-    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getLinkList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
-        $category = $this->categoryModel->query();
+        $link = $this->linkModel->query();
 
         if ($isTrash == true)
-            $category->onlyTrashed();
+            $link->onlyTrashed();
 
         if (isset($filter['publish']))
-            $category->where('publish', $filter['publish']);
+            $link->where('publish', $filter['publish']);
 
         if (isset($filter['public']))
-            $category->where('public', $filter['public']);
+            $link->where('public', $filter['public']);
 
         if (isset($filter['approved']))
-            $category->where('approved', $filter['approved']);
+            $link->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $link->where('detail', $filter['detail']);
 
         if (isset($filter['created_by']))
-            $category->where('created_by', $filter['created_by']);
+            $link->where('created_by', $filter['created_by']);
 
         if (isset($filter['q']))
-            $category->when($filter['q'], function ($category, $q) {
-                $category->whereRaw('LOWER(JSON_EXTRACT(name, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
+            $link->when($filter['q'], function ($link, $q) {
+                $link->whereRaw('LOWER(JSON_EXTRACT(name, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
                     ->orWhereRaw('LOWER(JSON_EXTRACT(description, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"']);
             });
 
@@ -71,66 +79,81 @@ class LinkService
             $limit = $filter['limit'];
 
         if (!empty($with))
-            $category->with($with);
+            $link->with($with);
 
         if (!empty($orderBy))
             foreach ($orderBy as $key => $value) {
-                $category->orderBy($key, $value);
+                $link->orderBy($key, $value);
             }
 
         if ($withPaginate == true) {
-            $result = $category->paginate($limit);
+            $result = $link->paginate($limit);
         } else {
 
             if ($limit > 0)
-                $category->limit($limit);
+                $link->limit($limit);
 
-            $result = $category->get();
+            $result = $link->get();
         }
         
         return $result;
     }
 
     /**
-     * Get Category One
+     * Get Link One
      * @param array $where
      * @param array $with
      */
-    public function getCategory($where, $with = [])
+    public function getLink($where, $with = [])
     {
-        $category = $this->categoryModel->query();
+        $link = $this->linkModel->query();
         
         if (!empty($with))
-            $category->with($with);
+            $link->with($with);
         
-        $result = $category->firstWhere($where);;
+        $result = $link->firstWhere($where);;
 
         return $result;
     }
 
     /**
-     * Create Category
+     * Create Link
      * @param array $data
      */
-    public function storeCategory($data)
+    public function storeLink($data)
     {
         try {
 
-            $category = new LinkCategory;
-            $this->setFieldCategory($data, $category);
-            $category->position = $this->categoryModel->max('position') + 1;
+            DB::beginTransaction();
+
+            $link = new Link;
+            $this->setFieldLink($data, $link);
+            $link->position = $this->linkModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.link.category.approval') == true) {
-                    $category->approved = 2;
+                if (Auth::user()->hasRole('editor') && config('module.link.approval') == true) {
+                    $link->approved = 2;
                 }
-                $category->created_by = Auth::user()['id'];
+                $link->created_by = Auth::user()['id'];
 
-            $category->save();
+            $link->save();
 
-            return $this->success($category,  __('global.alert.create_success', [
-                'attribute' => __('module/link.category.caption')
-            ]));
+            try {
+                
+                DB::commit();
+                $slug = Str::slug(strip_tags($data['slug']), '-');
+                $data['slug'] = $slug;
+                $data['module'] = 'link';
+                $this->indexUrl->storeAssociate($data, $link);
+
+                return $this->success($link,  __('global.alert.create_success', [
+                    'attribute' => __('module/link.caption')
+                ]));
+
+            } catch (Exception $e) {
+            
+                return $this->error(null,  $e->getMessage());
+            }
             
         } catch (Exception $e) {
             
@@ -139,24 +162,27 @@ class LinkService
     }
 
     /**
-     * Update Category
+     * Update Link
      * @param array $data
      * @param array $where
      */
-    public function updateCategory($data, $where)
+    public function updateLink($data, $where)
     {
-        $category = $this->getCategory($where);
+        $link = $this->getLink($where);
 
         try {
             
-            $this->setFieldCategory($data, $category);
+            $this->setFieldLink($data, $link);
             if (Auth::guard()->check())
-                $category->updated_by = Auth::user()['id'];
+                $link->updated_by = Auth::user()['id'];
 
-            $category->save();
+            $link->save();
 
-            return $this->success($category,  __('global.alert.update_success', [
-                'attribute' => __('module/link.category.caption')
+            $slug = Str::slug(strip_tags($data['slug']), '-');
+            $this->indexUrl->updateAssociate($slug, ['id' => $link['indexing']['id']]);
+
+            return $this->success($link,  __('global.alert.update_success', [
+                'attribute' => __('module/link.caption')
             ]));
 
         } catch (Exception $e) {
@@ -166,11 +192,11 @@ class LinkService
     }
 
     /**
-     * Set Field Category
+     * Set Field Link
      * @param array $data
-     * @param model $category
+     * @param model $link
      */
-    private function setFieldCategory($data, $category)
+    private function setFieldLink($data, $link)
     {
         $multiple = config('cms.module.feature.language.multiple');
         $langDefault = config('cms.module.feature.language.default');
@@ -183,23 +209,28 @@ class LinkService
                 $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
         }
 
-        $category->slug = Str::slug($data['slug'], '-');
-        $category->name = $name;
-        $category->description = $description;
-        $category->banner = [
+        $link->slug = Str::slug(strip_tags($data['slug']), '-');
+        $link->name = $name;
+        $link->description = $description;
+        $link->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
             'alt' => $data['banner_alt'] ?? null,
         ];
-        $category->publish = (bool)$data['publish'];
-        $category->public = (bool)$data['public'];
-        $category->locked = (bool)$data['locked'];
-        $category->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_banner' => (bool)$data['hide_banner'],
+        $link->publish = (bool)$data['publish'];
+        $link->public = (bool)$data['public'];
+        $link->locked = (bool)$data['locked'];
+        $link->detail = (bool)$data['detail'];
+        $link->config = [
+            'show_description' => (bool)$data['config_show_description'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'paginate_media' => (bool)$data['config_paginate_media'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+            'media_limit' => $data['config_media_limit'],
+            'media_order_by' => $data['config_media_order_by'],
+            'media_order_type' => $data['config_media_order_type'],
         ];
-        $category->template_id = $data['template_id'] ?? null;
+        $link->template_id = $data['template_id'] ?? null;
 
         if (isset($data['cf_name'])) {
             
@@ -208,43 +239,41 @@ class LinkService
                 $customField[$value] = $data['cf_value'][$key];
             }
 
-            $category->custom_fields = $customField;
+            $link->custom_fields = $customField;
         } else {
-            $category->custom_fields = null;
+            $link->custom_fields = null;
         }
 
-        $category->media_perpage = $data['media_perpage'] ?? 0;
-
-        return $category;
+        return $link;
     }
 
     /**
-     * Status Category (boolean type only)
+     * Status Link (boolean type only)
      * @param string $field
      * @param array $where
      */
-    public function statusCategory($field, $where)
+    public function statusLink($field, $where)
     {
-        $category = $this->getCategory($where);
+        $link = $this->getLink($where);
 
         try {
             
-            $category->update([
-                $field => !$category[$field],
-                'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
+            $link->update([
+                $field => !$link[$field],
+                'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $link['updated_by'],
             ]);
 
             if ($field == 'publish') {
-                $category->menus()->update([
-                    'publish' => $category['publish']
+                $link->menus()->update([
+                    'publish' => $link['publish']
                 ]);
-                $category->widgets()->update([
-                    'publish' => $category['publish']
+                $link->widgets()->update([
+                    'publish' => $link['publish']
                 ]);
             }
 
-            return $this->success($category, __('global.alert.update_success', [
-                'attribute' => __('module/link.category.caption')
+            return $this->success($link, __('global.alert.update_success', [
+                'attribute' => __('module/link.caption')
             ]));
             
         } catch (Exception $e) {
@@ -254,36 +283,55 @@ class LinkService
     }
 
     /**
-     * Set Position Category
+     * Sort Link
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortLink($where, $position)
+    {
+        $link = $this->getLink($where);
+
+        $link->position = $position;
+        if (Auth::guard()->check()) {
+            $link->updated_by = Auth::user()['id'];
+        }
+        $link->save();
+
+        return $link;
+    }
+
+    /**
+     * Set Position Link
      * @param array $where
      * @param int $position
      */
-    public function positionCategory($where, $position)
+    public function positionLink($where, $position)
     {
-        $category = $this->getCategory($where);
+        $link = $this->getLink($where);
         
         try {
 
             if ($position >= 1) {
     
-                $this->categoryModel->where('position', $position)->update([
-                    'position' => $category['position'],
+                $this->linkModel->where('position', $position)->update([
+                    'position' => $link['position'],
                 ]);
     
-                $category->position = $position;
+                $link->position = $position;
                 if (Auth::guard()->check()) {
-                    $category->updated_by = Auth::user()['id'];
+                    $link->updated_by = Auth::user()['id'];
                 }
-                $category->save();
+                $link->save();
     
-                return $this->success($category, __('global.alert.update_success', [
-                    'attribute' => __('module/link.category.caption')
+                return $this->success($link, __('global.alert.update_success', [
+                    'attribute' => __('module/link.caption')
                 ]));
 
             } else {
 
                 return $this->error(null, __('global.alert.update_failed', [
-                    'attribute' => __('module/link.category.caption')
+                    'attribute' => __('module/link.caption')
                 ]));
             }
             
@@ -294,57 +342,62 @@ class LinkService
     }
 
      /**
-     * Record Category Hits
+     * Record Link Hits
      * @param array $where
      */
-    public function recordCategoryHits($where)
+    public function recordLinkHits($where)
     {
-        $category = $this->getCategory($where);
-        $category->update([
-            'hits' => ($category->hits+1)
-        ]);
+        $link = $this->getLink($where);
+        
+        if (empty(Session::get('linktHits-'.$link['id']))) {
+            Session::put('linktHits-'.$link['id'], $link['id']);
+            $link->hits = ($link->hits+1);
+            $link->timestamps = false;
+            $link->save();
+        }
 
-        return $category;
+        return $link;
     }
 
         /**
-     * Trash Category
+     * Trash Link
      * @param array $where
      */
-    public function trashCategory($where)
+    public function trashLink($where)
     {
-        $category = $this->getCategory($where);
+        $link = $this->getLink($where);
 
         try {
             
-            $meedia = $category->medias()->count();
+            $meedia = $link->medias()->count();
 
-            if ($category['locked'] == 0 && $meedia == 0) {
+            if ($link['locked'] == 0 && $meedia == 0) {
 
                 if (Auth::guard()->check()) {
 
-                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $category['created_by']) {
-                        return $this->error($category,  __('global.alert.delete_failed_used', [
-                            'attribute' => __('module/link.category.caption')
+                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $link['created_by']) {
+                        return $this->error($link,  __('global.alert.delete_failed_used', [
+                            'attribute' => __('module/link.caption')
                         ]));
                     }
 
-                    $category->update([
+                    $link->update([
                         'deleted_by' => Auth::user()['id']
                     ]);
                 }
 
-                $category->menus()->delete();
-                $category->widgets()->delete();
-                $category->delete();
+                $link->menus()->delete();
+                $link->widgets()->delete();
+                // $link->indexing->delete();
+                $link->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
-                    'attribute' => __('module/link.category.caption')
+                    'attribute' => __('module/link.caption')
                 ]));
     
             } else {
-                return $this->error($category,  __('global.alert.delete_failed_used', [
-                    'attribute' => __('module/link.category.caption')
+                return $this->error($link,  __('global.alert.delete_failed_used', [
+                    'attribute' => __('module/link.caption')
                 ]));
             }
 
@@ -355,29 +408,30 @@ class LinkService
     }
 
     /**
-     * Restore Category
+     * Restore Link
      * @param array $where
      */
-    public function restoreCategory($where)
+    public function restoreLink($where)
     {
-        $category = $this->categoryModel->onlyTrashed()->firstWhere($where);
+        $link = $this->linkModel->onlyTrashed()->firstWhere($where);
 
         try {
             
-            $checkSlug = $this->getCategory(['slug' => $category['slug']]);
+            $checkSlug = $this->getLink(['slug' => $link['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
-                    'attribute' => __('module/link.category.caption')
+                    'attribute' => __('module/link.caption')
                 ]));
             }
             
             //restore data yang bersangkutan
-            $category->menus()->restore();
-            $category->widgets()->restore();
-            $category->restore();
+            $link->menus()->restore();
+            $link->widgets()->restore();
+            // $link->indexing()->restore();
+            $link->restore();
 
-            return $this->success($category, __('global.alert.restore_success', [
-                'attribute' => __('module/link.category.caption')
+            return $this->success($link, __('global.alert.restore_success', [
+                'attribute' => __('module/link.caption')
             ]));
             
         } catch (Exception $e) {
@@ -387,25 +441,26 @@ class LinkService
     }
 
     /**
-     * Delete Category (Permanent)
+     * Delete Link (Permanent)
      * @param array $where
      */
-    public function deleteCategory($request, $where)
+    public function deleteLink($request, $where)
     {
         if ($request->get('is_trash') == 'yes') {
-            $category = $this->categoryModel->onlyTrashed()->firstWhere($where);
+            $link = $this->linkModel->onlyTrashed()->firstWhere($where);
         } else {
-            $category = $this->getCategory($where);
+            $link = $this->getLink($where);
         }
 
         try {
             
-            $category->menus()->forceDelete();
-            $category->widgets()->forceDelete();
-            $category->forceDelete();
+            $link->menus()->forceDelete();
+            $link->widgets()->forceDelete();
+            $link->indexing()->forceDelete();
+            $link->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
-                'attribute' => __('module/link.category.caption')
+                'attribute' => __('module/link.caption')
             ]));
             
         } catch (Exception $e) {
@@ -435,8 +490,8 @@ class LinkService
         if ($isTrash == true)
             $media->onlyTrashed();
 
-        if (isset($filter['link_category_id']))
-            $media->where('link_category_id', $filter['link_category_id']);
+        if (isset($filter['link_id']))
+            $media->where('link_id', $filter['link_id']);
 
         if (isset($filter['publish']))
             $media->where('publish', $filter['publish']);
@@ -506,9 +561,9 @@ class LinkService
         try {
 
             $media = new LinkMedia;
-            $media->link_category_id = $data['link_category_id'];
+            $media->link_id = $data['link_id'];
             $this->setFieldMedia($data, $media);
-            $media->position = $this->mediaModel->where('link_category_id', $data['link_category_id'])->max('position') + 1;
+            $media->position = $this->mediaModel->where('link_id', $data['link_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
                 if (Auth::user()->hasRole('editor') && config('module.link.media.approval') == true) {
@@ -590,11 +645,24 @@ class LinkService
         $media->public = (bool)$data['public'];
         $media->locked = (bool)$data['locked'];
         $media->config = [
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_cover' => (bool)$data['hide_cover'],
-            'hide_banner' => (bool)$data['hide_banner'],
-            'is_embed' => (bool)$data['is_embed']
+            'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+            'is_embed' => (bool)$data['config_is_embed']
         ];
+
+        if (isset($data['cf_name'])) {
+            
+            $customField = [];
+            foreach ($data['cf_name'] as $key => $value) {
+                $customField[$value] = $data['cf_value'][$key];
+            }
+
+            $media->custom_fields = $customField;
+        } else {
+            $media->custom_fields = null;
+        }
 
         return $media;
     }
@@ -626,6 +694,24 @@ class LinkService
     }
 
     /**
+     * Sort Media
+     * @param array $where
+     * @param int $position
+     */
+    public function sortMedia($where, $position)
+    {
+        $media = $this->getMedia($where);
+
+        $media->position = $position;
+        if (Auth::guard()->check()) {
+            $media->updated_by = Auth::user()['id'];
+        }
+        $media->save();
+
+        return $media;
+    }
+
+    /**
      * Set Position Media
      * @param array $where
      * @param int $position
@@ -638,7 +724,7 @@ class LinkService
 
             if ($position >= 1) {
     
-                $this->mediaModel->where('link_category_id', $media['link_category_id'])
+                $this->mediaModel->where('link_id', $media['link_id'])
                     ->where('position', $position)->update([
                     'position' => $media['position'],
                 ]);

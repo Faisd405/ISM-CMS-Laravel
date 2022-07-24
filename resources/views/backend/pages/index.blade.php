@@ -22,14 +22,14 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @can ('page_create')
-                    <a href="{{ route('page.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
-                            'attribute' => __('module/page.caption')
+                    @if (Auth::user()->hasRole('developer|super') && Auth::user()->can('page_create'))
+                    <a href="{{ route('page.create') }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                        'attribute' => __('module/page.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/page.caption')</span>
                     </a>
-                    @endcan
-                    @role('super')
+                    @endif
+                    @role('developer|super')
                     <a href="{{ route('page.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -103,8 +103,8 @@
                         <tr class="table-primary">
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <strong>{!! Str::limit($item->fieldLang('title'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
+                                <strong>{!! Str::limit($item->fieldLang('title'), 60) !!}</strong>
+                                @if ($item['detail'] == 1)
                                 <a href="{{ route('page.read.'.$item['slug']) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
@@ -116,7 +116,7 @@
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}"
                                     title="@lang('global.status')">
                                     {{ __('global.label.publish.'.$item['publish']) }}
-                                    <form action="{{ route('page.publish', array_merge(['id' => $item['id']], $queryParam)) }}" method="POST">
+                                    <form action="{{ route('page.publish', ['id' => $item['id']]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -140,6 +140,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
+                                @if (isset(config('cms.module.page.ordering')['position']))
                                 @if (Auth::user()->can('page_update') && $item->where('parent', $item['parent'])->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
@@ -162,39 +163,44 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
+                                @endif
                             </td>
                             <td class="text-center">
                                 @can('page_create')
-                                <a href="{{ route('page.create', array_merge(['parent' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-success" title="@lang('global.add_attr_new', [
+                                @if (Auth::user()->hasRole('developer|super') || $item['config']['create_child'] == true)
+                                <a href="{{ route('page.create', ['parent' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success" title="@lang('global.add_attr_new', [
                                     'attribute' => __('module/page.caption')
                                 ])">
                                     <i class="las la-plus"></i>
                                 </a>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->can('medias') && config('cms.module.master.media.active') == true)
+                                @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('medias') && config('cms.module.master.media.active') == true && $item['config']['show_media'] == true)
                                 <a href="{{ route('media.index', ['moduleId' => $item['id'], 'moduleType' => 'page']) }}" class="btn icon-btn btn-sm btn-info" title="@lang('master/media.caption')">
                                     <i class="las la-folder"></i>
                                 </a>
                                 @endif
                                 @can('page_update')
-                                <a href="{{ route('page.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('page.edit', ['id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/page.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can('page_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/page.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.page.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super') && config('cms.module.page.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
-                                    <form action="{{ route('page.approved', array_merge(['id' => $item['id']], $queryParam)) }}" method="POST" id="form-approval">
+                                    <form action="{{ route('page.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -203,7 +209,7 @@
                             </td>
                         </tr>
                         @if ($item['childs']->count() > 0)
-                            @include('backend.pages.child', ['childs' => $item['childs'], 'level' => 1])
+                            @include('backend.pages.child', ['childs' => $item->childs()->orderBy($item['config']['child_order_by'], $item['config']['child_order_type'])->get(), 'level' => 1])
                         @endif
                         @empty
                         <tr>

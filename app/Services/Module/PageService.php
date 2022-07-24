@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class PageService
@@ -59,13 +60,15 @@ class PageService
         if (isset($filter['approved']))
             $page->where('approved', $filter['approved']);
 
+        if (isset($filter['detail']))
+            $page->where('detail', $filter['detail']);
+
         if (isset($filter['created_by']))
             $page->where('created_by', $filter['created_by']);
 
         if (isset($filter['q']))
             $page->when($filter['q'], function ($page, $q) {
                 $page->whereRaw('LOWER(JSON_EXTRACT(title, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
-                    ->orWhereRaw('LOWER(JSON_EXTRACT(intro, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
                     ->orWhereRaw('LOWER(JSON_EXTRACT(content, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
                     ->orWhereRaw('LOWER(JSON_EXTRACT(seo, "$.keywords")) like ?', ['"%' . strtolower($q) . '%"']);
             });
@@ -134,7 +137,7 @@ class PageService
             $page->position = $this->pageModel->where('parent', (int)$data['parent'])->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('editor') && config('module.page.approval') == true) {
+                if (Auth::user()->hasRole('support|admin|editor') && config('module.page.approval') == true) {
                     $page->approved = 2;
                 }
                 $page->created_by = Auth::user()['id'];
@@ -144,7 +147,7 @@ class PageService
             try {
                 
                 DB::commit();
-                $slug = Str::slug($data['slug'], '-');
+                $slug = Str::slug(strip_tags($data['slug']), '-');
                 $data['slug'] = $slug;
                 $data['module'] = 'page';
                 $this->indexUrl->storeAssociate($data, $page);
@@ -157,7 +160,9 @@ class PageService
                 ]));
 
             } catch (Exception $e) {
-            
+
+                DB::rollBack();
+                
                 return $this->error(null,  $e->getMessage());
             }
             
@@ -184,7 +189,7 @@ class PageService
 
             $page->save();
 
-            $slug = Str::slug($data['slug'], '-');
+            $slug = Str::slug(strip_tags($data['slug']), '-');
             $this->indexUrl->updateAssociate($slug, ['id' => $page['indexing']['id']]);
 
             if (isset($data['tags']))
@@ -221,7 +226,7 @@ class PageService
                 $data['content_'.$langDefault] : $data['content_'.$value['iso_codes']];
         }
 
-        $page->slug = Str::slug($data['slug'], '-');
+        $page->slug = Str::slug(strip_tags($data['slug']), '-');
         $page->title = $title;
         $page->intro = $intro;
         $page->content = $content;
@@ -237,13 +242,25 @@ class PageService
         ];
         $page->publish = (bool)$data['publish'];
         $page->public = (bool)$data['public'];
+        $page->detail = (bool)$data['detail'];
         $page->locked = (bool)$data['locked'];
         $page->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_intro' => (bool)$data['hide_intro'],
-            'hide_tags' => (bool)$data['hide_tags'],
-            'hide_cover' => (bool)$data['hide_cover'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_intro' => (bool)$data['config_show_intro'],
+            'show_content' => (bool)$data['config_show_content'],
+            'show_tags' => (bool)$data['config_show_tags'],
+            'show_cover' => (bool)$data['config_show_cover'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'show_media' => (bool)$data['config_show_media'],
+            'detail_child' => (bool)$data['config_detail_child'],
+            'create_child' => (bool)$data['config_create_child'],
+            'paginate_child' => (bool)$data['config_paginate_child'],
+            'action_media' => (bool)$data['config_action_media'],
+            'paginate_media' => (bool)$data['config_paginate_media'],
+            'child_limit' => $data['config_child_limit'],
+            'media_limit' => $data['config_media_limit'],
+            'child_order_by' => $data['config_child_order_by'],
+            'child_order_type' => $data['config_child_order_type'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
         ];
         $page->template_id = $data['template_id'] ?? null;
         $page->seo = [
@@ -251,7 +268,6 @@ class PageService
             'description' => $data['meta_description'] ?? null,
             'keywords' => $data['meta_keywords'] ?? null,
         ];
-
 
         if (isset($data['cf_name'])) {
             
@@ -357,9 +373,13 @@ class PageService
     public function recordHits($where)
     {
         $page = $this->getPage($where);
-        $page->update([
-            'hits' => ($page->hits+1)
-        ]);
+
+        if (empty(Session::get('pageHits-'.$page['id']))) {
+            Session::put('pageHits-'.$page['id'], $page['id']);
+            $page->hits = ($page->hits+1);
+            $page->timestamps = false;
+            $page->save();
+        }
 
         return $page;
     }
@@ -380,7 +400,7 @@ class PageService
 
                 if (Auth::guard()->check()) {
 
-                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $page['created_by']) {
+                    if (Auth::user()->hasRole('support|admin|editor') && Auth::user()['id'] != $page['created_by']) {
                         return $this->error($page,  __('global.alert.delete_failed_used', [
                             'attribute' => __('module/page.caption')
                         ]));

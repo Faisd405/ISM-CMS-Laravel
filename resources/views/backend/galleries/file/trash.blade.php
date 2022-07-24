@@ -55,7 +55,7 @@
                                 <label class="form-label">@lang('global.type')</label>
                                 <select class="custom-select" name="type">
                                     <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('module/gallery.file.type') as $key => $val)
+                                    @foreach (config('cms.module.gallery.file.type') as $key => $val)
                                     <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
@@ -101,12 +101,14 @@
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <a href="{{ $item['type'] == '1' && $item['video_type'] == '1' ? $item->fileSrc()['video'] : $item->fileSrc()['image'] }}" data-fancybox="gallery">
-                                    <img src="{{ $item->fileSrc()['image'] }}" alt="" style="width: 120px;">
+                                <a href="{{ $item['type'] == '1' && $item['video_type'] == '1' ? $item['file_src']['video'] : $item['file_src']['image'] }}" data-fancybox="gallery">
+                                    <img src="{{ $item['file_src']['image'] }}" alt="" style="width: 120px;">
                                 </a>
                             </td>
                             <td>
-                                {!! !empty($item['title'][App::getLocale()]) ? Str::limit($item['title'][App::getLocale()], 30) : '-' !!}
+                                {!! !empty($item['title'][App::getLocale()]) ? Str::limit($item['title'][App::getLocale()], 30) : __('global.field_empty_attr', [
+                                    'attribute' => __('module/gallery.file.label.field1')
+                                    ]) !!}
                                 @if (!empty($item['description'][App::getLocale()]))
                                     <br>
                                     <small class="text-muted">{!! Str::limit($item['description'][App::getLocale()], 45) !!}</small>
@@ -115,13 +117,13 @@
                             <td>
                                 @switch($item['type'])
                                     @case(1)
-                                        <span class="badge badge-danger">{{ __('module/gallery.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-danger">{{ config('cms.module.gallery.file.type.'.$item['type']) }}</span>
                                         @break
                                     @case(2)
-                                        <span class="badge badge-secondary">{{ __('module/gallery.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-secondary">{{ config('cms.module.gallery.file.type.'.$item['type']) }}</span>
                                         @break
                                     @default
-                                    <span class="badge badge-success">{{ __('module/gallery.file.type.'.$item['type']) }}</span>
+                                    <span class="badge badge-success">{{ config('cms.module.gallery.file.type.'.$item['type']) }}</span>
                                 @endswitch
                             </td>
                             <td class="text-center">
@@ -213,7 +215,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/gallery/album/' + albumId + '/'+ id +'/permanent?is_trash=yes',
+                        url: '/admin/gallery/album/' + albumId + '/file/'+ id +'/permanent?is_trash=yes',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -21,6 +21,7 @@ class CreateMasterTemplatesTable extends Migration
             $table->text('filepath');
             $table->string('filename');
             $table->text('content_template')->nullable();
+            $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();

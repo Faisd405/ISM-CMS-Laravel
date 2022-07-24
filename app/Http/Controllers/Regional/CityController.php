@@ -106,6 +106,7 @@ class CityController extends Controller
     {
         $data = $request->all();
         $data['province_code'] = $provinceCode;
+        $data['locked'] = (bool)$request->locked;
         $city = $this->regionalService->storeCity($data);
         $data['query'] = $request->query();
 
@@ -143,6 +144,7 @@ class CityController extends Controller
     {
         $data = $request->all();
         $data['province_code'] = $provinceCode;
+        $data['locked'] = (bool)$request->locked;
         $city = $this->regionalService->updateCity($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -202,7 +204,7 @@ class CityController extends Controller
             $filter['code'] = $request->input('code');
         }
 
-        $city = $this->regionalService->getCityList($filter, false);
+        $city = $this->regionalService->getCityList($filter, false, 0);
 
         return $this->success($city);
     }

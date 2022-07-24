@@ -25,8 +25,9 @@ class ConfigurationService
     /**
      * Get Config List
      * @param array $filter
+     * @param array $orderBy
      */
-    public function getConfigList($filter = [])
+    public function getConfigList($filter = [], $orderBy = [])
     {
         $config = $this->configModel->query();
 
@@ -41,6 +42,11 @@ class ConfigurationService
 
         if (isset($filter['active']))
             $config->where('active', $filter['active']);
+
+        if (!empty($orderBy))
+            foreach ($orderBy as $key => $value) {
+                $config->orderBy($key, $value);
+            }
 
         $result = $config->get();
 
@@ -91,6 +97,62 @@ class ConfigurationService
         }
 
         return $file;
+    }
+    
+    /**
+     * Create Confg
+     * @param array $data
+     */
+    public function storeConfig($data)
+    {
+        try {
+            
+            $config = new Configuration;
+            $config->group = $data['group'];
+            $config->name = Str::slug($data['name'], '_');
+            $config->label = $data['label'];
+            $config->value = $data['value'] ?? null;
+            $config->is_upload = (bool)$data['is_upload'];
+            $config->show_form = (bool)$data['show_form'];
+            $config->active = (bool)$data['active'];
+            $config->locked = (bool)$data['locked'];
+            $config->save();
+
+            return $this->success($config,  __('global.alert.create_success', [
+                'attribute' => __('feature/configuration.website.caption')
+            ]));
+            
+        } catch (Exception $e) {
+            
+            return $this->error(null,  $e->getMessage());
+        }
+    }
+
+    /**
+     * Set Config
+     * @param arrray $data
+     */
+    public function setConfig($data)
+    {
+        try {
+            
+            foreach ($data['label'] as $key => $value) {
+                $this->getConfig(['name' => $key])->update([
+                    'label' => $value,
+                    'show_form' => isset($data['show_form'][$key]) ? 1 : 0,
+                    'active' => isset($data['active'][$key]) ? 1 : 0,
+                    'locked' => isset($data['locked'][$key]) ? 1 : 0,
+                ]);
+            }
+
+            return $this->success($data,  __('global.alert.update_success', [
+                'attribute' => __('feature/configuration.website.caption')
+            ]));
+            
+        } catch (Exception $e) {
+            
+            return $this->error(null,  $e->getMessage());
+        }
     }
 
     /**
@@ -157,7 +219,7 @@ class ConfigurationService
 
     /**
      * Delete File Config
-     * @param arrray $requestName
+     * @param string $name
      */
     public function deleteFileConfig($name)
     {
@@ -174,6 +236,37 @@ class ConfigurationService
             return $this->success($config,  __('global.alert.delete_success', [
                 'attribute' => __('feature/configuration.website.caption')
             ]));
+
+        } catch (Exception $e) {
+            
+            return $this->error(null,  $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete Config
+     * @param string $nam
+     */
+    public function deleteConfig($name)
+    {
+        $config = $this->getConfig(['name' => $name]);
+        
+        try {
+
+            if ($config['locked'] == 0) {
+                
+                $config->delete();
+
+                return $this->success($config,  __('global.alert.delete_success', [
+                    'attribute' => __('feature/configuration.website.caption')
+                ]));
+
+            } else {
+                
+                return $this->error(null,  __('global.alert.delete_failed_used', [
+                    'attribute' => __('feature/configuration.website.caption')
+                ]));
+            }
 
         } catch (Exception $e) {
             

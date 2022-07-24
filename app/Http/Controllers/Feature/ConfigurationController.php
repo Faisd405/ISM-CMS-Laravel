@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Lang;
 use Spatie\Analytics\Period;
 use Analytics;
+use App\Http\Requests\Feature\ConfigRequest;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -37,7 +38,11 @@ class ConfigurationController extends Controller
         $data['general'] = $this->configService->getConfigList(['group' => 2, 'show_form' => 1]);
         $data['meta_data'] = $this->configService->getConfigList(['group' => 3, 'show_form' => 1]);
         $data['social_media'] = $this->configService->getConfigList(['group' => 4, 'show_form' => 1]);
+        $data['notification'] = $this->configService->getConfigList(['group' => 5, 'show_form' => 1]);
         $data['dev_only'] = $this->configService->getConfigList(['group' => 100, 'show_form' => 1]);
+        $data['all_config'] = $this->configService->getConfigList([], [
+            'group' => 'ASC'
+        ]);
         $data['languages'] = $this->langService->getLanguageActive();
 
         return view('backend.features.configuration.website', compact('data'), [
@@ -47,6 +52,34 @@ class ConfigurationController extends Controller
                 __('feature/configuration.website.caption') => ''
             ],
         ]);
+    }
+
+    public function addConfigWeb(ConfigRequest $request)
+    {
+        $data = $request->all();
+        $data['is_upload'] = (bool)$request->is_upload;
+        $data['show_form'] = (bool)$request->show_form;
+        $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
+
+        $config = $this->configService->storeConfig($data);
+
+        if ($config['success'] == true) {
+            return redirect()->back()->with('success', $config['message']);
+        }
+
+        return redirect()->back()->with('failed', $config['message']);
+    }
+
+    public function setConfigWeb(Request $request)
+    {
+        $config = $this->configService->setConfig($request);
+
+        if ($config['success'] == true) {
+            return redirect()->back()->with('success', $config['message']);
+        }
+
+        return redirect()->back()->with('failed', $config['message']);
     }
 
     public function updateConfigWeb(Request $request)
@@ -78,6 +111,13 @@ class ConfigurationController extends Controller
         return $config;
     }
 
+    public function deleteConfigWeb($name)
+    {
+        $config = $this->configService->deleteConfig($name);
+
+        return $config;
+    }
+
     /**
      * Text
      */
@@ -102,7 +142,7 @@ class ConfigurationController extends Controller
 
         return view('backend.features.configuration.text', compact('data'), [
             'title' => __('feature/configuration.caption').' - '.__('feature/configuration.text.caption').
-                ' : <b class="text-primary">'.Str::upper($data['lang']['name']).'</b>',
+                ' : '.Str::upper($data['lang']['name']),
             'breadcrumbs' => [
                 __('feature/configuration.caption') => 'javascript:;',
                 __('feature/configuration.text.caption') => ''

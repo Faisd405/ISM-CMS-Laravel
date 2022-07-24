@@ -102,6 +102,7 @@ class RegistrationController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $registration = $this->registrationService->store($data);
         $data['query'] = $request->query();
 
@@ -136,6 +137,7 @@ class RegistrationController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $registration = $this->registrationService->update($data, ['id' => $id]);
         $data['query'] = $request->query();
 

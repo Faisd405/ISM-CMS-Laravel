@@ -21,6 +21,8 @@ class Widget extends Model
         'title' => 'json',
         'description' => 'json',
         'content' => 'json',
+        'config' => 'json',
+        'custom_fields' => 'json',
     ];
 
     public static function boot()

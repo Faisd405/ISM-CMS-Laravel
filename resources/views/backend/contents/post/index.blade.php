@@ -23,7 +23,7 @@
                     @endif
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
-                    @if (Auth::user()->can('content_categories') && config('cms.module.content.category.active') == true)
+                    @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('content_categories') && config('cms.module.content.category.active') == true && $data['section']['config']['show_category'] == true)
                     <a href="{{ route('content.category.index', ['sectionId' => $data['section']['id']]) }}" class="btn btn-primary icon-btn-only-sm btn-sm mr-2" title="@lang('module/content.category.manage')">
                         <i class="las la-list"></i> <span>@lang('module/content.category.manage')</span>
                     </a>
@@ -35,7 +35,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/content.post.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('content.post.trash', ['sectionId' => $data['section']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -57,7 +57,7 @@
                                 </select>
                             </div>
                         </div>
-                        @if (config('cms.module.content.category.active') == true)   
+                        @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('content_categories') && config('cms.module.content.category.active') == true && $data['section']['config']['show_category'] == true)
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-label">@lang('module/content.category.caption')</label>
@@ -100,13 +100,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header with-elements">
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.post.text')</h5>
+            </div>
             <div class="card-header">
                 <span class="text-muted">
                     {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
                 </span>
-            </div>
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/content.post.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -114,25 +114,28 @@
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
+                            @if (Auth::user()->hasRole('developer|super') || $data['section']['config']['post_selected'] == true)
                             <th style="width: 40px;"></th>
+                            @endif
                             <th>@lang('module/content.post.label.field1')</th>
-                            @if (config('cms.module.content.category.active') == true)   
+                            @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('content_categories') && config('cms.module.content.category.active') == true && $data['section']['config']['show_category'] == true)
                             <th style="width: 210px;">@lang('module/content.category.caption')</th>
                             @endif
                             <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
-                            @if ($data['section']['ordering']['order_by'] == 'position')
+                            @if ($data['section']['config']['post_order_by'] == 'position')
                             <th class="text-center" style="width: 110px;"></th>
                             @endif
                             <th class="text-center" style="width: 190px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['posts']->total() > 1 && $data['section']['config']['post_order_by'] == 'position' ? 'drag' : ''}}">
                         @forelse ($data['posts'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
+                            @if (Auth::user()->hasRole('developer|super') || $data['section']['config']['post_selected'] == true)
                             <td>
                                 @can ('content_post_update')
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-selected').submit();" class="btn icon-btn btn-sm btn-{{ $item['selected'] == 1 ? 'warning' : 'secondary' }}" title="{{ $item['selected'] == 1 ? 'UNSELECTED' : 'SELECTED'}}">
@@ -144,15 +147,16 @@
                                 </a>
                                 @endcan
                             </td>
+                            @endif
                             <td>
-                                <strong>{!! Str::limit($item->fieldLang('title'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
+                                <strong>{!! Str::limit($item->fieldLang('title'), 45) !!}</strong>
+                                @if ($item['detail'] == true)
                                 <a href="{{ route('content.post.read.'.$item['section']['slug'], ['slugPost' => $item['slug']]) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
                                 @endif
                             </td>
-                            @if (config('cms.module.content.category.active') == true)   
+                            @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('content_categories') && config('cms.module.content.category.active') == true && $data['section']['config']['show_category'] == true)
                             <td>
                                 @if (!empty($item['category_id']))
                                     @foreach ($item->categories() as $cat)
@@ -194,7 +198,7 @@
                                     <span class="text-muted">@lang('global.by') : {{ $item['updateBy'] != null ? $item['updateBy']['name'] : 'User Deleted' }}</span>
                                 @endif
                             </td>
-                            @if ($data['section']['ordering']['order_by'] == 'position')
+                            @if ($data['section']['config']['post_order_by'] == 'position')
                             <td class="text-center">
                                 @if (Auth::user()->can('content_post_update') && $item->where('section_id', $item['section_id'])->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
@@ -221,7 +225,7 @@
                             </td>
                             @endif
                             <td class="text-center">
-                                @if (Auth::user()->can('medias') && config('cms.module.master.media.active') == true)
+                                @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('medias') && config('cms.module.master.media.active') == true && $item['config']['show_media'] == true)
                                 <a href="{{ route('media.index', ['moduleId' => $item['id'], 'moduleType' => 'content_post']) }}" class="btn icon-btn btn-sm btn-info" title="@lang('master/media.caption')">
                                     <i class="las la-folder"></i>
                                 </a>
@@ -234,15 +238,17 @@
                                 </a>
                                 @endcan
                                 @can('content_post_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/content.post.caption')
                                     ])"
                                     data-section-id="{{ $item['section_id'] }}"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
+                                @endif
                                 </button>
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.content.post.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.content.post.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('content.post.approved', ['sectionId' => $item['section_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -298,7 +304,38 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                var sectionId = '{{ $data['section']['id'] }}';
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/content/'+sectionId+'/post/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //select2
     $(function () {
         $('.select2').select2();

@@ -5,10 +5,10 @@ namespace App\Models\Master;
 use App\Models\Module\Content\ContentCategory;
 use App\Models\Module\Content\ContentPost;
 use App\Models\Module\Content\ContentSection;
-use App\Models\Module\Document\DocumentCategory;
+use App\Models\Module\Document\Document;
 use App\Models\Module\Gallery\GalleryAlbum;
 use App\Models\Module\Gallery\GalleryCategory;
-use App\Models\Module\Link\LinkCategory;
+use App\Models\Module\Link\Link;
 use App\Models\Module\Page;
 use App\Models\User;
 use App\Observers\LogObserver;
@@ -71,14 +71,14 @@ class Template extends Model
         return $this->hasMany(GalleryAlbum::class, 'template_id');
     }
 
-    public function documentCategories()
+    public function documents()
     {
-        return $this->hasMany(DocumentCategory::class, 'template_id');
+        return $this->hasMany(Document::class, 'template_id');
     }
 
-    public function linkCategories()
+    public function links()
     {
-        return $this->hasMany(LinkCategory::class, 'template_id');
+        return $this->hasMany(Link::class, 'template_id');
     }
 
     public function createBy()
@@ -94,5 +94,10 @@ class Template extends Model
     public function deleteBy()
     {
         return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
     }
 }

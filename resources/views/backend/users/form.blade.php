@@ -59,9 +59,6 @@
                         <div class="col-md-2 text-md-right">
                           <label class="col-form-label text-sm-right">
                             @lang('module/user.label.field3') <i class="text-danger">*</i>
-                            <i class="las la-info-circle" data-toggle="popover"  data-placement="right" 
-                              data-content="@lang('module/user.username_info')" title="Info">
-                            </i>
                           </label>
                         </div>
                         <div class="col-md-10">
@@ -69,9 +66,10 @@
                             value="{{ !isset($data['user']) ? old('username') : old('username', $data['user']['username']) }}" 
                             placeholder="@lang('module/user.placeholder.field3')">
                             @include('components.field-error', ['field' => 'username'])
+                            <small class="form-text text-muted">@lang('module/user.username_info')</small>
                         </div>
                     </div>
-                    @if (!isset($data['user']) || isset($data['user']) && $data['user']->roles[0]['id'] <= 4)
+                    @if (!isset($data['user']) || isset($data['user']) && $data['user']->roles[0]['level'] <= 5)
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
                             <label class="col-form-label text-sm-right">@lang('module/user.role.caption') <i class="text-danger">*</i></label>
@@ -106,13 +104,23 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group row hide-form">
+                      <div class="col-md-2 text-md-right">
+                        <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                      </div>
+                      <div class="col-md-10">
+                          <label class="custom-control custom-checkbox m-0">
+                              <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                              {{ !isset($data['user']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['user']['locked']) == 1 ? 'checked' : '') }}>
+                              <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                          </label>
+                          <small class="form-text text-muted">@lang('global.locked_info')</small>
+                      </div>
+                    </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
                           <label class="col-form-label text-sm-right">
                             @lang('module/user.label.field5') <i class="text-danger">*</i>
-                            <i class="las la-info-circle" data-toggle="popover" data-placement="right" 
-                              data-content="@lang('module/user.password_info')" title="Info">
-                            </i>
                           </label>
                         </div>
                         <div class="col-md-10">
@@ -122,8 +130,11 @@
                             <div class="input-group-append">
                                 <span toggle="#password-field" class="input-group-text toggle-password fas fa-eye"></span>
                             </div>
-                              @include('components.field-error', ['field' => 'password'])
+                            @include('components.field-error', ['field' => 'password'])
                           </div>
+                          <small class="form-text text-muted">
+                            @lang('module/user.password_info')
+                          </small>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -166,7 +177,7 @@
                     </thead>
                     <tbody>
                       @forelse ($data['permissions'] as $item)
-                      <tr class="bg-primary" style="color: #fff;">
+                      <tr class="table-primary">
                         <td><strong>{{ $loop->iteration }}</strong></td>
                           <td>
                               <strong>
@@ -175,14 +186,21 @@
                           </td>
                           <td><strong><i>READ</i></strong></td>
                           <td class="text-center">
-                              <label class="form-check form-check-inline">
-                                  <input type="checkbox" class="form-check-input check-parent" data-id="{{ $item['id'] }}" name="permissions[]" value="{{ $item['id'] }}" 
-                                    {{ isset($data['permission_ids']) ? (in_array($item['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
-                                  <span class="form-check-label"></span>
-                              </label>
+                            <label class="custom-control custom-checkbox">
+                              <input type="checkbox" class="custom-control-input check-parent" data-id="{{ $item['id'] }}" name="permissions[]" value="{{ $item['id'] }}" 
+                                {{ isset($data['permission_ids']) ? (in_array($item['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
+                              <span class="custom-control-label"></span>
+                            </label>
                           </td>
                       </tr>
-                      @foreach (Auth::user()['roles'][0]['permissions']->where('parent', $item['id']) as $child)
+                      @php
+                          if (Auth::user()->hasRole('developer')) {
+                            $childs = $item->where('parent', $item['id'])->get();
+                          } else {
+                            $childs = Auth::user()['roles'][0]['permissions']->where('parent', $item['id']);
+                          }
+                      @endphp
+                      @foreach ($childs as $child)
                       @php
                           $parentName = substr_replace($item['name'], '', -1);
                           // $childName = str_replace([$parentName.'_'], '', $child['name'])
@@ -194,11 +212,11 @@
                             <i>{!! Str::replace('_', ' ', Str::upper($child['name'])) !!}</i>
                           </td>
                           <td class="text-center">
-                              <label class="form-check form-check-inline">
-                                  <input type="checkbox" class="form-check-input check-child-{{ $child['parent'] }}" name="permissions[]" value="{{ $child['id'] }}" 
-                                    {{ isset($data['permission_ids']) ? (in_array($child['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
-                                  <span class="form-check-label"></span>
-                              </label>
+                            <label class="custom-control custom-checkbox">
+                              <input type="checkbox" class="custom-control-input check-child-{{ $child['parent'] }}" name="permissions[]" value="{{ $child['id'] }}" 
+                                {{ isset($data['permission_ids']) ? (in_array($child['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
+                              <span class="custom-control-label"></span>
+                            </label>
                           </td>
                       </tr>
                       @endforeach
@@ -251,7 +269,7 @@
     });
 
     //permissions
-    @if (isset($data['user']) && $data['user']['roles'][0]['id'] == 4)
+    @if (isset($data['user']) && $data['user']['roles'][0]['level'] == 5)
       $('#permissions').show();
     @else
       $('#permissions').hide();
@@ -273,4 +291,9 @@
     });
 
 </script>
+@if(!Auth::user()->hasRole('developer|super'))
+<script>
+  $('.hide-form').hide();
+</script>
+@endif
 @endsection

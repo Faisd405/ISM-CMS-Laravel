@@ -68,6 +68,7 @@ class PermissionController extends Controller
     {
         $data = $request->all();
         $data['parent'] = $request->parent;
+        $data['locked'] = (bool)$request->locked;
         $permission = $this->userService->storePermission($data);
         $data['query'] = $request->query();
 
@@ -105,6 +106,7 @@ class PermissionController extends Controller
     public function update(PermissionRequest $request, $id)
     {
         $data = $request->all();
+        $data['locked'] = (bool)$request->locked;
         $permission = $this->userService->updatePermission($data, ['id' => $id]);
         $data['query'] = $request->query();
 

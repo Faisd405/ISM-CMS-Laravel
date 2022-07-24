@@ -29,7 +29,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/inquiry.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('inquiry.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -98,13 +98,13 @@
                             <th class="text-center" style="width: 210px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['inquiries']->total() > 1 && isset(config('cms.module.inquiry.ordering')['position']) ? 'drag' : ''}}">
                         @forelse ($data['inquiries'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
+                                @if ($item['detail'] == 1)
                                 <a href="{{ route('inquiry.read.'.$item['slug']) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
@@ -140,6 +140,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
+                                @if (isset(config('cms.module.inquiry.ordering')['position']))
                                 @if (Auth::user()->can('inquiry_update') && $item->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
@@ -162,8 +163,10 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
+                                @endif
                             </td>
                             <td class="text-center">
+                                @if ($item['config']['show_form'] == true)
                                 <a href="{{ route('inquiry.form', ['inquiryId' => $item['id']]) }}" class="btn icon-btn btn-sm btn-warning" title="@lang('module/inquiry.form.caption')">
                                     <i class="las la-edit"></i>
                                 </a>
@@ -172,6 +175,7 @@
                                     <i class="las la-list"></i>
                                 </a>
                                 @endcan
+                                @endif
                                 @can('inquiry_update')
                                 <a href="{{ route('inquiry.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/inquiry.caption')
@@ -180,14 +184,16 @@
                                 </a>
                                 @endcan
                                 @can('inquiry_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/inquiry.caption')
+                                    'attribute' => __('module/inquiry.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super') && config('cms.module.inquiry.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super') && config('cms.module.inquiry.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('inquiry.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -242,7 +248,37 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/inquiry/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

@@ -93,6 +93,7 @@ class ApiController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $api = $this->apiService->store($data);
         $data['query'] = $request->query();
 
@@ -125,6 +126,7 @@ class ApiController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $api = $this->apiService->update($data, ['id' => $id]);
         $data['query'] = $request->query();
 

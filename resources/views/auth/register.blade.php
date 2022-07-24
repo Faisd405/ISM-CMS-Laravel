@@ -41,7 +41,7 @@
     <div class="form-group">
         <label class="form-label">@lang('auth.register.label.field2')</label>
         <input type="text" class="form-control @error('email') is-invalid @enderror" name="email" 
-          value="{{ old('email') }}" placeholder="@lang('auth.register.placeholder.field2')" autofocus>
+          value="{{ old('email') }}" placeholder="@lang('auth.register.placeholder.field2')">
         @include('components.field-error', ['field' => 'email'])
     </div>
     <div class="form-group">
@@ -51,27 +51,24 @@
                 <span class="input-group-text">+62</span>
             </div>
             <input type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" 
-                value="{{ old('phone') }}"placeholder="@lang('auth.register.placeholder.field6')" autofocus>
+                value="{{ old('phone') }}"placeholder="@lang('auth.register.placeholder.field6')">
             @include('components.field-error', ['field' => 'phone'])
         </div>
     </div>
     <div class="form-group">
         <label class="form-label">
-            @lang('auth.register.label.field3') 
-            <i class="las la-info-circle" data-toggle="popover" data-placement="right" 
-                data-content="@lang('module/user.username_info')" title="Info">
-            </i>
+            @lang('auth.register.label.field3')
         </label>
         <input type="text" class="form-control @error('username') is-invalid @enderror"  name="username" 
-          value="{{ old('username') }}" placeholder="@lang('auth.register.placeholder.field3')" autofocus>
+          value="{{ old('username') }}" placeholder="@lang('auth.register.placeholder.field3')">
         @include('components.field-error', ['field' => 'username'])
+        <small class="form-text text-muted">
+            @lang('module/user.username_info')
+        </small>
     </div>
     <div class="form-group">
         <label class="form-label">
             @lang('auth.register.label.field4')
-            <i class="las la-info-circle"  data-toggle="popover" data-placement="right" 
-                data-content="@lang('module/user.password_info')" title="Info">
-            </i>
         </label>
         <div class="input-group">
             <input type="password" id="password-field" class="form-control @error('password') is-invalid @enderror" 
@@ -81,6 +78,9 @@
             </div>
             @include('components.field-error', ['field' => 'password'])
         </div>
+        <small class="form-text text-muted">
+            @lang('module/user.password_info')
+        </small>
     </div>
     <div class="form-group">
         <label class="form-label">@lang('auth.register.label.field5')</label>

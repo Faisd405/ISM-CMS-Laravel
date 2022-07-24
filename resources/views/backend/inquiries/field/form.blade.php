@@ -10,16 +10,16 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
-            <div class="card-header">
-                <span class="text-muted">
-                    {{ Str::upper(__('module/inquiry.caption')) }} : <b class="text-primary">{{ $data['inquiry']->fieldLang('name') }}</b>
-                </span>
-            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/inquiry.field.caption')
                 ])
             </h6>
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/inquiry.caption')) }} : <b class="text-primary">{{ $data['inquiry']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <form action="{{ !isset($data['field']) ? route('inquiry.field.store', array_merge(['inquiryId' => $data['inquiry']['id']], $queryParam)) : 
                 route('inquiry.field.update', array_merge(['inquiryId' => $data['inquiry']['id'], 'id' => $data['field']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
@@ -82,12 +82,12 @@
 
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">FIELD SETTING</h6>
+                    <h6 class="font-weight-bold text-primary mb-4">FIELD SETTING</h6>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field3')</label>
                         <div class="col-sm-10">
                             <select class="select2 show-tick" name="type" data-style="btn-default">
-                                @foreach (config('cms.field.inquiry_field') as $key => $field)
+                                @foreach (config('cms.module.inquiry.field.type') as $key => $field)
                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('type') == ''.$key.'' ? 'selected' : '') : (old('type', $data['field']['type']) == ''.$key.'' ? 'selected' : '') }}>
                                         {{ $field }}
                                     </option>
@@ -99,7 +99,7 @@
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field4')</label>
                         <div class="col-sm-10">
                             <select class="custom-select show-tick" name="property_type" data-style="btn-default">
-                                @foreach (config('cms.field.inquiry_input_type') as $key => $value)
+                                @foreach (config('cms.module.inquiry.field.input') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('property_type') == ''.$key.'' ? 'selected' : '') : (old('property_type', $data['field']['properties']['type']) == ''.$key.'' ? 'selected' : '') }}>
                                         {{ $value }}
                                     </option>
@@ -107,7 +107,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field6')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('property_class') is-invalid @enderror" name="property_class" 
@@ -115,7 +115,7 @@
                                 placeholder="@lang('module/inquiry.field.placeholder.field6')">
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.field.label.field7')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('property_attribute') is-invalid @enderror" name="property_attribute" 
@@ -155,8 +155,8 @@
                 </div>
 
                 {{-- CUSTOM FIELD --}}
-                <hr class="m-0">
-                <div class="table-responsive text-center">
+                <hr class="m-0 hide-form">
+                <div class="table-responsive text-center hide-form">
                     <table class="table card-table table-bordered">
                         <thead>
                             <tr>
@@ -195,43 +195,38 @@
                  {{-- SETTING --}}
                  <hr class="m-0">
                  <div class="card-body">
-                     <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                     <div class="form-group row">
-                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                         <div class="col-sm-10">
-                             <select class="form-control show-tick" name="publish" data-style="btn-default">
-                                 @foreach (__('global.label.publish') as $key => $value)
-                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['field']['publish']) == ''.$key.'' ? 'selected' : '') }}>
-                                         {{ $value }}
-                                     </option>
-                                 @endforeach
-                             </select>
-                         </div>
-                     </div>
-                     <div class="form-group row">
-                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                         <div class="col-sm-10">
-                             <select class="form-control show-tick" name="public" data-style="btn-default">
-                                 @foreach (__('global.label.optional') as $key => $value)
-                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['field']['public']) == ''.$key.'' ? 'selected' : '') }}>
-                                         {{ $value }}
-                                     </option>
-                                 @endforeach
-                             </select>
-                         </div>
-                     </div>
-                     <div class="form-group row">
-                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                         <div class="col-sm-10">
-                             <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                 @foreach (__('global.label.optional') as $key => $value)
-                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['field']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                         {{ $value }}
-                                     </option>
-                                 @endforeach
-                             </select>
-                         </div>
-                     </div>
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
+                            <select class="form-control show-tick" name="publish" data-style="btn-default">
+                                @foreach (__('global.label.publish') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['field']['publish']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
+                            <select class="form-control show-tick" name="public" data-style="btn-default">
+                                @foreach (__('global.label.optional') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['field']['public']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">@lang('global.locked')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['field']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['field']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                    </div>
                  </div>
 
                 <div class="card-footer text-center">
@@ -305,4 +300,10 @@
         $("#delete-"+id).remove();
     });
 </script>
+
+@if (!Auth::user()->hasRole('developer|super'))
+<script>
+    $('.hide-form').hide();
+</script>
+@endif
 @endsection

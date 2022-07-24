@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class InquiryService
@@ -65,6 +66,9 @@ class InquiryService
 
         if (isset($filter['approved']))
             $inquiry->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $inquiry->where('detail', $filter['detail']);
 
         if (isset($filter['created_by']))
             $inquiry->where('created_by', $filter['created_by']);
@@ -141,7 +145,7 @@ class InquiryService
             try {
                 
                 DB::commit();
-                $slug = Str::slug($data['slug'], '-');
+                $slug = Str::slug(strip_tags($data['slug']), '-');
                 $data['slug'] = $slug;
                 $data['module'] = 'inquiry';
                 $this->indexUrl->storeAssociate($data, $inquiry);
@@ -189,7 +193,7 @@ class InquiryService
 
             $inquiry->save();
 
-            $slug = Str::slug($data['slug'], '-');
+            $slug = Str::slug(strip_tags($data['slug']), '-');
             $this->indexUrl->updateAssociate($slug, ['id' => $inquiry['indexing']['id']]);
 
             if ($oldSlug != $slug) {
@@ -232,7 +236,7 @@ class InquiryService
                 $data['after_body_'.$langDefault] : $data['after_body_'.$value['iso_codes']];
         }
 
-        $inquiry->slug = Str::slug($data['slug'], '-');
+        $inquiry->slug = Str::slug(strip_tags($data['slug']), '-');
         $inquiry->name = $name;
         $inquiry->body = $body;
         $inquiry->after_body = $afterBody;
@@ -243,6 +247,8 @@ class InquiryService
         ];
         if (!empty($data['email'])) {
             $inquiry->email = explode(',', $data['email']);
+        } else {
+            $inquiry->email = null;
         }
         $inquiry->longitude = $data['longitude'] ?? null;
         $inquiry->latitude = $data['latitude'] ?? null;
@@ -250,21 +256,24 @@ class InquiryService
         $inquiry->publish = (bool)$data['publish'];
         $inquiry->public = (bool)$data['public'];
         $inquiry->locked = (bool)$data['locked'];
+        $inquiry->detail = (bool)$data['detail'];
+        $inquiry->mail_sender_template = $data['mail_sender_template'];
         $inquiry->content_template = isset($data['content_template']) ? $data['content_template'] : null;
         $inquiry->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_map' => (bool)$data['hide_map'],
-            'hide_form' => (bool)$data['hide_form'],
-            'lock_form' => (bool)$data['lock_form'],
-            'hide_body' => (bool)$data['hide_body'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_body' => (bool)$data['config_show_body'],
+            'show_after_body' => (bool)$data['config_show_after_body'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'show_map' => (bool)$data['config_show_map'],
+            'show_form' => (bool)$data['config_show_form'],
+            'lock_form' => (bool)$data['config_lock_form'],
+            'send_mail_sender' => (bool)$data['config_send_mail_sender'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
         ];
         $inquiry->seo = [
             'title' => $data['meta_title'] ?? null,
             'description' => $data['meta_description'] ?? null,
             'keywords' => $data['meta_keywords'] ?? null,
         ];
-
 
         if (isset($data['cf_name'])) {
             
@@ -317,6 +326,25 @@ class InquiryService
     }
 
     /**
+     * Sort Inquiry
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortInquiry($where, $position)
+    {
+        $inquiry = $this->getInquiry($where);
+
+        $inquiry->position = $position;
+        if (Auth::guard()->check()) {
+            $inquiry->updated_by = Auth::user()['id'];
+        }
+        $inquiry->save();
+
+        return $inquiry;
+    }
+
+    /**
      * Set Position Inquiry
      * @param array $where
      * @param int $position
@@ -363,9 +391,13 @@ class InquiryService
     public function recordHits($where)
     {
         $inquiry = $this->getInquiry($where);
-        $inquiry->update([
-            'hits' => ($inquiry->hits+1)
-        ]);
+        
+        if (empty(Session::get('inquiryHits-'.$inquiry['id']))) {
+            Session::put('inquiryHits-'.$inquiry['id'], $inquiry['id']);
+            $inquiry->hits = ($inquiry->hits+1);
+            $inquiry->timestamps = false;
+            $inquiry->save();
+        }
 
         return $inquiry;
     }
@@ -470,8 +502,8 @@ class InquiryService
                 File::delete($path);
                 
             $inquiry->menus()->forceDelete();
-            $inquiry->indexing()->forceDelete();
             $inquiry->widgets()->forceDelete();
+            $inquiry->indexing()->forceDelete();
             $inquiry->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
@@ -724,6 +756,24 @@ class InquiryService
     }
 
     /**
+     * Sort Field
+     * @param array $where
+     * @param int $position
+     */
+    public function sortField($where, $position)
+    {
+        $field = $this->getField($where);
+
+        $field->position = $position;
+        if (Auth::guard()->check()) {
+            $field->updated_by = Auth::user()['id'];
+        }
+        $field->save();
+
+        return $field;
+    }
+
+    /**
      * Set Position Field
      * @param array $where
      * @param int $position
@@ -942,6 +992,7 @@ class InquiryService
     {
         try {
             
+            $inquiry = $this->getInquiry(['id' => $data['inquiry_id']]);
             $getFields = $this->getFieldList([
                 'inquiry_id' => $data['inquiry_id'],
                 'publish' => 1,
@@ -952,16 +1003,24 @@ class InquiryService
                 $fields[$value['name']] = strip_tags($data[$value['name']]) ?? null;
             }
 
-            $form = new InquiryForm;
-            $form->inquiry_id = $data['inquiry_id'];
-            $form->ip_address = request()->ip();
-            $form->fields = $fields;
-            $form->submit_time = now();
-            $form->save();
+            if ($inquiry['config']['show_form'] == true) {
+                
+                $form = new InquiryForm;
+                $form->inquiry_id = $data['inquiry_id'];
+                $form->ip_address = request()->ip();
+                $form->fields = $fields;
+                $form->submit_time = now();
+                $form->save();
 
-            return $this->success($form, __('global.alert.create_success', [
-                'attribute' => __('module/inquiry.form.caption')
-            ]));
+                return $this->success($form, __('global.alert.create_success', [
+                    'attribute' => __('module/inquiry.form.caption')
+                ]));
+
+            } else {
+                return $this->success($inquiry, __('global.alert.create_failed', [
+                    'attribute' => __('module/inquiry.form.caption')
+                ]));
+            }
 
         } catch (Exception $e) {
             

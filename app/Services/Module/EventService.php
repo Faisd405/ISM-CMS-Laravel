@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class EventService
@@ -64,6 +65,9 @@ class EventService
 
         if (isset($filter['approved']))
             $event->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $event->where('detail', $filter['detail']);
 
         if (isset($filter['created_by']))
             $event->where('created_by', $filter['created_by']);
@@ -136,16 +140,13 @@ class EventService
 
             $event->save();
 
-            $slug = Str::slug($data['slug'], '-');
+            $slug = Str::slug(strip_tags($data['slug']), '-');
 
             $setPath = 'views/frontend/events/'.$slug.'.blade.php';
             if (!file_exists(resource_path($setPath))) {
                 File::copy(resource_path('views/frontend/events/detail.blade.php'), 
                     resource_path($setPath));
             }
-
-            File::copy(resource_path('views/frontend/events/detail.blade.php'), 
-                resource_path('views/frontend/events/'.$slug.'.blade.php'));
 
             return $this->success($event,  __('global.alert.create_success', [
                 'attribute' => __('module/event.caption')
@@ -175,7 +176,7 @@ class EventService
 
             $event->save();
 
-            $slug = Str::slug($data['slug'], '-');
+            $slug = Str::slug(strip_tags($data['slug']), '-');
 
             if ($oldSlug != $slug) {
                 
@@ -217,7 +218,7 @@ class EventService
                 $data['form_description_'.$langDefault] : $data['form_description_'.$value['iso_codes']];
         }
 
-        $event->slug = Str::slug($data['slug'], '-');
+        $event->slug = Str::slug(strip_tags($data['slug']), '-');
         $event->name = $name;
         $event->description = $description;
         $event->form_description = $formDescription;
@@ -233,6 +234,8 @@ class EventService
         $event->end_date = $data['end_date'] ?? null;
         if (!empty($data['email'])) {
             $event->email = explode(',', $data['email']);
+        } else {
+            $event->email = null;
         }
         $event->cover = [
             'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
@@ -248,14 +251,17 @@ class EventService
         $event->publish = (bool)$data['publish'];
         $event->public = (bool)$data['public'];
         $event->locked = (bool)$data['locked'];
+        $event->detail = (bool)$data['detail'];
         $event->content_template = isset($data['content_template']) ? $data['content_template'] : null;
         $event->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_form' => (bool)$data['hide_form'],
-            'lock_form' => (bool)$data['lock_form'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_cover' => (bool)$data['hide_cover'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_description' => (bool)$data['config_show_description'],
+            'show_form_description' => (bool)$data['config_show_form_description'],
+            'show_register_code' => (bool)$data['config_show_register_code'],
+            'show_cover' => (bool)$data['config_show_cover'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'show_form' => (bool)$data['config_show_form'],
+            'lock_form' => (bool)$data['config_lock_form'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
         ];
         $event->seo = [
             'title' => $data['meta_title'] ?? null,
@@ -314,6 +320,25 @@ class EventService
     }
 
     /**
+     * Sort Event
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortEvent($where, $position)
+    {
+        $event = $this->getEvent($where);
+
+        $event->position = $position;
+        if (Auth::guard()->check()) {
+            $event->updated_by = Auth::user()['id'];
+        }
+        $event->save();
+
+        return $event;
+    }
+
+    /**
      * Set Position Event
      * @param array $where
      * @param int $position
@@ -360,9 +385,13 @@ class EventService
     public function recordHits($where)
     {
         $event = $this->getEvent($where);
-        $event->update([
-            'hits' => ($event->hits+1)
-        ]);
+        
+        if (empty(Session::get('eventHits-'.$event['id']))) {
+            Session::put('eventHits-'.$event['id'], $event['id']);
+            $event->hits = ($event->hits+1);
+            $event->timestamps = false;
+            $event->save();
+        }
 
         return $event;
     }
@@ -718,6 +747,24 @@ class EventService
     }
 
     /**
+     * Sort Field
+     * @param array $where
+     * @param int $position
+     */
+    public function sortField($where, $position)
+    {
+        $field = $this->getField($where);
+
+        $field->position = $position;
+        if (Auth::guard()->check()) {
+            $field->updated_by = Auth::user()['id'];
+        }
+        $field->save();
+
+        return $field;
+    }
+
+    /**
      * Set Position Field
      * @param array $where
      * @param int $position
@@ -936,6 +983,7 @@ class EventService
     {
         try {
             
+            $event = $this->getEvent(['id' => $data['event_id']]);
             $getFields = $this->getFieldList([
                 'event_id' => $data['event_id'],
                 'publish' => 1,
@@ -948,17 +996,25 @@ class EventService
 
             $registerNumber = $this->eventFormModel->where('event_id', $data['event_id'])->max('register_code') + 1;
 
-            $form = new eventForm;
-            $form->event_id = $data['event_id'];
-            $form->register_code = sprintf("%03d", $registerNumber);
-            $form->ip_address = request()->ip();
-            $form->fields = $fields;
-            $form->submit_time = now();
-            $form->save();
+            if ($event['config']['show_form'] == true) {
 
-            return $this->success($form, __('global.alert.create_success', [
-                'attribute' => __('module/event.form.caption')
-            ]));
+                $form = new eventForm;
+                $form->event_id = $data['event_id'];
+                $form->register_code = sprintf("%03d", $registerNumber);
+                $form->ip_address = request()->ip();
+                $form->fields = $fields;
+                $form->submit_time = now();
+                $form->save();
+
+                return $this->success($form, __('global.alert.create_success', [
+                    'attribute' => __('module/event.form.caption')
+                ]));
+            
+            } else {
+                return $this->success($event, __('global.alert.create_failed', [
+                    'attribute' => __('module/event.form.caption')
+                ]));
+            }
 
         } catch (Exception $e) {
             

@@ -19,7 +19,7 @@
     <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.file.caption') Limit</label>
     <div class="col-sm-10">
         <input type="number" class="form-control mb-1 @error('file_limit') is-invalid @enderror" name="file_limit" 
-            value="{{ !isset($data['widget']) ? old('file_limit') : old('file_limit', $data['widget']['content']['file_limit']) }}" 
+            value="{{ !isset($data['widget']) ? old('file_limit', 6) : old('file_limit', $data['widget']['content']['file_limit']) }}" 
             placeholder="">
         @include('components.field-error', ['field' => 'file_limit'])
     </div>

@@ -48,12 +48,14 @@ class GalleryAlbumController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['albums'] = $this->galleryService->getAlbumList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
+        $data['albums'] = $this->galleryService->getAlbumList($filter, true, 10, false, [], 
+            config('cms.module.gallery.album.ordering'));
         $data['no'] = $data['albums']->firstItem();
         $data['albums']->withQueryString();
-        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
+        $data['categories'] = $this->galleryService->getCategoryList([
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.galleries.album.index', compact('data'), [
             'title' => __('module/gallery.album.title'),
@@ -85,7 +87,10 @@ class GalleryAlbumController extends Controller
         ]);
         $data['no'] = $data['albums']->firstItem();
         $data['albums']->withQueryString();
-        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
+        $data['categories'] = $this->galleryService->getCategoryList([
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.galleries.album.trash', compact('data'), [
             'title' => __('module/gallery.album.title').' - '.__('global.trash'),
@@ -102,7 +107,10 @@ class GalleryAlbumController extends Controller
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'gallery_album'], false, 0);
-        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
+        $data['categories'] = $this->galleryService->getCategoryList([
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.galleries.album.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -120,9 +128,15 @@ class GalleryAlbumController extends Controller
     public function store(GalleryAlbumRequest $request)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_type_image'] = (bool)$request->config_type_image;
+        $data['config_type_video'] = (bool)$request->config_type_video;
+        $data['config_paginate_file'] = (bool)$request->config_paginate_file;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $album = $this->galleryService->storeAlbum($data);
         $data['query'] = $request->query();
 
@@ -141,7 +155,10 @@ class GalleryAlbumController extends Controller
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'gallery_album'], false, 0);
-        $data['categories'] = $this->galleryService->getCategoryList([], false, 0);
+        $data['categories'] = $this->galleryService->getCategoryList([
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.galleries.album.form', compact('data'), [
             'title' => __('global.edit_attr', [
@@ -159,9 +176,15 @@ class GalleryAlbumController extends Controller
     public function update(GalleryAlbumRequest $request, $id)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_type_image'] = (bool)$request->config_type_image;
+        $data['config_type_video'] = (bool)$request->config_type_video;
+        $data['config_paginate_file'] = (bool)$request->config_paginate_file;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $album = $this->galleryService->updateAlbum($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -192,6 +215,16 @@ class GalleryAlbumController extends Controller
         }
 
         return redirect()->back()->with('failed', $album['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->galleryService->sortAlbum(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $id, $position)
@@ -254,7 +287,7 @@ class GalleryAlbumController extends Controller
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
@@ -262,34 +295,32 @@ class GalleryAlbumController extends Controller
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
 
-        $this->galleryService->recordAlbumHits(['id' => $data['read']['id']]);
-
-        //limit
-        $filePerpage = $this->configService->getConfigValue('content_limit');
-        if ($data['read']['file_perpage'] > 0) {
-            $filePerpage = $data['read']['file_perpage'];
+        // filtring
+        $keyword = $request->input('keyword', '');
+        if ($keyword != '') {
+            $filter['q'] = $keyword;
         }
 
+        $filter['gallery_album_id'] = $data['read']['id'];
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
+
         //data
-        $data['files'] = $this->galleryService->getFileList([
-            'gallery_album_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $filePerpage, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['no'] = $data['files']->firstItem();
-        $data['files']->withQueryString();
+        $data['files'] = $this->galleryService->getFileList($filter,
+            $data['read']['config']['paginate_file'], $data['read']['config']['file_limit'], false,
+        [], [$data['read']['config']['file_order_by'] => $data['read']['config']['file_order_type']]);
+        if ($data['read']['config']['paginate_file'] == true) {
+            $data['no_files'] = $data['files']->firstItem();
+            $data['files']->withQueryString();
+        }
 
         $data['fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['image_preview'] = $data['read']->imgPreview();
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['cover'] = $data['read']['cover_src'];
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-
         $data['meta_description'] = $this->configService->getConfigValue('meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
@@ -305,7 +336,7 @@ class GalleryAlbumController extends Controller
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
             URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $data['image_preview']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'album.detail';
         if (!empty($data['read']['template_id'])) {
@@ -313,6 +344,9 @@ class GalleryAlbumController extends Controller
         } elseif (!empty($data['read']['gallery_category_id']) && !empty($data['read']['category']['template_detail_id'])) {
             $blade = 'category.detail.'.Str::replace('.blade.php', '', $data['read']['category']['templateDetail']['filename']);
         }
+
+        // record hits
+        $this->galleryService->recordAlbumHits(['id' => $data['read']['id']]);
 
         return view('frontend.galleries.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('name'),

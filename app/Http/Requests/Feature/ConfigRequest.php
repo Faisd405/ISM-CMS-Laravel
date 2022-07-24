@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Module\Banner;
+namespace App\Http\Requests\Feature;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BannerMultipleRequest extends FormRequest
+class ConfigRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,14 +24,18 @@ class BannerMultipleRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required|max:'.config('cms.files.banner.size_byte').'|mimes:'.config('cms.files.banner.mimes'),
+            'group' => 'required',
+            'name' => 'required|unique:feature_configurations,name',
+            'label' => 'required'
         ];
     }
 
-    // public function attributes()
-    // {
-    //     return [
-    //         'file' => __('module/banner.label.field5'),
-    //     ];
-    // }
+    public function attributes()
+    {
+        return [
+            'group' => 'Group',
+            'name' => 'Name',
+            'label' => 'Label'
+        ];
+    }
 }

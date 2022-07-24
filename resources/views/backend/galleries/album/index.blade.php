@@ -24,9 +24,11 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can ('gallery_categories')
+                    @if (Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true)
                     <a href="{{ route('gallery.category.index') }}" class="btn btn-primary icon-btn-only-sm btn-sm mr-2" title="@lang('module/gallery.category.manage')">
                         <i class="las la-list"></i> <span>@lang('module/gallery.category.manage')</span>
                     </a>
+                    @endif
                     @endcan
                     @can ('gallery_album_create')
                     <a href="{{ route('gallery.album.create', $queryParam) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
@@ -35,7 +37,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/gallery.album.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('gallery.album.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -57,7 +59,7 @@
                                 </select>
                             </div>
                         </div>
-                        @if (config('cms.module.gallery.category.active') == true)
+                        @if (Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true)
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-label">@lang('module/gallery.category.caption')</label>
@@ -110,7 +112,7 @@
                         <tr>
                             <th style="width: 10px;">#</th>
                             <th>@lang('module/gallery.album.label.field1')</th>
-                            @if (config('cms.module.gallery.category.active') == true)   
+                            @if (Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true)
                             <th style="width: 150px;">@lang('module/gallery.category.caption')</th>
                             @endif
                             <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
@@ -121,19 +123,19 @@
                             <th class="text-center" style="width: 180px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['albums']->total() > 1 && isset(config('cms.module.gallery.category.ordering')['position']) ? 'drag' : ''}}">
                         @forelse ($data['albums'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
                                 <strong>{!! Str::limit($item->fieldLang('name'), 65) !!}</strong>
-                                @if ($item['config']['is_detail'] == 1)
+                                @if ($item['detail'] == 1)
                                 <a href="{{ route('gallery.album.read', ['slugAlbum' => $item['slug']]) }}" title="@lang('global.view_detail')" target="_blank">
                                     <i class="las la-external-link-square-alt text-bold" style="font-size: 20px;"></i>
                                 </a>
                                 @endif
                             </td>
-                            @if (config('cms.module.gallery.category.active') == true)   
+                            @if (Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true)
                             <td>
                                 @if (!empty($item['category']))
                                 <span class="badge badge-secondary">{!! $item['category']->fieldLang('name') !!}</span>
@@ -174,6 +176,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
+                                @if (isset(config('cms.module.gallery.category.ordering')['position']))
                                 @if (Auth::user()->can('gallery_album_update') && $item->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
@@ -196,6 +199,7 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
+                                @endif
                             </td>
                             <td class="text-center">
                                 @can('gallery_files')
@@ -211,14 +215,16 @@
                                 </a>
                                 @endcan
                                 @can('gallery_album_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/gallery.album.caption')
                                     ])"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.gallery.album.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.gallery.album.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('gallery.album.approved', ['id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -274,11 +280,42 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/gallery/album/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //select2
     $(function () {
         $('.select2').select2();
     });
+    
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {

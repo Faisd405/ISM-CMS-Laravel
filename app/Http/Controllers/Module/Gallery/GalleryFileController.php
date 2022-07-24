@@ -8,7 +8,6 @@ use App\Http\Requests\Module\Gallery\GalleryFileRequest;
 use App\Services\Feature\LanguageService;
 use App\Services\Module\GalleryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class GalleryFileController extends Controller
 {
@@ -46,7 +45,7 @@ class GalleryFileController extends Controller
             return abort(404);
 
         $data['files'] = $this->galleryService->getFileList($filter, true, 10, false, [], [
-            'position' => 'ASC'
+            $data['album']['config']['file_order_by'] => $data['album']['config']['file_order_type']
         ]);
         $data['no'] = $data['files']->firstItem();
         $data['files']->withQueryString();
@@ -83,7 +82,7 @@ class GalleryFileController extends Controller
             return abort(404);
 
         $data['files'] = $this->galleryService->getFileList($filter, true, 10, true, [], [
-            'position' => 'ASC'
+            'deleted_at' => 'ASC'
         ]);
         $data['no'] = $data['files']->firstItem();
         $data['files']->withQueryString();
@@ -142,8 +141,10 @@ class GalleryFileController extends Controller
         $data['gallery_album_id'] = $albumId;
         $data['image_type'] = $request->image_type ?? null;
         $data['video_type'] = $request->video_type ?? null;
-        $data['hide_title'] = (bool)$request->hide_title;
-        $data['hide_description'] = (bool)$request->hide_description;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_title'] = (bool)$request->config_show_title;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $galleryFile = $this->galleryService->storeFile($data);
         $data['query'] = $request->query();
 
@@ -168,9 +169,10 @@ class GalleryFileController extends Controller
         $data['gallery_album_id'] = $albumId;
         $data['publish'] = 1;
         $data['public'] = 1;
-        $data['locked'] = 1;
-        $data['hide_title'] = (bool)$request->hide_title;
-        $data['hide_description'] = (bool)$request->hide_description;
+        $data['locked'] = 0;
+        $data['config_show_title'] = 1;
+        $data['config_show_description'] = 1;
+        $data['config_show_custom_field'] = 0;
 
         $galleryFile = $this->galleryService->storeFileMultiple($data);
 
@@ -224,8 +226,10 @@ class GalleryFileController extends Controller
         $data['gallery_album_id'] = $albumId;
         $data['image_type'] = $request->image_type ?? null;
         $data['video_type'] = $request->video_type ?? null;
-        $data['hide_title'] = (bool)$request->hide_title;
-        $data['hide_description'] = (bool)$request->hide_description;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_title'] = (bool)$request->config_show_title;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $galleryFile = $this->galleryService->updateFile($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -256,6 +260,16 @@ class GalleryFileController extends Controller
         }
 
         return redirect()->back()->with('failed', $galleryFile['message']);
+    }
+
+    public function sort(Request $request, $albumId)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->galleryService->sortFile(['id' => $value, 'gallery_album_id' => $albumId], $i);
+        }
     }
 
     public function position(Request $request, $albumId, $id, $position)

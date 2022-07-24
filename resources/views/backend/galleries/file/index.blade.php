@@ -30,13 +30,15 @@
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/gallery.file.caption')</span>
                     </a>
+                    @if (Auth::user()->hasRole('developer|super') || $data['album']['config']['type_image'] == true)
                     <a href="javascript:;" id="upload" class="btn btn-primary icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                         'attribute' => __('module/gallery.file.caption')
                         ])">
                         <i class="las la-hand-pointer"></i> <span>@lang('global.drag_drop')</span>
                     </a>
+                    @endif
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('gallery.file.trash', ['albumId' => $data['album']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -75,7 +77,7 @@
                                 <label class="form-label">@lang('global.type')</label>
                                 <select class="custom-select" name="type">
                                     <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('module/gallery.file.type') as $key => $val)
+                                    @foreach (config('cms.module.gallery.file.type') as $key => $val)
                                     <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
@@ -113,13 +115,13 @@
         </div>
 
         <div class="card">
+            <div class="card-header with-elements">
+                <h5 class="card-header-title mt-1 mb-0">@lang('module/gallery.file.text')</h5>
+            </div>
             <div class="card-header">
                 <span class="text-muted">
                     {{ Str::upper(__('module/gallery.album.caption')) }} : <b class="text-primary">{{ $data['album']->fieldLang('name') }}</b>
                 </span>
-            </div>
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/gallery.file.text')</h5>
             </div>
 
             <div class="table-responsive">
@@ -133,21 +135,25 @@
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
+                            @if ($data['album']['config']['file_order_by'] == 'position')
                             <th class="text-center" style="width: 110px;"></th>
+                            @endif
                             <th class="text-center" style="width: 180px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['files']->total() > 1 && $data['album']['config']['file_order_by'] == 'position' ? 'drag' : ''}}">
                         @forelse ($data['files'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                <a href="{{ $item['type'] == '1' && $item['video_type'] == '1' ? $item->fileSrc()['video'] : $item->fileSrc()['image'] }}" data-fancybox="gallery">
-                                    <img src="{{ $item->fileSrc()['image'] }}" alt="" style="width: 120px;">
+                                <a href="{{ $item['type'] == '1' && $item['video_type'] == '1' ? $item['file_src']['video'] : $item['file_src']['image'] }}" data-fancybox="gallery">
+                                    <img src="{{ $item['file_src']['image'] }}" alt="" style="width: 120px;">
                                 </a>
                             </td>
                             <td>
-                                {!! !empty($item->fieldLang('title')) ? Str::limit($item->fieldLang('title'), 30) : '-' !!}
+                                {!! !empty($item->fieldLang('title')) ? Str::limit($item->fieldLang('title'), 30) : __('global.field_empty_attr', [
+                                    'attribute' => __('module/gallery.file.label.field1')
+                                    ]) !!}
                                 @if (!empty($item->fieldLang('description')))
                                     <br>
                                     <small class="text-muted">{!! Str::limit($item->fieldLang('description'), 45) !!}</small>
@@ -156,13 +162,13 @@
                             <td>
                                 @switch($item['type'])
                                     @case(1)
-                                        <span class="badge badge-danger">{{ __('module/gallery.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-danger">{{ config('cms.module.gallery.file.type.'.$item['type']) }}</span>
                                         @break
                                     @case(2)
-                                        <span class="badge badge-secondary">{{ __('module/gallery.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-secondary">{{ config('cms.module.gallery.file.type.'.$item['type']) }}</span>
                                         @break
                                     @default
-                                    <span class="badge badge-success">{{ __('module/gallery.file.type.'.$item['type']) }}</span>
+                                    <span class="badge badge-success">{{ config('cms.module.gallery.file.type.'.$item['type']) }}</span>
                                 @endswitch
                             </td>
                             <td class="text-center">
@@ -193,6 +199,7 @@
                                 <span class="text-muted"> @lang('global.by') : {{ $item['updateBy'] != null ? $item['updateBy']['name'] : 'User Deleted' }}</span>
                                 @endif
                             </td>
+                            @if ($data['album']['config']['file_order_by'] == 'position')
                             <td class="text-center">
                                 @if (Auth::user()->can('gallery_file_update') && $item->where('gallery_album_id', $item['gallery_album_id'])->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
@@ -217,10 +224,11 @@
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
                             </td>
+                            @endif
                             <td class="text-center">
                                 @if ($item['type'] == '1' && $item['video_type'] == '0')
                                 <button type="button" class="btn btn-info icon-btn btn-sm modals-preview" data-toggle="modal" 
-                                    data-target="#preview-video" data-video="{!! $item->fileSrc()['video'] !!}" title="@lang('global.preview')">
+                                    data-target="#preview-video" data-video="{!! $item['file_src']['video'] !!}" title="@lang('global.preview')">
                                     <i class="las la-play"></i>
                                 </button>
                                 @endif
@@ -232,6 +240,7 @@
                                 </a>
                                 @endcan
                                 @can('gallery_file_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                         'attribute' => __('module/gallery.file.caption')
                                     ])"
@@ -239,8 +248,9 @@
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.gallery.file.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.gallery.file.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
                                     <form action="{{ route('gallery.file.approved', ['albumId' => $item['gallery_album_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -299,6 +309,7 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
     //dropzone
     $(document).ready(function () {
@@ -311,7 +322,7 @@
         });
     });
     $('#dropzone-upload').dropzone({
-        url: '/admin/gallery/album/{{ $data['album']['id'] }}/multiple',
+        url: '/admin/gallery/album/{{ $data['album']['id'] }}/file/multiple',
         method:'POST',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -364,6 +375,37 @@
             </video>
         `);
     });
+
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                var albumId = '{{ $data['album']['id'] }}';
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/gallery/album/'+albumId+'/file/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
@@ -384,7 +426,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/gallery/album/' + albumId + '/'+ id +'/soft',
+                        url: '/admin/gallery/album/' + albumId + '/file/'+ id +'/soft',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

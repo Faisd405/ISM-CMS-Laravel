@@ -15,6 +15,11 @@
                     'attribute' => __('module/event.field.caption')
                 ])
             </h6>
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/event.caption')) }} : <b class="text-primary">{{ $data['event']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <form action="{{ !isset($data['field']) ? route('event.field.store', array_merge(['eventId' => $data['event']['id']], $queryParam)) : 
                 route('event.field.update', array_merge(['eventId' => $data['event']['id'], 'id' => $data['field']['id']], $queryParam)) }}" method="POST" 
                     enctype="multipart/form-data">
@@ -77,12 +82,12 @@
 
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">FIELD SETTING</h6>
+                    <h6 class="font-weight-bold text-primary mb-4">FIELD SETTING</h6>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field3')</label>
                         <div class="col-sm-10">
                             <select class="select2 show-tick" name="type" data-style="btn-default">
-                                @foreach (config('cms.field.event_field') as $key => $field)
+                                @foreach (config('cms.module.event.field.type') as $key => $field)
                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('type') == ''.$key.'' ? 'selected' : '') : (old('type', $data['field']['type']) == ''.$key.'' ? 'selected' : '') }}>
                                         {{ $field }}
                                     </option>
@@ -93,20 +98,16 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field4')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control @error('property_type') is-invalid @enderror" name="property_type" 
-                                value="{{ !isset($data['field']) ? old('property_type') : old('property_type', $data['field']['properties']['type']) }}" 
-                                placeholder="@lang('module/event.field.placeholder.field4')">
+                            <select class="custom-select show-tick" name="property_type" data-style="btn-default">
+                                @foreach (config('cms.module.event.field.input') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('property_type') == ''.$key.'' ? 'selected' : '') : (old('property_type', $data['field']['properties']['type']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-                    {{-- <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field5')</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control @error('property_id') is-invalid @enderror" name="property_id" 
-                                value="{{ !isset($data['field']) ? old('property_id') : old('property_id', $data['field']['properties']['id']) }}" 
-                                placeholder="@lang('module/event.field.placeholder.field5')">
-                        </div>
-                    </div> --}}
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field6')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('property_class') is-invalid @enderror" name="property_class" 
@@ -114,7 +115,7 @@
                                 placeholder="@lang('module/event.field.placeholder.field6')">
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field7')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('property_attribute') is-invalid @enderror" name="property_attribute" 
@@ -125,91 +126,107 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field8')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control @error('validation') is-invalid @enderror" name="validation" 
-                            value="{{ !isset($data['field']) ? old('validation') : old('validation', $data['field']['validation']) }}" 
-                            placeholder="@lang('module/event.field.placeholder.field8')">
+                            @foreach (__('module/event.field.validations') as $key => $val)
+                            <label class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="validation[]" value="{{ $key }}" 
+                                    {{ isset($data['field']) && !empty($data['field']['validation']) ? (in_array($key, $data['field']['validation']) ? 'checked' : '') : '' }}>
+                                <span class="custom-control-label">{{ $val['caption'] }} <small class="text-muted">({{ $val['desc'] }})</small></span>
+                              </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.is_unique')</label>
+                        <div class="col-sm-10">
+                            <label class="switcher switcher-success">
+                                <input type="checkbox" class="switcher-input" name="is_unique" value="1" 
+                                    {{ !isset($data['field']) ? (old('is_unique') ? 'checked' : '') : (old('is_unique', $data['field']['is_unique']) ? 'checked' : '') }}>
+                                <span class="switcher-indicator">
+                                <span class="switcher-yes">
+                                    <span class="ion ion-md-checkmark"></span>
+                                </span>
+                                <span class="switcher-no">
+                                    <span class="ion ion-md-close"></span>
+                                </span>
+                                </span>
+                            </label>
                         </div>
                     </div>
                 </div>
 
-                 {{-- CUSTOM FIELD --}}
-                 <hr class="m-0">
-                 <div class="table-responsive text-center">
-                     <table class="table card-table table-bordered">
-                         <thead>
-                             <tr>
-                                 <td colspan="3" class="text-center">
-                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
-                                         <i class="las la-plus"></i> @lang('module/event.field.label.field11')
-                                     </button>
-                                 </td>
-                             </tr>
-                             <tr>
-                                 <th>Label</th>
-                                 <th>Value</th>
-                                 <th></th>
-                             </tr>
-                         </thead>
-                         <tbody id="list_field">
-                             @if (isset($data['field']) && !empty($data['field']['options']))
-                                 @foreach ($data['field']['options'] as $key => $val)
-                                 <tr class="num-list" id="delete-{{ $key }}">
-                                     <td>
-                                         <input type="text" class="form-control" name="opt_label[]" placeholder="label" value="{{ $key }}">
-                                     </td>
-                                     <td>
-                                         <textarea class="form-control" name="opt_value[]" placeholder="value">{{ $val }}</textarea>
-                                     </td>
-                                     <td style="width: 30px;">
-                                         <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
-                                     </td>
-                                 </tr>
-                                 @endforeach
-                             @endif
-                         </tbody>
-                     </table>
-                 </div>
+                {{-- CUSTOM FIELD --}}
+                <hr class="m-0 hide-form">
+                <div class="table-responsive text-center hide-form">
+                    <table class="table card-table table-bordered">
+                        <thead>
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
+                                        <i class="las la-plus"></i> @lang('module/event.field.label.field11')
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Label</th>
+                                <th>Value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="list_field">
+                            @if (isset($data['field']) && !empty($data['field']['options']))
+                                @foreach ($data['field']['options'] as $key => $val)
+                                <tr class="num-list" id="delete-{{ $key }}">
+                                    <td>
+                                        <input type="text" class="form-control" name="opt_label[]" placeholder="label" value="{{ $key }}">
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" name="opt_value[]" placeholder="value">{{ $val }}</textarea>
+                                    </td>
+                                    <td style="width: 30px;">
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
 
                  {{-- SETTING --}}
                  <hr class="m-0">
                  <div class="card-body">
-                     <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                     <div class="form-group row">
-                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                         <div class="col-sm-10">
-                             <select class="form-control show-tick" name="publish" data-style="btn-default">
-                                 @foreach (__('global.label.publish') as $key => $value)
-                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['field']['publish']) == ''.$key.'' ? 'selected' : '') }}>
-                                         {{ $value }}
-                                     </option>
-                                 @endforeach
-                             </select>
-                         </div>
-                     </div>
-                     <div class="form-group row">
-                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                         <div class="col-sm-10">
-                             <select class="form-control show-tick" name="public" data-style="btn-default">
-                                 @foreach (__('global.label.optional') as $key => $value)
-                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['field']['public']) == ''.$key.'' ? 'selected' : '') }}>
-                                         {{ $value }}
-                                     </option>
-                                 @endforeach
-                             </select>
-                         </div>
-                     </div>
-                     <div class="form-group row">
-                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                         <div class="col-sm-10">
-                             <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                 @foreach (__('global.label.optional') as $key => $value)
-                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['field']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                         {{ $value }}
-                                     </option>
-                                 @endforeach
-                             </select>
-                         </div>
-                     </div>
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
+                            <select class="form-control show-tick" name="publish" data-style="btn-default">
+                                @foreach (__('global.label.publish') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['field']['publish']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
+                            <select class="form-control show-tick" name="public" data-style="btn-default">
+                                @foreach (__('global.label.optional') as $key => $value)
+                                    <option value="{{ $key }}" {{ !isset($data['field']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['field']['public']) == ''.$key.'' ? 'selected' : '') }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">@lang('global.locked')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['field']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['field']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                    </div>
                  </div>
 
                 <div class="card-footer text-center">
@@ -283,4 +300,10 @@
         $("#delete-"+id).remove();
     });
 </script>
+
+@if (!Auth::user()->hasRole('developer|super'))
+<script>
+    $('.hide-form').hide();
+</script>
+@endif
 @endsection

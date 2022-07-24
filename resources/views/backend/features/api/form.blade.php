@@ -45,6 +45,19 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group row hide-form">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['api']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['api']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/api.label.field6') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
@@ -64,10 +77,10 @@
                                     @endforeach
                                 @endif
                             </div>
-                            <small class="text-muted">@lang('feature/api.placeholder.field6')</small>
                             @error('ip_address')
                             <label class="error jquery-validation-error small form-text invalid-feedback" style="display: inline-block;color:red;">{!! $message !!}</label>
                             @enderror
+                            <small class="form-text text-muted">@lang('feature/api.placeholder.field6')</small>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -101,10 +114,10 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <small class="text-muted">@lang('feature/api.placeholder.field5')</small>
                             @error('roles')
                             <label class="small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
                             @enderror
+                            <small class="form-text text-muted">@lang('feature/api.placeholder.field5')</small>
                         </div>
                     </div>
                 </div>
@@ -164,4 +177,10 @@
         $("#delete-"+id).remove();
     });
 </script>
+
+@if(!Auth::user()->hasRole('developer|super'))
+<script>
+  $('.hide-form').hide();
+</script>
+@endif
 @endsection

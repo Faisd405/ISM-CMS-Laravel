@@ -17,8 +17,6 @@ class EventForm extends Model
         'submit_time' => 'datetime'
     ];
 
-    public $timestamps = false;
-
     public function event()
     {
         return $this->belongsTo(Event::class, 'event_id');

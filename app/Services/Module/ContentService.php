@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class ContentService
@@ -65,6 +66,9 @@ class ContentService
 
         if (isset($filter['approved']))
             $section->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $section->where('detail', $filter['detail']);
 
         if (isset($filter['created_by']))
             $section->where('created_by', $filter['created_by']);
@@ -143,7 +147,7 @@ class ContentService
             try {
                 
                 DB::commit();
-                $slug = Str::slug($data['slug'], '-');
+                $slug = Str::slug(strip_tags($data['slug']), '-');
                 $data['slug'] = $slug;
                 $data['module'] = 'content_section';
                 $this->indexUrl->storeAssociate($data, $section);
@@ -154,6 +158,8 @@ class ContentService
 
             } catch (Exception $e) {
             
+                DB::rollBack();
+                
                 return $this->error(null,  $e->getMessage());
             }
             
@@ -180,7 +186,7 @@ class ContentService
 
             $section->save();
 
-            $slug = Str::slug($data['slug'], '-');
+            $slug = Str::slug(strip_tags($data['slug']), '-');
             $this->indexUrl->updateAssociate($slug, ['id' => $section['indexing']['id']]);
 
             return $this->success($section,  __('global.alert.update_success', [
@@ -211,7 +217,7 @@ class ContentService
                 $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
         }
 
-        $section->slug = Str::slug($data['slug'], '-');
+        $section->slug = Str::slug(strip_tags($data['slug']), '-');
         $section->name = $name;
         $section->description = $description;
         $section->banner = [
@@ -219,17 +225,30 @@ class ContentService
             'title' => $data['banner_title'] ?? null,
             'alt' => $data['banner_alt'] ?? null,
         ];
-        $section->ordering = [
-            'order_by' => $data['order_by'],
-            'order_seq' => $data['order_seq']
-        ];
         $section->publish = (bool)$data['publish'];
         $section->public = (bool)$data['public'];
+        $section->detail = (bool)$data['detail'];
         $section->locked = (bool)$data['locked'];
         $section->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_description' => (bool)$data['config_show_description'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'show_category' => (bool)$data['config_show_category'],
+            'multiple_category' => (bool)$data['config_multiple_category'],
+            'show_post' => (bool)$data['config_show_post'],
+            'post_selected' => (bool)$data['config_post_selected'],
+            'show_tags' => (bool)$data['config_show_tags'],
+            'latest_post' => (bool)$data['config_latest_post'],
+            'latest_post_limit' => $data['config_latest_post_limit'],
+            'detail_category' => (bool)$data['config_detail_category'],
+            'detail_post' => (bool)$data['config_detail_post'],
+            'paginate_category' => (bool)$data['config_paginate_category'],
+            'paginate_post' => (bool)$data['config_paginate_post'],
+            'show_media' => (bool)$data['config_show_media'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+            'category_limit' => $data['config_category_limit'],
+            'post_limit' => $data['config_post_limit'],
+            'post_order_by' => $data['config_post_order_by'],
+            'post_order_type' => $data['config_post_order_type'],
         ];
         $section->template_list_id = $data['template_list_id'] ?? null;
         $section->template_detail_id = $data['template_detail_id'] ?? null;
@@ -251,7 +270,7 @@ class ContentService
             $section->custom_fields = null;
         }
 
-        if (Auth::user()->hasRole('super')) {
+        if (Auth::user()->hasRole('developer|super')) {
             if (isset($data['af_name'])) {
                 
                 $addonField = [];
@@ -268,9 +287,6 @@ class ContentService
                 $section->addon_fields = null;
             }
         }
-
-        $section->post_perpage = $data['post_perpage'] ?? 0;
-        $section->category_perpage = $data['category_perpage'] ?? 0;
 
         return $section;
     }
@@ -308,6 +324,25 @@ class ContentService
             
             return $this->error(null, $e->getMessage());
         }
+    }
+
+    /**
+     * Sort Section
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortSection($where, $position)
+    {
+        $section = $this->getSection($where);
+
+        $section->position = $position;
+        if (Auth::guard()->check()) {
+            $section->updated_by = Auth::user()['id'];
+        }
+        $section->save();
+
+        return $section;
     }
 
     /**
@@ -357,9 +392,13 @@ class ContentService
     public function recordSectionHits($where)
     {
         $section = $this->getSection($where);
-        $section->update([
-            'hits' => ($section->hits+1)
-        ]);
+
+        if (empty(Session::get('contentSectionHits-'.$section['id']))) {
+            Session::put('contentSectionHits-'.$section['id'], $section['id']);
+            $section->hits = ($section->hits+1);
+            $section->timestamps = false;
+            $section->save();
+        }
 
         return $section;
     }
@@ -381,7 +420,7 @@ class ContentService
 
                 if (Auth::guard()->check()) {
 
-                    if (Auth::user()->hasRole('editor') && Auth::user()['id'] != $section['created_by']) {
+                    if (Auth::user()->hasRole('support|admin|editor') && Auth::user()['id'] != $section['created_by']) {
                         return $this->error($section,  __('global.alert.delete_failed_used', [
                             'attribute' => __('module/content.section.caption')
                         ]));
@@ -507,6 +546,9 @@ class ContentService
 
         if (isset($filter['approved']))
             $category->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $category->where('detail', $filter['detail']);
 
         if (isset($filter['created_by']))
             $category->where('created_by', $filter['created_by']);
@@ -635,7 +677,7 @@ class ContentService
                 $data['description_'.$langDefault] : $data['description_'.$value['iso_codes']];
         }
 
-        $category->slug = Str::slug($data['slug'], '-');
+        $category->slug = Str::slug(strip_tags($data['slug']), '-');
         $category->name = $name;
         $category->description = $description;
         $category->banner = [
@@ -645,12 +687,17 @@ class ContentService
         ];
         $category->publish = (bool)$data['publish'];
         $category->public = (bool)$data['public'];
+        $category->detail = (bool)$data['detail'];
         $category->locked = (bool)$data['locked'];
+
         $category->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_description' => (bool)$data['hide_description'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_description' => (bool)$data['config_show_description'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'paginate_post' => (bool)$data['config_paginate_post'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
+            'post_limit' => $data['config_post_limit'],
         ];
+
         $category->template_id = $data['template_id'] ?? null;
         $category->seo = [
             'title' => $data['meta_title'] ?? null,
@@ -669,8 +716,6 @@ class ContentService
         } else {
             $category->custom_fields = null;
         }
-
-        $category->post_perpage = $data['post_perpage'] ?? 0;
 
         return $category;
     }
@@ -711,6 +756,25 @@ class ContentService
     }
 
     /**
+     * Sort Category
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortCategory($where, $position)
+    {
+        $category = $this->getCategory($where);
+        
+        $category->position = $position;
+        if (Auth::guard()->check()) {
+            $category->updated_by = Auth::user()['id'];
+        }
+        $category->save();
+
+        return $category;
+    }
+
+    /**
      * Set Position Category
      * @param array $where
      * @param int $position
@@ -721,7 +785,7 @@ class ContentService
         
         try {
 
-            if ($category >= 1) {
+            if ($position >= 1) {
     
                 $this->categoryModel->where('section_id', $category['section_id'])
                     ->where('position', $position)->update([
@@ -758,9 +822,13 @@ class ContentService
     public function recordCategoryHits($where)
     {
         $category = $this->getCategory($where);
-        $category->update([
-            'hits' => ($category->hits+1)
-        ]);
+
+        if (empty(Session::get('contentCategoryHits-'.$category['id']))) {
+            Session::put('contentCategoryHits-'.$category['id'], $category['id']);
+            $category->hits = ($category->hits+1);
+            $category->timestamps = false;
+            $category->save();
+        }
 
         return $category;
     }
@@ -775,7 +843,7 @@ class ContentService
 
         try {
             
-            $posts = ContentPost::whereJsonContains('category_id', $category['id'])->count();
+            $posts = $category->posts()->count();
 
             if ($category['locked'] == 0 && $posts == 0) {
 
@@ -909,6 +977,12 @@ class ContentService
         if (isset($filter['approved']))
             $post->where('approved', $filter['approved']);
 
+        if (isset($filter['detail']))
+            $post->where('detail', $filter['detail']);
+
+        if (isset($filter['selected']))
+            $post->where('selected', $filter['selected']);
+
         if (isset($filter['created_by']))
             $post->where('created_by', $filter['created_by']);
 
@@ -922,7 +996,6 @@ class ContentService
             $post->when($filter['q'], function ($post, $q) {
                 $post->where(function ($post) use ($q) {
                     $post->whereRaw('LOWER(JSON_EXTRACT(title, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
-                        ->orWhereRaw('LOWER(JSON_EXTRACT(intro, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
                         ->orWhereRaw('LOWER(JSON_EXTRACT(content, "$.'.App::getLocale().'")) like ?', ['"%' . strtolower($q) . '%"'])
                         ->orWhereRaw('LOWER(JSON_EXTRACT(seo, "$.keywords")) like ?', ['"%' . strtolower($q) . '%"']);
                 });
@@ -983,6 +1056,9 @@ class ContentService
 
         if (isset($filter['approved']))
             $post->where('approved', $filter['approved']);
+
+        if (isset($filter['detail']))
+            $post->where('detail', $filter['detail']);
 
         if ($type == 'prev') {
             $post->where('id', '<', $id);
@@ -1103,10 +1179,12 @@ class ContentService
                 $data['content_'.$langDefault] : $data['content_'.$value['iso_codes']];
         }
 
-        if (isset($data['category_id'])) {
+        if (isset($data['category_id']) && count($data['category_id']) > 0) {
             $post->category_id = $data['category_id'];
+        } else {
+            $post->category_id = null;
         }
-        $post->slug = Str::slug($data['slug'], '-');
+        $post->slug = Str::slug(strip_tags($data['slug']), '-');
         $post->title = $title;
         $post->intro = $intro;
         $post->content = $content;
@@ -1122,13 +1200,18 @@ class ContentService
         ];
         $post->publish = (bool)$data['publish'];
         $post->public = (bool)$data['public'];
+        $post->detail = (bool)$data['detail'];
         $post->locked = (bool)$data['locked'];
         $post->config = [
-            'is_detail' => (bool)$data['is_detail'],
-            'hide_intro' => (bool)$data['hide_intro'],
-            'hide_tags' => (bool)$data['hide_tags'],
-            'hide_cover' => (bool)$data['hide_cover'],
-            'hide_banner' => (bool)$data['hide_banner'],
+            'show_intro' => (bool)$data['config_show_intro'],
+            'show_content' => (bool)$data['config_show_content'],
+            'show_cover' => (bool)$data['config_show_cover'],
+            'show_banner' => (bool)$data['config_show_banner'],
+            'show_media' => (bool)$data['config_show_media'],
+            'action_media' => (bool)$data['config_action_media'],
+            'paginate_media' => (bool)$data['config_paginate_media'],
+            'media_limit' => $data['config_media_limit'],
+            'show_custom_field' => (bool)$data['config_show_custom_field'],
         ];
         $post->template_id = $data['template_id'] ?? null;
         $post->seo = [
@@ -1207,6 +1290,25 @@ class ContentService
     }
 
     /**
+     * Sort Post
+     * @param array $where
+     * @param int $position
+     * @param int $parent
+     */
+    public function sortPost($where, $position)
+    {
+        $post = $this->getPost($where);
+        
+        $post->position = $position;
+        if (Auth::guard()->check()) {
+            $post->updated_by = Auth::user()['id'];
+        }
+        $post->save();
+
+        return $post;
+    }
+
+    /**
      * Set Position Post
      * @param array $where
      * @param int $position
@@ -1217,7 +1319,7 @@ class ContentService
         
         try {
 
-            if ($post >= 1) {
+            if ($position >= 1) {
     
                 $this->postModel->where('section_id', $post['section_id'])
                     ->where('position', $position)->update([
@@ -1254,9 +1356,13 @@ class ContentService
     public function recordPostHits($where)
     {
         $post = $this->getPost($where);
-        $post->update([
-            'hits' => ($post->hits+1)
-        ]);
+
+        if (empty(Session::get('contentPostHits-'.$post['id']))) {
+            Session::put('contentPostHits-'.$post['id'], $post['id']);
+            $post->hits = ($post->hits+1);
+            $post->timestamps = false;
+            $post->save();
+        }
 
         return $post;
     }

@@ -31,7 +31,7 @@
                         <i class="las la-plus"></i> <span>@lang('module/user.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('user.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -142,7 +142,7 @@
                                 @endforeach
                             </td>
                             <td class="text-center">
-                                @if (Auth::user()->can('user_update') && $item['roles'][0]['id'] >= Auth::user()['roles'][0]['id'] && ($item['id'] != Auth::user()['id']))
+                                @if (Auth::user()->can('user_update') && $item['roles'][0]['level'] >= Auth::user()['roles'][0]['level'] && ($item['id'] != Auth::user()['id']))
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['active'] == 1 ? 'success' : 'secondary' }}"
                                     title="{{ __('global.label.active.'.$item['active']) }}">
                                     {{ __('global.label.active.'.$item['active']) }}
@@ -171,7 +171,7 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if ($item->roles[0]['id'] > Auth::user()->roles[0]['id'] && ($item['id'] != Auth::user()['id']))
+                                @if ($item->roles[0]['level'] > Auth::user()->roles[0]['level'] && ($item['id'] != Auth::user()['id']))
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-bypass').submit();" class="btn btn-warning icon-btn btn-sm" title="Bypass Login">
                                     <i class="las la-sign-in-alt"></i>
                                     <form action="{{ route('user.bypass', array_merge(['id' => $item['id']], $queryParam)) }}" method="POST" id="form-bypass">
@@ -180,19 +180,21 @@
                                     </form>
                                 </a>
                                 @endif
-                                @if (Auth::user()->can('user_update') && $item->roles[0]['id'] > Auth::user()->roles[0]['id'] && ($item['id'] != Auth::user()['id']))
+                                @if (Auth::user()->can('user_update') && $item->roles[0]['level'] > Auth::user()->roles[0]['level'] && ($item['id'] != Auth::user()['id']))
                                 <a href="{{ route('user.edit', array_merge(['id' => $item['id']], $queryParam)) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/user.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endif
-                                @if (Auth::user()->can('user_delete') && $item->roles[0]['id'] > Auth::user()->roles[0]['id'] && ($item['id'] != Auth::user()['id']))
+                                @if (Auth::user()->can('user_delete') && $item->roles[0]['level'] > Auth::user()->roles[0]['level'] && ($item['id'] != Auth::user()['id']))
+                                @if ($item['locked'] == 0)
                                 <button type="button" data-id="{{ $item['id'] }}" class="btn icon-btn btn-sm btn-danger swal-delete" title="@lang('global.delete_attr', [
                                     'attribute' => __('module/user.caption')
                                     ])">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endif
                             </td>
                         </tr>

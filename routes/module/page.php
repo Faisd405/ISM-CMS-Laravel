@@ -11,7 +11,7 @@ Route::prefix('admin/page')->name('page.')->middleware('auth')->group(function (
         ->middleware('permission:pages');
     Route::get('/trash', [PageController::class, 'trash'])
         ->name('trash')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
         
     Route::get('/create', [PageController::class, 'create'])
         ->name('create')
@@ -30,7 +30,7 @@ Route::prefix('admin/page')->name('page.')->middleware('auth')->group(function (
         ->middleware('permission:page_update');
     Route::put('/{id}/approved', [PageController::class, 'approved'])
         ->name('approved')
-        ->middleware('role:super|support|admin');
+        ->middleware('role:developer|super|support|admin');
     Route::put('/{id}/position/{position}', [PageController::class, 'position'])
         ->name('position')
         ->middleware('permission:page_update');
@@ -39,10 +39,10 @@ Route::prefix('admin/page')->name('page.')->middleware('auth')->group(function (
         ->middleware('permission:page_delete');
     Route::delete('/{id}/permanent', [PageController::class, 'permanentDelete'])
         ->name('delete.permanent')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
     Route::put('/{id}/restore', [PageController::class, 'restore'])
         ->name('restore')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
 
 });
 

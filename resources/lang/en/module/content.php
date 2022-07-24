@@ -8,7 +8,7 @@ return[
         'text' => 'List Section',
         'label' => [
             'field1' => 'Name',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Description',
             'field5' => 'Order Field',
             'field6' => 'Order By',
@@ -39,7 +39,7 @@ return[
         'manage' => 'Manage Category',
         'label' => [
             'field1' => 'Name',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Description',
         ],
         'placeholder' => [
@@ -52,9 +52,10 @@ return[
         'title' => 'Post',
         'caption' => 'Post',
         'text' => 'Post List',
+        'manage' => 'Manage Post',
         'label' => [
             'field1' => 'Title',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Intro',
             'field4' => 'Content',
             'publish_time' => 'Publish Time',

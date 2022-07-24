@@ -8,6 +8,7 @@ use App\Http\Requests\User\ProfileRequest;
 use App\Http\Requests\User\UserRequest;
 use App\Mail\VerificationEmail;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -37,10 +38,10 @@ class UserController extends Controller
         }
 
         if (Auth::user()->hasRole('support')) {
-            $filter['role_not'] = ['super'];
+            $filter['role_not'] = ['developer', 'super'];
         }
-        if (Auth::user()['roles'][0]['id'] >= 3) {
-            $filter['role_not'] = ['super', 'support'];
+        if (Auth::user()['roles'][0]['level'] >= 4) {
+            $filter['role_not'] = ['developer', 'super', 'support'];
         }
         if ($request->input('role', '') != '') {
             $filter['role_in'] = [$request->input('role')];
@@ -106,7 +107,7 @@ class UserController extends Controller
         if ($request->input('limit', '') != '') {
             $filter['limit'] = $request->input('limit');
         }
-        if (!Auth::user()->hasRole('super')) {
+        if (!Auth::user()->hasRole('developer|super')) {
             $filter['user_id'] = Auth::user()['id'];
         }
         if ($request->input('event', '') != '') {
@@ -159,7 +160,13 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $data['roles'] = $this->userService->getRoleByUser(false);
-        $data['permissions'] = Auth::user()['roles'][0]['permissions']->where('parent', 0);
+        if (Auth::user()->hasRole('developer')) {
+            $data['permissions'] = $this->userService->getPermissionList([
+                'parent' => 0
+            ], false, 0);
+        } else {
+            $data['permissions'] = Auth::user()['roles'][0]['permissions']->where('parent', 0);
+        }
 
         return view('backend.users.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -178,6 +185,7 @@ class UserController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $user = $this->userService->store($data);
         $data['query'] = $request->query();
 
@@ -195,7 +203,7 @@ class UserController extends Controller
     public function bypass(Request $request, $id)
     {
         $user = $this->userService->getUser(['id' => $id]);
-        if (($user['roles'][0]['id'] < Auth::user()['roles'][0]['id'] ) 
+        if (($user['roles'][0]['level'] < Auth::user()['roles'][0]['level'] ) 
             || ($id == Auth::user()['id'])) {
             return abort(403);
         }
@@ -218,10 +226,16 @@ class UserController extends Controller
             return abort(404);
 
         $data['roles'] = $this->userService->getRoleByUser(false);
-        $data['permissions'] = Auth::user()['roles'][0]['permissions']->where('parent', 0);
+        if (Auth::user()->hasRole('developer')) {
+            $data['permissions'] = $this->userService->getPermissionList([
+                'parent' => 0
+            ], false, 0);
+        } else {
+            $data['permissions'] = Auth::user()['roles'][0]['permissions']->where('parent', 0);
+        }
         $data['permission_ids'] = $data['user']['permissions']->pluck('id')->toArray();
 
-        if (($data['user']['roles'][0]['id'] < Auth::user()['roles'][0]['id'] ) 
+        if (($data['user']['roles'][0]['level'] < Auth::user()['roles'][0]['level'] ) 
             || ($id == Auth::user()['id'])) {
             return abort(403);
         }
@@ -243,6 +257,7 @@ class UserController extends Controller
     {
         $data = $request->all();
         $data['active'] = (bool)$request->active;
+        $data['locked'] = (bool)$request->locked;
         $user = $this->userService->update($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -395,21 +410,27 @@ class UserController extends Controller
         $email = Auth::user()['email'];
         $expired = now()->format('YmdHis');
 
-        if (config('cms.module.feature.notification.email.verification_email') == true) {
-            $encrypt = Crypt::encrypt($email);
-            $data = [
-                'title' => __('mail.verification_email.title'),
-                'name' => Auth::user()['name'],
-                'email' => $email,
-                'expired' => $expired,
-                'link' => route('profile.email.verification', ['email' => $encrypt, 'expired' => $expired]),
-            ];
+        try {
+            
+            if (config('cms.module.feature.notification.email.verification_email') == true) {
+                $encrypt = Crypt::encrypt($email);
+                $data = [
+                    'title' => __('mail.verification_email.title'),
+                    'name' => Auth::user()['name'],
+                    'email' => $email,
+                    'expired' => $expired,
+                    'link' => route('profile.email.verification', ['email' => $encrypt, 'expired' => $expired]),
+                ];
+    
+                Mail::to($email)->send(new VerificationEmail($data));
+    
+                return back()->with('info', __('module/user.alert.verification_info'));
+            } else {
+                return back()->with('warning', __('module/user.alert.verification_warning'));
+            }
 
-            Mail::to($email)->send(new VerificationEmail($data));
-
-            return back()->with('info', __('module/user.alert.verification_info'));
-        } else {
-            return back()->with('warning', __('module/user.alert.verification_warning'));
+        } catch (Exception $e) {
+            return back()->with('failed', $e->getMessage());
         }
     }
 

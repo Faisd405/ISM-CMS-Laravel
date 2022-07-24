@@ -23,7 +23,7 @@
         //     })
         // },
         relative_urls : false,
-        remove_script_host : false,
+        remove_script_host : true,
         convert_urls : true,
       });
 

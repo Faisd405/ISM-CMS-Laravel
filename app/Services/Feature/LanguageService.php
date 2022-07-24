@@ -131,6 +131,7 @@ class LanguageService
                 'time_zone' => $data['time_zone'] ?? null,
                 'gmt' => $data['gmt'] ?? null,
                 'active' => (bool)$data['active'],
+                'locked' => (bool)$data['locked'],
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -169,6 +170,7 @@ class LanguageService
                 'time_zone' => $data['time_zone'] ?? null,
                 'gmt' => $data['gmt'] ?? null,
                 'active' => (bool)$data['active'],
+                'locked' => (bool)$data['locked'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $language['updated_by'],
             ]);
 

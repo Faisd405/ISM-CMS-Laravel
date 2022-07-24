@@ -39,18 +39,11 @@
                                     <tr>
                                         <th>{{ $item['name'] }}</th>
                                         <td class="text-center">
-                                            <label class="switcher switcher-success">
-                                                <input type="checkbox" class="switcher-input check-parent" data-id="{{ $item['id'] }}" name="roles[]" value="{{ $item['id'] }}" 
+                                            <label class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input check-parent" data-id="{{ $item['id'] }}" name="roles[]" value="{{ $item['id'] }}" 
                                                     {{ isset($data['registration']) && !empty($data['registration']['roles']) ? 
-                                                        (in_array($item['id'], $data['registration']['roles']) ? 'checked' : '') : '' }}>
-                                                <span class="switcher-indicator">
-                                                <span class="switcher-yes">
-                                                    <span class="ion ion-md-checkmark"></span>
-                                                </span>
-                                                <span class="switcher-no">
-                                                    <span class="ion ion-md-close"></span>
-                                                </span>
-                                                </span>
+                                                    (in_array($item['id'], $data['registration']['roles']) ? 'checked' : '') : '' }}>
+                                                <span class="custom-control-label"></span>
                                             </label>
                                         </td>
                                     </tr>
@@ -141,6 +134,19 @@
                             </label>
                         </div>
                     </div>
+                    <div class="form-group row hide-form">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['registration']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['registration']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['registration']) ? __('global.save_change') : __('global.save') }}">
@@ -192,4 +198,10 @@
         }
     });
 </script>
+
+@if(!Auth::user()->hasRole('developer|super'))
+<script>
+  $('.hide-form').hide();
+</script>
+@endif
 @endsection

@@ -17,7 +17,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:languages');
         Route::get('/trash', [LanguageController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [LanguageController::class, 'create'])
             ->name('create')
@@ -39,10 +39,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:language_delete');
         Route::delete('/{id}/permanent', [LanguageController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [LanguageController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -54,7 +54,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:registrations');
         Route::get('/trash', [RegistrationController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
             
         Route::get('/create', [RegistrationController::class, 'create'])
             ->name('create')
@@ -76,10 +76,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:registration_delete');
         Route::delete('/{id}/permanent', [RegistrationController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [RegistrationController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -91,7 +91,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:apis');
         Route::get('/trash', [ApiController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [ApiController::class, 'create'])
             ->name('create')
@@ -116,10 +116,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:api_delete');
         Route::delete('/{id}/permanent', [ApiController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [ApiController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -136,7 +136,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('website', [ConfigurationController::class, 'configWeb'])
             ->name('website')
             ->middleware('permission:configurations');
-        Route::put('website', [ConfigurationController::class, 'updateConfigWeb'])
+        Route::post('website/add-confg', [ConfigurationController::class, 'addConfigWeb'])
+            ->name('website.store')
+            ->middleware('role:developer|super');
+        Route::put('website/set-confg', [ConfigurationController::class, 'setConfigWeb'])
+            ->name('website.set')
+            ->middleware('role:developer|super');
+        Route::put('website/update-config', [ConfigurationController::class, 'updateConfigWeb'])
             ->name('website.update')
             ->middleware('permission:configurations');
         Route::put('website/{name}/upload', [ConfigurationController::class, 'uploadConfigWeb'])
@@ -145,6 +151,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::put('website/{name}/delete', [ConfigurationController::class, 'deleteUploadConfigWeb'])
             ->name('website.delete')
             ->middleware('permission:configurations');
+        Route::delete('website/{name}/delete-config', [ConfigurationController::class, 'deleteConfigWeb'])
+            ->name('website.delete.config')
+            ->middleware('role:developer|super');
         Route::get('text/{lang}', [ConfigurationController::class, 'configText'])
             ->name('text')
             ->middleware('permission:configurations');

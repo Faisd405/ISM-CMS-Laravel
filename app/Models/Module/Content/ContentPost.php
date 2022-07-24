@@ -9,7 +9,6 @@ use App\Models\Master\Template;
 use App\Models\Menu\Menu;
 use App\Models\User;
 use App\Observers\LogObserver;
-use Google\Service\Script\Content;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -37,6 +36,11 @@ class ContentPost extends Model
         'seo' => 'json',
         'publish_time' => 'datetime',
         'publish_end' => 'datetime'
+    ];
+
+    protected $appends = [
+        'cover_src',
+        'banner_src'
     ];
 
     public static function boot()
@@ -109,6 +113,11 @@ class ContentPost extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -124,7 +133,7 @@ class ContentPost extends Model
         return $query->where('selected', 1);
     }
 
-    public function coverSrc()
+    public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
@@ -140,7 +149,7 @@ class ContentPost extends Model
         return $cover;
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

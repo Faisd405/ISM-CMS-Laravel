@@ -15,16 +15,10 @@ class CreateModBannersTable extends Migration
     {
         Schema::create('mod_banners', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('banner_category_id');
-            $table->json('title')->nullable();
+            $table->json('name');
             $table->json('description')->nullable();
-            $table->tinyInteger('type')->comment('0 = image, 1 = video, 2 = text');
-            $table->tinyInteger('image_type')->nullable()->comment('0 = image upload, 1 = image fileman, 2 = image url');
-            $table->tinyInteger('video_type')->nullable()->comment('0 = video upload, 1 = video youtube');
-            $table->text('file')->nullable();
-            $table->text('thumbnail')->nullable();
             $table->json('config')->nullable();
-            $table->text('url')->nullable();
+            $table->json('custom_fields')->nullable();
             $table->integer('position');
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
@@ -37,9 +31,6 @@ class CreateModBannersTable extends Migration
             $table->timestamps();
             $table->softDeletesTz('deleted_at', 0);
 
-            $table->foreign('banner_category_id')->references('id')
-                ->on('mod_banner_categories')
-                ->cascadeOnDelete();
             $table->foreign('created_by')->references('id')->on('users')
                 ->onDelete('SET NULL');
             $table->foreign('updated_by')->references('id')->on('users')

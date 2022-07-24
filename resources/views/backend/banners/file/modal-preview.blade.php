@@ -3,7 +3,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
-            @lang('global.preview') @lang('module/banner.caption')
+            @lang('global.preview') @lang('module/banner.file.caption')
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="las la-times"></i></button>
         </div>

@@ -13,16 +13,16 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
-            <div class="card-header">
-                <span class="text-muted">
-                    {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
-                </span>
-            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/content.category.caption')
                 ])
             </h6>
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/content.section.caption')) }} : <b class="text-primary">{{ $data['section']->fieldLang('name') }}</b>
+                </span>
+            </div>
             <form action="{{ !isset($data['category']) ? route('content.category.store', array_merge(['sectionId' => $data['section']['id']], $queryParam)) : 
                 route('content.category.update', array_merge(['sectionId' => $data['section']['id'], 'id' => $data['category']['id']], $queryParam)) }}" method="POST">
                 @csrf
@@ -56,7 +56,7 @@
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row {{ isset($data['category']) && $data['category']['config']['show_description'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.category.label.field3')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['category']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['category']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
@@ -71,7 +71,7 @@
                             <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.category.label.field2') <i class="text-danger">*</i></label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
-                                    value="{{ !isset($data['category']) ? old('slug') : old('slug', $data['category']['slug']) }}" placeholder="{{ url('/') }}/{{ $data['section']['slug'] }}/cat/SLUG">
+                                    value="{{ !isset($data['category']) ? old('slug') : old('slug', $data['category']['slug']) }}" placeholder="{{ url('/') }}/{{ $data['section']['slug'] }}/cat/url">
                                 @include('components.field-error', ['field' => 'slug'])
                             </div>
                         </div>
@@ -89,25 +89,10 @@
                     </button>
                 </div>
 
-                {{-- POST SETTING --}}
-                <hr class="m-0">
-                <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">POST SETTING</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">Post perpage</label>
-                        <div class="col-sm-10">
-                            <input type="number" class="form-control mb-1 @error('post_perpage') is-invalid @enderror" name="post_perpage" 
-                                value="{{ !isset($data['category']) ? old('post_perpage') : old('post_perpage', $data['category']['post_perpage']) }}" 
-                                placeholder="limit list post">
-                            @include('components.field-error', ['field' => 'post_perpage'])
-                        </div>
-                    </div>
-                </div>
-
                 {{-- SEO --}}
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SEO</h6>
+                    <h6 class="font-weight-bold text-primary mb-4">SEO</h6>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_title')</label>
                         <div class="col-sm-10">
@@ -125,7 +110,7 @@
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_keywords')</label>
                         <div class="col-sm-10">
                             <input class="form-control tags-input mb-1" name="meta_keywords" value="{{ !isset($data['category']) ? old('meta_keywords') : old('meta_keywords', $data['category']['seo']['keywords'])  }}" placeholder="">
-                            <small class="text-muted">@lang('global.separated_comma')</small>
+                            <small class="form-text text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>
                 </div>
@@ -133,10 +118,10 @@
                 {{-- SETTING --}}
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                        <div class="col-sm-10">
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
                             <select class="form-control show-tick" name="publish" data-style="btn-default">
                                 @foreach (__('global.label.publish') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['category']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['category']['publish']) == ''.$key.'' ? 'selected' : '') }}>
@@ -145,10 +130,8 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
                             <select class="form-control show-tick" name="public" data-style="btn-default">
                                 @foreach (__('global.label.optional') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['category']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['category']['public']) == ''.$key.'' ? 'selected' : '') }}>
@@ -157,42 +140,8 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['category']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['category']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('global.detail')</label>
-                        </div>
-                        <div class="col-md-10">
-                            <label class="switcher switcher-success">
-                                <input type="checkbox" class="switcher-input" name="is_detail" value="1" 
-                                    {{ !isset($data['category']) ? (old('is_detail', 1) ? 'checked' : '') : (old('is_detail', $data['category']['config']['is_detail']) ? 'checked' : '') }}>
-                                <span class="switcher-indicator">
-                                <span class="switcher-yes">
-                                    <span class="ion ion-md-checkmark"></span>
-                                </span>
-                                <span class="switcher-no">
-                                    <span class="ion ion-md-close"></span>
-                                </span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                    @role('super')
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.template')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-12 hide-form">
+                            <label class="form-label">@lang('global.template')</label>
                             <select class="select2 show-tick" name="template_id" data-style="btn-default">
                                 <option value=" " selected>DEFAULT</option>
                                 @foreach ($data['templates'] as $tmpList)
@@ -202,61 +151,95 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    @else
-                    <input type="hidden" name="template_id" value="{{ !isset($data['category']) ? null : $data['category']['template_id'] }}">
-                    @endrole
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.banner')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-12 {{ isset($data['category']) && $data['category']['config']['show_banner'] == false ? 'hide-form' : '' }}">
+                            <label class="form-label">@lang('global.banner')</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file" placeholder="Browse file..."
+                                            value="{{ !isset($data['category']) ? old('banner_file') : old('banner_file', $data['category']['banner']['filepath']) }}">
+                                    <div class="input-group-append" title="browse file">
+                                        <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file"
-                                        value="{{ !isset($data['category']) ? old('banner_file') : old('banner_file', $data['category']['banner']['filepath']) }}">
-                                <div class="input-group-append" title="browse file">
-                                    <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                <input type="text" class="form-control" placeholder="@lang('global.title')" name="banner_title" value="{{ !isset($data['category']) ? old('banner_title') : old('banner_title', $data['category']['banner']['title']) }}">
-                                </div>
-                                <div class="col-sm-6">
-                                <input type="text" class="form-control" placeholder="@lang('global.alt')" name="banner_alt" value="{{ !isset($data['category']) ? old('banner_alt') : old('banner_alt', $data['category']['banner']['alt']) }}">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.hide') Field</label>
-                        <div class="col-sm-10">
-                            <div>
-                                <label class="form-check form-check-inline">
-                                  <input class="form-check-input" type="checkbox" name="hide_description" value="1" 
-                                  {{ !isset($data['category']) ? (old('hide_description') ? 'checked' : '') : (old('hide_description', $data['category']['config']['hide_description']) ? 'checked' : '') }}>
-                                  <span class="form-check-label">
-                                    @lang('module/content.category.label.field3')
-                                  </span>
-                                </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="hide_banner" value="1" 
-                                    {{ !isset($data['category']) ? (old('hide_banner') ? 'checked' : '') : (old('hide_banner', $data['category']['config']['hide_banner']) ? 'checked' : '') }}>
-                                    <span class="form-check-label">
-                                      @lang('global.banner')
-                                    </span>
-                                </label>
+                                <input type="text" class="form-control" name="banner_title" placeholder="@lang('global.title')"
+                                    value="{{ !isset($data['category']) ? old('banner_title') : old('banner_title', $data['category']['banner']['title']) }}">
+                                <input type="text" class="form-control" name="banner_alt" placeholder="@lang('global.alt')"
+                                    value="{{ !isset($data['category']) ? old('banner_alt') : old('banner_alt', $data['category']['banner']['alt']) }}">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                @if (!isset($data['category']) && Auth::user()->hasRole('super') || isset($data['category']))
+                <hr class="border-light m-0">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label class="form-label">@lang('global.locked')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['category']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['category']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="form-label">@lang('global.detail')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="detail" value="1"
+                                    {{ !isset($data['category']) ? (old('detail', $data['section']['config']['detail_category']) ? 'checked' : '') : (old('detail', $data['category']['detail']) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.detail_info')</small>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="form-label">Show Description</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_description" value="1"
+                                {{ !isset($data['category']) ? (old('config_show_description', 1) ? 'checked' : 'checked') : (old('config_show_description', $data['category']['config']['show_description']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="form-label">Show Banner</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_banner" value="1"
+                                {{ !isset($data['category']) ? (old('config_show_banner', 1) ? 'checked' : '') : (old('config_show_banner', $data['category']['config']['show_banner']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Paginate Post</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_paginate_post" value="1"
+                                {{ !isset($data['category']) ? (old('config_paginate_post', 1) ? 'checked' : '') : (old('config_paginate_post', $data['category']['config']['paginate_post']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Custom Field</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_custom_field" value="1"
+                                {{ !isset($data['category']) ? (old('config_show_custom_field') ? 'checked' : '') : (old('config_show_custom_field', $data['category']['config']['show_custom_field']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Post Limit</label>
+                            <input type="number" class="form-control" name="config_post_limit"
+                                 value="{{ !isset($data['category']) ? old('config_post_limit', 6) : old('config_post_limit', $data['category']['config']['post_limit']) }}">
+                        </div>
+                    </div>
+                </div>
+
+                @if (Auth::user()->hasRole('developer|super') || isset($data['category']) && $data['category']['config']['show_custom_field'] == true && !empty($data['category']['custom_fields']))
                 {{-- CUSTOM FIELD --}}
                 <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
                         <thead>
-                            @role('super')
+                            @role('developer|super')
                             <tr>
                                 <td colspan="3" class="text-center">
                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
@@ -277,12 +260,12 @@
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
                                         <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
-                                            value="{{ $key }}" {{ !Auth::user()->hasRole('super') ? 'readonly' : '' }}>
+                                            value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
                                         <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
                                     </td>
-                                    @role('super')
+                                    @role('developer|super')
                                     <td style="width: 30px;">
                                         <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
                                     </td>
@@ -361,10 +344,9 @@
     });
 </script>
 
-@if (!Auth::user()->hasRole('super'))
+@if (!Auth::user()->hasRole('developer|super'))
 <script>
-    //hide form yang tidak diperlukan
-    $('.hd').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 

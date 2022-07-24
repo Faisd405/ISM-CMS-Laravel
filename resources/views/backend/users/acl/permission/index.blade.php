@@ -102,13 +102,13 @@
                                     ])">
                                     <i class="las la-plus"></i>
                                 </a>
-                                <a href="{{ route('permission.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('lang.edit_attr', [
+                                <a href="{{ route('permission.edit', ['id' => $item['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('module/user.permission.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @if ($item['locked'] == 0) 
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('lang.delete_attr', [
+                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                     'attribute' => __('module/user.permission.caption')
                                 ])"
                                     data-id="{{ $item['id'] }}">
@@ -135,13 +135,13 @@
                                     ])" disabled>
                                     <i class="las la-plus"></i>
                                 </button> --}}
-                                <a href="{{ route('permission.edit', ['id' => $child['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('lang.edit_attr', [
+                                <a href="{{ route('permission.edit', ['id' => $child['id']]) }}" class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
                                         'attribute' => __('module/user.permission.caption')
                                     ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @if ($child['locked'] == 0) 
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('lang.delete_attr', [
+                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
                                     'attribute' => __('module/user.permission.caption')
                                 ])"
                                     data-id="{{ $child['id'] }}">

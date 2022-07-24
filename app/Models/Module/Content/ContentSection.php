@@ -27,11 +27,14 @@ class ContentSection extends Model
         'name' => 'json',
         'description' => 'json',
         'banner' => 'json',
-        'ordering' => 'json',
         'custom_fields' => 'json',
         'addon_fields' => 'json',
         'config' => 'json',
         'seo' => 'json',
+    ];
+
+    protected $appends = [
+        'banner_src'
     ];
 
     public static function boot()
@@ -63,7 +66,7 @@ class ContentSection extends Model
 
     public function widgets()
     {
-        return $this->morphMany(Widget::class, 'moduleable_id');
+        return $this->morphMany(Widget::class, 'moduleable');
     }
 
     public function templateList()
@@ -109,6 +112,11 @@ class ContentSection extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -119,7 +127,7 @@ class ContentSection extends Model
         return $query->where('locked', 1);
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

@@ -107,6 +107,7 @@ class RegistrationService
                 'start_date' => $data['start_date'] ?? null,
                 'end_date' => $data['end_date'] ?? null,
                 'active' => (bool)$data['active'],
+                'locked' => (bool)$data['locked'],
                 'created_by' => Auth::guard()->check() ? Auth::user()['id'] : null,
             ]);
 
@@ -138,6 +139,7 @@ class RegistrationService
                 'start_date' => $data['start_date'] ?? null,
                 'end_date' => $data['end_date'] ?? null,
                 'active' => (bool)$data['active'],
+                'locked' => (bool)$data['locked'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $registration['updated_by'],
             ]);
 

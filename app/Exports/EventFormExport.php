@@ -33,7 +33,7 @@ class EventFormExport implements
 
         return view('backend.events.form.export', [
             'event' => $event,
-            'field' => $this->field,
+            'fields' => $this->field,
             'data' => $this->data
         ]);
     }

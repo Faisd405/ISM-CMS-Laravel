@@ -209,7 +209,7 @@
 }
 .alsen .custom-control.custom-checkbox .custom-control-label::before {
   border: none;
-  background-color: #f1f1f1;
+  background-color: #dfdfdf;
   top: 0.2rem;
 }
 .alsen .custom-control.custom-radio {
@@ -219,7 +219,7 @@
 }
 .alsen .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before {
   border: none;
-  background-color: #6CC0C2;
+  background-color: #0084ff;
 }
 .alsen .custom-control.custom-radio .custom-control-input:focus ~ .custom-control-label::before {
   box-shadow: none;

@@ -23,8 +23,8 @@
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
                                 value="{{ !isset($data['role']) ? old('name') : old('name', $data['role']['name']) }}" 
                                 placeholder="@lang('module/user.role.placeholder.field1')" {{ isset($data['role']) && $data['role']['locked'] == 1 ? 'readonly' : 'autofocus' }}>
-                            <small class="text-muted">@lang('global.lower_case')</small>
                             @include('components.field-error', ['field' => 'name'])
+                            <small class="form-text text-muted">@lang('global.lower_case')</small>
                         </div>
                     </div>
     
@@ -54,6 +54,20 @@
                                 {{ !isset($data['role']) ? (old('is_register') ? 'checked' : '') : (old('is_register', $data['role']['is_register']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
+                            <small class="form-text text-muted">@lang('module/user.role.placeholder.field5')</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['role']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['role']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
                         </div>
                     </div>
                 </div>
@@ -80,7 +94,7 @@
                         </thead>
                         <tbody>
                             @forelse ($data['permissions'] as $item)
-                            <tr class="bg-primary" style="color: #fff;">
+                            <tr class="table-primary">
                                 <td><strong>{{ $loop->iteration }}</strong></td>
                                 <td>
                                     <strong>
@@ -89,10 +103,10 @@
                                 </td>
                                 <td><strong><i>READ</i></strong></td>
                                 <td class="text-center">
-                                    <label class="form-check form-check-inline">
-                                        <input type="checkbox" class="form-check-input check-parent" data-id="{{ $item['id'] }}" name="permission[]" value="{{ $item['id'] }}" 
+                                    <label class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input check-parent" data-id="{{ $item['id'] }}" name="permission[]" value="{{ $item['id'] }}" 
                                             {{ isset($data['permission_ids']) ? (in_array($item['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
-                                        <span class="form-check-label"></span>
+                                        <span class="custom-control-label"></span>
                                     </label>
                                 </td>
                             </tr>
@@ -108,10 +122,10 @@
                                     <i>{{ Str::upper(Str::replace('_', ' ', $child['name'])) }}</i>
                                 </td>
                                 <td class="text-center">
-                                    <label class="form-check form-check-inline">
-                                        <input type="checkbox" class="form-check-input check-child-{{ $child['parent'] }}" name="permission[]" value="{{ $child['id'] }}"
-                                            {{ isset($data['permission_ids']) ? (in_array($child['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
-                                        <span class="form-check-label"></span>
+                                    <label class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input check-child-{{ $child['parent'] }}" name="permission[]" value="{{ $child['id'] }}"
+                                        {{ isset($data['permission_ids']) ? (in_array($child['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
+                                        <span class="custom-control-label"></span>
                                     </label>
                                 </td>
                             </tr>

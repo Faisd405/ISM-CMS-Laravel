@@ -9,7 +9,7 @@ return [
         'login' => [
             'backend' => [
                 'active' => true, //status
-                'role' => 'super|support|admin|editor', //role user login,
+                'role' => 'developer|super|support|admin|editor', //role user login,
                 'lock_time' => 3, //jam penguncian form login,
                 'lock_total' => 5, //jumlah gagal yang akan dilock,
                 'lock_warning' => 3, //muncul warning jika gagal
@@ -17,7 +17,7 @@ return [
             ],
             'frontend' => [
                 'active' => true, //status
-                'role' => 'super|support|admin', //role user login
+                'role' => 'developer|super|support|admin', //role user login
                 'lock_time' => 2, //jam penguncian form login
                 'lock_total' => 10, //jumlah gagal yang akan dilock
                 'lock_warning' => 5, //muncul warning jika gagal
@@ -58,16 +58,36 @@ return [
     //---------------
     'feature' => [
         'configuration' => [
-            'active' => true
+            'active' => true,
+            'group' => [
+                1 => [
+                    'key' => 'upload'
+                ],
+                2 => [
+                    'key' => 'general'
+                ],
+                3 => [
+                    'key' => 'meta-data'
+                ],
+                4 => [
+                    'key' => 'social-media'
+                ],
+                5 => [
+                    'key' => 'notification'
+                ],
+                100 => [
+                    'key' => 'dev-only'
+                ],
+            ]
         ],
         'notification' => [
             'active' => true,
             'email' => [
+                'login_failed' => true,
                 'activate_account' => true,
                 'verification_email' => true,
                 'register' => true,
                 'inquiry' => true,
-                'login_failed' => true,
                 'event' => true
             ],
             'apps' => [
@@ -133,11 +153,11 @@ return [
                     'full' => 'views/frontend/galleries/album/',
                     'custom' => 'custom',
                 ],
-                'document_category' => [
+                'document' => [
                     'full' => 'views/frontend/documents/',
                     'custom' => 'custom',
                 ],
-                'link_category' => [
+                'link' => [
                     'full' => 'views/frontend/links/',
                     'custom' => 'custom',
                 ]
@@ -160,6 +180,7 @@ return [
         'mod' => [
             'page',
             'content_section',
+            'link',
             'inquiry'
         ],
     ],
@@ -190,6 +211,10 @@ return [
         'active' => true,
         'list_view' => true,
         'approval' => true,
+        'search' => true,
+        'ordering' => [
+            'position' => 'ASC'
+        ]
     ],
 
     //---------------
@@ -200,16 +225,33 @@ return [
             'active' => true,
             'list_view' => true,
             'approval' => true,
+            'search' => true,
+            'ordering' => [
+                'position' => 'ASC'
+            ],
+            'addon_field' => [
+                'text',
+                'textarea',
+                'date',
+                'checkbox',
+            ],
         ],
         'category' => [
             'active' => true,
             'list_view' => true,
             'approval' => true,
+            'search' => true
         ],
         'post' => [
             'active' => true,
             'list_view' => true,
             'approval' => true,
+            'search' => true,
+            'ordering' => [
+                'created_at' => 'Created',
+                'publish_time' => 'Publish Time',
+                'position' => 'Position'
+            ],
         ],
     ],
 
@@ -219,9 +261,26 @@ return [
     'banner' => [
         'active' => true,
         'approval' => true,
-        'category' => [
+        'ordering' => [
+            'position' => 'ASC'
+        ],
+        'file' => [
             'approval' => true,
-        ]
+            'type' => [
+                0 => 'IMAGE',
+                1 => 'VIDEO',
+                2 => 'TEXT',
+            ],
+            'type_image' => [
+                0 => 'UPLOAD',
+                1 => 'FILEMANAGER',
+                2 => 'URL'
+            ],
+            'type_video' => [
+                0 => 'UPLOAD',
+                1 => 'YOUTUBE ID'
+            ],
+        ],
     ],
 
     //---------------
@@ -229,15 +288,37 @@ return [
     //---------------
     'gallery' => [
         'active' => true,
+        'list_view' => true,
         'category' => [
-            'approval' => true,
             'active' => true,
+            'approval' => true,
+            'search' => true,
+            'ordering' => [
+                'position' => 'ASC',
+            ]
         ],
         'album' => [
             'approval' => true,
+            'search' => true,
+            'ordering' => [
+                'position' => 'ASC',
+            ]
         ],
         'file' => [
             'approval' => true,
+            'type' => [
+                0 => 'IMAGE',
+                1 => 'VIDEO',
+            ],
+            'type_image' => [
+                0 => 'UPLOAD',
+                1 => 'FILEMANAGER',
+                2 => 'URL'
+            ],
+            'type_video' => [
+                0 => 'UPLOAD',
+                1 => 'YOUTUBE ID'
+            ],
         ]
     ],
 
@@ -245,13 +326,20 @@ return [
     // DOCUMENT
     //---------------
     'document' => [
-        'list_view' => true,
         'active' => true,
-        'category' => [
-            'approval' => true,
+        'list_view' => true,
+        'approval' => true,
+        'search' => true,
+        'ordering' => [
+            'position' => 'ASC'
         ],
         'file' => [
             'approval' => true,
+            'type' => [
+                0 => 'UPLOAD',
+                1 => 'FILEMANAGER',
+                2 => 'URL'
+            ],
         ]
     ],
 
@@ -259,10 +347,12 @@ return [
     // LINK
     //---------------
     'link' => [
-        'list_view' => true,
         'active' => true,
-        'category' => [
-            'approval' => true,
+        'list_view' => true,
+        'approval' => true,
+        'search' => true,
+        'ordering' => [
+            'position' => 'ASC'
         ],
         'media' => [
             'approval' => true,
@@ -273,24 +363,66 @@ return [
     // INQUIRY
     //---------------
     'inquiry' => [
+        'active' => true,
         'list_view' => true,
         'approval' => true,
-        'active' => true,
+        'search' => true,
+        'ordering' => [
+            'position' => 'ASC'
+        ],
         'field' => [
             'approval' => true,
-        ]
+            'type' => [
+                0 => 'Text',
+                1 => 'Textarea',
+                // 2 => 'Date',
+                // 3 => 'Date Time'
+                // 4 => 'Select',
+                // 5 => 'Checkbox',
+                // 6 => 'Radiobox',
+                // 7 => 'File',
+            ],
+            'input' => [
+                'text' => 'Text',
+                'number' => 'Number',
+                'email' => 'Email'
+            ],
+        ],
     ],
 
     //---------------
     // EVENT
     //---------------
     'event' => [
+        'active' => true,
         'list_view' => true,
         'approval' => true,
-        'active' => true,
+        'search' => true,
+        'ordering' => [
+            'position' => 'ASC'
+        ],
+        'type' => [
+            0 => 'OFFLINE',
+            1 => 'ONLINE'
+        ],
         'field' => [
             'approval' => true,
-        ]
+            'type' => [
+                0 => 'Text',
+                1 => 'Textarea',
+                // 2 => 'Date',
+                // 3 => 'Date Time'
+                // 4 => 'Select',
+                // 5 => 'Checkbox',
+                // 6 => 'Radiobox',
+                // 7 => 'File',
+            ],
+            'input' => [
+                'text' => 'Text',
+                'number' => 'Number',
+                'email' => 'Email'
+            ],
+        ],
     ],
 
     //---------------
@@ -317,4 +449,17 @@ return [
         ],
     ],
 
+    //---------------
+    // ORDERING
+    //---------------
+    'ordering' => [
+        'by' => [
+            'created_at' => 'Created',
+            'position' => 'Position',
+        ],
+        'type' => [
+            'DESC' => 'DESCENDING',
+            'ASC' => 'ASCENDING',
+        ],
+    ],
 ];

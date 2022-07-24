@@ -70,9 +70,6 @@ class PassingDataToViews
                 $passingData['menu'][$value['name']] = $this->menu->getMenuList($filterMenu, false, 10, false, [], [
                     'position' => 'ASC'
                 ]);
-                foreach ($passingData['menu'][$value['name']] as $keyB => $valueB) {
-                    $passingData['menu'][$value['name']][$keyB]['modules'] = $this->menu->getModuleData($valueB);
-                }
             }
 
             //--- Widget Global
@@ -87,7 +84,6 @@ class PassingDataToViews
                 $passingData['widget_globals'][$value['name']]['module'] = $this->widget->getModuleData($value);
             }
         }
-
 
         View::share($passingData);
 

@@ -98,7 +98,8 @@ class IndexUrlService
                 'slug' => Str::slug($data['slug'], '-'),
                 'module' => $data['module'] ?? null,
                 'urlable_id' => $data['urlable_id'] ?? null,
-                'urlable_type' => $data['urlable_type'] ?? null
+                'urlable_type' => $data['urlable_type'] ?? null,
+                'locked' => (bool)$data['locked'],
             ]);
 
             return $this->success($indexUrl,  __('global.alert.create_success', [
@@ -143,7 +144,8 @@ class IndexUrlService
                 'slug' => Str::slug($data['slug'], '-'),
                 'module' => $data['module'] ?? null,
                 'urlable_id' => $data['urlable_id'] ?? null,
-                'urlable_type' => $data['urlable_type'] ?? null
+                'urlable_type' => $data['urlable_type'] ?? null,
+                'locked' => (bool)$data['locked'],
             ]);
 
             return $this->success($indexUrl,  __('global.alert.update_success', [

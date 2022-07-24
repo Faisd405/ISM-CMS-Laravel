@@ -25,6 +25,7 @@ class CreateModGalleryFilesTable extends Migration
             $table->text('file');
             $table->text('thumbnail')->nullable();
             $table->json('config')->nullable();
+            $table->json('custom_fields')->nullable();
             $table->integer('position')->nullable();
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');

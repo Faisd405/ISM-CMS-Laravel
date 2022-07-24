@@ -23,26 +23,32 @@ class UserSeeder extends Seeder
          */
         $roles = [
             [
-                'name' => 'super',
+                'name' => 'developer',
                 'level' => 1,
                 'locked' => true,
                 'is_register' => false,
             ],
             [
-                'name' => 'support',
+                'name' => 'super',
                 'level' => 2,
                 'locked' => true,
                 'is_register' => false,
             ],
             [
-                'name' => 'admin',
+                'name' => 'support',
                 'level' => 3,
                 'locked' => true,
                 'is_register' => false,
             ],
             [
-                'name' => 'editor',
+                'name' => 'admin',
                 'level' => 4,
+                'locked' => true,
+                'is_register' => false,
+            ],
+            [
+                'name' => 'editor',
+                'level' => 5,
                 'locked' => true,
                 'is_register' => false,
             ],
@@ -339,42 +345,42 @@ class UserSeeder extends Seeder
             ],
             55 => [
                 'parent' => 0,
-                'name' => 'banner_categories',
+                'name' => 'banners',
                 'locked' => true
             ],
             56 => [
                 'parent' => 56,
-                'name' => 'banner_category_create',
+                'name' => 'banner_create',
                 'locked' => true
             ],
             57 => [
                 'parent' => 56,
-                'name' => 'banner_category_update',
+                'name' => 'banner_update',
                 'locked' => true
             ],
             58 => [
                 'parent' => 56,
-                'name' => 'banner_category_delete',
+                'name' => 'banner_delete',
                 'locked' => true
             ],
             59 => [
                 'parent' => 0,
-                'name' => 'banners',
+                'name' => 'banner_files',
                 'locked' => true
             ],
             60 => [
                 'parent' => 60,
-                'name' => 'banner_create',
+                'name' => 'banner_file_create',
                 'locked' => true
             ],
             61 => [
                 'parent' => 60,
-                'name' => 'banner_update',
+                'name' => 'banner_file_update',
                 'locked' => true
             ],
             62 => [
                 'parent' => 60,
-                'name' => 'banner_delete',
+                'name' => 'banner_file_delete',
                 'locked' => true
             ],
             63 => [
@@ -439,22 +445,22 @@ class UserSeeder extends Seeder
             ],
             75 => [
                 'parent' => 0,
-                'name' => 'document_categories',
+                'name' => 'documents',
                 'locked' => true
             ],
             76 => [
                 'parent' => 76,
-                'name' => 'document_category_create',
+                'name' => 'document_create',
                 'locked' => true
             ],
             77 => [
                 'parent' => 76,
-                'name' => 'document_category_update',
+                'name' => 'document_update',
                 'locked' => true
             ],
             78 => [
                 'parent' => 76,
-                'name' => 'document_category_delete',
+                'name' => 'document_delete',
                 'locked' => true
             ],
             79 => [
@@ -479,22 +485,22 @@ class UserSeeder extends Seeder
             ],
             83 => [
                 'parent' => 0,
-                'name' => 'link_categories',
+                'name' => 'links',
                 'locked' => true
             ],
             84 => [
                 'parent' => 84,
-                'name' => 'link_category_create',
+                'name' => 'link_create',
                 'locked' => true
             ],
             85 => [
                 'parent' => 84,
-                'name' => 'link_category_update',
+                'name' => 'link_update',
                 'locked' => true
             ],
             86 => [
                 'parent' => 84,
-                'name' => 'link_category_delete',
+                'name' => 'link_delete',
                 'locked' => true
             ],
             87 => [
@@ -633,8 +639,20 @@ class UserSeeder extends Seeder
          */
         $users = [
             [
-                'name' => 'Developer 4VM',
+                'name' => 'Developer',
                 'email' => 'developer@4visionmedia.com',
+                'email_verified' => 1,
+                'email_verified_at' => now(),
+                'username' => '4vmDev',
+                'password' => Hash::make('cmsDev0ps#'),
+                'active' => 1,
+                'active_at' => now(),
+                'roles' => 'developer',
+                'locked' => true
+            ],
+            [
+                'name' => 'Super Admin',
+                'email' => 'superadmin@4visionmedia.com',
                 'email_verified' => 1,
                 'email_verified_at' => now(),
                 'username' => '4vmSuper',
@@ -645,7 +663,7 @@ class UserSeeder extends Seeder
                 'locked' => true
             ],
             [
-                'name' => 'Support 4VM',
+                'name' => 'Support',
                 'email' => 'support@4visionmedia.com',
                 'email_verified' => 1,
                 'email_verified_at' => now(),
@@ -704,20 +722,20 @@ class UserSeeder extends Seeder
          */
         foreach (Permission::all() as $value) {
             DB::table('role_has_permissions')->insert([
-                'role_id' => 1,
+                'role_id' => 2,
                 'permission_id' => $value->id
             ]);
         }
 
-        //custom permission
-        // $permissions = [];
-        // foreach ($permissions as $key => $value) {
-        //     DB::table('role_has_permissions')->insert([
-        //         'role_id' => 2,
-        //         'permission_id' => $value
-        //     ]);
-        // }
+        foreach (Permission::all() as $value) {
+            DB::table('role_has_permissions')->insert([
+                'role_id' => 3,
+                'permission_id' => $value->id
+            ]);
+        }
 
+        // custom permission
+        // $permissions = [];
         // foreach ($permissions as $key => $value) {
         //     DB::table('role_has_permissions')->insert([
         //         'role_id' => 3,

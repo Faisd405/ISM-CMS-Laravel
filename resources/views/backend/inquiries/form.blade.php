@@ -52,14 +52,14 @@
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field3') <i class="text-danger">*</i></label>
+                            <div class="form-group row {{ isset($data['inquiry']) && $data['inquiry']['config']['show_body'] == false ? 'hide-form' : '' }}">
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field3')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce @error('body_'.$lang['iso_codes']) is-invalid @enderror" name="body_{{ $lang['iso_codes'] }}">{!! !isset($data['inquiry']) ? old('body_'.$lang['iso_codes']) : old('body_'.$lang['iso_codes'], $data['inquiry']->fieldLang('body', $lang['iso_codes'])) !!}</textarea>
                                     @include('components.field-error', ['field' => 'body_'.$lang['iso_codes']])
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row {{ isset($data['inquiry']) && $data['inquiry']['config']['show_after_body'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field4')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce @error('after_body_'.$lang['iso_codes']) is-invalid @enderror" name="after_body_{{ $lang['iso_codes'] }}">{!! !isset($data['inquiry']) ? old('after_body_'.$lang['iso_codes']) : old('after_body_'.$lang['iso_codes'], $data['inquiry']->fieldLang('after_body', $lang['iso_codes'])) !!}</textarea>
@@ -75,7 +75,7 @@
                             <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field2') <i class="text-danger">*</i></label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
-                                    value="{{ !isset($data['inquiry']) ? old('slug') : old('slug', $data['inquiry']['slug']) }}" placeholder="{{ url('/') }}/SLUG">
+                                    value="{{ !isset($data['inquiry']) ? old('slug') : old('slug', $data['inquiry']['slug']) }}" placeholder="{{ url('/') }}/url">
                                 @include('components.field-error', ['field' => 'slug'])
                             </div>
                         </div>
@@ -93,59 +93,14 @@
                     </button>
                 </div>
 
-                {{-- INQUIRY SETTING --}}
-                <hr class="m-0">
-                <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">INQUIRY SETTING</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field6')</label>
-                        <div class="col-sm-10">
-                            <input class="form-control tags-input mb-1" name="email" value="{{ isset($data['inquiry']) && !empty($data['inquiry']['email']) ? old('email', implode(",", $data['inquiry']['email'])) : old('email') }}" placeholder="">
-                            <small class="text-muted">@lang('global.separated_comma')</small>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field8')</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="longitude" value="{{ !isset($data['inquiry']) ? old('longitude') : old('longitude', $data['inquiry']['longitude']) }}" placeholder="">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.field9')</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="latitude" value="{{ !isset($data['inquiry']) ? old('latitude') : old('latitude', $data['inquiry']['latitude']) }}" placeholder="">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('module/inquiry.label.lock_form')</label>
-                        </div>
-                        <div class="col-md-10">
-                            <label class="switcher switcher-success">
-                                <input type="checkbox" class="switcher-input" name="lock_form" value="1" 
-                                    {{ !isset($data['inquiry']) ? (old('lock_form', 1) ? 'checked' : '') : (old('lock_form', $data['inquiry']['config']['lock_form']) ? 'checked' : '') }}>
-                                <span class="switcher-indicator">
-                                <span class="switcher-yes">
-                                    <span class="ion ion-md-checkmark"></span>
-                                </span>
-                                <span class="switcher-no">
-                                    <span class="ion ion-md-close"></span>
-                                </span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
                 {{-- SEO --}}
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SEO</h6>
+                    <h6 class="font-weight-bold text-primary mb-4">SEO</h6>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_title')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control mb-1" name="meta_title" value="{{ !isset($data['inquiry']) ? old('meta_title') : old('meta_title', $data['inquiry']['seo']['title']) }}" placeholder="@lang('global.meta_title')">
-
                         </div>
                     </div>
                     <div class="form-group row">
@@ -158,7 +113,7 @@
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_keywords')</label>
                         <div class="col-sm-10">
                             <input class="form-control tags-input mb-1" name="meta_keywords" value="{{ !isset($data['inquiry']) ? old('meta_keywords') : old('meta_keywords', $data['inquiry']['seo']['keywords'])  }}" placeholder="">
-                            <small class="text-muted">@lang('global.separated_comma')</small>
+                            <small class="form-text text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>
                 </div>
@@ -166,10 +121,27 @@
                 {{-- SETTING --}}
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                        <div class="col-sm-10">
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-12 {{ isset($data['inquiry']) && $data['inquiry']['config']['show_form'] == false ? 'hide-form' : 'hide-form' }}">
+                            <label class="form-label">@lang('module/inquiry.label.field6')</label>
+                            <input class="form-control tags-input mb-1" name="email" value="{{ isset($data['inquiry']) && !empty($data['inquiry']['email']) ? old('email', implode(",", $data['inquiry']['email'])) : old('email') }}" placeholder="">
+                            <small class="form-text text-muted">@lang('global.separated_comma')</small>
+                        </div>
+                        <div class="form-group col-md-12 {{ isset($data['inquiry']) && $data['inquiry']['config']['send_mail_sender'] == false ? 'hide-form' : 'hide-form' }}">
+                            <label class="form-label">Mail Template (Sender)</label>
+                            <textarea class="form-control tiny-mce @error('mail_sender_template') is-invalid @enderror" name="mail_sender_template">{!! !isset($data['inquiry']) ? old('mail_sender_template') : old('mail_sender_template', $data['inquiry']['mail_sender_template']) !!}</textarea>
+                        </div>
+                        <div class="form-group col-md-6 {{ isset($data['inquiry']) && $data['inquiry']['config']['show_map'] == false ? 'hide-form' : 'hide-form' }}">
+                            <label class="form-label">@lang('module/inquiry.label.field8')</label>
+                            <input type="text" class="form-control" name="longitude" value="{{ !isset($data['inquiry']) ? old('longitude') : old('longitude', $data['inquiry']['longitude']) }}" placeholder="">
+                        </div>
+                        <div class="form-group col-md-6 {{ isset($data['inquiry']) && $data['inquiry']['config']['show_map'] == false ? 'hide-form' : 'hide-form' }}">
+                            <label class="form-label">@lang('module/inquiry.label.field9')</label>
+                            <input type="text" class="form-control" name="latitude" value="{{ !isset($data['inquiry']) ? old('latitude') : old('latitude', $data['inquiry']['latitude']) }}" placeholder="">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
                             <select class="form-control show-tick" name="publish" data-style="btn-default">
                                 @foreach (__('global.label.publish') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['inquiry']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['inquiry']['publish']) == ''.$key.'' ? 'selected' : '') }}>
@@ -178,10 +150,8 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
                             <select class="form-control show-tick" name="public" data-style="btn-default">
                                 @foreach (__('global.label.optional') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['inquiry']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['inquiry']['public']) == ''.$key.'' ? 'selected' : '') }}>
@@ -190,117 +160,126 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['inquiry']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['inquiry']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    @role('super')
-                    <div class="form-group row">
-                        <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('global.detail')</label>
-                        </div>
-                        <div class="col-md-10">
-                            <label class="switcher switcher-success">
-                                <input type="checkbox" class="switcher-input" name="is_detail" value="1" 
-                                    {{ !isset($data['inquiry']) ? (old('is_detail', 1) ? 'checked' : '') : (old('is_detail', $data['inquiry']['config']['is_detail']) ? 'checked' : '') }}>
-                                <span class="switcher-indicator">
-                                <span class="switcher-yes">
-                                    <span class="ion ion-md-checkmark"></span>
-                                </span>
-                                <span class="switcher-no">
-                                    <span class="ion ion-md-close"></span>
-                                </span>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                    @else
-                    <input type="hidden" name="is_detail" value="{{ !isset($data['inquiry']) ? 1 : $data['inquiry']['config']['is_detail'] }}">
-                    @endrole
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.banner')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-12 {{ isset($data['inquiry']) && $data['inquiry']['config']['show_banner'] == false ? 'hide-form' : '' }}">
+                            <label class="form-label">@lang('global.banner')</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file" placeholder="Browse file..."
+                                            value="{{ !isset($data['inquiry']) ? old('banner_file') : old('banner_file', $data['inquiry']['banner']['filepath']) }}">
+                                    <div class="input-group-append" title="browse file">
+                                        <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file"
-                                        value="{{ !isset($data['inquiry']) ? old('banner_file') : old('banner_file', $data['inquiry']['banner']['filepath']) }}">
-                                <div class="input-group-append" title="browse file">
-                                    <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                <input type="text" class="form-control" placeholder="@lang('global.title')" name="banner_title" value="{{ !isset($data['inquiry']) ? old('banner_title') : old('banner_title', $data['inquiry']['banner']['title']) }}">
-                                </div>
-                                <div class="col-sm-6">
-                                <input type="text" class="form-control" placeholder="@lang('global.alt')" name="banner_alt" value="{{ !isset($data['inquiry']) ? old('banner_alt') : old('banner_alt', $data['inquiry']['banner']['alt']) }}">
-                                </div>
+                                <input type="text" class="form-control" name="banner_title" placeholder="@lang('global.title')"
+                                    value="{{ !isset($data['inquiry']) ? old('banner_title') : old('banner_title', $data['inquiry']['banner']['title']) }}">
+                                <input type="text" class="form-control" name="banner_alt" placeholder="@lang('global.alt')"
+                                    value="{{ !isset($data['inquiry']) ? old('banner_alt') : old('banner_alt', $data['inquiry']['banner']['alt']) }}">
                             </div>
                         </div>
-                    </div>
-                    @role('super')
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">Content Template</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-12" style="display: none;">
+                            <label class="form-label">Content Template</label>
                             <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['inquiry']) ? old('content_template') : old('content_template', $data['inquiry']['content_template']) !!}</textarea>
-                        </div>
-                    </div>
-                    @else
-                    <input type="hidden" name="content_template" value="{{ !isset($data['inquiry']) ? old('content_template') : old('content_template', $data['inquiry']['content_template']) }}">
-                    @endrole
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.hide') Field</label>
-                        <div class="col-sm-10">
-                            <div>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="hide_body" value="1" 
-                                    {{ !isset($data['inquiry']) ? (old('hide_body') ? 'checked' : '') : (old('hide_body', $data['inquiry']['config']['hide_body']) ? 'checked' : '') }}>
-                                    <span class="form-check-label">
-                                      @lang('module/content.section.label.field3')
-                                    </span>
-                                  </label>
-                                <label class="form-check form-check-inline">
-                                  <input class="form-check-input" type="checkbox" name="hide_map" value="1" 
-                                  {{ !isset($data['inquiry']) ? (old('hide_map') ? 'checked' : '') : (old('hide_map', $data['inquiry']['config']['hide_map']) ? 'checked' : '') }}>
-                                  <span class="form-check-label">
-                                    Map
-                                  </span>
-                                </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="hide_form" value="1" 
-                                    {{ !isset($data['inquiry']) ? (old('hide_form') ? 'checked' : '') : (old('hide_form', $data['inquiry']['config']['hide_form']) ? 'checked' : '') }}>
-                                    <span class="form-check-label">
-                                      Form
-                                    </span>
-                                  </label>
-                                <label class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="hide_banner" value="1" 
-                                    {{ !isset($data['inquiry']) ? (old('hide_banner') ? 'checked' : '') : (old('hide_banner', $data['inquiry']['config']['hide_banner']) ? 'checked' : '') }}>
-                                    <span class="form-check-label">
-                                      @lang('global.banner')
-                                    </span>
-                                </label>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                @if (!isset($data['inquiry']) && Auth::user()->hasRole('super') || isset($data['inquiry']))
+                <hr class="border-light m-0">
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">@lang('global.locked')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['inquiry']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['inquiry']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">@lang('global.detail')</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="detail" value="1"
+                                    {{ !isset($data['inquiry']) ? (old('detail') ? 'checked' : 'checked') : (old('detail', $data['inquiry']['detail']) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.detail_info')</small>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Body</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_body" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_show_body', 1) ? 'checked' : '') : (old('config_show_body', $data['inquiry']['config']['show_body']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show After Body</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_after_body" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_show_after_body', 1) ? 'checked' : '') : (old('config_show_after_body', $data['inquiry']['config']['show_after_body']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Banner</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_banner" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_show_banner', 1) ? 'checked' : '') : (old('config_show_banner', $data['inquiry']['config']['show_banner']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Map</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_map" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_show_map') ? 'checked' : '') : (old('config_show_map', $data['inquiry']['config']['show_map']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Form</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_form" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_show_form') ? 'checked' : '') : (old('config_show_form', $data['inquiry']['config']['show_form']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Lock Form</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_lock_form" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_lock_form') ? 'checked' : '') : (old('config_lock_form', $data['inquiry']['config']['lock_form']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Send Mail Sender</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_send_mail_sender" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_send_mail_sender') ? 'checked' : '') : (old('config_send_mail_sender', $data['inquiry']['config']['send_mail_sender']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Custom Field</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_custom_field" value="1"
+                                {{ !isset($data['inquiry']) ? (old('config_show_custom_field') ? 'checked' : '') : (old('config_show_custom_field', $data['inquiry']['config']['show_custom_field']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Auth::user()->hasRole('developer|super') || isset($data['inquiry']) && $data['inquiry']['config']['show_custom_field'] == true && !empty($data['inquiry']['custom_fields']))
                 {{-- CUSTOM FIELD --}}
                 <hr class="m-0">
                 <div class="table-responsive text-center">
                     <table class="table card-table table-bordered">
                         <thead>
-                            @role('super')
+                            @role('developer|super')
                             <tr>
                                 <td colspan="3" class="text-center">
                                     <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
@@ -321,12 +300,12 @@
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
                                         <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
-                                            value="{{ $key }}" {{ !Auth::user()->hasRole('super') ? 'readonly' : '' }}>
+                                            value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
                                         <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
                                     </td>
-                                    @role('super')
+                                    @role('developer|super')
                                     <td style="width: 30px;">
                                         <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
                                     </td>
@@ -410,10 +389,9 @@
     $('.my-code-area').ace({ theme: 'monokai', lang: 'html' });
 </script>
 
-@if (!Auth::user()->hasRole('super'))
+@if (!Auth::user()->hasRole('developer|super'))
 <script>
-    //hide form yang tidak diperlukan
-    $('.hd').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 

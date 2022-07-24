@@ -30,7 +30,7 @@
                 {{-- MEDIA --}}
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/media.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/media.label.field1')</label>
                         <div class="col-sm-10">
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" id="is_youtube" name="is_youtube" value="1" {{ isset($data['media']) ? ($data['media']['is_youtube'] == 1 ? 'checked' : '') : '' }}>
@@ -53,7 +53,7 @@
                             <div class="col-sm-10">
                                 <div class="input-group">
                                     <input type="text" class="form-control @error('filename') is-invalid @enderror" id="image1" aria-label="Image" aria-describedby="button-image" name="filename"
-                                            value="{{!isset($data['media']) ? old('filename') : old('filename', $data['media']['filepath']['filename']) }}" placeholder="@lang('global.browse')">
+                                            value="{{!isset($data['media']) ? old('filename') : old('filename', $data['media']['filepath']['filename']) }}" placeholder="@lang('global.browse') file...">
                                     <div class="input-group-append" title="browse file">
                                         <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-file"></i>&nbsp; @lang('global.browse')</button>
                                     </div>
@@ -66,12 +66,23 @@
                             <div class="col-sm-10">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="image2" aria-label="Image2" aria-describedby="button-image2" name="thumbnail"
-                                            value="{{!isset($data['media']) ? old('thumbnail') : old('thumbnail', $data['media']['filepath']['thumbnail']) }}" placeholder="@lang('global.browse')">
+                                            value="{{!isset($data['media']) ? old('thumbnail') : old('thumbnail', $data['media']['filepath']['thumbnail']) }}" placeholder="@lang('global.browse') file...">
                                     <div class="input-group-append" title="browse thumbnail">
                                         <button class="btn btn-primary file-name" id="button-image2" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
+                        <div class="col-sm-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['media']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['media']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
                         </div>
                     </div>
                 </div>
@@ -160,10 +171,9 @@
     });
 </script>
 
-@if (!Auth::user()->hasRole('super'))
+@if (!Auth::user()->hasRole('developer|super'))
 <script>
-    //hide form yang tidak diperlukan
-    $('.hd').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 

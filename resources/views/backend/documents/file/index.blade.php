@@ -25,7 +25,7 @@
                 </div>
                 <div class="d-flex w-100 w-xl-auto">
                     @can('document_file_create')
-                    <a href="{{ route('document.file.create', array_merge(['categoryId' => $data['category']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
+                    <a href="{{ route('document.file.create', array_merge(['documentId' => $data['document']['id']], $queryParam)) }}" class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
                         'attribute' => __('module/document.file.caption')
                         ])">
                         <i class="las la-plus"></i> <span>@lang('module/document.file.caption')</span>
@@ -36,8 +36,8 @@
                         <i class="las la-hand-pointer"></i> <span>@lang('global.drag_drop')</span>
                     </a>
                     @endcan
-                    @role('super')
-                    <a href="{{ route('document.file.trash', ['categoryId' => $data['category']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
+                    @role('developer|super')
+                    <a href="{{ route('document.file.trash', ['documentId' => $data['document']['id']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
                     @endrole
@@ -75,7 +75,7 @@
                                 <label class="form-label">@lang('global.type')</label>
                                 <select class="custom-select" name="type">
                                     <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('module/document.file.type') as $key => $val)
+                                    @foreach (config('cms.module.document.file.type') as $key => $val)
                                     <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
                                         title="{{ $val }}">{{ $val }}</option>
                                     @endforeach
@@ -113,13 +113,13 @@
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <span class="text-muted">
-                    {{ Str::upper(__('module/document.category.caption')) }} : <b class="text-primary">{{ $data['category']->fieldLang('name') }}</b>
-                </span>
-            </div>
             <div class="card-header with-elements">
                 <h5 class="card-header-title mt-1 mb-0">@lang('module/document.file.text')</h5>
+            </div>
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/document.caption')) }} : <b class="text-primary">{{ $data['document']->fieldLang('name') }}</b>
+                </span>
             </div>
 
             <div class="table-responsive">
@@ -130,22 +130,29 @@
                             <th style="width: 210px;">@lang('module/document.file.label.file')</th>
                             <th>@lang('module/document.file.label.field1')</th>
                             <th style="width: 100px;">@lang('global.type')</th>
+                            <th class="text-center" style="width: 100px;">@lang('global.download')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
+                            @if ($data['document']['config']['file_order_by'] == 'position')
                             <th class="text-center" style="width: 110px;"></th>
+                            @endif
                             <th class="text-center" style="width: 140px;"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="{{ $data['files']->total() > 1 && $data['document']['config']['file_order_by'] == 'position' ? 'drag' : ''}}">
                         @forelse ($data['files'] as $item)
-                        <tr>
+                        <tr id="{{ $item['id'] }}" style="cursor: move;">
                             <td>{{ $data['no']++ }}</td>
                             <td>
-                                {{ $item['file'] }}
+                                <a href="{{ route('document.download', ['id' => $item['id']]) }}" target="_blank" title="@lang('global.download')">
+                                    {{ $item['file'] }}
+                                </a>
                             </td>
                             <td>
-                                {!! !empty($item->fieldLang('title')) ? Str::limit($item->fieldLang('title'), 30) : '-' !!}
+                                {!! !empty($item->fieldLang('title')) ? Str::limit($item->fieldLang('title'), 30) : __('global.field_empty_attr', [
+                                    'attribute' => __('module/document.file.label.field1')
+                                    ]) !!}
                                 @if (!empty($item->fieldLang('description')))
                                     <br>
                                     <small class="text-muted">{!! Str::limit($item->fieldLang('description'), 45) !!}</small>
@@ -154,21 +161,24 @@
                             <td>
                                 @switch($item['type'])
                                     @case(1)
-                                        <span class="badge badge-danger">{{ __('module/document.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-danger">{{ config('cms.module.document.file.type.'.$item['type']) }}</span>
                                         @break
                                     @case(2)
-                                        <span class="badge badge-secondary">{{ __('module/document.file.type.'.$item['type']) }}</span>
+                                        <span class="badge badge-secondary">{{ config('cms.module.document.file.type.'.$item['type']) }}</span>
                                         @break
                                     @default
-                                    <span class="badge badge-success">{{ __('module/document.file.type.'.$item['type']) }}</span>
+                                    <span class="badge badge-success">{{ config('cms.module.document.file.type.'.$item['type']) }}</span>
                                 @endswitch
+                            </td>
+                            <td class="text-center">
+                                <span class="badge badge-info">{{ $item['download'] }}</span>
                             </td>
                             <td class="text-center">
                                 @can('document_file_update')
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="badge badge-{{ $item['publish'] == 1 ? 'primary' : 'warning' }}"
                                     title="{{ __('global.label.publish.'.$item['publish']) }}">
                                     {{ __('global.label.publish.'.$item['publish']) }}
-                                    <form action="{{ route('document.file.publish', ['categoryId' => $item['document_category_id'], 'id' => $item['id']]) }}" method="POST">
+                                    <form action="{{ route('document.file.publish', ['documentId' => $item['document_id'], 'id' => $item['id']]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -191,11 +201,12 @@
                                 <span class="text-muted"> @lang('global.by') : {{ $item['updateBy'] != null ? $item['updateBy']['name'] : 'User Deleted' }}</span>
                                 @endif
                             </td>
+                            @if ($data['document']['config']['file_order_by'] == 'position')
                             <td class="text-center">
-                                @if (Auth::user()->can('document_file_update') && $item->where('document_category_id', $item['document_category_id'])->min('position') != $item['position'])
+                                @if (Auth::user()->can('document_file_update') && $item->where('document_id', $item['document_id'])->min('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-up"></i>
-                                    <form action="{{ route('document.file.position', ['categoryId' => $item['document_category_id'], 'id' => $item['id'], 'position' => ($item['position'] - 1)]) }}" method="POST">
+                                    <form action="{{ route('document.file.position', ['documentId' => $item['document_id'], 'id' => $item['id'], 'position' => ($item['position'] - 1)]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -203,10 +214,10 @@
                                 @else
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-up"></i></button>
                                 @endif
-                                @if (Auth::user()->can('document_file_update') && $item->where('document_category_id', $item['document_category_id'])->max('position') != $item['position'])
+                                @if (Auth::user()->can('document_file_update') && $item->where('document_id', $item['document_id'])->max('position') != $item['position'])
                                 <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" title="@lang('global.position')">
                                     <i class="las la-arrow-down"></i>
-                                    <form action="{{ route('document.file.position', ['categoryId' => $item['document_category_id'], 'id' => $item['id'], 'position' => ($item['position'] + 1)]) }}" method="POST">
+                                    <form action="{{ route('document.file.position', ['documentId' => $item['document_id'], 'id' => $item['id'], 'position' => ($item['position'] + 1)]) }}" method="POST">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -215,27 +226,30 @@
                                 <button type="button" class="btn icon-btn btn-sm btn-secondary" title="@lang('global.position')" disabled><i class="las la-arrow-down"></i></button>
                                 @endif
                             </td>
+                            @endif
                             <td class="text-center">
                                 @can('document_file_update')
-                                <a href="{{ route('document.file.edit', array_merge(['categoryId' => $item['document_category_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
+                                <a href="{{ route('document.file.edit', array_merge(['documentId' => $item['document_id'], 'id' => $item['id']], $queryParam)) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.edit_attr', [
                                     'attribute' => __('module/document.file.caption')
                                 ])">
                                     <i class="las la-pen"></i>
                                 </a>
                                 @endcan
                                 @can('document_file_delete')
+                                @if ($item['locked'] == 0)
                                 <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/document.file.caption')
+                                    'attribute' => __('module/document.file.caption')
                                     ])"
-                                    data-category-id="{{ $item['document_category_id'] }}"
+                                    data-document-id="{{ $item['document_id'] }}"
                                     data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-alt"></i>
                                 </button>
+                                @endif
                                 @endcan
-                                @if (Auth::user()->hasRole('super|support|admin') && config('cms.module.document.file.approval') == true)
+                                @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.document.file.approval') == true)
                                 <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-{{ $item['approved'] == 1 ? 'danger' : 'primary' }}" title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                     <i class="las la-{{ $item['approved'] == 1 ? 'times' : 'check' }}"></i>
-                                    <form action="{{ route('document.file.approved', ['categoryId' => $item['document_category_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
+                                    <form action="{{ route('document.file.approved', ['documentId' => $item['document_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -245,7 +259,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="9" align="center">
+                            <td colspan="10" align="center">
                                 <i>
                                     <strong style="color:red;">
                                     @if ($totalQueryParam > 0)
@@ -289,6 +303,7 @@
 @endsection
 
 @section('jsbody')
+<script src="{{ asset('assets/backend/jquery-ui.js') }}"></script>
 <script>
     //dropzone
     $(document).ready(function () {
@@ -301,7 +316,7 @@
         });
     });
     $('#dropzone-upload').dropzone({
-        url: '/admin/document/category/{{ $data['category']['id'] }}/multiple',
+        url: '/admin/document/{{ $data['document']['id'] }}/file/multiple',
         method:'POST',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -354,10 +369,41 @@
             </video>
         `);
     });
+
+    //sort
+    $(function () {
+        var refreshNeeded = false;
+        $(".drag").sortable({
+            connectWith: '.drag',
+            update : function (event, ui) {
+                var data  = $(this).sortable('toArray');
+                var documentId = '{{ $data['document']['id'] }}';
+                $.ajax({
+                    data: {'datas' : data},
+                    url: '/admin/document/'+documentId+'/file/sort',
+                    type: 'POST',
+                    dataType:'json',
+                    success: function(){
+                        refreshNeeded = true;
+                    },
+                    error: function(argument, error){
+                        refreshNeeded = true;
+                    },
+                });
+            }
+        }).disableSelection();
+
+        $(document).ajaxStop(function(){
+            if(refreshNeeded){
+                window.location.reload();
+            }
+        });
+    });
+
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
-            var categoryId = $(this).attr('data-category-id');
+            var documentId = $(this).attr('data-document-id');
             var id = $(this).attr('data-id');
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
@@ -374,7 +420,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/document/category/' + categoryId + '/'+ id +'/soft',
+                        url: '/admin/document/' + documentId + '/file/'+ id +'/soft',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

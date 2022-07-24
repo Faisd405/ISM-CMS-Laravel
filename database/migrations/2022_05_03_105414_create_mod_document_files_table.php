@@ -15,13 +15,14 @@ class CreateModDocumentFilesTable extends Migration
     {
         Schema::create('mod_document_files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('document_category_id');
+            $table->unsignedBigInteger('document_id');
             $table->json('title')->nullable();
             $table->json('description')->nullable();
             $table->tinyInteger('type')->default(0)->comment('0 = upload, 1 = filemanager, 2 = url');
             $table->text('file');
             $table->json('cover')->nullable();
             $table->json('config');
+            $table->json('custom_fields')->nullable();
             $table->integer('position')->nullable();
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
@@ -35,7 +36,7 @@ class CreateModDocumentFilesTable extends Migration
             $table->timestamps();
             $table->softDeletesTz('deleted_at', 0);
 
-            $table->foreign('document_category_id')->references('id')->on('mod_document_categories')
+            $table->foreign('document_id')->references('id')->on('mod_documents')
                 ->cascadeOnDelete();
             $table->foreign('created_by')->references('id')->on('users')
                 ->onDelete('SET NULL');

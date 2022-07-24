@@ -11,6 +11,7 @@ use App\Services\Feature\LanguageService;
 use App\Services\Feature\NotificationService;
 use App\Services\Module\EventService;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
@@ -53,9 +54,8 @@ class EventController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['events'] = $this->eventService->getEventList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
+        $data['events'] = $this->eventService->getEventList($filter, true, 10, false, [], 
+            config('cms.module.event.ordering'));
         $data['no'] = $data['events']->firstItem();
         $data['events']->withQueryString();
 
@@ -115,15 +115,19 @@ class EventController extends Controller
     public function store(EventRequest $request)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_form'] = (bool)$request->hide_form;
-        $data['lock_form'] = (bool)$request->lock_form;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_cover'] = (bool)$request->hide_cover;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
         $data['meeting_url'] = $request->meeting_url;
         $data['meeting_id'] = $request->meeting_id;
         $data['meeting_passcode'] = $request->meeting_passcode;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_form_description'] = (bool)$request->config_show_form_description;
+        $data['config_show_register_code'] = (bool)$request->config_show_register_code;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_form'] = (bool)$request->config_show_form;
+        $data['config_lock_form'] = (bool)$request->config_lock_form;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $event = $this->eventService->storeEvent($data);
         $data['query'] = $request->query();
 
@@ -157,15 +161,19 @@ class EventController extends Controller
     public function update(EventRequest $request, $id)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_form'] = (bool)$request->hide_form;
-        $data['lock_form'] = (bool)$request->lock_form;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_cover'] = (bool)$request->hide_cover;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
         $data['meeting_url'] = $request->meeting_url;
         $data['meeting_id'] = $request->meeting_id;
         $data['meeting_passcode'] = $request->meeting_passcode;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_form_description'] = (bool)$request->config_show_form_description;
+        $data['config_show_register_code'] = (bool)$request->config_show_register_code;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_form'] = (bool)$request->config_show_form;
+        $data['config_lock_form'] = (bool)$request->config_lock_form;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $event = $this->eventService->updateEvent($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -196,6 +204,16 @@ class EventController extends Controller
         }
 
         return redirect()->back()->with('failed', $event['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->eventService->sortEvent(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $id, $position)
@@ -349,13 +367,13 @@ class EventController extends Controller
         //data
         $data['banner'] = $this->configService->getConfigFile('banner_default');
         $limit = $this->configService->getConfigValue('content_limit');
+
+        // eveet
         $data['events'] = $this->eventService->getEventList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['no'] = $data['events']->firstItem();
+        ], true, $limit, false, [], config('cms.module.event.ordering'));
+        $data['no_events'] = $data['events']->firstItem();
         $data['events']->withQueryString();
 
         return view('frontend.events.list', compact('data'), [
@@ -377,16 +395,13 @@ class EventController extends Controller
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
-            
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
         if ($data['read']['public'] == 0 && App::guard()->check() == false) {
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
-
-        $this->eventService->recordHits(['id' => $data['read']['id']]);
 
         //data
         $fields = $this->eventService->getFieldList([
@@ -412,10 +427,9 @@ class EventController extends Controller
         ]);
 
         $data['custom_fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['cover'] = $data['read']->coverSrc();
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['cover'] = $data['read']['cover_src'];
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
@@ -448,6 +462,9 @@ class EventController extends Controller
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
             $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
+        // record hits
+        $this->eventService->recordHits(['id' => $data['read']['id']]);
+
         return view('frontend.events.'.$data['read']['slug'], compact('data'), [
             'title' => $data['read']->fieldLang('name'),
             'breadcrumbs' => [
@@ -461,7 +478,7 @@ class EventController extends Controller
         $id = $request->route('id');
         $event = $this->eventService->getevent(['id' => $id]);
 
-        if ($event['config']['hide_form'] == true) {
+        if ($event['config']['show_form'] == false) {
             return redirect()->back();
         }
 
@@ -499,12 +516,8 @@ class EventController extends Controller
         ]);
 
         $this->eventService->recordForm($formData);
-        
-        if (config('cms.module.feature.notification.email.event') == true && !empty($event['email'])) {
-            Mail::to($event['email'])->send(new \App\Mail\EventFormMail($data));
-        }
 
-        if (config('cms.module.feature.notification.apps.event') == true) {
+        if ($this->configService->getConfigValue('notif_apps_event') == 1) {
             $this->notifService->sendNotif([
                 'user_from' => null,
                 'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3]], false)
@@ -533,6 +546,16 @@ class EventController extends Controller
             $redirect[$fields[0]['name']] = $request->input($fields[0]['name']);
         }
 
-        return redirect()->route('event.read', $redirect)->with('success', $message);
+        try {
+            
+            if ($this->configService->getConfigValue('notif_email_event') == 1 && !empty($event['email'])) {
+                Mail::to($event['email'])->send(new \App\Mail\EventFormMail($data));
+            }
+            
+            return redirect()->route('event.read', $redirect)->with('success', $message);
+
+        } catch (Exception $e) {
+            return back()->with('warning', $e->getMessage());
+        }
     }
 }

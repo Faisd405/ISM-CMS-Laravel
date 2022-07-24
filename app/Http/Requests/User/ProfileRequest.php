@@ -31,7 +31,7 @@ class ProfileRequest extends FormRequest
                 'email' => 'required|max:191|email|unique:users,email,'.Auth::user()->id,
                 'username' => 'required|regex:/^[\w-]*$/|max:15|min:5|unique:users,username,'.Auth::user()->id,
                 'old_password' => 'required|min:6',
-                'password' => 'nullable|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/|confirmed|min:6|different:old_password',
+                'password' => 'nullable|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@$#%]).*$/|confirmed|min:6|different:old_password',
                 'phone' => 'nullable|numeric',
             ];
 

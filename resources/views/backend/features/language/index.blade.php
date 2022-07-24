@@ -29,7 +29,7 @@
                         <i class="las la-plus"></i> <span>@lang('feature/language.caption')</span>
                     </a>
                     @endcan
-                    @role('super')
+                    @role('developer|super')
                     <a href="{{ route('language.trash') }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
                         <i class="las la-trash"></i> <span>@lang('global.trash')</span>
                     </a>
@@ -162,14 +162,14 @@
                                 </a>
                                 @endcan
                                 @can('language_delete')
-                                @if ($item['locked'] == 0)
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('feature/language.caption')
-                                    ])"
-                                    data-id="{{ $item['id'] }}">
-                                    <i class="las la-trash-alt"></i>
-                                </button>
-                                @endif
+                                    @if ($item['locked'] == 0)
+                                    <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
+                                            'attribute' => __('feature/language.caption')
+                                        ])"
+                                        data-id="{{ $item['id'] }}">
+                                        <i class="las la-trash-alt"></i>
+                                    </button>
+                                    @endif
                                 @endcan
                             </td>
                         </tr>

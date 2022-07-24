@@ -31,8 +31,8 @@ class UserRequest extends FormRequest
                 'required|min:5|max:15|regex:/^[\w-]*$/|unique:users,username,'.$this->id,
             'phone' => 'nullable|numeric',
             'roles' => 'required',
-            'password' => $this->method() == 'POST' ? 'required|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/|confirmed|min:6' : 
-                'nullable|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%]).*$/|confirmed|min:6',
+            'password' => $this->method() == 'POST' ? 'required|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@$#%]).*$/|confirmed|min:6' : 
+                'nullable|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@$#%]).*$/|confirmed|min:6',
         ];
 
     }

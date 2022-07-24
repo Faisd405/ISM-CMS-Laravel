@@ -4,14 +4,14 @@
     <table border="1">
         <thead>
             <tr>
-                <th colspan="{{ $field->count()+3 }}" style="text-align: center; height:20px;">
+                <th colspan="{{ $fields->count()+3 }}" style="text-align: center; height:20px;">
                     <h1>{{ strtoupper($inquiry->fieldLang('name')) }}</h1>
                 </th>
             </tr>
             <tr>
                 <th style="width: 5px;">#</th>
                 <th style="width: 25px;">@lang('module/inquiry.form.label.field1')</th>
-                @foreach ($field as $item)
+                @foreach ($fields as $item)
                 <th style="width: 35px;">{{ $item->fieldLang('label') }}</th>
                 @endforeach
                 <th style="width: 30px;">@lang('module/inquiry.form.label.field3')</th>
@@ -22,10 +22,10 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $item['ip_address'] }}</td>
-                @foreach ($field as $field)
+                @foreach ($fields as $field)
                 <td>
                     @php
-                        $name = isset($item->fields[$field['name']]) ? $item->fields[$field['name']] : '-';
+                        $name = isset($item['fields'][$field['name']]) ? $item['fields'][$field['name']] : '-';
                     @endphp
                     {!! preg_replace("/[^a-zA-Z0-9]/", " ", $name) !!}
                 </td>

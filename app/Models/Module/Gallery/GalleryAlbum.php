@@ -25,10 +25,15 @@ class GalleryAlbum extends Model
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
-        'image_preview' => 'json',
+        'cover' => 'json',
         'banner' => 'json',
-        'custom_fields' => 'json',
         'config' => 'json',
+        'custom_fields' => 'json',
+    ];
+
+    protected $appends = [
+        'cover_src',
+        'banner_src'
     ];
 
     public static function boot()
@@ -97,6 +102,11 @@ class GalleryAlbum extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -107,35 +117,69 @@ class GalleryAlbum extends Model
         return $query->where('locked', 1);
     }
 
-    public function imgPreview()
+    public function getCoverSrcAttribute()
     {
         $file = GalleryFile::where('gallery_album_id', $this->id)->first();
 
-        if (!empty($this->image_preview['filepath'])) {
-            $preview = Storage::url($this->image_preview['filepath']);
+        if (!empty($this->cover['filepath'])) {
+            $cover = Storage::url($this->cover['filepath']);
         } else {
            
             if (!empty($file)) {
 
-                $preview = Storage::url(config('cms.files.gallery.path').'/'.$this->id.'/'.
-                    $file['file']);
+                if ($file['type'] == 0) {
+                    if ($file['image_type'] == 0) {
+                        $cover = Storage::url(config('cms.files.gallery.path').'/'.$this->id.'/'.
+                            $file['file']);
+                    }
+    
+                    if ($file['image_type'] == 1) {
+                        $cover = Storage::url($file['file']);
+                    }
+
+                    if ($file['image_type'] == 2) {
+                        $cover = $file['file'];
+                    }
+                }
+
+                if ($file['type'] == 1) {
+                    
+                    $thumbnail = Storage::url(config('cms.files.gallery.thumbnail.path').$file['gallery_album_id'].'/'.$file['thumbnail']);
+                    if (empty($file['thumbnail'])) {
+                        if (!empty(Configuration::value('cover_default'))) {
+                            $thumbnail = Storage::url(config('cms.files.config.path').
+                            Configuration::value('cover_default'));
+                        } else {
+                            $thumbnail = asset(config('cms.files.config.cover_default.file'));
+                        }
+                    }
+
+                    if ($file['video_type'] == '0') {
+                        $cover = $thumbnail;
+                    }
+        
+                    if ($file['video_type'] == '1') {
+                        $cover = !empty($file['thumbnail']) ? $thumbnail : 'https://i.ytimg.com/vi/'.$file['file'].'/mqdefault.jpg';
+                    }
+
+                }
     
             } else {
 
                 if (!empty(Configuration::value('cover_default'))) {
-                    $preview = Storage::url(config('cms.files.config.path').
+                    $cover = Storage::url(config('cms.files.config.path').
                     Configuration::value('cover_default'));
                 } else {
-                    $preview = asset(config('cms.files.config.cover_default.file'));
+                    $cover = asset(config('cms.files.config.cover_default.file'));
                 }
             }
     
         }        
         
-        return $preview;
+        return $cover;
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

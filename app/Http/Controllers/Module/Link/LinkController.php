@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Module\Link;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Module\Link\LinkCategoryRequest;
+use App\Http\Requests\Module\Link\LinkRequest;
 use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\TemplateService;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class LinkCategoryController extends Controller
+class LinkController extends Controller
 {
     private $linkService, $languageService, $templateService, $configService;
 
@@ -45,17 +45,15 @@ class LinkCategoryController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['categories'] = $this->linkService->getCategoryList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withQueryString();
+        $data['links'] = $this->linkService->getLinkList($filter, true, 10, false, [], 
+            config('cms.module.link.ordering'));
+        $data['no'] = $data['links']->firstItem();
+        $data['links']->withQueryString();
 
-        return view('backend.links.category.index', compact('data'), [
-            'title' => __('module/link.category.title'),
+        return view('backend.links.index', compact('data'), [
+            'title' => __('module/link.title'),
             'breadcrumbs' => [
-                __('module/link.caption') => 'javascript:;',
-                __('module/link.category.caption') => '',
+                __('module/link.caption') => '',
             ]
         ]);
     }
@@ -73,18 +71,17 @@ class LinkCategoryController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['categories'] = $this->linkService->getCategoryList($filter, true, 10, true, [], [
+        $data['links'] = $this->linkService->getLinkList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
-        $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withQueryString();
+        $data['no'] = $data['links']->firstItem();
+        $data['links']->withQueryString();
 
-        return view('backend.links.category.trash', compact('data'), [
-            'title' => __('module/link.category.title').' - '.__('global.trash'),
-            'routeBack' => route('link.category.index'),
+        return view('backend.links.trash', compact('data'), [
+            'title' => __('module/link.title').' - '.__('global.trash'),
+            'routeBack' => route('link.index'),
             'breadcrumbs' => [
-                __('module/link.caption') => 'javascript:;',
-                __('module/link.category.caption') => route('link.category.index'),
+                __('module/link.caption') => route('link.index'),
                 __('global.trash') => '',
             ]
         ]);
@@ -93,134 +90,150 @@ class LinkCategoryController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link_category'], false, 0);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link'], false, 0);
 
-        return view('backend.links.category.form', compact('data'), [
+        return view('backend.links.form', compact('data'), [
             'title' => __('global.add_attr_new', [
-                'attribute' => __('module/link.category.caption')
+                'attribute' => __('module/link.caption')
             ]),
-            'routeBack' => route('link.category.index', $request->query()),
+            'routeBack' => route('link.index', $request->query()),
             'breadcrumbs' => [
-                __('module/link.caption') => 'javascript:;',
-                __('module/link.category.caption') => route('link.category.index'),
+                __('module/link.caption') => route('link.index'),
                 __('global.add') => '',
             ]
         ]);
     }
 
-    public function store(LinkCategoryRequest $request)
+    public function store(LinkRequest $request)
     {
         $data = $request->all();
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
-        $category = $this->linkService->storeCategory($data);
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_media'] = (bool)$request->config_paginate_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
+        $link = $this->linkService->storeLink($data);
         $data['query'] = $request->query();
 
-        if ($category['success'] == true) {
-            return $this->redirectForm($data)->with('success', $category['message']);
+        if ($link['success'] == true) {
+            return $this->redirectForm($data)->with('success', $link['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $link['message']);
     }
 
     public function edit(Request $request, $id)
     {
-        $data['category'] = $this->linkService->getCategory(['id' => $id]);
-        if (empty($data['category']))
+        $data['link'] = $this->linkService->getLink(['id' => $id]);
+        if (empty($data['link']))
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link_category'], false, 0);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'link'], false, 0);
 
-        return view('backend.links.category.form', compact('data'), [
+        return view('backend.links.form', compact('data'), [
             'title' => __('global.edit_attr', [
-                'attribute' => __('module/link.category.caption')
+                'attribute' => __('module/link.caption')
             ]),
-            'routeBack' => route('link.category.index', $request->query()),
+            'routeBack' => route('link.index', $request->query()),
             'breadcrumbs' => [
-                __('module/link.caption') => 'javascript:;',
-                __('module/link.category.caption') => route('link.category.index'),
+                __('module/link.caption') => route('link.index'),
                 __('global.edit') => '',
             ]
         ]);
     }
 
-    public function update(LinkCategoryRequest $request, $id)
+    public function update(LinkRequest $request, $id)
     {
         $data = $request->all();
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
-        $category = $this->linkService->updateCategory($data, ['id' => $id]);
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_media'] = (bool)$request->config_paginate_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
+        $link = $this->linkService->updateLink($data, ['id' => $id]);
         $data['query'] = $request->query();
 
-        if ($category['success'] == true) {
-            return $this->redirectForm($data)->with('success', $category['message']);
+        if ($link['success'] == true) {
+            return $this->redirectForm($data)->with('success', $link['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $link['message']);
     }
 
     public function publish($id)
     {
-        $category = $this->linkService->statusCategory('publish', ['id' => $id]);
+        $link = $this->linkService->statusLink('publish', ['id' => $id]);
 
-        if ($category['success'] == true) {
-            return back()->with('success', $category['message']);
+        if ($link['success'] == true) {
+            return back()->with('success', $link['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $link['message']);
     }
 
     public function approved($id)
     {
-        $category = $this->linkService->statusCategory('approved', ['id' => $id]);
+        $link = $this->linkService->statusLink('approved', ['id' => $id]);
 
-        if ($category['success'] == true) {
-            return back()->with('success', $category['message']);
+        if ($link['success'] == true) {
+            return back()->with('success', $link['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $link['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->linkService->sortLink(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $id, $position)
     {
-        $category = $this->linkService->positionCategory(['id' => $id], $position);
+        $link = $this->linkService->positionLink(['id' => $id], $position);
 
-        if ($category['success'] == true) {
-            return back()->with('success', $category['message']);
+        if ($link['success'] == true) {
+            return back()->with('success', $link['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $link['message']);
     }
 
     public function softDelete($id)
     {
-        $category = $this->linkService->trashCategory(['id' => $id]);
+        $link = $this->linkService->trashLink(['id' => $id]);
 
-        return $category;
+        return $link;
     }
 
     public function permanentDelete(Request $request, $id)
     {
-        $category = $this->linkService->deleteCategory($request, ['id' => $id]);
+        $link = $this->linkService->deleteLink($request, ['id' => $id]);
 
-        return $category;
+        return $link;
     }
 
     public function restore($id)
     {
-        $category = $this->linkService->restoreCategory(['id' => $id]);
+        $link = $this->linkService->restoreLink(['id' => $id]);
 
-        if ($category['success'] == true) {
-            return redirect()->back()->with('success', $category['message']);
+        if ($link['success'] == true) {
+            return redirect()->back()->with('success', $link['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $link['message']);
     }
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('link.category.index', $data['query']);
+        $redir = redirect()->route('link.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }
@@ -233,25 +246,30 @@ class LinkCategoryController extends Controller
      */
     public function list(Request $request)
     {
+        if (config('cms.module.link.list_view') == false)
+            return redirect()->route('home');
+
         //data
         $data['banner'] = $this->configService->getConfigFile('banner_default');
         $limit = $this->configService->getConfigValue('content_limit');
-        $data['categories'] = $this->linkService->getCategoryList([
+
+        // link
+        $data['links'] = $this->linkService->getLinkList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['cat_no'] = $data['categories']->firstItem();
-        $data['categories']->withQueryString();
+        ], true, $limit, false, [], 
+            config('cms.module.link.ordering'));
+        $data['no_links'] = $data['links']->firstItem();
+        $data['links']->withQueryString();
 
+        // media
         $data['medias'] = $this->linkService->getMediaList([
             'publish' => 1,
             'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
-        $data['media_no'] = $data['medias']->firstItem();
+        $data['no_medias'] = $data['medias']->firstItem();
         $data['medias']->withQueryString();
 
         return view('frontend.links.list', compact('data'), [
@@ -264,16 +282,16 @@ class LinkCategoryController extends Controller
 
     public function read(Request $request)
     {
-        $slug = $request->route('slugCategory');
+        $slug = $request->route('slug');
 
-        $data['read'] = $this->linkService->getCategory(['slug' => $slug]);
+        $data['read'] = $this->linkService->getLink(['slug' => $slug]);
 
         //check
         if (empty($data['read']) || $data['read']['publish'] == 0 || $data['read']['approved'] != 1) {
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
@@ -281,33 +299,31 @@ class LinkCategoryController extends Controller
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
 
-        $this->linkService->recordCategoryHits(['id' => $data['read']['id']]);
+       // filtring
+       $keyword = $request->input('keyword', '');
+       if ($keyword != '') {
+           $filter['q'] = $keyword;
+       }
 
-        //limit
-        $mediaPerpage = $this->configService->getConfigValue('content_limit');
-        if ($data['read']['media_perpage'] > 0) {
-            $mediaPerpage = $data['read']['media_perpage'];
-        }
+       $filter['link_id'] = $data['read']['id'];
+       $filter['publish'] = 1;
+       $filter['approved'] = 1;
 
-        //data
-        $data['medias'] = $this->linkService->getMediaList([
-            'link_category_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $mediaPerpage, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['no'] = $data['medias']->firstItem();
-        $data['medias']->withQueryString();
+       //data
+       $data['medias'] = $this->linkService->getMediaList($filter, 
+           $data['read']['config']['paginate_media'], $data['read']['config']['media_limit'], false,
+       [], [$data['read']['config']['media_order_by'] => $data['read']['config']['media_order_type']]);
+       if ($data['read']['config']['paginate_media'] == true) {
+           $data['no_medias'] = $data['medias']->firstItem();
+           $data['medias']->withQueryString();
+       }
 
         $data['fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-
         $data['meta_description'] = $this->configService->getConfigValue('meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
@@ -329,6 +345,8 @@ class LinkCategoryController extends Controller
         if (!empty($data['read']['template_id'])) {
             $blade = 'custom.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
         }
+
+        $this->linkService->recordLinkHits(['id' => $data['read']['id']]);
 
         return view('frontend.links.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('name'),

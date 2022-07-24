@@ -27,6 +27,11 @@ class Configuration extends Model
         return $query->where('active', 1);
     }
 
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
+    }
+
     static function value($name)
     {
         return static::select('value')->firstWhere('name', $name)['value'];

@@ -22,6 +22,11 @@
                 @endisset
                 <input class="form-control custom-file-input file @error('avatar') is-invalid @enderror" type="file" id="upload-2" lang="en" name="avatar">
                 @include('components.field-error', ['field' => 'avatar'])
+                <small class="form-text text-muted">
+                  Type of file : <strong>{{ Str::upper(config('cms.files.avatar.mimes')) }}</strong> | 
+                  Pixel : <strong>{{ config('cms.files.avatar.pixel') }}</strong> | 
+                  Max Size : <strong>{{ config('cms.files.avatar.size') }}</strong>
+                </small>
               </div>
             </div>
         </div>

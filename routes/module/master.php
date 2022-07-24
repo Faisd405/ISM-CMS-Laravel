@@ -15,7 +15,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:templates');
         Route::get('/trash', [TemplateController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [TemplateController::class, 'create'])
             ->name('create')
@@ -34,10 +34,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:template_delete');
         Route::delete('/{id}/permanent', [TemplateController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [TemplateController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -49,7 +49,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:tags');
         Route::get('/trash', [TagController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [TagController::class, 'create'])
             ->name('create')
@@ -74,10 +74,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:tag_delete');
         Route::delete('/{id}/permanent', [TagController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [TagController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -89,7 +89,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:medias');
         Route::get('/trash', [MediaController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [MediaController::class, 'create'])
             ->name('create')
@@ -103,6 +103,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::put('/{id}', [MediaController::class, 'update'])
             ->name('update')
             ->middleware('permission:media_update');
+        Route::post('/sort', [MediaController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:media_update');
         Route::put('{id}/position/{position}', [MediaController::class, 'position'])
             ->name('position')
             ->middleware('permission:media_update');
@@ -111,10 +114,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:media_delete');
         Route::delete('/{id}/permanent', [MediaController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [MediaController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 

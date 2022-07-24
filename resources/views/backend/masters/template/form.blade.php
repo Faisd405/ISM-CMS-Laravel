@@ -66,10 +66,24 @@
                         <input type="text" class="form-control @error('filename') is-invalid @enderror" name="filename" value="{{ old('filename') }}" 
                             placeholder="@lang('master/template.placeholder.field3')">
                         @include('components.field-error', ['field' => 'filename'])
+                        <small class="form-text text-muted">@lang('global.lower_case')</small>
                         </div>
                     </div>
                     @endif
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
+                        <div class="col-md-2 text-md-right">
+                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        </div>
+                        <div class="col-md-10">
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                {{ !isset($data['template']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['template']['locked']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="display: none;">
                         <label class="col-form-label col-sm-2 text-sm-right">Content Template</label>
                         <div class="col-sm-10">
                             <textarea class="my-code-area" rows="10" style="width: 100%" name="content_template">{!! !isset($data['template']) ? old('content_template') : old('content_template', $data['template']['content_template']) !!}</textarea>
@@ -128,4 +142,10 @@
 
     $('.my-code-area').ace({ theme: 'monokai', lang: 'html' });
 </script>
+
+@if(!Auth::user()->hasRole('developer|super'))
+<script>
+  $('.hide-form').hide();
+</script>
+@endif
 @endsection

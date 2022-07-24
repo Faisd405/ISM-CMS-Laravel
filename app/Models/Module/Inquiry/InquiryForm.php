@@ -17,8 +17,6 @@ class InquiryForm extends Model
         'submit_time' => 'datetime'
     ];
 
-    public $timestamps = false;
-
     public function inquiry()
     {
         return $this->belongsTo(Inquiry::class, 'inquiry_id');

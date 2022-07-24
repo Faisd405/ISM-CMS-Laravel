@@ -98,7 +98,7 @@ class WidgetController extends Controller
     {
         $data['type'] = $type;
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['banners'] = App::make(BannerService::class)->getCategoryList([
+        $data['banners'] = App::make(BannerService::class)->getBannerList([
             'publish' => 1,
             'approved' => 1
         ], false, 0, false, [], []);
@@ -118,9 +118,16 @@ class WidgetController extends Controller
     public function store(WidgetRequest $request, $type)
     {
         $data = $request->all();
-        $data['ordering'] = $request->ordering;
-        $data['global'] = (bool)$request->global;
         $data['type'] = $type;
+        $data['global'] = (bool)$request->global;
+        $data['locked'] = (bool)$request->locked;
+        $data['post_selected'] = (bool)$request->post_selected;
+        $data['post_hits'] = (bool)$request->post_hits;
+        $data['config_order_by'] = $request->config_order_by;
+        $data['config_order_type'] = $request->config_order_type;
+        $data['config_show_image'] = (bool)$request->config_show_image;
+        $data['config_show_url'] = (bool)$request->config_show_url;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $widget = $this->widgetService->storeWidget($data);
         $data['query'] = $request->query();
 
@@ -140,7 +147,7 @@ class WidgetController extends Controller
         $data['widget']['module'] = $this->widgetService->getModuleData($data['widget']);
         $data['type'] = $type;
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['banners'] = App::make(BannerService::class)->getCategoryList([
+        $data['banners'] = App::make(BannerService::class)->getBannerList([
             'publish' => 1,
             'approved' => 1
         ], false, 0, false, [], []);
@@ -160,9 +167,16 @@ class WidgetController extends Controller
     public function update(WidgetRequest $request, $type, $id)
     {
         $data = $request->all();
-        $data['ordering'] = $request->ordering;
-        $data['global'] = (bool)$request->global;
         $data['type'] = $type;
+        $data['global'] = (bool)$request->global;
+        $data['locked'] = (bool)$request->locked;
+        $data['post_selected'] = (bool)$request->post_selected;
+        $data['post_hits'] = (bool)$request->post_hits;
+        $data['config_order_by'] = $request->config_order_by;
+        $data['config_order_type'] = $request->config_order_type;
+        $data['config_show_image'] = (bool)$request->config_show_image;
+        $data['config_show_url'] = (bool)$request->config_show_url;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $widget = $this->widgetService->updateWidget($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -193,6 +207,16 @@ class WidgetController extends Controller
         }
 
         return redirect()->back()->with('failed', $widget['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->widgetService->sortWidget(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $id, $position)

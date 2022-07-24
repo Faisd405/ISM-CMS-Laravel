@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateModBannerCategoriesTable extends Migration
+class CreateModDocumentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,23 @@ class CreateModBannerCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('mod_banner_categories', function (Blueprint $table) {
+        Schema::create('mod_documents', function (Blueprint $table) {
             $table->id();
+            $table->string('slug')->unique()->index();
             $table->json('name');
             $table->json('description')->nullable();
-            $table->integer('banner_perpage')->nullable();
+            $table->json('roles')->nullable();
+            $table->json('banner')->nullable();
+            $table->json('config');
             $table->json('custom_fields')->nullable();
-            $table->json('config')->nullable();
+            $table->unsignedBigInteger('template_id')->nullable();
+            $table->integer('position')->nullable();
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
+            $table->boolean('detail')->default(true)->comment('1 = memiliki halaman, 0 = tidak memiliki halaman');
             $table->tinyInteger('approved')->default(1)->comment('0 = rejected, 1 = approved, 2 = pending');
             $table->boolean('locked')->default(false)->comment('1 = tidak bisa dihapus, 0 = bisa dihapus');
+            $table->bigInteger('hits')->default(0);
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -31,6 +37,8 @@ class CreateModBannerCategoriesTable extends Migration
             $table->timestamps();
             $table->softDeletesTz('deleted_at', 0);
 
+            $table->foreign('template_id')->references('id')->on('master_templates')
+                ->onDelete('SET NULL');
             $table->foreign('created_by')->references('id')->on('users')
                 ->onDelete('SET NULL');
             $table->foreign('updated_by')->references('id')->on('users')
@@ -47,6 +55,6 @@ class CreateModBannerCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mod_banner_categories');
+        Schema::dropIfExists('mod_documents');
     }
 }

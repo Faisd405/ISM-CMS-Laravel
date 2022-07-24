@@ -39,7 +39,7 @@ class DashboardController extends Controller
         $data['counter'] = [
             'page' => App::make(PageService::class)->getPageList([
                 'publish' => 1,
-                'approved' => 1
+                'approved' => 1,
             ], false, 0)->count(),
             'post' => App::make(ContentService::class)->getPostList([
                 'publish' => 1,
@@ -51,9 +51,9 @@ class DashboardController extends Controller
             'posts' => App::make(ContentService::class)->getPostList([
                 'publish' => 1,
                 'approved' => 1,
-                'is_detail' => 1
+                'detail' => 1
             ], true, 5, false, [], [
-                'publish_time' => 'DESC'
+                'created_at' => 'DESC'
             ]),
             'inquiries' => App::make(InquiryService::class)->getFormList([], true, 5, false, [], [
                 'submit_time' => 'DESC'

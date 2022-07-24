@@ -2,14 +2,13 @@
 
 namespace App\Models\Module\Banner;
 
-use App\Models\Feature\Configuration;
+use App\Models\Module\Widget;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Storage;
 
 class Banner extends Model
 {
@@ -20,9 +19,10 @@ class Banner extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'title' => 'json',
+        'name' => 'json',
         'description' => 'json',
-        'config' => 'json'
+        'config' => 'json',
+        'custom_fields' => 'json',
     ];
 
     public static function boot()
@@ -32,9 +32,14 @@ class Banner extends Model
         Banner::observe(LogObserver::class);
     }
 
-    public function category()
+    public function files()
     {
-        return $this->belongsTo(BannerCategory::class, 'banner_category_id');
+        return $this->hasMany(BannerFile::class, 'banner_id');
+    }
+
+    public function widgets()
+    {
+        return $this->morphMany(Widget::class, 'moduleable');
     }
 
     public function createBy()
@@ -79,64 +84,5 @@ class Banner extends Model
     public function scopeLocked($query)
     {
         return $query->where('locked', 1);
-    }
-
-    public function fileSrc()
-    {
-        $type = $this->type;
-        $imageType = $this->image_type;
-        $videoType = $this->video_type;
-
-        if ($type == '0') {
-            
-            if ($imageType == '0') {
-                return [
-                    'image' => Storage::url(config('cms.files.banner.path').$this->banner_category_id.'/'.$this->file),
-                    'video' => '',
-                ];
-            }
-
-            if ($imageType == '1') {
-                return [
-                    'image' => Storage::url($this->file),
-                    'video'
-                ];
-            }
-
-            if ($imageType == '2') {
-                return [
-                    'image' => $this->file,
-                    'video' => ''
-                ];
-            }
-        }
-
-        if ($type == '1') {
-            
-            if ($videoType == '0') {
-
-                $thumbnail = Storage::url(config('cms.files.banner.thumbnail.path').$this->banner_category_id.'/'.$this->thumbnail);
-                if (empty($this->thumbnail)) {
-                    if (!empty(Configuration::value('cover_default'))) {
-                        $thumbnail = Storage::url(config('cms.files.config.path').
-                        Configuration::value('cover_default'));
-                    } else {
-                        $thumbnail = asset(config('cms.files.config.cover_default.file'));
-                    }
-                }
-
-                return [
-                    'image' => $thumbnail,
-                    'video' => Storage::url(config('cms.files.banner.path').$this->banner_category_id.'/'.$this->file),
-                ];
-            }
-
-            if ($videoType == '1') {
-                return [
-                    'image' => 'https://i.ytimg.com/vi/'.$this->file.'/mqdefault.jpg',
-                    'video' => 'https://www.youtube.com/embed/'.$this->file.'?rel=0;showinfo=0',
-                ];
-            }
-        }
     }
 }

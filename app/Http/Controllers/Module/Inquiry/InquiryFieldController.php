@@ -75,7 +75,7 @@ class InquiryFieldController extends Controller
             return abort(404);
 
         $data['fields'] = $this->inquiryService->getFieldList($filter, true, 10, true, [], [
-            'position' => 'ASC'
+            'deleted_at' => 'DESC'
         ]);
         $data['no'] = $data['fields']->firstItem();
         $data['fields']->withQueryString();
@@ -117,6 +117,7 @@ class InquiryFieldController extends Controller
         
         $data['inquiry_id'] = $inquiryId;
         $data['is_unique'] = (bool)$request->is_unique;
+        $data['locked'] = (bool)$request->locked;
         $field = $this->inquiryService->storeField($data);
         $data['query'] = $request->query();
 
@@ -157,6 +158,7 @@ class InquiryFieldController extends Controller
 
         $data['inquiry_id'] = $inquiryId;
         $data['is_unique'] = (bool)$request->is_unique;
+        $data['locked'] = (bool)$request->locked;
         $field = $this->inquiryService->updateField($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -187,6 +189,16 @@ class InquiryFieldController extends Controller
         }
 
         return redirect()->back()->with('failed', $field['message']);
+    }
+
+    public function sort(Request $request, $inquiryId)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->inquiryService->sortField(['id' => $value, 'inquiry_id' => $inquiryId], $i);
+        }
     }
 
     public function position(Request $request, $inquiryId, $id, $position)

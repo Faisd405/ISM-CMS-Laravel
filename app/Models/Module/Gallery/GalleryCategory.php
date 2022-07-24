@@ -25,10 +25,15 @@ class GalleryCategory extends Model
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
-        'image_preview' => 'json',
+        'cover' => 'json',
         'banner' => 'json',
-        'custom_fields' => 'json',
         'config' => 'json',
+        'custom_fields' => 'json',
+    ];
+
+    protected $appends = [
+        'cover_src',
+        'banner_src'
     ];
 
     public static function boot()
@@ -102,6 +107,11 @@ class GalleryCategory extends Model
         return $query->where('public', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('approved', 1);
@@ -112,24 +122,24 @@ class GalleryCategory extends Model
         return $query->where('locked', 1);
     }
 
-    public function imgPreview()
+    public function getCoverSrcAttribute()
     {
-        if (!empty($this->image_preview['filepath'])) {
-            $preview = Storage::url($this->image_preview['filepath']);
+        if (!empty($this->cover['filepath'])) {
+            $cover = Storage::url($this->cover['filepath']);
         } else {
 
             if (!empty(Configuration::value('cover_default'))) {
-                $preview = Storage::url(config('cms.files.config.path').
+                $cover = Storage::url(config('cms.files.config.path').
                 Configuration::value('cover_default'));
             } else {
-                $preview = asset(config('cms.files.config.cover_default.file'));
+                $cover = asset(config('cms.files.config.cover_default.file'));
             }
         }
 
-        return $preview;
+        return $cover;
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

@@ -6,7 +6,7 @@ return [
     'text' => 'List Inquiry',
     'label' => [
         'field1' => 'Nama',
-        'field2' => 'Slug',
+        'field2' => 'Slug / URL',
         'field3' => 'Body',
         'field4' => 'After Body',
         'field5' => 'Tampilkan Form',

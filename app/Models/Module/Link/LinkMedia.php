@@ -25,6 +25,12 @@ class LinkMedia extends Model
         'cover' => 'json',
         'banner' => 'json',
         'config' => 'json',
+        'custom_fields' => 'json',
+    ];
+
+    protected $appends = [
+        'cover_src',
+        'banner_src'
     ];
 
     public static function boot()
@@ -34,9 +40,9 @@ class LinkMedia extends Model
         LinkMedia::observe(LogObserver::class);
     }
 
-    public function category()
+    public function link()
     {
-        return $this->belongsTo(LinkCategory::class, 'link_category_id');
+        return $this->belongsTo(Link::class, 'link_id');
     }
 
     public function createBy()
@@ -83,7 +89,7 @@ class LinkMedia extends Model
         return $query->where('locked', 1);
     }
 
-    public function coverSrc()
+    public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
@@ -99,7 +105,7 @@ class LinkMedia extends Model
         return $cover;
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

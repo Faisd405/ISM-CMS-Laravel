@@ -9,7 +9,7 @@ return [
         'manage' => 'Manage Categorry',
         'label' => [
             'field1' => 'Name',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Description',
             'field4' => 'Preview Image',
             'field5' => 'Template List',
@@ -33,7 +33,7 @@ return [
         'text' => 'List Album Gallery',
         'label' => [
             'field1' => 'Name',
-            'field2' => 'Slug',
+            'field2' => 'Slug / URL',
             'field3' => 'Description',
             'field4' => 'Image Preview',
             'field5' => 'File Limit',
@@ -65,19 +65,6 @@ return [
             'field2' => '',
             'field3' => '',
             'field4' => '',
-        ],
-        'type' => [
-            0 => 'IMAGE',
-            1 => 'VIDEO',
-        ],
-        'type_image' => [
-            0 => 'UPLOAD',
-            1 => 'FILEMANAGER',
-            2 => 'URL'
-        ],
-        'type_video' => [
-            0 => 'UPLOAD',
-            1 => 'YOUTUBE ID'
         ],
     ],
 ];

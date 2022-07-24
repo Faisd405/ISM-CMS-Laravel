@@ -7,12 +7,12 @@ use App\Models\Menu\MenuCategory;
 use App\Models\Module\Content\ContentCategory;
 use App\Models\Module\Content\ContentPost;
 use App\Models\Module\Content\ContentSection;
-use App\Models\Module\Document\DocumentCategory;
+use App\Models\Module\Document\Document;
 use App\Models\Module\Event\Event;
 use App\Models\Module\Gallery\GalleryAlbum;
 use App\Models\Module\Gallery\GalleryCategory;
 use App\Models\Module\Inquiry\Inquiry;
-use App\Models\Module\Link\LinkCategory;
+use App\Models\Module\Link\Link;
 use App\Models\Module\Page;
 use App\Services\Feature\LanguageService;
 use App\Traits\ApiResponser;
@@ -341,151 +341,6 @@ class MenuService
     }
 
     /**
-     * Get Module Data
-     * @param model $menu
-     */
-    public function getModuleData($menu)
-    {
-        $id = $menu['menuable_id'];
-
-        if ($menu['module'] == 'page') {
-            
-            $model = Page::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['title'][App::getLocale()],
-                'routes' => route('page.read.'.$model['slug']),
-                'active' => '',
-                'is_trash' => Page::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'content_section') {
-            
-            $model = ContentSection::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('content.section.read.'.$model['slug']),
-                'active' => '',
-                'is_trash' => ContentSection::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'content_category') {
-            
-            $model = ContentCategory::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('content.category.read.'.$model['section']['slug'], ['slugCategory' => $model['slug']]),
-                'active' => '',
-                'is_trash' => ContentCategory::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'content_post') {
-            
-            $model = ContentPost::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['title'][App::getLocale()],
-                'routes' => route('content.post.read.'.$model['section']['slug'], ['slugPost' => $model['slug']]),
-                'active' => '',
-                'is_trash' => ContentPost::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'gallery_category') {
-            
-            $model = GalleryCategory::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('gallery.category.read', ['slugCategory' => $model['slug']]),
-                'active' => '',
-                'is_trash' => GalleryCategory::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'gallery_album') {
-            
-            $model = GalleryAlbum::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('gallery.album.read', ['slugAlbum' => $model['slug']]),
-                'active' => '',
-                'is_trash' => GalleryAlbum::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'document') {
-            
-            $model = DocumentCategory::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('document.category.read', ['slugCategory' => $model['slug']]),
-                'active' => '',
-                'is_trash' => DocumentCategory::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'link') {
-            
-            $model = LinkCategory::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('link.category.read', ['slugCategory' => $model['slug']]),
-                'active' => '',
-                'is_trash' => LinkCategory::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'inquiry') {
-            
-            $model = Inquiry::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('inquiry.read.'.$model['slug']),
-                'active' => '',
-                'is_trash' => Inquiry::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == 'event') {
-            
-            $model = Event::withTrashed()->find($id);
-            $module = [
-                'title' => !empty($menu['title'][App::getLocale()]) ? $menu['title'][App::getLocale()] 
-                    : $model['name'][App::getLocale()],
-                'routes' => route('event.read', ['slugEvent' => $model['slug']]),
-                'active' => '',
-                'is_trash' => Event::onlyTrashed()->find($id),
-            ];
-        }
-
-        if ($menu['module'] == null) {
-
-            $url = $menu['config']['url'];
-            if (App::getLocale() != config('cms.module.feature.language.default'))
-                $url = '/'.App::getLocale().$menu['config']['url'];
-
-            $module = [
-                'title' => $menu['title'][App::getLocale()],
-                'routes' => $url,
-                'active' => '',
-                'is_trash' => ''
-            ];
-        }
-
-        return $module;
-    }
-
-    /**
      * Get Menu One
      * @param array $where
      * @param array $with
@@ -604,6 +459,7 @@ class MenuService
             'not_from_module' => $notFromModule,
             'icon' => $data['icon'] ?? null,
             'edit_public_menu' => (bool)$data['edit_public_menu'],
+            'create_child' => (bool)$data['create_child'],
         ];
         
         return $menu;
@@ -641,11 +497,11 @@ class MenuService
         }
 
         if ($data['module'] == 'document') {
-            $module = DocumentCategory::find($data['menuable_id']);
+            $module = Document::find($data['menuable_id']);
         }
 
         if ($data['module'] == 'link') {
-            $module = LinkCategory::find($data['menuable_id']);
+            $module = Link::find($data['menuable_id']);
         }
 
         if ($data['module'] == 'inquiry') {

@@ -13,7 +13,7 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
         ->middleware('permission:inquiries');
     Route::get('/trash', [InquiryController::class, 'trash'])
         ->name('trash')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
 
     Route::get('/create', [InquiryController::class, 'create'])
         ->name('create')
@@ -32,7 +32,10 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
         ->middleware('permission:inquiry_update');
     Route::put('/{id}/approved', [InquiryController::class, 'approved'])
         ->name('approved')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
+    Route::post('/sort', [InquiryController::class, 'sort'])
+        ->name('sort')
+        ->middleware('permission:inquiry_update');
     Route::put('/{id}/position/{position}', [InquiryController::class, 'position'])
         ->name('position')
         ->middleware('permission:inquiry_update');
@@ -41,10 +44,10 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
         ->middleware('permission:inquiry_delete');
     Route::delete('/{id}/permanent', [InquiryController::class, 'permanentDelete'])
         ->name('delete.permanent')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
     Route::put('/{id}/restore', [InquiryController::class, 'restore'])
         ->name('restore')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
 
     //--- Form
     Route::get('/{inquiryId}/form', [InquiryController::class, 'form'])
@@ -68,7 +71,7 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
             ->middleware('permission:inquiry_fields');
         Route::get('/trash', [InquiryFieldController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [InquiryFieldController::class, 'create'])
             ->name('create')
@@ -87,7 +90,10 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
             ->middleware('permission:inquiry_field_update');
         Route::put('/{id}/approved', [InquiryFieldController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
+        Route::post('/sort', [InquiryFieldController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:inquiry_field_update');
         Route::put('/{id}/position/{position}', [InquiryFieldController::class, 'position'])
             ->name('position')
             ->middleware('permission:inquiry_field_update');
@@ -96,10 +102,10 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
             ->middleware('permission:inquiry_field_delete');
         Route::delete('/{id}/permanent', [InquiryFieldController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [InquiryFieldController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 

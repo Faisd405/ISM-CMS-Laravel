@@ -56,11 +56,15 @@ class ContentPostController extends Controller
             return abort(404);
 
         $data['posts'] = $this->contentService->getPostList($filter, true, 10, false, [], [
-            $data['section']['ordering']['order_by'] => $data['section']['ordering']['order_seq']
+            $data['section']['config']['post_order_by'] => $data['section']['config']['post_order_type']
         ]);
         $data['no'] = $data['posts']->firstItem();
         $data['posts']->withQueryString();
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
+        $data['categories'] = $this->contentService->getCategoryList([
+            'section_id' => $sectionId,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.contents.post.index', compact('data'), [
             'title' => __('module/content.post.title'),
@@ -98,7 +102,11 @@ class ContentPostController extends Controller
         ]);
         $data['no'] = $data['posts']->firstItem();
         $data['posts']->withQueryString();
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
+        $data['categories'] = $this->contentService->getCategoryList([
+            'section_id' => $sectionId,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.contents.post.trash', compact('data'), [
             'title' => __('module/content.post.title').' - '.__('global.trash'),
@@ -119,7 +127,11 @@ class ContentPostController extends Controller
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false, 0);
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
+        $data['categories'] = $this->contentService->getCategoryList([
+            'section_id' => $sectionId,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         return view('backend.contents.post.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -138,11 +150,16 @@ class ContentPostController extends Controller
     {
         $data = $request->all();
         $data['section_id'] = $sectionId;
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_intro'] = (bool)$request->hide_intro;
-        $data['hide_tags'] = (bool)$request->hide_tags;
-        $data['hide_cover'] = (bool)$request->hide_cover;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_intro'] = (bool)$request->config_show_intro;
+        $data['config_show_content'] = (bool)$request->config_show_content;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_media'] = (bool)$request->config_show_media;
+        $data['config_action_media'] = (bool)$request->config_action_media;
+        $data['config_paginate_media'] = (bool)$request->config_paginate_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $post = $this->contentService->storePost($data);
         $data['query'] = $request->query();
 
@@ -165,7 +182,11 @@ class ContentPostController extends Controller
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'content_post'], false, 0);
-        $data['categories'] = $this->contentService->getCategoryList(['section_id' => $sectionId], false, 0);
+        $data['categories'] = $this->contentService->getCategoryList([
+            'section_id' => $sectionId,
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0);
 
         if ($data['post']->tags()->count() > 0) {
             foreach ($data['post']->tags as $key => $value) {
@@ -192,11 +213,16 @@ class ContentPostController extends Controller
     {
         $data = $request->all();
         $data['section_id'] = $sectionId;
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_intro'] = (bool)$request->hide_intro;
-        $data['hide_tags'] = (bool)$request->hide_tags;
-        $data['hide_cover'] = (bool)$request->hide_cover;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_intro'] = (bool)$request->config_show_intro;
+        $data['config_show_content'] = (bool)$request->config_show_content;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_media'] = (bool)$request->config_show_media;
+        $data['config_action_media'] = (bool)$request->config_action_media;
+        $data['config_paginate_media'] = (bool)$request->config_paginate_media;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $post = $this->contentService->updatePost($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -238,6 +264,16 @@ class ContentPostController extends Controller
         }
 
         return redirect()->back()->with('failed', $post['message']);
+    }
+
+    public function sort(Request $request, $sectionId)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->contentService->sortPost(['id' => $value, 'section_id' => $sectionId], $i);
+        }
     }
 
     public function position(Request $request, $sectionId, $id, $position)
@@ -301,7 +337,7 @@ class ContentPostController extends Controller
             'publish' => 1,
             'approved' => 1
         ], true, $limit, false, [], [
-            'position' => 'ASC'
+            'created_at' => 'DESC'
         ]);
         $data['no'] = $data['posts']->firstItem();
         $data['posts']->withQueryString();
@@ -327,7 +363,7 @@ class ContentPostController extends Controller
         $data['read'] = $this->contentService->getPost(['slug' => $slugPost]);
 
         //check
-        if (empty($data['read']) || $data['read']['publish'] == 0 && $data['read']['approved'] == 0) {
+        if (empty($data['read']) || $data['read']['publish'] == 0 && $data['read']['approved'] != 1) {
             return redirect()->route('home');
         }
 
@@ -338,52 +374,56 @@ class ContentPostController extends Controller
         if (!empty($end) && $now > $end->format('Y-m-d H:i'))
             return redirect()->route('home');
 
-        if ($data['read']['config']['is_detail'] == 0) {
-            return redirect()->route('home');
+        if ($data['read']['detail'] == 0) {
+            return redirect()->route('content.section.read.'.$data['section']['slug']);
         }
 
         if ($data['read']['public'] == 0 && Auth::guard()->check() == false) {
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
 
-        $this->contentService->recordPostHits(['id' => $data['read']['id']]);
-
-        //data
+        //media
         $data['medias'] = $this->mediaService->getMediaList([
             'module' => 'content_post',
             'mediable_id' => $data['read']['id']
-        ], false, 0, false, [], [
+        ], $data['read']['config']['paginate_media'], $data['read']['config']['media_limit'], false, [], [
             'position' => 'ASC'
         ]);
+        if ($data['read']['config']['paginate_media'] == true) {
+            $data['no_medias'] = $data['medias']->firstItem();
+            $data['medias']->withQueryString();
+        }
 
         $data['latest_posts'] = $this->contentService->getPostList([
             'section_id' => $data['read']['section_id'],
             'publish' => 1,
-            'approved' => 1
-        ], false)->take(4);
+            'approved' => 1,
+            'detail' => 1,
+        ], false)->take($data['section']['config']['latest_post_limit']);
 
         $data['prev'] = $this->contentService->postPrevNext($data['read']['id'], [
             'section_id' => $data['read']['section_id'],
             'publish' => 1,
-            'approved' => 1
+            'approved' => 1,
+            'detail' => 1,
         ], 'prev');
 
         $data['next'] = $this->contentService->postPrevNext($data['read']['id'], [
             'section_id' => $data['read']['section_id'],
             'publish' => 1,
-            'approved' => 1
+            'approved' => 1,
+            'detail' => 1,
         ], 'next');
 
         $data['addon_fields'] = $data['read']['addon_fields'];
         $data['fields'] = $data['read']['custom_fields'];
         $data['tags'] = $data['read']->tags();
-
         $data['creator'] = $data['read']['createBy']['name'];
         if (!empty($data['read']['posted_by_alias'])) {
             $data['creator'] = $data['read']['posted_by_alias'];
         }
-        $data['cover'] = $data['read']->coverSrc();
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['cover'] = $data['read']['cover_src'];
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('title');
@@ -425,6 +465,9 @@ class ContentPostController extends Controller
         } elseif (!empty($data['read']['section']['template_detail_id'])) {
             $blade = 'section.detail.'.Str::replace('.blade.php', '', $data['section']['templateDetail']['filename']);
         }
+
+        // record hits
+        $this->contentService->recordPostHits(['id' => $data['read']['id']]);
 
         return view('frontend.contents.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('title'),

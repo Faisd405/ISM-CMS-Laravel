@@ -19,7 +19,7 @@
     <label class="col-form-label col-sm-2 text-sm-right">Child Limit</label>
     <div class="col-sm-10">
         <input type="number" class="form-control mb-1 @error('child_limit') is-invalid @enderror" name="child_limit" 
-            value="{{ !isset($data['widget']) ? old('child_limit') : old('child_limit', $data['widget']['content']['child_limit']) }}" 
+            value="{{ !isset($data['widget']) ? old('child_limit', 4) : old('child_limit', $data['widget']['content']['child_limit']) }}" 
             placeholder="">
         @include('components.field-error', ['field' => 'child_limit'])
     </div>

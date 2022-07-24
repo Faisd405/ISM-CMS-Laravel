@@ -19,7 +19,7 @@
     <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.post.caption') Limit</label>
     <div class="col-sm-10">
         <input type="number" class="form-control mb-1 @error('post_limit') is-invalid @enderror" name="post_limit" 
-            value="{{ !isset($data['widget']) ? old('post_limit') : old('post_limit', $data['widget']['content']['post_limit']) }}" 
+            value="{{ !isset($data['widget']) ? old('post_limit', 4) : old('post_limit', $data['widget']['content']['post_limit']) }}" 
             placeholder="">
         @include('components.field-error', ['field' => 'post_limit'])
     </div>

@@ -10,7 +10,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     /**
      * Access Control List
      */
-    Route::prefix('acl')->middleware('role:super')->group(function () {
+    Route::prefix('acl')->middleware('role:developer|super')->group(function () {
 
         //--- Role
         Route::prefix('role')->name('role.')->group(function () {
@@ -54,19 +54,19 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:users');
         Route::get('/trash', [UserController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::get('/log', [UserController::class, 'log'])
             ->name('log')
             ->middleware('permission:users');
         Route::delete('/log/reset', [UserController::class, 'logReset'])
             ->name('log.reset')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::get('/login-failed', [UserController::class, 'loginFailed'])
             ->name('login-failed')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::delete('/login-failed/reset', [UserController::class, 'loginFailedReset'])
             ->name('login-failed.reset')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [UserController::class, 'create'])
             ->name('create')
@@ -91,16 +91,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             ->middleware('permission:user_delete');
         Route::delete('/{id}/permanent', [UserController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [UserController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::delete('/delete/{id}/log', [UserController::class, 'logDelete'])
             ->name('log.destroy')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::delete('delete/{ip}/login-failed', [UserController::class, 'loginFailedDelete'])
             ->name('login-failed.destroy')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 

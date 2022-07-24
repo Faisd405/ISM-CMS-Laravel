@@ -51,6 +51,11 @@ class Language extends Model
         return $query->where('active', 1);
     }
 
+    public function scopeLocked($query)
+    {
+        return $query->where('locked', 1);
+    }
+
     public function getUrlSwitcherAttribute()
     {
         $checkUrl = Str::replaceFirst(url('/'), '', URL::full());
@@ -75,6 +80,6 @@ class Language extends Model
 
     public function getFlagIconAttribute()
     {
-        return asset(config('cms.files.lang').$this->iso_codes.'svg');
+        return asset(config('cms.files.lang').$this->iso_codes.'.svg');
     }
 }

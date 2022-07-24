@@ -83,6 +83,7 @@ class IndexUrlController extends Controller
     public function store(IndexUrlRequest $request)
     {
         $data = $request->all();
+        $data['locked'] = (bool)$request->locked;
         $indexUrl = $this->indexUrlService->store($data);
         $data['query'] = $request->query();
 
@@ -114,6 +115,7 @@ class IndexUrlController extends Controller
     public function update(IndexUrlRequest $request, $id)
     {
         $data = $request->all();
+        $data['locked'] = (bool)$request->locked;
         $indexUrl = $this->indexUrlService->update($data, ['id' => $id]);
         $data['query'] = $request->query();
 

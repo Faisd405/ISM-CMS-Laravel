@@ -3,7 +3,7 @@
 use App\Http\Controllers\IndexUrlController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('admin/url')->name('url.')->middleware(['auth', 'role:super'])
+Route::prefix('admin/url')->name('url.')->middleware(['auth', 'role:developer|super'])
     ->group(function () {
 
     Route::get('/', [IndexUrlController::class, 'index'])

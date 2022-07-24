@@ -12,7 +12,7 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
         ->middleware('permission:events');
     Route::get('/trash', [EventController::class, 'trash'])
         ->name('trash')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
 
     Route::get('/create', [EventController::class, 'create'])
         ->name('create')
@@ -31,7 +31,10 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
         ->middleware('permission:event_update');
     Route::put('/{id}/approved', [EventController::class, 'approved'])
         ->name('approved')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
+    Route::post('/sort', [EventController::class, 'sort'])
+        ->name('sort')
+        ->middleware('permission:event_update');
     Route::put('/{id}/position/{position}', [EventController::class, 'position'])
         ->name('position')
         ->middleware('permission:event_update');
@@ -40,10 +43,10 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
         ->middleware('permission:event_delete');
     Route::delete('/{id}/permanent', [EventController::class, 'permanentDelete'])
         ->name('delete.permanent')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
     Route::put('/{id}/restore', [EventController::class, 'restore'])
         ->name('restore')
-        ->middleware('role:super');
+        ->middleware('role:developer|super');
 
     //--- Form
     Route::get('/{eventId}/form', [EventController::class, 'form'])
@@ -67,7 +70,7 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
             ->middleware('permission:event_fields');
         Route::get('/trash', [EventFieldController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [EventFieldController::class, 'create'])
             ->name('create')
@@ -86,7 +89,10 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
             ->middleware('permission:event_field_update');
         Route::put('/{id}/approved', [EventFieldController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
+        Route::post('/sort', [EventFieldController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:event_field_update');
         Route::put('/{id}/position/{position}', [EventFieldController::class, 'position'])
             ->name('position')
             ->middleware('permission:event_field_update');
@@ -95,10 +101,10 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
             ->middleware('permission:event_field_delete');
         Route::delete('/{id}/permanent', [EventFieldController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [EventFieldController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 

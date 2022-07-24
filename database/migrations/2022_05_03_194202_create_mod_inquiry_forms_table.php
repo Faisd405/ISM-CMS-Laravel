@@ -20,7 +20,8 @@ class CreateModInquiryFormsTable extends Migration
             $table->json('fields')->nullable();
             $table->boolean('status')->default(false);
             $table->boolean('exported')->default(false);
-            $table->timestamp('submit_time');
+            $table->dateTime('submit_time');
+            $table->timestamps();
 
             $table->foreign('inquiry_id')->references('id')->on('mod_inquiries')
                 ->cascadeOnDelete();

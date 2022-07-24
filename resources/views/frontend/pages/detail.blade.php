@@ -1,25 +1,24 @@
 @extends('layouts.frontend.layout')
 
 @section('content')
-@isset ($data['read']['template']['content_template'])
-    {!! $data['read']['template']['content_template'] !!}
-@else
     {{-- DETAIL
 
     DATA :
     {!! $data['read']->fieldLang('title') !!} // title
     
-    @if ($data['read']['config']['hide_intro'] == false)
+    @if ($data['read']['config']['show_intro'] == true)
     {!! $data['read']->fieldLang('intro') !!} //intro
     @endif
 
-    {!! $data['read']->fieldLang('content') !!} //content
+    @if ($data['read']['config']['show_content'] == true)
+    {!! $data['read']->fieldLang('content') !!} //intro
+    @endif
 
-    @if ($data['read']['config']['hide_cover'] == false) //cover
+    @if ($data['read']['config']['show_cover'] == true) //cover
     <img src="{{ $data['cover'] }}" title="{{ $data['read']['cover']['title'] }}" alt="{{ $data['read']['cover']['alt'] }}">
     @endif
 
-    @if ($data['read']['config']['hide_banner'] == false) //banner
+    @if ($data['read']['config']['show_banner'] == true) //banner
     <img src="{{ $data['banner'] }}" title="{{ $data['read']['banner']['title'] }}" alt="{{ $data['read']['banner']['alt'] }}">
     @endif
 
@@ -27,7 +26,7 @@
     $data['read']['childs']
     $data['read']['medias']
     $data['read']['fields']
-    @if ($data['read']['config']['hide_tags'] == false)
+    @if ($data['read']['config']['show_tags'] == true)
         $data['read']['tags']
     @endif
 
@@ -41,5 +40,4 @@
     $data['share_pinterest']
     
 --}}
-@endisset
 @endsection

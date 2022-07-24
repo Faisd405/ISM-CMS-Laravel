@@ -1,66 +1,65 @@
 <?php
 
-use App\Http\Controllers\Module\Link\LinkCategoryController;
+use App\Http\Controllers\Module\Link\LinkController;
 use App\Http\Controllers\Module\Link\LinkMediaController;
+use App\Models\IndexingUrl;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin/link')->name('link.')->middleware('auth')->group(function () {
 
-    //--- Category
-    Route::prefix('category')->name('category.')->group(function() {
+    Route::get('/', [LinkController::class, 'index'])
+        ->name('index')
+        ->middleware('permission:links');
+    Route::get('/trash', [LinkController::class, 'trash'])
+        ->name('trash')
+        ->middleware('role:developer|super');
 
-        Route::get('/', [LinkCategoryController::class, 'index'])
-            ->name('index')
-            ->middleware('permission:link_categories');
-        Route::get('/trash', [LinkCategoryController::class, 'trash'])
-            ->name('trash')
-            ->middleware('role:super');
-
-        Route::get('/create', [LinkCategoryController::class, 'create'])
-            ->name('create')
-            ->middleware('permission:link_category_create');
-        Route::post('/store', [LinkCategoryController::class, 'store'])
-            ->name('store')
-            ->middleware('permission:link_category_create');
-        Route::get('/{id}/edit', [LinkCategoryController::class, 'edit'])
-            ->name('edit')
-            ->middleware('permission:link_category_update');
-        Route::put('/{id}', [LinkCategoryController::class, 'update'])
-            ->name('update')
-            ->middleware('permission:link_category_update');
-        Route::put('/{id}', [LinkCategoryController::class, 'update'])
-            ->name('update')
-            ->middleware('permission:link_category_update');
-        Route::put('/{id}/publish', [LinkCategoryController::class, 'publish'])
-            ->name('publish')
-            ->middleware('permission:link_category_update');
-        Route::put('/{id}/approved', [LinkCategoryController::class, 'approved'])
-            ->name('approved')
-            ->middleware('role:super|support|admin');
-        Route::put('/{id}/position/{position}', [LinkCategoryController::class, 'position'])
-            ->name('position')
-            ->middleware('permission:link_category_update');
-        Route::delete('/{id}/soft', [LinkCategoryController::class, 'softDelete'])
-            ->name('delete.soft')
-            ->middleware('permission:link_category_delete');
-        Route::delete('/{id}/permanent', [LinkCategoryController::class, 'permanentDelete'])
-            ->name('delete.permanent')
-            ->middleware('role:super');
-        Route::put('/{id}/restore', [LinkCategoryController::class, 'restore'])
-            ->name('restore')
-            ->middleware('role:super');
-
-    });
+    Route::get('/create', [LinkController::class, 'create'])
+        ->name('create')
+        ->middleware('permission:link_create');
+    Route::post('/store', [LinkController::class, 'store'])
+        ->name('store')
+        ->middleware('permission:link_create');
+    Route::get('/{id}/edit', [LinkController::class, 'edit'])
+        ->name('edit')
+        ->middleware('permission:link_update');
+    Route::put('/{id}', [LinkController::class, 'update'])
+        ->name('update')
+        ->middleware('permission:link_update');
+    Route::put('/{id}', [LinkController::class, 'update'])
+        ->name('update')
+        ->middleware('permission:link_update');
+    Route::put('/{id}/publish', [LinkController::class, 'publish'])
+        ->name('publish')
+        ->middleware('permission:link_update');
+    Route::put('/{id}/approved', [LinkController::class, 'approved'])
+        ->name('approved')
+        ->middleware('role:developer|super|support|admin');
+    Route::post('/sort', [LinkController::class, 'sort'])
+        ->name('sort')
+        ->middleware('permission:link_update');
+    Route::put('/{id}/position/{position}', [LinkController::class, 'position'])
+        ->name('position')
+        ->middleware('permission:link_update');
+    Route::delete('/{id}/soft', [LinkController::class, 'softDelete'])
+        ->name('delete.soft')
+        ->middleware('permission:link_delete');
+    Route::delete('/{id}/permanent', [LinkController::class, 'permanentDelete'])
+        ->name('delete.permanent')
+        ->middleware('role:developer|super');
+    Route::put('/{id}/restore', [LinkController::class, 'restore'])
+        ->name('restore')
+        ->middleware('role:developer|super');
 
     //--- Media
-    Route::prefix('category/{categoryId}')->name('media.')->group(function() {
+    Route::prefix('{linkId}/media')->name('media.')->group(function() {
 
         Route::get('/', [LinkMediaController::class, 'index'])
             ->name('index')
             ->middleware('permission:link_medias');
         Route::get('/trash', [LinkMediaController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
             
         Route::get('/create', [LinkMediaController::class, 'create'])
             ->name('create')
@@ -79,22 +78,22 @@ Route::prefix('admin/link')->name('link.')->middleware('auth')->group(function (
             ->middleware('permission:link_media_update');
         Route::put('/{id}/approved', [LinkMediaController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
-        Route::put('/{id}/position/{position}', [LinkMediaController::class, 'position'])
-            ->name('position')
-            ->middleware('permission:link_media_update');
+            ->middleware('role:developer|super|support|admin');
         Route::post('/sort', [LinkMediaController::class, 'sort'])
             ->name('sort')
+            ->middleware('permission:link_media_update');
+        Route::put('/{id}/position/{position}', [LinkMediaController::class, 'position'])
+            ->name('position')
             ->middleware('permission:link_media_update');
         Route::delete('/{id}/soft', [LinkMediaController::class, 'softDelete'])
             ->name('delete.soft')
             ->middleware('permission:link_media_delete');
         Route::delete('/{id}/permanent', [LinkMediaController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [LinkMediaController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -112,11 +111,17 @@ if (config('cms.module.feature.language.needLocale')) {
 Route::group($group, function () {
 
     //--- List
-    Route::get('link', [LinkCategoryController::class, 'list'])
+    Route::get('link', [LinkController::class, 'list'])
         ->name('link.list');
 
-    //--- Category
-    Route::get('link/{slugCategory}', [LinkCategoryController::class, 'read'])
-        ->name('link.category.read');
+    if (config('cms.setting.index_url') == true) {
+        $indexing = IndexingUrl::where('module', 'link')->get();
+        if ($indexing->count() > 0) {
+            foreach ($indexing as $key => $value) {
+                Route::get($value['slug'], [LinkController::class, 'read'])
+                    ->name('link.read.'.$value['slug']);
+            }
+        }
+    }
 
 });

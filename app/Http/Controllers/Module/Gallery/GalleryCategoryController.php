@@ -45,9 +45,8 @@ class GalleryCategoryController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['categories'] = $this->galleryService->getCategoryList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
+        $data['categories'] = $this->galleryService->getCategoryList($filter, true, 10, false, [], 
+            config('cms.module.gallery.category.ordering'));
         $data['no'] = $data['categories']->firstItem();
         $data['categories']->withQueryString();
 
@@ -113,9 +112,14 @@ class GalleryCategoryController extends Controller
     public function store(GalleryCategoryRequest $request)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_album'] = (bool)$request->config_paginate_album;
+        $data['config_paginate_file'] = (bool)$request->config_paginate_file;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $category = $this->galleryService->storeCategory($data);
         $data['query'] = $request->query();
 
@@ -152,9 +156,14 @@ class GalleryCategoryController extends Controller
     public function update(GalleryCategoryRequest $request, $id)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_album'] = (bool)$request->config_paginate_album;
+        $data['config_paginate_file'] = (bool)$request->config_paginate_file;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $category = $this->galleryService->updateCategory($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -163,6 +172,16 @@ class GalleryCategoryController extends Controller
         }
 
         return redirect()->back()->with('failed', $category['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->galleryService->sortCategory(['id' => $value], $i);
+        }
     }
 
     public function publish($id)
@@ -238,34 +257,37 @@ class GalleryCategoryController extends Controller
      */
     public function list(Request $request)
     {
+        if (config('cms.module.gallery.list_view') == false)
+            return redirect()->route('home');
+
         //data
         $data['banner'] = $this->configService->getConfigFile('banner_default');
         $limit = $this->configService->getConfigValue('content_limit');
+
+        // category
         $data['categories'] = $this->galleryService->getCategoryList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['cat_no'] = $data['categories']->firstItem();
+        ], true, $limit, false, [], config('cms.module.gallery.category.ordering'));
+        $data['no_categories'] = $data['categories']->firstItem();
         $data['categories']->withQueryString();
         
+        // album
         $data['albums'] = $this->galleryService->getAlbumList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['album_no'] = $data['albums']->firstItem();
+        ], true, $limit, false, [], config('cms.module.gallery.album.ordering'));
+        $data['no_albums'] = $data['albums']->firstItem();
         $data['albums']->withQueryString();
 
+        // file
         $data['files'] = $this->galleryService->getFileList([
             'publish' => 1,
             'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
-        $data['file_no'] = $data['files']->firstItem();
+        $data['no_files'] = $data['files']->firstItem();
         $data['files']->withQueryString();
 
         return view('frontend.galleries.list', compact('data'), [
@@ -287,7 +309,7 @@ class GalleryCategoryController extends Controller
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
@@ -295,48 +317,41 @@ class GalleryCategoryController extends Controller
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
 
-        $this->galleryService->recordCategoryHits(['id' => $data['read']['id']]);
-
-        //limit
-        $albumPerpage = $this->configService->getConfigValue('content_limit');
-        $filePerpage = $this->configService->getConfigValue('content_limit');
-        if ($data['read']['album_perpage'] > 0) {
-            $albumPerpage = $data['read']['album_perpage'];
-        }
-        if ($data['read']['file_perpage'] > 0) {
-            $filePerpage = $data['read']['file_perpage'];
+        // filtring
+        $keyword = $request->input('keyword', '');
+        if ($keyword != '') {
+            $filter['q'] = $keyword;
         }
 
-        //data
-        $data['albums'] = $this->galleryService->getAlbumList([
-            'gallery_category_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $albumPerpage, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['album_no'] = $data['albums']->firstItem();
-        $data['albums']->withQueryString();
+        $filter['gallery_category_id'] = $data['read']['id'];
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
 
-        $data['files'] = $this->galleryService->getFileList([
-            'gallery_category_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $filePerpage, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['file_no'] = $data['files']->firstItem();
-        $data['files']->withQueryString();
+        // album
+        $data['albums'] = $this->galleryService->getAlbumList($filter,
+            $data['read']['config']['paginate_album'], $data['read']['config']['album_limit'], false,
+        [], config('cms.module.gallery.album.ordering'));
+        if ($data['read']['config']['paginate_album'] == true) {
+            $data['no_albums'] = $data['albums']->firstItem();
+            $data['albums']->withQueryString();
+        }
+
+        // file
+        $data['files'] = $this->galleryService->getFileList($filter,
+            $data['read']['config']['paginate_file'], $data['read']['config']['file_limit'], false,
+        [], ['position' => 'ASC']);
+        if ($data['read']['config']['paginate_file'] == true) {
+            $data['no_files'] = $data['files']->firstItem();
+            $data['files']->withQueryString();
+        }
 
         $data['fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['image_preview'] = $data['read']->imgPreview();
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['cover'] = $data['read']['cover_src'];
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-
         $data['meta_description'] = $this->configService->getConfigValue('meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
@@ -352,12 +367,15 @@ class GalleryCategoryController extends Controller
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
             URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $data['image_preview']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_list_id'])) {
             $blade = 'list.'.Str::replace('.blade.php', '', $data['read']['templateList']['filename']);
         }
+
+        // record hits
+        $this->galleryService->recordCategoryHits(['id' => $data['read']['id']]);
 
         return view('frontend.galleries.category.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('name'),

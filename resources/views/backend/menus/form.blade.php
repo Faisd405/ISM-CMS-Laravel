@@ -10,20 +10,20 @@
     <div class="col-xl-9 col-lg-9 col-md-9">
 
         <div class="card">
-            <div class="card-header">
-                <span class="text-muted">
-                    {{ Str::upper(__('module/menu.category.caption')) }} : <b class="text-primary">{{ Str::upper($data['category']['name']) }}</b>
-                    @if (isset($data['parent']))
-                        <i class="las la-angle-right"></i>
-                        UNDER : <b class="text-primary">{!! $data['parent']->fieldLang('title') !!}</b>
-                    @endif
-                </span>
-            </div>
             <h6 class="card-header">
                 @lang('global.form_attr', [
                     'attribute' => __('module/menu.caption')
                 ])
             </h6>
+            <div class="card-header">
+                <span class="text-muted">
+                    {{ Str::upper(__('module/menu.category.caption')) }} : <b class="text-primary">{{ Str::upper($data['category']['name']) }}</b>
+                    @if (isset($data['parent']))
+                        <i class="las la-angle-right"></i>
+                        UNDER : <b class="text-primary">{!! $data['parent']['module_data']['title'] !!}</b>
+                    @endif
+                </span>
+            </div>
             <form action="{{ !isset($data['menu']) ? route('menu.store', array_merge(['categoryId' => $data['category']['id'], 'parent' => Request::get('parent')], $queryParam)) : 
                 route('menu.update', array_merge(['categoryId' => $data['category']['id'], 'id' => $data['menu']['id']], $queryParam)) }}" method="POST">
                 @csrf
@@ -105,7 +105,7 @@
                                 <div class="col-md-10">
                                     @if(isset($data['menu']) && $data['menu']['config']['not_from_module'] == 0)
                                     <input type="hidden" name="menuable_id" value="{{ $data['menu']['menuable_id'] }}">
-                                    <input id="menuable" type="text" class="form-control mb-1" value="{!! $data['menu']['modules']['title'] !!}" readonly>
+                                    <input id="menuable" type="text" class="form-control mb-1" value="{!! $data['menu']['module_data']['title'] !!}" readonly>
                                     @endif
                                     <select id="menuable_id" class="select-autocomplete show-tick @error('menuable_id') is-invalid @enderror" name="menuable_id" data-style="btn-default">
                                         <option value="" disabled selected>@lang('global.select')</option>
@@ -127,7 +127,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-2 text-md-right">
-                            <label class="col-form-label text-sm-right">@lang('module/menu.label.target_blank')</label>
+                                <label class="col-form-label text-sm-right">@lang('module/menu.label.target_blank')</label>
                             </div>
                             <div class="col-md-10">
                                 <label class="switcher switcher-success">
@@ -144,14 +144,14 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row hide-form">
                             <div class="col-md-2 text-md-right">
                             <label class="col-form-label text-sm-right">@lang('module/menu.label.field6')</label>
                             </div>
                             <div class="col-md-10">
                                 <label class="switcher switcher-success">
                                     <input type="checkbox" class="switcher-input" name="edit_public_menu" value="1" 
-                                        {{ !isset($data['menu']) ? (old('edit_public_menu', 0) ? 'checked' : '') : (old('edit_public_menu', $data['menu']['config']['edit_public_menu']) ? 'checked' : '') }}>
+                                        {{ !isset($data['menu']) ? (old('edit_public_menu', 1) ? 'checked' : '') : (old('edit_public_menu', $data['menu']['config']['edit_public_menu']) ? 'checked' : '') }}>
                                     <span class="switcher-indicator">
                                     <span class="switcher-yes">
                                         <span class="ion ion-md-checkmark"></span>
@@ -163,7 +163,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row hide-form">
                             <label class="col-form-label col-sm-2 text-sm-right">@lang('module/menu.label.icon')</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control mb-1 @error('icon') is-invalid @enderror" name="icon" 
@@ -178,6 +178,31 @@
                                     </ul>
                                 </small>
                                 @include('components.field-error', ['field' => 'icon'])
+                            </div>
+                        </div>
+                        <div class="form-group row hide-form">
+                            <div class="col-md-2 text-md-right">
+                              <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                            </div>
+                            <div class="col-md-10">
+                                <label class="custom-control custom-checkbox m-0">
+                                    <input type="checkbox" class="custom-control-input" name="locked" value="1"
+                                    {{ !isset($data['menu']) ? (old('locked', 1) ? 'checked' : '') : (old('locked', $data['menu']['locked']) == 1 ? 'checked' : '') }}>
+                                    <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                                </label>
+                                <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            </div>
+                        </div>
+                        <div class="form-group row hide-form">
+                            <div class="col-md-2 text-md-right">
+                              <label class="col-form-label text-sm-right">Create Child</label>
+                            </div>
+                            <div class="col-md-10">
+                                <label class="custom-control custom-checkbox m-0">
+                                    <input type="checkbox" class="custom-control-input" name="create_child" value="1"
+                                    {{ !isset($data['menu']) ? (old('create_child') ? 'checked' : '') : (old('create_child', $data['menu']['config']['create_child']) == 1 ? 'checked' : '') }}>
+                                    <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -197,10 +222,10 @@
                 {{-- SETTING --}}
                 <hr class="m-0">
                 <div class="card-body">
-                    <h6 class="font-weight-semibold mb-4">SETTING</h6>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.status')</label>
-                        <div class="col-sm-10">
+                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.status')</label>
                             <select class="form-control show-tick" name="publish" data-style="btn-default">
                                 @foreach (__('global.label.publish') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['menu']) ? (old('publish') == ''.$key.'' ? 'selected' : '') : (old('publish', $data['menu']['publish']) == ''.$key.'' ? 'selected' : '') }}>
@@ -209,10 +234,8 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.public')</label>
-                        <div class="col-sm-10">
+                        <div class="form-group col-md-6">
+                            <label class="form-label">@lang('global.public')</label>
                             <select class="form-control show-tick" name="public" data-style="btn-default">
                                 @foreach (__('global.label.optional') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['menu']) ? (old('public') == ''.$key.'' ? 'selected' : '') : (old('public', $data['menu']['public']) == ''.$key.'' ? 'selected' : '') }}>
@@ -222,19 +245,8 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('global.locked')</label>
-                        <div class="col-sm-10">
-                            <select class="form-control show-tick" name="locked" data-style="btn-default">
-                                @foreach (__('global.label.optional') as $key => $value)
-                                    <option value="{{ $key }}" {{ !isset($data['menu']) ? (old('locked') == ''.$key.'' ? 'selected' : '') : (old('locked', $data['menu']['locked']) == ''.$key.'' ? 'selected' : '') }}>
-                                        {{ $value }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -316,10 +328,9 @@
     });
 </script>
 
-@if (!Auth::user()->hasRole('super'))
+@if (!Auth::user()->hasRole('developer|super'))
 <script>
-    //hide form yang tidak diperlukan
-    $('.hd').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 @endsection

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Module\Link;
+namespace App\Models\Module\Document;
 
 use App\Models\Feature\Configuration;
 use App\Models\Master\Template;
@@ -14,32 +14,37 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
-class LinkCategory extends Model
+class Document extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'mod_link_categories';
+    protected $table = 'mod_documents';
     protected $guarded = [];
 
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
+        'roles' => 'json',
         'banner' => 'json',
-        'custom_fields' => 'json',
         'config' => 'json',
+        'custom_fields' => 'json',
+    ];
+
+    protected $appends = [
+        'banner_src'
     ];
 
     public static function boot()
     {
         parent::boot();
 
-        LinkCategory::observe(LogObserver::class);
+        Document::observe(LogObserver::class);
     }
 
-    public function medias()
+    public function files()
     {
-        return $this->hasMany(LinkMedia::class, 'link_category_id');
+        return $this->hasMany(DocumentFile::class, 'document_id');
     }
 
     public function menus()
@@ -78,7 +83,7 @@ class LinkCategory extends Model
             $lang = App::getLocale();
         }
 
-        return $this->hasMany(LinkCategory::class, 'id')->first()[$field][$lang];
+        return $this->hasMany(Document::class, 'id')->first()[$field][$lang];
     }
 
     public function scopePublish($query)
@@ -96,12 +101,17 @@ class LinkCategory extends Model
         return $query->where('approved', 1);
     }
 
+    public function scopeDetail($query)
+    {
+        return $query->where('detail', 1);
+    }
+
     public function scopeLocked($query)
     {
         return $query->where('locked', 1);
     }
 
-    public function bannerSrc()
+    public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);

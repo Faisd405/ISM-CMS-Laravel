@@ -10,7 +10,7 @@ return [
         'text' => 'List Role',
         'label' => [
             'field1' => 'Name',
-            'field2' => 'Penulisan',
+            'field2' => 'Code',
             'field3' => 'Guard Name',
             'field4' => 'Level',
             'field5' => 'Role Register'
@@ -20,7 +20,7 @@ return [
             'field2' => '',
             'field3' => '',
             'field4' => '',
-            'field5' => ''
+            'field5' => 'Show role during user registration'
         ],
     ],
 
@@ -32,7 +32,7 @@ return [
         'label' => [
             'field1' => 'Parent',
             'field2' => 'Name',
-            'field3' => 'Penulisan',
+            'field3' => 'Code',
             'field4' => 'Guard Name'
         ],
         'placeholder' => [
@@ -126,6 +126,6 @@ return [
     ],
 
     //info
-    'password_info' => 'password must use at least 1 upper & lower case letter, number & character. Example : adMin123#',
-    'username_info' => 'username must use lowercase & no spaces. Example: johndoe',
+    'password_info' => 'Password must use at least 1 upper & lower case letter, number & character(!@$#%). Example : adMin123#',
+    'username_info' => 'Username must use lowercase & no spaces. Example: johndoe',
 ];

@@ -108,12 +108,12 @@
                             <td class="text-center">
                                 <button type="button" class="btn btn-success icon-btn btn-sm restore" onclick="$(this).find('#form-restore').submit();" title="@lang('global.restore')" data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-restore-alt"></i>
-                                    <form action="{{ route('link.media.restore', ['categoryId' => $item['link_category_id'], 'id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
+                                    <form action="{{ route('link.media.restore', ['linkId' => $item['link_id'], 'id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
                                         @csrf
                                         @method('PUT')
                                     </form>
                                 </button>
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-category-id="{{ $item['link_category_id'] }}" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
+                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" data-link-id="{{ $item['link_id'] }}" data-id="{{ $item['id'] }}" title="@lang('global.delete')">
                                     <i class="las la-ban"></i>
                                 </button>
                             </td>
@@ -167,7 +167,7 @@
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
-            var categoryId = $(this).attr('data-category-id');
+            var linkId = $(this).attr('data-link-id');
             var id = $(this).attr('data-id');
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
@@ -184,7 +184,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/link/category/' + categoryId + '/'+ id +'/permanent?is_trash=yes',
+                        url: '/admin/link/' + linkId + '/media/'+ id +'/permanent?is_trash=yes',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

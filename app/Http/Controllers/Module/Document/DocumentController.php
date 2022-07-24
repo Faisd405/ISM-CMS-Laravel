@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Module\Document;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Module\Document\DocumentCategoryRequest;
+use App\Http\Requests\Module\Document\DocumentRequest;
 use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\TemplateService;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class DocumentCategoryController extends Controller
+class DocumentController extends Controller
 {
     private $documentService, $languageService, $templateService, $configService,
         $userService;
@@ -49,23 +49,22 @@ class DocumentCategoryController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['categories'] = $this->documentService->getCategoryList($filter, true, 10, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withQueryString();
+        $data['documents'] = $this->documentService->getDocumentList($filter, true, 10, false, [], 
+            config('cms.module.document.ordering'));
+        $data['no'] = $data['documents']->firstItem();
+        $data['documents']->withQueryString();
 
-        return view('backend.documents.category.index', compact('data'), [
-            'title' => __('module/document.category.title'),
+        return view('backend.documents.index', compact('data'), [
+            'title' => __('module/document.title'),
             'breadcrumbs' => [
-                __('module/document.caption') => 'javascript:;',
-                __('module/document.category.caption') => '',
+                __('module/document.caption') => '',
             ]
         ]);
     }
 
     public function trash(Request $request)
     {
+        $filter = [];
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
@@ -76,18 +75,17 @@ class DocumentCategoryController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['categories'] = $this->documentService->getCategoryList($filter, true, 10, true, [], [
+        $data['documents'] = $this->documentService->getDocumentList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
-        $data['no'] = $data['categories']->firstItem();
-        $data['categories']->withQueryString();
+        $data['no'] = $data['documents']->firstItem();
+        $data['documents']->withQueryString();
 
-        return view('backend.documents.category.trash', compact('data'), [
-            'title' => __('module/document.category.title').' - '.__('global.trash'),
-            'routeBack' => route('document.category.index'),
+        return view('backend.documents.trash', compact('data'), [
+            'title' => __('module/document.title').' - '.__('global.trash'),
+            'routeBack' => route('document.index'),
             'breadcrumbs' => [
-                __('module/document.caption') => 'javascript:;',
-                __('module/document.category.caption') => route('document.category.index'),
+                __('module/document.caption') => route('document.index'),
                 __('global.trash') => '',
             ]
         ]);
@@ -96,138 +94,152 @@ class DocumentCategoryController extends Controller
     public function create(Request $request)
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document_category'], false, 0);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document'], false, 0);
         $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false, 0);
 
-        return view('backend.documents.category.form', compact('data'), [
+        return view('backend.documents.form', compact('data'), [
             'title' => __('global.add_attr_new', [
-                'attribute' => __('module/document.category.caption')
+                'attribute' => __('module/document.caption')
             ]),
-            'routeBack' => route('document.category.index', $request->query()),
+            'routeBack' => route('document.index', $request->query()),
             'breadcrumbs' => [
-                __('module/document.caption') => 'javascript:;',
-                __('module/document.category.caption') => route('document.category.index'),
+                __('module/document.caption') => route('document.index'),
                 __('global.add') => '',
             ]
         ]);
     }
 
-    public function store(DocumentCategoryRequest $request)
+    public function store(DocumentRequest $request)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
-        $category = $this->documentService->storeCategory($data);
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_file'] = (bool)$request->config_paginate_file;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
+        $document = $this->documentService->storeDocument($data);
         $data['query'] = $request->query();
 
-        if ($category['success'] == true) {
-            return $this->redirectForm($data)->with('success', $category['message']);
+        if ($document['success'] == true) {
+            return $this->redirectForm($data)->with('success', $document['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $document['message']);
     }
 
     public function edit(Request $request, $id)
     {
-        $data['category'] = $this->documentService->getCategory(['id' => $id]);
-        if (empty($data['category']))
+        $data['document'] = $this->documentService->getDocument(['id' => $id]);
+        if (empty($data['document']))
             return abort(404);
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document_category'], false, 0);
+        $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document'], false, 0);
         $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false, 0);
 
-        return view('backend.documents.category.form', compact('data'), [
+        return view('backend.documents.form', compact('data'), [
             'title' => __('global.edit_attr', [
-                'attribute' => __('module/document.category.caption')
+                'attribute' => __('module/document.caption')
             ]),
-            'routeBack' => route('document.category.index', $request->query()),
+            'routeBack' => route('document.index', $request->query()),
             'breadcrumbs' => [
-                __('module/document.caption') => 'javascript:;',
-                __('module/document.category.caption') => route('document.category.index'),
+                __('module/document.caption') => route('document.index'),
                 __('global.edit') => '',
             ]
         ]);
     }
 
-    public function update(DocumentCategoryRequest $request, $id)
+    public function update(DocumentRequest $request, $id)
     {
         $data = $request->all();
-        $data['is_detail'] = (bool)$request->is_detail;
-        $data['hide_description'] = (bool)$request->hide_description;
-        $data['hide_banner'] = (bool)$request->hide_banner;
-        $category = $this->documentService->updateCategory($data, ['id' => $id]);
+        $data['detail'] = (bool)$request->detail;
+        $data['locked'] = (bool)$request->locked;
+        $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_paginate_file'] = (bool)$request->config_paginate_file;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
+        $document = $this->documentService->updateDocument($data, ['id' => $id]);
         $data['query'] = $request->query();
 
-        if ($category['success'] == true) {
-            return $this->redirectForm($data)->with('success', $category['message']);
+        if ($document['success'] == true) {
+            return $this->redirectForm($data)->with('success', $document['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $document['message']);
     }
 
     public function publish($id)
     {
-        $category = $this->documentService->statusCategory('publish', ['id' => $id]);
+        $document = $this->documentService->statusDocument('publish', ['id' => $id]);
 
-        if ($category['success'] == true) {
-            return back()->with('success', $category['message']);
+        if ($document['success'] == true) {
+            return back()->with('success', $document['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $document['message']);
     }
 
     public function approved($id)
     {
-        $category = $this->documentService->statusCategory('approved', ['id' => $id]);
+        $document = $this->documentService->statusDocument('approved', ['id' => $id]);
 
-        if ($category['success'] == true) {
-            return back()->with('success', $category['message']);
+        if ($document['success'] == true) {
+            return back()->with('success', $document['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $document['message']);
+    }
+
+    public function sort(Request $request)
+    {
+        $i = 0;
+
+        foreach ($request->datas as $value) {
+            $i++;
+            $this->documentService->sortDocument(['id' => $value], $i);
+        }
     }
 
     public function position(Request $request, $id, $position)
     {
-        $category = $this->documentService->positionCategory(['id' => $id], $position);
+        $document = $this->documentService->positionDocument(['id' => $id], $position);
 
-        if ($category['success'] == true) {
-            return back()->with('success', $category['message']);
+        if ($document['success'] == true) {
+            return back()->with('success', $document['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $document['message']);
     }
 
     public function softDelete($id)
     {
-        $category = $this->documentService->trashCategory(['id' => $id]);
+        $document = $this->documentService->trashDocument(['id' => $id]);
 
-        return $category;
+        return $document;
     }
 
     public function permanentDelete(Request $request, $id)
     {
-        $category = $this->documentService->deleteCategory($request, ['id' => $id]);
+        $document = $this->documentService->deleteDocument($request, ['id' => $id]);
 
-        return $category;
+        return $document;
     }
 
     public function restore($id)
     {
-        $category = $this->documentService->restoreCategory(['id' => $id]);
+        $document = $this->documentService->restoreDocument(['id' => $id]);
 
-        if ($category['success'] == true) {
-            return redirect()->back()->with('success', $category['message']);
+        if ($document['success'] == true) {
+            return redirect()->back()->with('success', $document['message']);
         }
 
-        return redirect()->back()->with('failed', $category['message']);
+        return redirect()->back()->with('failed', $document['message']);
     }
 
     private function redirectForm($data)
     {
-        $redir = redirect()->route('document.category.index', $data['query']);
+        $redir = redirect()->route('document.index', $data['query']);
         if ($data['action'] == 'back') {
             $redir = back();
         }
@@ -240,25 +252,30 @@ class DocumentCategoryController extends Controller
      */
     public function list(Request $request)
     {
+        if (config('cms.module.document.list_view') == false)
+            return redirect()->route('home');
+
         //data
         $data['banner'] = $this->configService->getConfigFile('banner_default');
         $limit = $this->configService->getConfigValue('content_limit');
-        $data['categories'] = $this->documentService->getCategoryList([
+
+        // category
+        $data['categories'] = $this->documentService->getDocumentList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['cat_no'] = $data['categories']->firstItem();
+        ], true, $limit, false, [], 
+            config('cms.module.document.ordering'));
+        $data['no_categories'] = $data['categories']->firstItem();
         $data['categories']->withQueryString();
 
+        // file
         $data['files'] = $this->documentService->getFileList([
             'publish' => 1,
             'approved' => 1
         ], true, $limit, false, [], [
             'position' => 'ASC'
         ]);
-        $data['file_no'] = $data['files']->firstItem();
+        $data['no_files'] = $data['files']->firstItem();
         $data['files']->withQueryString();
 
         return view('frontend.documents.list', compact('data'), [
@@ -271,16 +288,16 @@ class DocumentCategoryController extends Controller
 
     public function read(Request $request)
     {
-        $slug = $request->route('slugCategory');
+        $slug = $request->route('slugDocument');
 
-        $data['read'] = $this->documentService->getCategory(['slug' => $slug]);
+        $data['read'] = $this->documentService->getDocument(['slug' => $slug]);
 
         //check
         if (empty($data['read']) || $data['read']['publish'] == 0 || $data['read']['approved'] != 1) {
             return redirect()->route('home');
         }
 
-        if ($data['read']['config']['is_detail'] == 0) {
+        if ($data['read']['detail'] == 0) {
             return redirect()->route('home');
         }
 
@@ -288,33 +305,31 @@ class DocumentCategoryController extends Controller
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
 
-        $this->documentService->recordCategoryHits(['id' => $data['read']['id']]);
-
-        //limit
-        $filePerpage = $this->configService->getConfigValue('content_limit');
-        if ($data['read']['file_perpage'] > 0) {
-            $filePerpage = $data['read']['file_perpage'];
+        // filtring
+        $keyword = $request->input('keyword', '');
+        if ($keyword != '') {
+            $filter['q'] = $keyword;
         }
 
+        $filter['document_id'] = $data['read']['id'];
+        $filter['publish'] = 1;
+        $filter['approved'] = 1;
+
         //data
-        $data['files'] = $this->documentService->getFileList([
-            'document_category_id' => $data['read']['id'],
-            'publish' => 1,
-            'approved' => 1
-        ], true, $filePerpage, false, [], [
-            'position' => 'ASC'
-        ]);
-        $data['no'] = $data['files']->firstItem();
-        $data['files']->withQueryString();
+        $data['files'] = $this->documentService->getFileList($filter, 
+            $data['read']['config']['paginate_file'], $data['read']['config']['file_limit'], false,
+        [], [$data['read']['config']['file_order_by'] => $data['read']['config']['file_order_type']]);
+        if ($data['read']['config']['paginate_file'] == true) {
+            $data['no_files'] = $data['files']->firstItem();
+            $data['files']->withQueryString();
+        }
 
         $data['fields'] = $data['read']['custom_fields'];
-
         $data['creator'] = $data['read']['createBy']['name'];
-        $data['banner'] = $data['read']->bannerSrc();
+        $data['banner'] = $data['read']['banner_src'];
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-
         $data['meta_description'] = $this->configService->getConfigValue('meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
@@ -336,6 +351,9 @@ class DocumentCategoryController extends Controller
         if (!empty($data['read']['template_id'])) {
             $blade = 'custom.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
         }
+
+        // record hits
+        $this->documentService->recordDocumentHits(['id' => $data['read']['id']]);
 
         return view('frontend.documents.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('name'),

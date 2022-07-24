@@ -96,6 +96,7 @@ class TemplateController extends Controller
     public function store(TemplateRequest $request)
     {
         $data = $request->all();
+        $data['locked'] = (bool)$request->locked;
         $template = $this->templateService->store($data);
         $data['query'] = $request->query();
 
@@ -128,6 +129,7 @@ class TemplateController extends Controller
     public function update(TemplateRequest $request, $id)
     {
         $data = $request->all();
+        $data['locked'] = (bool)$request->locked;
         $template = $this->templateService->update($data, ['id' => $id]);
         $data['query'] = $request->query();
 

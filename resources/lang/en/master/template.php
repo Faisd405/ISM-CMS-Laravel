@@ -13,7 +13,7 @@ return [
     'placeholder' => [
         'field1' => 'Enter nama',
         'field2' => '',
-        'field3' => 'Enter filename',
+        'field3' => 'Example : template-view',
     ],
     'alert' => [
         'file_exist' => 'Filename already exists'

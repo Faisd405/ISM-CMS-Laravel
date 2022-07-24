@@ -75,7 +75,7 @@
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th>@lang('module/document.category.label.field1')</th>
+                            <th>@lang('module/link.label.field1')</th>
                             <th class="text-center" style="width: 80px;">@lang('global.hits')</th>
                             <th class="text-center" style="width: 100px;">@lang('global.status')</th>
                             <th style="width: 230px;">@lang('global.deleted')</th>
@@ -83,7 +83,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($data['categories'] as $item)
+                        @forelse ($data['links'] as $item)
                         <tr>
                             <td>{{ $data['no']++ }}</td>
                             <td>
@@ -103,7 +103,7 @@
                             <td class="text-center">
                                 <button type="button" class="btn btn-success icon-btn btn-sm restore" onclick="$(this).find('#form-restore').submit();" title="@lang('global.restore')" data-id="{{ $item['id'] }}">
                                     <i class="las la-trash-restore-alt"></i>
-                                    <form action="{{ route('document.category.restore', ['id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
+                                    <form action="{{ route('link.restore', ['id' => $item['id']])}}" method="POST" id="form-restore-{{ $item['id'] }}">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -137,11 +137,11 @@
                 <div class="card-footer">
                     <div class="row align-items-center">
                         <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['categories']->firstItem() }}</strong> - <strong>{{ $data['categories']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['categories']->total() }}</strong>
+                            @lang('pagination.showing') : <strong>{{ $data['links']->firstItem() }}</strong> - <strong>{{ $data['links']->lastItem() }}</strong> @lang('pagination.of')
+                            <strong>{{ $data['links']->total() }}</strong>
                         </div>
                         <div class="col-lg-6 m--align-right">
-                            {{ $data['categories']->onEachSide(1)->links() }}
+                            {{ $data['links']->onEachSide(1)->links() }}
                         </div>
                     </div>
                 </div>
@@ -177,7 +177,7 @@
                 cancelButtonText: "@lang('global.alert.delete_btn_cancel')",
                 preConfirm: () => {
                     return $.ajax({
-                        url: '/admin/document/category/' + id + '/permanent?is_trash=yes',
+                        url: '/admin/link/' + id + '/permanent?is_trash=yes',
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -199,7 +199,7 @@
                 if (response.value.success) {
                     Swal.fire({
                         type: 'success',
-                        text: "{{ __('global.alert.delete_success', ['attribute' => __('module/document.category.caption')]) }}"
+                        text: "{{ __('global.alert.delete_success', ['attribute' => __('module/link.caption')]) }}"
                     }).then(() => {
                         window.location.reload();
                     })

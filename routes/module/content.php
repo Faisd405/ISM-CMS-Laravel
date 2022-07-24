@@ -16,7 +16,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_sections');
         Route::get('/trash', [ContentSectionController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
         Route::get('/create', [ContentSectionController::class, 'create'])
             ->name('create')
@@ -35,7 +35,10 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_section_update');
         Route::put('/{id}/approved', [ContentSectionController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
+        Route::post('/sort', [ContentSectionController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:content_section_update');
         Route::put('/{id}/position/{position}', [ContentSectionController::class, 'position'])
             ->name('position')
             ->middleware('permission:content_section_update');
@@ -44,10 +47,10 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_section_delete');
         Route::delete('/{id}/permanent', [ContentSectionController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [ContentSectionController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
 
     });
 
@@ -59,7 +62,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_categories');
         Route::get('/trash', [ContentCategoryController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         
         Route::get('/create', [ContentCategoryController::class, 'create'])
             ->name('create')
@@ -78,7 +81,10 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_category_update');
         Route::put('/{id}/approved', [ContentCategoryController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:developer|super|support|admin');
+        Route::post('/sort', [ContentCategoryController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:content_category_update');
         Route::put('/{id}/position/{position}', [ContentCategoryController::class, 'position'])
             ->name('position')
             ->middleware('permission:content_category_update');
@@ -87,10 +93,10 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_category_delete');
         Route::delete('/{id}/permanent', [ContentCategoryController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [ContentCategoryController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
             
     });
 
@@ -102,7 +108,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_posts');
         Route::get('/trash', [ContentPostController::class, 'trash'])
             ->name('trash')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         
         Route::get('/create', [ContentPostController::class, 'create'])
             ->name('create')
@@ -124,7 +130,10 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_post_update');
         Route::put('/{id}/approved', [ContentPostController::class, 'approved'])
             ->name('approved')
-            ->middleware('role:super|support|admin');
+            ->middleware('role:developer|super|support|admin');
+        Route::post('/sort', [ContentPostController::class, 'sort'])
+            ->name('sort')
+            ->middleware('permission:content_post_update');
         Route::put('/{id}/position/{position}', [ContentPostController::class, 'position'])
             ->name('position')
             ->middleware('permission:content_post_update');
@@ -133,10 +142,10 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
             ->middleware('permission:content_post_delete');
         Route::delete('/{id}/permanent', [ContentPostController::class, 'permanentDelete'])
             ->name('delete.permanent')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
         Route::put('/{id}/restore', [ContentPostController::class, 'restore'])
             ->name('restore')
-            ->middleware('role:super');
+            ->middleware('role:developer|super');
             
     });
 

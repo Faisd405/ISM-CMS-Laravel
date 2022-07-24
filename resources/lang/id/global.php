@@ -44,6 +44,7 @@ return [
     'restore' => 'Kembalikan',
     'remove' => 'Hapus',
     'detail' => 'Detail',
+    'detail_info' => 'Memiliki halaman detail',
     'upload' => 'Upload',
     'download' => 'Download',
     'preview' => 'Preview',
@@ -52,7 +53,7 @@ return [
     'template' => 'Template',
     'seo' => 'SEO',
     'meta_title' => 'Meta Title',
-    'meta_description' => 'Meta Dscription',
+    'meta_description' => 'Meta Description',
     'meta_keywords' => 'Meta Keywords',
 
     //label
@@ -67,6 +68,7 @@ return [
     'approved' => 'Approved',
     'reject' => 'Reject',
     'locked' => 'Locked',
+    'locked_info' => 'Data tidak bisa dihapus (dikunci)',
     'position' => 'Posisi',
     'action' => 'Aksi',
     'select' => 'Pilih',
