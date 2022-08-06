@@ -1,14 +1,18 @@
 @if ($paginator->hasPages())
     <nav>
-        <ul class="pagination pagination-sm">
+        <ul class="pagination pagination-sm justify-content-center">
             {{-- Previous Page Link --}}
             @if ($paginator->onFirstPage())
                 <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">
-                    <span class="page-link" aria-hidden="true">&lsaquo;</span>
+                    <a class="page-link" href="javascript:void(0)">
+                        <i class="fi fi-rr-arrow-small-left"></i>
+                    </a>
                 </li>
             @else
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="@lang('pagination.previous')">&lsaquo;</a>
+                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="@lang('pagination.previous')">
+                        <i class="fi fi-rr-arrow-small-left"></i>
+                    </a>
                 </li>
             @endif
 
@@ -34,11 +38,15 @@
             {{-- Next Page Link --}}
             @if ($paginator->hasMorePages())
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="@lang('pagination.next')">&rsaquo;</a>
+                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="@lang('pagination.next')">
+                        <i class="fi fi-rr-arrow-small-right"></i>
+                    </a>
                 </li>
             @else
                 <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.next')">
-                    <span class="page-link" aria-hidden="true">&rsaquo;</span>
+                    <a class="page-link" href="javascript:void(0)">
+                        <i class="fi fi-rr-arrow-small-right"></i>
+                    </a>
                 </li>
             @endif
         </ul>

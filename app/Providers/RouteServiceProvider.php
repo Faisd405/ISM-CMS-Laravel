@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Feature\Language;
+use App\Services\Feature\ConfigurationService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +55,9 @@ class RouteServiceProvider extends ServiceProvider
                         config('cms.module.feature.language.listLocale'))
             ]);
         }
+
+        // set config cache
+        App::make(ConfigurationService::class)->setConfigCache();
 
         $this->configureRateLimiting();
 

@@ -20,59 +20,56 @@
                 @isset ($data['template'])
                     @method('PUT')
                 @endisset
+
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/template.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/template.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
-                            value="{{ !isset($data['template']) ? old('name') : old('name', $data['template']['name']) }}" 
-                            placeholder="@lang('master/template.placeholder.field1')" autofocus>
+                            <input type="text" class="form-control text-bolder @error('name') is-invalid @enderror" name="name" 
+                                value="{{ !isset($data['template']) ? old('name') : old('name', $data['template']['name']) }}" 
+                                placeholder="@lang('master/template.placeholder.name')" autofocus>
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>
                     @if (!isset($data['template']))
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('master/template.label.field2') <i class="text-danger">*</i></label>
+                            <label class="col-form-label text-sm-right">@lang('master/template.label.module') <i class="text-danger">*</i></label>
                         </div>
                         <div class="col-md-10">
-                        <select id="module" class="select2 show-tick @error('module') is-invalid @enderror" name="module" data-style="btn-default">
-                            <option value="" disabled selected>@lang('global.select')</option>
-                            @foreach (config('cms.module.master.template.mod') as $key => $val)
-                            <option value="{{ $key }}">{{ Str::replace('_', ' ', Str::upper($key)) }}</option>
-                            @endforeach
-                        </select>
-                        @error('module')
-                        <label class="error jquery-validation-error small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
-                        @enderror
+                            <select id="module" class="select2 show-tick @error('module') is-invalid @enderror" name="module" data-style="btn-default">
+                                <option value="" disabled selected>@lang('global.select')</option>
+                                @foreach (config('cms.module.master.template.mod') as $key => $val)
+                                <option value="{{ $key }}">{{ Str::replace('_', ' ', Str::upper($key)) }}</option>
+                                @endforeach
+                            </select>
+                            @include('components.field-error', ['field' => 'module'])
                         </div>
                     </div>
                     <div class="form-group row" id="template-type">
                         <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('global.type') <i class="text-danger">*</i></label>
+                            <label class="col-form-label text-sm-right">@lang('global.type') <i class="text-danger">*</i></label>
                         </div>
                         <div class="col-md-10">
-                            <select id="type" class="custom-select" name="type" data-style="btn-default">
+                            <select id="type" class="form-control" name="type" data-style="btn-default">
     
                             </select>
-                            @error('type')
-                            <label class="error jquery-validation-error small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
-                            @enderror
+                            @include('components.field-error', ['field' => 'type'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/template.label.field4') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/template.label.filename') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('filename') is-invalid @enderror" name="filename" value="{{ old('filename') }}" 
-                            placeholder="@lang('master/template.placeholder.field3')">
-                        @include('components.field-error', ['field' => 'filename'])
-                        <small class="form-text text-muted">@lang('global.lower_case')</small>
+                            <input type="text" class="form-control @error('filename') is-invalid @enderror" name="filename" value="{{ old('filename') }}" 
+                                placeholder="@lang('master/template.placeholder.filename')">
+                            @include('components.field-error', ['field' => 'filename'])
+                            <small class="form-text">@lang('global.lower_case')</small>
                         </div>
                     </div>
                     @endif
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                            <label class="col-form-label text-sm-right">@lang('global.locked')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -80,7 +77,7 @@
                                 {{ !isset($data['template']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['template']['locked']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            <small class="form-text">@lang('global.locked_info')</small>
                         </div>
                     </div>
                     <div class="form-group row" style="display: none;">
@@ -90,16 +87,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['template']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['template']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['template']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['template']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['template']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['template']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['template']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['template']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -145,7 +147,7 @@
 
 @if(!Auth::user()->hasRole('developer|super'))
 <script>
-  $('.hide-form').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 @endsection

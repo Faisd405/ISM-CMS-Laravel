@@ -31,7 +31,7 @@ class BannerRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/banner.label.field1'),
+            'name_'.config('cms.module.feature.language.default') => __('module/banner.label.name'),
         ];
     }
 }

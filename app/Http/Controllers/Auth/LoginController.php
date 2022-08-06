@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginBackendRequest;
 use App\Http\Requests\Auth\LoginFrontendRequest;
-use App\Models\Feature\Configuration;
 use App\Services\UserService;
 use Exception;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -67,10 +66,12 @@ class LoginController extends Controller
             if ($login['success'] == true) {
 
                 if ($totalFailed > 0)
-                    $this->userService->getLoginFailedList([
+                    foreach ($this->userService->getLoginFailedList([
                         'ip_address' => $request->ip(), 
                         'user_type' => 0
-                    ], false)->delete();
+                    ], false) as $key => $value) {
+                        $value->delete();
+                    }
 
                 return redirect()->route('dashboard')->with('success', $login['message']);
 
@@ -88,7 +89,7 @@ class LoginController extends Controller
                     if ($totalFailed == ($totalLock-1)) {
                 
                         //--- Email Developer
-                        $dev = Configuration::value('system_email');
+                        $dev = config('cmsConfig.system_email');
                         $data = [
                             'title' => __('mail.login_failed.title'),
                             'ip_address' => $request->ip(),
@@ -148,7 +149,10 @@ class LoginController extends Controller
         try {
             
             $lock = config('cms.module.auth.login.lock_failed');
-            $totalFailed = $this->userService->getLoginFailedList(['ip_address' => $request->ip(), 'user_type' => 1], false)->count();
+            $totalFailed = $this->userService->getLoginFailedList([
+                'ip_address' => $request->ip(), 
+                'user_type' => 1
+            ], false)->count();
             $totalLock = config('cms.module.auth.login.frontend.lock_total');
 
             $data['email'] = $request->username;
@@ -159,10 +163,12 @@ class LoginController extends Controller
             if ($login['success'] == true) {
 
                 if ($totalFailed > 0)
-                    $this->userService->getLoginFailedList([
+                    foreach ($this->userService->getLoginFailedList([
                         'ip_address' => $request->ip(), 
                         'user_type' => 1
-                    ], false)->delete();
+                    ], false) as $key => $value) {
+                        $value->delete();
+                    }
                 
                 return redirect()->route('home')->with('success', $login['message']);
             } else {
@@ -179,7 +185,7 @@ class LoginController extends Controller
                     if ($totalFailed == ($totalLock-1)) {
                 
                         //--- Email Developer
-                        $dev = Configuration::value('system_email');
+                        $dev = config('cmsConfig.system_email');
                         $data = [
                             'title' => __('mail.login_failed.title'),
                             'ip_address' => $request->ip(),

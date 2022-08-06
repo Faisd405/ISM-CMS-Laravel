@@ -87,6 +87,7 @@ return [
     'separated_comma' => 'Dipisahkan dengan koma (,)',
     'view_detail' => 'Lihat Detail',
     'lower_case' => 'Disarankan menggunakan huruf kecil',
+    'approval_info' => 'Membutuhkan persetujuan',
 
     // form module
     'setting' => 'Setting',

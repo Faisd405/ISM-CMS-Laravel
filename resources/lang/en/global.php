@@ -87,6 +87,7 @@ return [
     'separated_comma' => 'Separated by comma (,)',
     'view_detail' => 'View Details',
     'lower_case' => 'It is recommended to use lowercase',
+    'approval_info' => 'Requires approval',
 
     // form module
     'setting' => 'Setting',

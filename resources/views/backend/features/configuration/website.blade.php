@@ -2,7 +2,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/pages/account.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/backend/fancybox/fancybox.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/fancybox/fancybox.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.css') }}">
 @endsection
 
@@ -16,42 +16,42 @@
                     <div class="list-group list-group-flush account-settings-links">
                         @if ($data['upload']->count() > 0)
                         <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'upload') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'upload']) }}" 
-                            title="@lang('feature/configuration.website.label.tabs1')">
-                            @lang('feature/configuration.website.label.tabs1')
+                            title="@lang('feature/configuration.website.label.upload')">
+                            @lang('feature/configuration.website.label.upload')
                         </a>
                         @endif
                         @if ($data['general']->count() > 0)
                         <a class="list-group-item list-group-item-action {{ empty(Request::get('tab')) ? 'active' : '' }}" href="{{ route('configuration.website') }}" 
-                            title="@lang('feature/configuration.website.label.tabs2')">
-                            @lang('feature/configuration.website.label.tabs2')
+                            title="@lang('feature/configuration.website.label.general')">
+                            @lang('feature/configuration.website.label.general')
                         </a>
                         @endif
                         @if ($data['meta_data']->count() > 0)
                         <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'meta-data') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'meta-data']) }}"
-                            title="@lang('feature/configuration.website.label.tabs3')">
-                            @lang('feature/configuration.website.label.tabs3')
+                            title="@lang('feature/configuration.website.label.seo')">
+                            @lang('feature/configuration.website.label.seo')
                         </a>
                         @endif
                         @if ($data['social_media']->count() > 0)
                         <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'social-media') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'social-media']) }}"
-                            title="@lang('feature/configuration.website.label.tabs4')">
-                            @lang('feature/configuration.website.label.tabs4')
+                            title="@lang('feature/configuration.website.label.social_media')">
+                            @lang('feature/configuration.website.label.social_media')
                         </a>
                         @endif
                         @if ($data['notification']->count() > 0)
                         <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'notification') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'notification']) }}"
-                            title="@lang('feature/configuration.website.label.tabs5')">
-                            @lang('feature/configuration.website.label.tabs5')
+                            title="@lang('feature/configuration.website.label.notification')">
+                            @lang('feature/configuration.website.label.notification')
                         </a>
                         @endif
                         @role ('developer|super')
                         <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'dev-only') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'dev-only']) }}"
-                            title="@lang('feature/configuration.website.label.tabs100')">
-                            @lang('feature/configuration.website.label.tabs100')
+                            title="@lang('feature/configuration.website.label.developer')">
+                            @lang('feature/configuration.website.label.developer')
                         </a>
                         <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'set-config') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'set-config']) }}"
-                            title="@lang('feature/configuration.website.label.tabs_set')">
-                            @lang('feature/configuration.website.label.tabs_set')
+                            title="@lang('feature/configuration.website.label.set')">
+                            @lang('feature/configuration.website.label.set')
                         </a>
                         @endrole
                     </div>
@@ -73,37 +73,39 @@
                                         method="POST" enctype="multipart/form-data">
                                         @csrf
                                         @method('PUT')
-                                        <label class="btn btn-outline-primary btn-sm">
-                                            {{ $upload['label'] }}
-                                            <input type="hidden" name="old_{{ $upload['name'] }}" value="{{ $upload['value'] }}">
-                                            <input type="file" id="{{ $upload['name'] }}" name="{{ $upload['name'] }}" class="account-settings-fileinput">
-                                        </label>
-                                        @if ($upload['value'] != null)
-                                        <button type="button" class="ml-2 btn btn-danger icon-btn btn-sm swal-delete"
-                                            data-name="{{ $upload['name'] }}" title="@lang('global.delete_attr', [
-                                                'attribute' => __('feature/configuration.website.label.tabs1')
-                                            ])">
-                                            <i class="las la-trash-alt"></i>
-                                        </button>
-                                        @endif
+                                        <div class="box-btn">
+                                            <label class="btn btn-outline-main btn-sm">
+                                                {{ $upload['label'] }}
+                                                <input type="hidden" name="old_{{ $upload['name'] }}" value="{{ $upload['value'] }}">
+                                                <input type="file" id="{{ $upload['name'] }}" name="{{ $upload['name'] }}" class="account-settings-fileinput">
+                                            </label>
+                                            @if ($upload['value'] != null)
+                                            <button type="button" class="btn icon-btn btn-sm btn-danger swal-delete"
+                                                data-name="{{ $upload['name'] }}" title="@lang('global.delete_attr', [
+                                                    'attribute' => __('feature/configuration.website.label.tabs1')
+                                                ])">
+                                                <i class="fi fi-rr-cross-circle"></i>
+                                            </button>
+                                            @endif
+                                        </div>
                                     </form>
 
                                     @error($upload['name'])
                                     <div class="small mt-1" style="color:#d9534f;">{{ $message }}</div>
                                     @enderror
-                                    <small class="form-text text-light small mt-1">
-                                        [<span class="text-muted">@lang('global.type_file') : <strong>{{ Str::upper(config('cms.files.config.'.$upload['name'].'.mimes')) }}</strong></span>] -
+                                    <div class="text-light small mt-1">
+                                        Allowed : <strong>{{ Str::upper(config('cms.files.config.'.$upload['name'].'.mimes')) }}</strong></span>.
                                         @if(config('cms.files.config.'.$upload['name'].'.pixel'))
-                                        [<span class="text-muted">Pixel : <strong>{{ config('cms.files.config.'.$upload['name'].'.pixel') }}</strong></span>] - 
+                                        Pixel : <strong>{{ config('cms.files.config.'.$upload['name'].'.pixel') }}</strong>. 
                                         @endif
-                                        [<span class="text-muted">@lang('global.max_upload') : <strong>{{ config('cms.files.config.'.$upload['name'].'.size') }}</strong></span>]
-                                    </small>
+                                        Max Upload : <strong>{{ config('cms.files.config.'.$upload['name'].'.size') }}</strong>
+                                    </div>
                                 </div>
                             </div>
                             @endforeach
                         </div>
                         @endif
-    
+
                         @if ($data['general']->count() > 0)
                         {{-- General --}}
                         <div class="tab-pane fade {{ empty(Request::get('tab')) ? 'show active' : '' }}">
@@ -114,14 +116,14 @@
                                     @foreach ($data['general'] as $general)
                                     <div class="form-group">
                                         <label class="form-label">{{ $general['label'] }}</label>
-                                        <textarea class="form-control mb-1" name="name[{{ $general['name'] }}]" 
+                                        <textarea class="form-control text-bolder" name="name[{{ $general['name'] }}]" 
                                             placeholder="{{ Str::replace('_', ' ', $general['name']) }}">{!! old($general['name'], $general['value']) !!}</textarea>
                                     </div>
                                     @endforeach
                                     <hr>
                                     <div class="text-center mt-3">
-                                        <button type="submit" class="btn btn-primary" title="@lang('global.save_change')">
-                                            <i class="las la-save"></i> @lang('global.save_change')
+                                        <button type="submit" class="btn btn-main w-icon" title="@lang('global.save_change')">
+                                            <i class="fi fi-rr-disk"></i> <span>@lang('global.save_change')</span>
                                         </button>
                                     </div>
                                 </div>
@@ -145,8 +147,8 @@
                                     @endforeach
                                     <hr>
                                     <div class="text-center mt-3">
-                                        <button type="submit" class="btn btn-primary" title="@lang('global.save_change')">
-                                            <i class="las la-save"></i> @lang('global.save_change')
+                                        <button type="submit" class="btn btn-main w-icon" title="@lang('global.save_change')">
+                                            <i class="fi fi-rr-disk"></i> <span>@lang('global.save_change')</span>
                                         </button>
                                     </div>
                                 </div>
@@ -170,8 +172,8 @@
                                     @endforeach
                                     <hr>
                                     <div class="text-center mt-3">
-                                        <button type="submit" class="btn btn-primary" title="@lang('global.save_change')">
-                                            <i class="las la-save"></i> @lang('global.save_change')
+                                        <button type="submit" class="btn btn-main w-icon" title="@lang('global.save_change')">
+                                            <i class="fi fi-rr-disk"></i> <span>@lang('global.save_change')</span>
                                         </button>
                                     </div>
                                 </div>
@@ -180,7 +182,7 @@
                         @endif
 
                         @if ($data['notification']->count() > 0)
-                        {{-- Socmed --}}
+                        {{-- Notif --}}
                         <div class="tab-pane fade {{ (Request::get('tab') == 'notification') ? 'show active' : '' }}">
                             <form action="{{ route('configuration.website.update') }}" method="POST">
                                 @csrf
@@ -189,7 +191,7 @@
                                     @foreach ($data['notification'] as $notif)
                                     <div class="form-group">
                                         <label class="form-label">{{ $notif['label'] }}</label>
-                                        <select class="custom-select" name="name[{{ $notif['name'] }}]">
+                                        <select class="form-control" name="name[{{ $notif['name'] }}]">
                                             @foreach (__('global.label.active') as $key => $value)
                                             <option value="{{ $key }}" {{ $notif['value'] == $key ? 'selected' : '' }} 
                                                 title="{{ $key }}">{{ $value}}</option>
@@ -199,9 +201,11 @@
                                     @endforeach
                                     <hr>
                                     <div class="text-center mt-3">
-                                        <button type="submit" class="btn btn-primary" title="@lang('global.save_change')">
-                                            <i class="las la-save"></i> @lang('global.save_change')
-                                        </button>
+                                        <div class="text-center mt-3">
+                                            <button type="submit" class="btn btn-main w-icon" title="@lang('global.save_change')">
+                                                <i class="fi fi-rr-disk"></i> <span>@lang('global.save_change')</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -218,8 +222,8 @@
                                     @foreach ($data['dev_only'] as $dev)
                                     <div class="form-group">
                                         <label class="form-label">{{ $dev['label'] }}</label>
-                                        @if ($dev['name'] == 'maintenance')
-                                        <select class="custom-select" name="name[{{ $dev['name'] }}]">
+                                        @if ($dev['name'] == 'maintenance' || $dev['name'] == 'pwa')
+                                        <select class="form-control" name="name[{{ $dev['name'] }}]">
                                             @foreach (__('global.label.optional') as $key => $value)
                                             <option value="{{ $key }}" {{ $dev['value'] == $key ? 'selected' : '' }} 
                                                 title="{{ $key }}">{{ $value}}</option>
@@ -232,24 +236,16 @@
                                                 title="{{ $value['iso_codes'] }}">{{ $value['name'] }}</option>
                                             @endforeach
                                         </select> --}}
-                                        @elseif ($dev['name'] == 'pwa')
-                                        <select class="custom-select" name="name[{{ $dev['name'] }}]">
-                                            @foreach (__('global.label.optional') as $key => $value)
-                                                <option value="{{ $key }}" {{ $dev['value'] == $key ? 'selected' : '' }}>
-                                                    {{ $value }}
-                                                </option>
-                                            @endforeach
-                                        </select>
                                         @else
-                                        <textarea class="form-control mb-1" name="name[{{ $dev['name'] }}]" 
+                                        <textarea class="form-control text-bolder" name="name[{{ $dev['name'] }}]" 
                                             placeholder="{{ Str::replace('_', ' ', $dev['name']) }}">{!! old($dev['name'], $dev['value']) !!}</textarea> 
                                         @endif
                                     </div>
                                     @endforeach
                                     <hr>
                                     <div class="text-center mt-3">
-                                        <button type="submit" class="btn btn-primary" title="@lang('global.save_change')">
-                                            <i class="las la-save"></i> @lang('global.save_change')
+                                        <button type="submit" class="btn btn-main w-icon" title="@lang('global.save_change')">
+                                            <i class="fi fi-rr-disk"></i> <span>@lang('global.save_change')</span>
                                         </button>
                                     </div>
                                 </div>
@@ -263,11 +259,11 @@
                                 @method('PUT')
                                 <div class="card-body" style="overflow: scroll; height: 600px;">
                                     @foreach ($data['all_config'] as $all)
-                                    <h6 class="text-primary">{{ $loop->iteration.' '.Str::upper(str_replace('_', ' ', $all['name'])) }}</h6>
+                                    <h6 class="text-main">{{ $loop->iteration.'. '.Str::upper(str_replace('_', ' ', $all['name'])) }}</h6>
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
                                             <label class="form-label">Label</label>
-                                            <input type="text" class="form-control" name="label[{{ $all['name'] }}]" 
+                                            <input type="text" class="form-control text-bolder" name="label[{{ $all['name'] }}]" 
                                                 value="{!! old($all['name'], $all['label']) !!}">
                                         </div>
                                         <div class="form-group col-md-2">
@@ -318,11 +314,13 @@
                                         @if ($all['locked'] == 0)
                                         <div class="form-group col-md-2">
                                             <label class="form-label">Delete</label> <br>
-                                            <button type="button" class="ml-2 btn btn-danger icon-btn btn-sm swal-delete-config"
-                                                data-name="{{ $all['name'] }}" title="@lang('global.delete_attr', [
+                                            <button type="button" class="ml-2 btn icon-btn btn-sm btn-danger swal-delete-config"
+                                                data-name="{{ $all['name'] }}" 
+                                                data-toggle="tooltip" data-placement="bottom"
+                                                data-original-title="@lang('global.delete_attr', [
                                                     'attribute' => __('feature/configuration.caption')
                                                 ])">
-                                                <i class="las la-trash-alt"></i>
+                                                <i class="fi fi-rr-trash"></i>
                                             </button>
                                         </div>
                                         @endif
@@ -331,18 +329,18 @@
                                 </div>
                                 <hr>
                                 <div class="text-center mt-3 mb-4">
-                                    <button type="button" class="btn btn-success mr-2" data-toggle="modal" data-target="#modals-add"
+                                    <button type="button" class="btn btn-success w-icon mr-2" data-toggle="modal" data-target="#modals-add"
                                         title="@lang('global.add_new')">
-                                        <i class="las la-plus"></i> @lang('global.add_new')
+                                        <i class="fi fi-rr-add"></i> <span>@lang('global.add_new')</span>
                                     </button>
-                                    <button type="submit" class="btn btn-primary" title="@lang('global.save_change')">
-                                        <i class="las la-save"></i> @lang('global.save_change')
+                                    <button type="submit" class="btn btn-main w-icon" title="@lang('global.save_change')">
+                                        <i class="fi fi-rr-disk"></i> <span>@lang('global.save_change')</span>
                                     </button>
                                 </div>
                             </form>
                         </div>
                         @endrole
-    
+                        
                     </div>
                 </div>
             </div>
@@ -383,7 +381,7 @@
                 <div class="form-row">
                     <div class="form-group col">
                         <label class="form-label">Name / Key <i class="text-danger">*</i></label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}">
+                        <input type="text" class="form-control text-bolder @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}">
                         @include('components.field-error', ['field' => 'name'])
                         <small class="text-form text-muted">@lang('global.lower_case')</small>
                     </div>
@@ -391,14 +389,14 @@
                 <div class="form-row">
                     <div class="form-group col">
                         <label class="form-label">Label <i class="text-danger">*</i></label>
-                        <input type="text" class="form-control @error('label') is-invalid @enderror" name="label" value="{{ old('label') }}">
+                        <input type="text" class="form-control text-bolder @error('label') is-invalid @enderror" name="label" value="{{ old('label') }}">
                         @include('components.field-error', ['field' => 'label'])
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col">
                         <label class="form-label">Value</label>
-                        <textarea class="form-control @error('value') is-invalid @enderror" name="value">{{ old('vale') }}</textarea>
+                        <textarea class="form-control text-bolder @error('value') is-invalid @enderror" name="value">{{ old('vale') }}</textarea>
                         @include('components.field-error', ['field' => 'value'])
                     </div>
                 </div>
@@ -415,7 +413,7 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col mb-0">
-                        <label class="form-label">Upload</label> <br>
+                        <label class="form-label">Upload</label>
                         <label class="switcher switcher-success">
                             <input type="checkbox" class="switcher-input" name="is_upload" value="1" 
                                 {{ old('is_upload') ? 'checked' : '' }}>
@@ -430,7 +428,7 @@
                         </label>
                     </div>
                     <div class="form-group col mb-0">
-                        <label class="form-label">Show Form</label> <br>
+                        <label class="form-label">Show Form</label>
                         <label class="switcher switcher-success">
                             <input type="checkbox" class="switcher-input" name="show_form" value="1" 
                                 {{ old('show_form') ? 'checked' : '' }}>
@@ -445,7 +443,7 @@
                         </label>
                     </div>
                     <div class="form-group col mb-0">
-                        <label class="form-label">Active</label> <br>
+                        <label class="form-label">Active</label>
                         <label class="switcher switcher-success">
                             <input type="checkbox" class="switcher-input" name="active" value="1" 
                                 {{ old('active') ? 'checked' : '' }}>
@@ -462,11 +460,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" title="@lang('global.close')">
-                    <i class="las la-times"></i> @lang('global.close')
+                <button type="button" class="btn btn-default w-icon" data-dismiss="modal" title="@lang('global.close')">
+                    <i class="fi fi-rr-cross-circle"></i> <span>@lang('global.close')</span>
                 </button>
-                <button type="submit" class="btn btn-primary" title="@lang('global.save')">
-                    <i class="las la-save"></i> @lang('global.save')
+                <button type="submit" class="btn btn-main w-icon" title="@lang('global.save')">
+                    <i class="fi fi-rr-disk"></i> <span>@lang('global.save')</span>
                 </button>
             </div>
         </form>
@@ -475,7 +473,8 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('assets/backend/fancybox/fancybox.min.js') }}"></script>
+<script src="{{ asset('assets/backend/js/ui_tooltips.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/fancybox/fancybox.min.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
 @endsection
 
@@ -494,11 +493,11 @@
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
                 text: "@lang('global.alert.delete_confirm_text')",
-                type: "warning",
+                icon: "warning",
                 confirmButtonText: "@lang('global.alert.delete_btn_yes')",
                 customClass: {
                     confirmButton: "btn btn-danger btn-lg",
-                    cancelButton: "btn btn-primary btn-lg"
+                    cancelButton: "btn btn-secondary btn-lg"
                 },
                 showLoaderOnConfirm: true,
                 showCancelButton: true,
@@ -519,7 +518,7 @@
                         return response;
                     }).catch(error => {
                         swal({
-                            type: 'error',
+                            icon: 'error',
                             text: 'Error while deleting data. Error Message: ' + error
                         })
                     });
@@ -527,14 +526,14 @@
             }).then(response => {
                 if (response.value.success) {
                     Swal.fire({
-                        type: 'success',
-                        text: "@lang('global.alert.delete_success', ['attribute' => __('feature/configuration.website.label.tabs1')])"
+                        icon: 'success',
+                        text: "@lang('global.alert.delete_success', ['attribute' => __('feature/configuration.website.label.upload')])"
                     }).then(() => {
                         window.location.reload();
                     })
                 } else {
                     Swal.fire({
-                        type: 'error',
+                        icon: 'error',
                         text: response.value.message
                     }).then(() => {
                         window.location.reload();
@@ -548,11 +547,11 @@
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
                 text: "@lang('global.alert.delete_confirm_text')",
-                type: "warning",
+                icon: "warning",
                 confirmButtonText: "@lang('global.alert.delete_btn_yes')",
                 customClass: {
                     confirmButton: "btn btn-danger btn-lg",
-                    cancelButton: "btn btn-primary btn-lg"
+                    cancelButton: "btn btn-secondary btn-lg"
                 },
                 showLoaderOnConfirm: true,
                 showCancelButton: true,
@@ -573,7 +572,7 @@
                         return response;
                     }).catch(error => {
                         swal({
-                            type: 'error',
+                            icon: 'error',
                             text: 'Error while deleting data. Error Message: ' + error
                         })
                     });
@@ -581,14 +580,14 @@
             }).then(response => {
                 if (response.value.success) {
                     Swal.fire({
-                        type: 'success',
+                        icon: 'success',
                         text: "@lang('global.alert.delete_success', ['attribute' => __('feature/configuration.caption')])"
                     }).then(() => {
                         window.location.reload();
                     })
                 } else {
                     Swal.fire({
-                        type: 'error',
+                        icon: 'error',
                         text: response.value.message
                     }).then(() => {
                         window.location.reload();

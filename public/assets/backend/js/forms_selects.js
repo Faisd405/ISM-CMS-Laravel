@@ -3,32 +3,6 @@ $(function () {
   $('.selectpicker').selectpicker();
 });
 
-// Bootstrap Multiselect
-$(function() {
-  $('#bs-multiselect-1,#bs-multiselect-2,#bs-multiselect-3').multiselect();
-  $('#bs-multiselect-4').multiselect({
-    enableClickableOptGroups: true,
-    enableCollapsibleOptGroups: true,
-    enableFiltering: true,
-    includeSelectAllOption: true,
-    buttonWidth: '100%',
-    maxHeight: 400,
-    dropUp: true,
-    templates: {
-      filter: '<li class="multiselect-item filter"><div class="input-group input-group-sm"><span class="input-group-prepend"><span class="input-group-text"><i class="ion ion-ios-search"></i></span></span><input class="form-control multiselect-search" type="text"></div></li>',
-      filterClearBtn: '<span class="input-group-append"><button class="btn btn-default multiselect-clear-filter" type="button"><i class="ion ion-md-close"></i></button></span>',
-    }
-  });
-
-  // RTL
-  if ($('html').attr('dir') === 'rtl') {
-    $('#bs-multiselect-1,#bs-multiselect-2,#bs-multiselect-3,#bs-multiselect-4')
-      .next('.btn-group')
-      .find('.dropdown-menu')
-      .addClass('dropdown-menu-right');
-  }
-});
-
 // Select2
 $(function() {
   $('.select2-demo').each(function() {

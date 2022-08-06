@@ -1,0 +1,42 @@
+// Dark Mode
+.active-dark-mode {
+    // LOGIN
+    .bg-login {
+        opacity: .5 !important;
+    }
+
+    // SIDENAV
+    .layout-sidenav  {
+        // background-color: var(--c-light) !important;
+        // box-shadow: none;
+
+        .sidenav-inner {
+            .sidenav-item {
+                .sidenav-link {
+                    .sidenav-icon {
+                        background-color: var(--c-grey_17);
+                    }
+                }
+            }
+        }
+    }
+
+    // DROPDOWN
+    .dropdown-menu, .select2-dropdown {
+        background-color: var(--c-grey_12) !important;
+        color: var(--c-text-primary) !important;
+    }
+
+    // TABLE
+    table {
+        &.table {
+            &.table-striped {
+                tbody {
+                    tr:nth-of-type(odd) {
+                        background-color: var(--c-grey_15);
+                    }
+                }
+            }
+        }
+    }
+}

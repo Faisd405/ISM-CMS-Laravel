@@ -675,7 +675,7 @@ class UserSeeder extends Seeder
                 'locked' => true
             ],
             [
-                'name' => 'Admin Website',
+                'name' => 'Admin',
                 'email' => 'admin@admin.com',
                 'email_verified' => 0,
                 'email_verified_at' => null,
@@ -687,7 +687,7 @@ class UserSeeder extends Seeder
                 'locked' => true
             ],
             [
-                'name' => 'Editor Website',
+                'name' => 'Editor',
                 'email' => 'editor@editor.com',
                 'email_verified' => 0,
                 'email_verified_at' => null,

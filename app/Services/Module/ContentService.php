@@ -302,8 +302,13 @@ class ContentService
 
         try {
             
+            $value = !$section[$field];
+            if ($field == 'approved') {
+                $value = $section['approved'] == 1 ? 0 : 1;
+            }
+
             $section->update([
-                $field => !$section[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $section['updated_by'],
             ]);
 
@@ -731,8 +736,13 @@ class ContentService
 
         try {
             
+            $value = !$category[$field];
+            if ($field == 'approved') {
+                $value = $category['approved'] == 1 ? 0 : 1;
+            }
+
             $category->update([
-                $field => !$category[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
             ]);
 
@@ -1268,8 +1278,13 @@ class ContentService
 
         try {
             
+            $value = !$post[$field];
+            if ($field == 'approved') {
+                $value = $post['approved'] == 1 ? 0 : 1;
+            }
+
             $post->update([
-                $field => !$post[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $post['updated_by'],
             ]);
 

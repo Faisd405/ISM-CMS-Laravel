@@ -5,15 +5,15 @@
     <meta charset="utf-8">
     <!-- Chrome for Android theme color -->
     <meta name="theme-color" content="#0084ff"/>
-    <meta name="title" content="{!! isset($data['meta_title']) ? strip_tags($data['meta_title']) : strip_tags($config['meta_title']) !!}">
-    <meta name="description" content="{!! isset($data['meta_description']) ? strip_tags($data['meta_description']) : strip_tags($config['meta_description']) !!}">
-    <meta name="keywords" content="{!! isset($data['meta_keywords']) ? strip_tags($data['meta_keywords']) : strip_tags($config['meta_keywords']) !!}">
+    <meta name="title" content="{!! isset($data['meta_title']) ? strip_tags($data['meta_title']) : strip_tags(config('cmsConfig.meta_title')) !!}">
+    <meta name="description" content="{!! isset($data['meta_description']) ? strip_tags($data['meta_description']) : strip_tags(config('cmsConfig.meta_description')) !!}">
+    <meta name="keywords" content="{!! isset($data['meta_keywords']) ? strip_tags($data['meta_keywords']) : strip_tags(config('cmsConfig.meta_keywords')) !!}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ isset($title) ? $title.' | ' : '' }} @yield('title') {{ strip_tags($config['meta_title']) }}</title>
+    <title>{{ isset($title) ? $title.' | ' : '' }} @yield('title') {{ strip_tags(config('cmsConfig.meta_title')) }}</title>
 
     <meta name="robots" content="index,follow" />
     <meta name="googlebot" content="index,follow" />
@@ -21,40 +21,40 @@
     <meta name="author" content="4 Vision Media">
     <meta name="expires" content="never" />
 
-    <meta name="google-site-verification" content="{!! $config['google_verification'] !!}" />
-    <meta name="p:domain_verify" content="{!! $config['domain_verification'] !!}"/>
+    <meta name="google-site-verification" content="{!! config('cmsConfig.google_verification') !!}" />
+    <meta name="p:domain_verify" content="{!! config('cmsConfig.domain_verification') !!}"/>
 
     <!-- Open Graph -->
     <meta property="og:locale" content="{{ App::getlocale().'_'.strtoupper(App::getlocale()) }}" />
     <meta property="og:site_name" content="{{ route('home') }}">
-    <meta property="og:title" content="{!! isset($data['meta_title']) ? strip_tags($data['meta_title']) : strip_tags($config['meta_title']) !!}"/>
+    <meta property="og:title" content="{!! isset($data['meta_title']) ? strip_tags($data['meta_title']) : strip_tags(config('cmsConfig.meta_title')) !!}"/>
     <meta property="og:url" name="url" content="{{ url()->full() }}">
-    <meta property="og:description" content="{!! isset($data['meta_description']) ? $data['meta_description'] : $config['meta_description'] !!}"/>
-    <meta property="og:image" content="{!! isset($data['cover']) ? asset($data['cover']) : $config['open_graph'] !!}"/>
+    <meta property="og:description" content="{!! isset($data['meta_description']) ? $data['meta_description'] : config('cmsConfig.meta_description') !!}"/>
+    <meta property="og:image" content="{!! isset($data['cover']) ? asset($data['cover']) : config('cmsConfig.open_graph') !!}"/>
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{!! isset($data['meta_title']) ? strip_tags($data['meta_title']) : strip_tags($config['meta_title']) !!}">
+    <meta name="twitter:title" content="{!! isset($data['meta_title']) ? strip_tags($data['meta_title']) : strip_tags(config('cmsConfig.meta_title')) !!}">
     <meta name="twitter:site" content="{{ url()->full() }}">
     <meta name="twitter:creator" content="{!! isset($data['creator']) ? $data['creator'] : 'Administrator Web' !!}">
-    <meta name="twitter:description" content="{!! isset($data['meta_description']) ? strip_tags($data['meta_description']) : strip_tags($config['meta_description']) !!}">
-    <meta name="twitter:image" content="{!! isset($data['cover']) ? asset($data['cover']) : $config['open_graph'] !!}">
+    <meta name="twitter:description" content="{!! isset($data['meta_description']) ? strip_tags($data['meta_description']) : strip_tags(config('cmsConfig.meta_description')) !!}">
+    <meta name="twitter:image" content="{!! isset($data['cover']) ? asset($data['cover']) : config('cmsConfig.open_graph') !!}">
 
     <link rel="canonical" href="{{ url()->full() }}" />
     
     <!-- Web Application Manifest -->
     <link rel="manifest" href="{{ asset('assets/favicon/manifest.json') }}">
 
-    @if ($config['pwa'] == true)
+    @if (config('cmsConfig.pwa') == true)
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="{!! $config['website_name'] !!}">
+    <meta name="application-name" content="{!! config('cmsConfig.website_name') !!}">
     <link rel="icon" sizes="512x512" href="{{ asset('assets/favicon/pwa/icon-512x512.png') }}">
 
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="#0084ff">
-    <meta name="apple-mobile-web-app-title" content="{!! $config['website_name'] !!}">
+    <meta name="apple-mobile-web-app-title" content="{!! config('cmsConfig.website_name') !!}">
     <link rel="apple-touch-icon" href="{{ asset('assets/favicon/pwa/icon-512x512.png') }}">
 
     <link href="{{ asset('assets/favicon/pwa/splash-640x1136.png') }}" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
@@ -97,7 +97,7 @@
     <!-- jQuery header -->
     @yield('jshead')
 
-    @if ($config['pwa'] == true)
+    @if (config('cmsConfig.pwa') == true)
     <!-- PWA -->
     <script type="text/javascript">
         // Initialize the service worker
@@ -115,7 +115,7 @@
     </script>
     @endif
 
-    {!! $config['google_analytics'] !!}
+    {!! config('cmsConfig.google_analytics') !!}
 </head>
     <body @yield('body-attr')>
 

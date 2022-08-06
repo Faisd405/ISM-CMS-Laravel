@@ -4,10 +4,10 @@ $(function() {
     var nextButtonClass = 'btn btn-sm btn-primary';
     var isRtl = $('html').attr('dir') === 'rtl';
 
-    tour.addStep('tour-1', {
+    tour.addStep({
       title: 'Title of first step',
-      text: ['Content of first step', '<strong>Second</strong> line'],
-      attachTo: '#tour-1 ' + (isRtl ? 'left' : 'right'),
+      text: '<p>Content of first step</p><p><strong>Second</strong> line</p>',
+      attachTo: { element: '#tour-1', on: isRtl ? 'left' : 'right' },
       buttons: [{
         action: tour.cancel,
         classes: backButtonClass,
@@ -18,10 +18,10 @@ $(function() {
         text: 'Next'
       }]
     });
-    tour.addStep('tour-2', {
+    tour.addStep({
       title: 'Title of second step',
       text: 'Content of second step',
-      attachTo: '#tour-2 ' + (isRtl ? 'right' : 'left'),
+      attachTo: { element: '#tour-2', on: isRtl ? 'right' : 'left' },
       buttons: [{
         action: tour.back,
         classes: backButtonClass,
@@ -32,10 +32,10 @@ $(function() {
         text: 'Next'
       }]
     });
-    tour.addStep('tour-3', {
+    tour.addStep({
       title: 'Title of third step',
       text: 'Content of third step',
-      attachTo: '#tour-3 bottom',
+      attachTo: { element: '#tour-3', on: 'bottom' },
       buttons: [{
         action: tour.back,
         classes: backButtonClass,
@@ -46,10 +46,10 @@ $(function() {
         text: 'Next'
       }]
     });
-    tour.addStep('tour-4', {
+    tour.addStep({
       title: 'Title of fourth step',
       text: 'Content of fourth step',
-      attachTo: '#tour-4 top',
+      attachTo: { element: '#tour-4', on: 'top' },
       buttons: [{
         action: tour.back,
         classes: backButtonClass,
@@ -60,7 +60,7 @@ $(function() {
         text: 'Next'
       }]
     });
-    tour.addStep('tour-modal', {
+    tour.addStep({
       title: 'Floating modal',
       text: 'Content of floating modal step',
       buttons: [{
@@ -73,10 +73,10 @@ $(function() {
         text: 'Next'
       }]
     });
-    tour.addStep('tour-5', {
+    tour.addStep({
       title: 'Title of fifth step',
       text: 'Content of fifth step',
-      attachTo: '#tour-5 bottom',
+      attachTo: { element: '#tour-5', on: 'bottom' },
       buttons: [{
         action: tour.back,
         classes: backButtonClass,
@@ -93,9 +93,13 @@ $(function() {
 
   $('#shepherd-example').click(function () {
     var tour = new Shepherd.Tour({
+      includeStyles: false,
+
       defaultStepOptions: {
         scrollTo: false,
-        showCancelLink: true
+        cancelIcon: {
+          enabled: true
+        }
       },
       useModalOverlay: true
     });

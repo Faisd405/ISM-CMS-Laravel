@@ -4,6 +4,25 @@ $(function() {
     $(this).wrap($('<div style="height:' + this.getAttribute('height') + 'px"></div>'));
   });
 
+  var isDark = themeSettings.isDarkStyle();
+  var scalesOptions = isDark ? {
+    yAxes: [{
+      gridLines: { color: '#383b40' },
+      ticks: { fontColor: '#fff' }
+    }],
+    xAxes: [{
+      gridLines: { color: '#383b40' },
+      ticks: { fontColor: '#fff' }
+    }]
+  } : {};
+  var radialScaleOptions = isDark ? {
+    angleLines: { color: '#383b40' },
+    gridLines: { color: '#383b40' },
+    pointLabels: { fontColor: '#fff' }
+  } : {};
+  var legendOptions = isDark ? {
+    labels: { fontColor: '#fff' }
+  } : {};
 
   var graphChart = new Chart(document.getElementById('chart-graph').getContext("2d"), {
     type: 'line',
@@ -28,6 +47,8 @@ $(function() {
 
     // Demo
     options: {
+      scales: scalesOptions,
+      legend: legendOptions,
       responsive: false,
       maintainAspectRatio: false
     }
@@ -54,6 +75,8 @@ $(function() {
 
     // Demo
     options: {
+      scales: scalesOptions,
+      legend: legendOptions,
       responsive: false,
       maintainAspectRatio: false
     }
@@ -88,7 +111,9 @@ $(function() {
 
     // Demo
     options: {
-      responsive: false,
+      scale: radialScaleOptions,
+      legend: legendOptions,
+      responsive: true,
       maintainAspectRatio: false
     }
   });
@@ -99,6 +124,7 @@ $(function() {
       datasets: [{
         data: [ 12, 10, 14, 6, 15 ],
         backgroundColor: [ '#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB' ],
+        borderColor: isDark ? '#22252B' : 'white',
         label: 'My dataset'
       }],
       labels: [ 'Red', 'Green', 'Yellow', 'Grey', 'Blue' ]
@@ -106,6 +132,7 @@ $(function() {
 
     // Demo
     options: {
+      legend: legendOptions,
       responsive: false,
       maintainAspectRatio: false
     }
@@ -118,12 +145,14 @@ $(function() {
       datasets: [{
         data: [ 180, 272, 100 ],
         backgroundColor: [ '#FF6384', '#36A2EB', '#FFCE56' ],
+        borderColor: isDark ? '#22252B' : 'white',
         hoverBackgroundColor: [ '#FF6384', '#36A2EB', '#FFCE56' ]
       }]
     },
 
     // Demo
     options: {
+      legend: legendOptions,
       responsive: false,
       maintainAspectRatio: false
     }
@@ -136,12 +165,14 @@ $(function() {
       datasets: [{
         data: [ 137, 296, 213 ],
         backgroundColor: [ '#FF6384', '#36A2EB', '#FFCE56' ],
+        borderColor: isDark ? '#22252B' : 'white',
         hoverBackgroundColor: [ '#FF6384', '#36A2EB', '#FFCE56' ]
       }]
     },
 
     // Demo
     options: {
+      legend: legendOptions,
       responsive: false,
       maintainAspectRatio: false
     }

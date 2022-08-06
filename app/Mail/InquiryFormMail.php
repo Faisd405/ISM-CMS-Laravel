@@ -31,8 +31,8 @@ class InquiryFormMail extends Mailable
      */
     public function build()
     {
-        $webname = Configuration::value('website_name');
-        $email = Configuration::value('system_email');
+        $webname = config('cmsConfig.website_name');
+        $email = config('cmsConfig.system_email');
         
         $from = isset($this->data['request']['email']) ? $this->data['request']['email'] : $email;
         $name = isset($this->data['request']['name']) ? $this->data['request']['name'] : __('global.visitor');

@@ -1,4 +1,6 @@
 $(function() {
+  var isDark = themeSettings.isDarkStyle();
+
   var chart1 = new Chart(document.getElementById('statistics-chart-1').getContext("2d"), {
     type: 'line',
     data: {
@@ -22,7 +24,7 @@ $(function() {
             display: false
           },
           ticks: {
-            fontColor: '#aaa',
+            fontColor: isDark ? '#fff' : '#aaa',
             autoSkipPadding: 50
           }
         }],
@@ -31,7 +33,7 @@ $(function() {
             display: false
           },
           ticks: {
-            fontColor: '#aaa',
+            fontColor: isDark ? '#fff' : '#aaa',
             maxTicksLimit: 5
           }
         }]

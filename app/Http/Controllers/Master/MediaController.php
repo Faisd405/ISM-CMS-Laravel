@@ -94,6 +94,12 @@ class MediaController extends Controller
         $data['params'] = ['moduleId' => $moduleId, 'moduleType' => $moduleType];
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
+        if ($moduleType == 'page') {
+            $data['module'] = Page::find($moduleId);
+        } else {
+            $data['module'] = ContentPost::find($moduleId);
+        }
+
         return view('backend.masters.media.form', compact('data'), [
             'title' => __('global.add_attr_new', [
                 'attribute' => __('master/media.caption')
@@ -128,6 +134,12 @@ class MediaController extends Controller
         $data['param_id'] = ['moduleId' => $moduleId, 'moduleType' => $moduleType, 'id' => $id];
         $data['media'] = $this->mediaService->getMedia(['id' => $id]);
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
+
+        if ($moduleType == 'page') {
+            $data['module'] = Page::find($moduleId);
+        } else {
+            $data['module'] = ContentPost::find($moduleId);
+        }
 
         if (empty($data['media']))
             return abort(404);

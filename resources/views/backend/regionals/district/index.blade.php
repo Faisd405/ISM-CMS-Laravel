@@ -8,91 +8,94 @@
 <div class="row justify-content-center">
     <div class="col-xl-12 col-lg-12 col-md-12">
 
-        {{-- Filter --}}
         <div class="card">
-            <div class="card-body d-flex flex-wrap justify-content-between">
-                <div class="d-flex w-100 w-xl-auto">
-                    <button type="button" class="btn btn-dark icon-btn-only-sm btn-sm mr-2" title="@lang('global.filter')" id="filter-btn">
-                        <i class="las la-filter"></i> <span>@lang('global.filter')</span>
-                    </button>
-                    @if ($totalQueryParam > 0)
-                    <a href="{{ url()->current() }}" class="btn btn-warning icon-btn-only-sm btn-sm" title="Clear @lang('global.filter')">
-                        <i class="las la-redo-alt"></i> <span>Clear @lang('global.filter')</span>
-                    </a>
-                    @endif
-                </div>
-                <div class="d-flex w-100 w-xl-auto">
+            <div class="card-header">
+                <h5 class="my-2">
+                    @lang('module/regional.district.text')
+                </h5>
+                <div class="box-btn">
                     @can('regional_create')
-                    <a href="{{ route('district.create', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']], $queryParam)) }}" 
-                        class="btn btn-success icon-btn-only-sm btn-sm mr-2" title="@lang('global.add_attr_new', [
-                            'attribute' => __('module/regional.district.caption')
+                    <a href="{{ route('district.create', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']], $queryParam)) }}" class="btn btn-main w-icon" title="@lang('global.add_attr_new', [
+                        'attribute' => __('module/regional.district.caption')
                         ])">
-                        <i class="las la-plus"></i> <span>@lang('module/regional.district.caption')</span>
+                        <i class="fi fi-rr-add"></i>
+                        <span>@lang('module/regional.district.caption')</span>
                     </a>
                     @endcan
+                    <button type="button" class="btn btn-default w-icon" data-toggle="modal"
+                        data-target="#modals-slide" title="@lang('global.filter')">
+                        <i class="fi fi-rr-filter"></i>
+                        <span>@lang('global.filter')</span>
+                    </button>
                     @role('developer|super')
-                    <a href="{{ route('district.trash', ['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']]) }}" class="btn btn-secondary icon-btn-only-sm btn-sm" title="@lang('global.trash')">
-                        <i class="las la-trash"></i> <span>@lang('global.trash')</span>
+                    <a href="{{ route('district.trash', ['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']]) }}" class="btn btn-dark w-icon" title="@lang('global.trash')">
+                        <i class="fi fi-rr-trash"></i> <span>@lang('global.trash')</span>
                     </a>
                     @endrole
                 </div>
-            </div>
-            <hr class="m-0">
-            <div class="card-body" id="{{ $totalQueryParam == 0 ? 'filter-form' : '' }}">
-                <form action="" method="GET">
-                    <div class="form-row align-items-center">
-                        <div class="col-md-1">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.limit')</label>
-                                <select class="custom-select" name="limit">
-                                    @foreach (config('cms.setting.limit') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }} 
-                                        title="@lang('global.limit') {{ $val }}">{{ $val }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.search')</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="q" value="{{ Request::get('q') }}" placeholder="@lang('global.search_keyword')">
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-dark" title="@lang('global.search')"><i class="las la-search"></i></button>
-                                    </div>
+                <!-- Modal Filter -->
+                <div class="modal modal-slide fade" id="modals-slide">
+                    <div class="modal-dialog">
+                        <form class="modal-content pb-0" action="" method="GET">
+                            <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close"><i class="fi fi-rr-cross-small"></i></button>
+                            <div class="modal-body mt-3">
+                                <div class="form-group">
+                                    <label class="form-label" for="limit">@lang('global.limit')</label>
+                                    <select id="limit" class="form-control" name="limit" data-style="btn-default">
+                                        @foreach (config('cms.setting.limit') as $key => $val)
+                                        <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }} 
+                                            title="@lang('global.limit') {{ $val }}">
+                                            {{ $val }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="" for="search-filter">@lang('global.search')</label>
+                                    <input id="search-filter" type="text" class="form-control" name="q" value="{{ Request::get('q') }}" 
+                                        placeholder="@lang('global.search_keyword')">
                                 </div>
                             </div>
-                        </div>
+                            <div class="modal-footer">
+                                <div class="box-btn justify-content-between w-100 m-0">
+                                    @if ($totalQueryParam > 0)
+                                    <a href="{{ url()->current() }}" class="btn btn-default w-100 text-bolder">Clear @lang('global.filter')</a>
+                                    @endif
+                                    <button type="submit" class="btn btn-main w-100">@lang('global.filter')</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/regional.district.text')</h5>
-            </div>
+            <hr class="border-light m-0">
             <div class="card-header">
-                <span class="text-muted">
-                    {{ Str::upper(__('module/regional.province.caption')) }} : <b class="text-primary">{{ $data['city']['province']['name'] }}</b>
-                    <i class="las la-angle-right"></i>
-                    {{ Str::upper(__('module/regional.city.caption')) }} : <b class="text-primary">{{ $data['city']['name'] }}</b>
-                </span>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item">
+                        <span>{{ Str::upper(__('module/regional.province.caption')) }}</span>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <span>{{ $data['city']['province']['name'] }}</span>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        <b class="text-main">{{ $data['city']['name'] }}</b>
+                    </li>
+                </ol>
             </div>
-
-            {{-- Table --}}
+            <hr class="border-light m-0">
             <div class="table-responsive">
-                <table class="table card-table table-striped table-hover">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th class="text-center" style="width: 50px;">@lang('module/regional.district.label.field1')</th>
-                            <th>@lang('module/regional.district.label.field2')</th>
-                            <th>@lang('module/regional.district.label.field3')</th>
-                            <th>@lang('module/regional.district.label.field4')</th>
+                            <th class="text-center" style="width: 50px;">@lang('module/regional.district.label.code')</th>
+                            <th>@lang('module/regional.district.label.name')</th>
+                            <th>@lang('module/regional.district.label.latitude')</th>
+                            <th>@lang('module/regional.district.label.longitude')</th>
                             <th style="width: 230px;">@lang('global.created')</th>
                             <th style="width: 230px;">@lang('global.updated')</th>
-                            <th class="text-center" style="width: 110px;"></th>
+                            <th class="text-center" style="width: 100px;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,34 +120,39 @@
                                 <span class="text-muted"> @lang('global.by') : {{ $item['updateBy'] != null ? $item['updateBy']['name'] : 'User Deleted' }}</span>
                                 @endif
                             </td>
-                            <td class="text-center">
-                                @can('regional_update')
-                                <a href="{{ route('district.edit', array_merge(['provinceCode' => $item['province_code'], 'cityCode' => $item['city_code'], 'id' => $item['id']], $queryParam)) }}" 
-                                    class="btn btn-primary icon-btn btn-sm" title="@lang('global.edit_attr', [
-                                        'attribute' => __('module/regional.district.caption')
-                                    ])">
-                                    <i class="las la-pen"></i>
-                                </a>
-                                @endcan
-                                @can('regional_delete')
-                                @if ($item['locked'] == 0)
-                                <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" title="@lang('global.delete_attr', [
-                                        'attribute' => __('module/regional.district.caption')
-                                    ])"
-                                    data-province-code="{{ $item['province_code'] }}"
-                                    data-city-code="{{ $item['city_code'] }}"
-                                    data-id="{{ $item['id'] }}">
-                                    <i class="las la-trash-alt"></i>
-                                </button>
-                                @endif
-                                @endcan
+                            <td>
+                                <div class="box-btn flex-wrap justify-content-end">
+                                    @can('regional_update')
+                                    <a href="{{ route('district.edit', array_merge(['provinceCode' => $item['province_code'], 'cityCode' => $item['city_code'], 'id' => $item['id']], $queryParam)) }}" class="btn btn-success icon-btn btn-sm" 
+                                        data-toggle="tooltip" data-placement="bottom"
+                                        data-original-title="@lang('global.edit_attr', [
+                                            'attribute' => __('module/regional.district.caption')
+                                        ])">
+                                        <i class="fi fi-rr-pencil"></i>
+                                    </a>
+                                    @endcan
+                                    @can('regional_delete')
+                                        @if ($item['locked'] == 0)
+                                        <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" 
+                                            data-province-code="{{ $item['province_code'] }}"
+                                            data-city-code="{{ $item['city_code'] }}"
+                                            data-id="{{ $item['id'] }}"
+                                            data-toggle="tooltip" data-placement="bottom"
+                                            data-original-title="@lang('global.delete_attr', [
+                                                'attribute' => __('module/regional.district.caption')
+                                            ])">
+                                            <i class="fi fi-rr-trash"></i>
+                                        </button>
+                                        @endif
+                                    @endcan
+                                </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
                             <td colspan="8" align="center">
                                 <i>
-                                    <strong style="color:red;">
+                                    <strong class="text-muted">
                                     @if ($totalQueryParam > 0)
                                         ! @lang('global.data_attr_not_found', [
                                             'attribute' => __('module/regional.district.caption')
@@ -161,18 +169,19 @@
                         @endforelse
                     </tbody>
                 </table>
-                <div class="card-footer">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['districts']->firstItem() }}</strong> - <strong>{{ $data['districts']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['districts']->total() }}</strong>
-                        </div>
-                        <div class="col-lg-6 m--align-right">
-                            {{ $data['districts']->onEachSide(1)->links() }}
-                        </div>
-                    </div>
-                </div>
             </div>
+            @if ($data['districts']->total() > 0)
+            <div class="card-footer justify-content-center justify-content-lg-between align-items-center flex-wrap">
+                <div class="text-muted mb-3 m-lg-0">
+                    @lang('pagination.showing') 
+                    <strong>{{ $data['districts']->firstItem() }}</strong> - 
+                    <strong>{{ $data['districts']->lastItem() }}</strong> 
+                    @lang('pagination.of')
+                    <strong>{{ $data['districts']->total() }}</strong>
+                </div>
+                {{ $data['districts']->onEachSide(1)->links() }}
+            </div>
+            @endif
         </div>
 
     </div>
@@ -194,11 +203,11 @@
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
                 text: "@lang('global.alert.delete_confirm_text')",
-                type: "warning",
+                icon: "warning",
                 confirmButtonText: "@lang('global.alert.delete_btn_yes')",
                 customClass: {
                     confirmButton: "btn btn-danger btn-lg",
-                    cancelButton: "btn btn-primary btn-lg"
+                    cancelButton: "btn btn-secondary btn-lg"
                 },
                 showLoaderOnConfirm: true,
                 showCancelButton: true,
@@ -219,7 +228,7 @@
                         return response;
                     }).catch(error => {
                         swal({
-                            type: 'error',
+                            icon: 'error',
                             text: 'Error while deleting data. Error Message: ' + error
                         })
                     });
@@ -227,14 +236,14 @@
             }).then(response => {
                 if (response.value.success) {
                     Swal.fire({
-                        type: 'success',
+                        icon: 'success',
                         text: "@lang('global.alert.delete_success', ['attribute' => __('module/regional.district.caption')])"
                     }).then(() => {
                         window.location.reload();
                     })
                 } else {
                     Swal.fire({
-                        type: 'error',
+                        icon: 'error',
                         text: response.value.message
                     }).then(() => {
                         window.location.reload();

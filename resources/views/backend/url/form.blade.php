@@ -20,19 +20,20 @@
                 @isset ($data['url'])
                     @method('PUT')
                 @endisset
+
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/url.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/url.label.slug') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('slug') is-invalid @enderror" name="slug" 
-                            value="{{ !isset($data['url']) ? old('slug') : old('slug', $data['url']['slug']) }}" 
-                            placeholder="@lang('module/url.placeholder.field1')" autofocus>
+                            <input type="text" class="form-control text-bolder @error('slug') is-invalid @enderror" name="slug" 
+                                value="{{ !isset($data['url']) ? old('slug') : old('slug', $data['url']['slug']) }}" 
+                                placeholder="@lang('module/url.placeholder.slug')" autofocus>
                             @include('components.field-error', ['field' => 'slug'])
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                        <label class="col-form-label text-sm-right">@lang('module/url.label.field2')</label>
+                        <label class="col-form-label text-sm-right">@lang('module/url.label.module')</label>
                         </div>
                         <div class="col-md-10">
                         <select id="module" class="select2 show-tick @error('module') is-invalid @enderror" name="module" data-style="btn-default">
@@ -41,26 +42,24 @@
                             <option value="{{ $val }}" {{ !isset($data['url']) ? (old('module') == $val ? 'selected' : '') : (old('module', $data['url']['module']) == $val ? 'selected' : '') }}>{{ Str::replace('_', ' ', Str::upper($val)) }}</option>
                             @endforeach
                         </select>
-                        @error('module')
-                        <label class="error jquery-validation-error small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
-                        @enderror
+                        @include('components.field-error', ['field' => 'module'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/url.label.field3')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/url.label.url_id')</label>
                         <div class="col-sm-10">
-                        <input type="number" class="form-control @error('urlable_id') is-invalid @enderror" name="urlable_id" 
+                        <input type="number" class="form-control text-bolder @error('urlable_id') is-invalid @enderror" name="urlable_id" 
                             value="{{ !isset($data['url']) ? old('urlable_id') : old('urlable_id', $data['url']['urlable_id']) }}" 
-                            placeholder="@lang('module/url.placeholder.field3')">
+                            placeholder="@lang('module/url.placeholder.url_id')">
                             @include('components.field-error', ['field' => 'urlable_id'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/url.label.field4')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/url.label.url_type')</label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('urlable_type') is-invalid @enderror" name="urlable_type" 
+                        <input type="text" class="form-control text-bolder @error('urlable_type') is-invalid @enderror" name="urlable_type" 
                             value="{{ !isset($data['url']) ? old('urlable_type') : old('urlable_type', $data['url']['urlable_type']) }}" 
-                            placeholder="@lang('module/url.placeholder.field4')">
+                            placeholder="@lang('module/url.placeholder.url_type')">
                             @include('components.field-error', ['field' => 'urlable_type'])
                         </div>
                     </div>
@@ -78,16 +77,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['url']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['url']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['url']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['url']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['url']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['url']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['url']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['url']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>

@@ -2,7 +2,6 @@
 
 namespace App\Models\Module\Banner;
 
-use App\Models\Feature\Configuration;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -120,9 +119,8 @@ class BannerFile extends Model
 
             $thumbnail = Storage::url(config('cms.files.banner.thumbnail.path').$this->banner_id.'/'.$this->thumbnail);
             if (empty($this->thumbnail)) {
-                if (!empty(Configuration::value('cover_default'))) {
-                    $thumbnail = Storage::url(config('cms.files.config.path').
-                    Configuration::value('cover_default'));
+                if (!empty(config('cmsConfig.cover_default'))) {
+                    $thumbnail = config('cmsConfig.cover_default');
                 } else {
                     $thumbnail = asset(config('cms.files.config.cover_default.file'));
                 }

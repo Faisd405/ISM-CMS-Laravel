@@ -1,5 +1,7 @@
 $(function() {
-  var gridBorder = '#eeeeee';
+  var isDark = themeSettings.isDarkStyle();
+  var gridBorder = isDark ? '#383b40' : '#ddd';
+  var gridTextColor = isDark ? '#fff' : '#888';
 
   new Morris.Line({
     element: 'morrisjs-graph',
@@ -21,6 +23,7 @@ $(function() {
     lineWidth: 1,
     pointSize: 4,
     gridLineColor: gridBorder,
+    gridTextColor: gridTextColor,
     resize: true
   });
 
@@ -42,6 +45,7 @@ $(function() {
     hideHover: 'auto',
     barColors: ['#CDDC39'],
     gridLineColor: gridBorder,
+    gridTextColor: gridTextColor,
     resize: true
   });
 
@@ -69,6 +73,7 @@ $(function() {
     lineWidth: 1,
     pointSize: 4,
     gridLineColor: gridBorder,
+    gridTextColor: gridTextColor,
     resize: true
   });
 
@@ -82,7 +87,7 @@ $(function() {
     ],
     colors: ['#009688', '#4CAF50', '#D32F2F', '#795548'],
     resize: true,
-    labelColor: '#888',
+    labelColor: gridTextColor,
     formatter: function (y) { return y + "%" }
   });
 });

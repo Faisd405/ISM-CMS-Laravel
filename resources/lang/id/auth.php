@@ -17,7 +17,7 @@ return [
     'password' => 'Kata sandi yang dimasukan salah.',
     'throttle' => 'Terlalu banyak upaya login. Silakan coba lagi dalam :seconds detik.',
     'lock_warning' => 'Anda sudah gagal login sebanyak :attr_failed kali. 
-        Jika sudah :attr_failed_def gagal, maka form akan ditutup selama :attr_hour jam.',
+        Jika sudah :attr_failed_def kali gagal, maka form akan ditutup selama :attr_hour jam.',
     'lock_form_caption' => 'Form login dilock',
     'warning_forgot_password' => 'disarankan untuk mereset password jika lupa',
     'login_request' => 'Untuk mengakses halaman, anda harus login terlebih dahulu',
@@ -30,14 +30,14 @@ return [
         'title' => 'Authentication required',
         'text' => 'Masuk ke akun Anda',
         'label' => [
-            'field1' => 'Username / Email',
-            'field2' => 'Password',
-            'field3' => 'Ingat Saya',
+            'username' => 'Username / Email',
+            'password' => 'Password',
+            'remember' => 'Ingat Saya',
             'signin' => 'Sign In',
         ],
         'placeholder' => [
-            'field1' => 'Masukan username / email',
-            'field2' => 'Masukan password',
+            'username' => 'Masukan username / email',
+            'password' => 'Masukan password',
         ],
         'alert' => [
             'exists' => 'Akun yang Anda coba masuki tidak terdaftar atau telah dinonaktifkan',
@@ -50,14 +50,14 @@ return [
         'title' => 'Login',
         'text' => 'Masuk ke akun Anda',
         'label' => [
-            'field1' => 'Username / Email',
-            'field2' => 'Password',
-            'field3' => 'Ingat Saya',
+            'username' => 'Username / Email',
+            'password' => 'Password',
+            'remember' => 'Ingat Saya',
             'signin' => 'Sign In',
         ],
         'placeholder' => [
-            'field1' => 'Masukan username / email',
-            'field2' => 'Masukan password',
+            'username' => 'Masukan username / email',
+            'password' => 'Masukan password',
         ],
         'alert' => [
             'exists' => 'Akun yang Anda coba masuki tidak terdaftar atau telah dinonaktifkan',
@@ -77,11 +77,11 @@ return [
         'title' => 'Lupa Password',
         'text' => 'Masukkan alamat email Anda dan kami akan mengirimkan tautan untuk mereset kata sandi Anda.',
         'label' => [
-            'field1' => 'Email',
+            'email' => 'Email',
             'send' => 'Kirim',
         ],
         'placeholder' => [
-            'field1' => 'Masukan email',
+            'email' => 'Masukan email',
         ],
     ],
 
@@ -89,13 +89,13 @@ return [
         'title' => 'Reset Password',
         'text' => 'Reset Password',
         'label' => [
-            'field1' => 'Password Baru',
-            'field2' => 'Ulangi Password',
+            'password' => 'Password Baru',
+            'password_confirmation' => 'Ulangi Password',
             'reset' => 'Reset Password',
         ],
         'placeholder' => [
-            'field1' => 'Masukan password',
-            'field2' => 'Ulangi password',
+            'password' => 'Masukan password',
+            'password_confirmation' => 'Ulangi password',
         ],
     ],
 
@@ -103,12 +103,12 @@ return [
         'title' => 'Register',
         'text' => 'Register Form',
         'label' => [
-            'field1' => 'Nama Lengkap',
-            'field2' => 'Email',
-            'field3' => 'Username',
-            'field4' => 'Password',
-            'field5' => 'Ulangi Password',
-            'field6' => 'Telpon',
+            'name' => 'Nama Lengkap',
+            'email' => 'Email',
+            'username' => 'Username',
+            'password' => 'Password',
+            'password_confirmation' => 'Ulangi Password',
+            'phone' => 'Telpon',
             'dont_have_account' => 'Belum memiliki akun?',
             'signup' => 'Daftar',
             'already_account' => 'Sudah memiliki akun?',
@@ -117,12 +117,12 @@ return [
             'form_close' => 'Form sudah ditutup, silahkan kembali nanti'
         ],
         'placeholder' => [
-            'field1' => 'Masukan nama',
-            'field2' => 'Masukan email',
-            'field3' => 'Masukan username',
-            'field4' => 'Masukan password',
-            'field5' => 'Ulangi password',
-            'field6' => 'Masukan telpon',
+            'name' => 'Masukan nama',
+            'email' => 'Masukan email',
+            'username' => 'Masukan username',
+            'password' => 'Masukan password',
+            'password_confirmation' => 'Ulangi password',
+            'phone' => 'Masukan telpon',
         ],
         'alert' => [
             'success' => 'Register berhasil',
@@ -136,11 +136,11 @@ return [
         'title' => 'Aktivasi Akun',
         'text' => 'Silahkan masukan email untuk mengirim link aktivasi akun anda',
         'label' => [
-            'field1' => 'Email',
+            'email' => 'Email',
             'send' => 'Kirim',
         ],
         'placeholder' => [
-            'field1' => 'Masukan email',
+            'email' => 'Masukan email',
         ],
         'alert' => [
             'info_active' => 'Link aktivasi sudah dikirim, mohon untuk cek inbox / spam di email anda',

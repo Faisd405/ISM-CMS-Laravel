@@ -1,4 +1,6 @@
 $(function() {
+  var isDark = themeSettings.isDarkStyle();
+
   var chart1 = new Chart(document.getElementById('statistics-chart-1').getContext("2d"), {
     type: 'bar',
     data: {
@@ -68,8 +70,8 @@ $(function() {
     data: {
       datasets: [{
         data: [54, 46],
-        backgroundColor: ['#673AB7', '#f9f9f9'],
-        hoverBackgroundColor: ['#673AB7', '#f9f9f9'],
+        backgroundColor: ['#673AB7', isDark ? 'rgba(255, 255, 255, .2)' : '#f9f9f9'],
+        hoverBackgroundColor: ['#673AB7', isDark ? 'rgba(255, 255, 255, .2)' : '#f9f9f9'],
         borderWidth: 0
       }]
     },

@@ -1,0 +1,114 @@
+// START BASE
+*:not(.ps__rail-x, .ps__rail-y, .ps__thumb-x, .ps__thumb-y) {
+    scrollbar-width: thin;
+    box-sizing: border-box;
+    // transition: .3s var(--easing)!important;
+}
+
+body {
+    position: relative;
+    color: var(--c-text-primary);
+    font: normal 14px/1.8 var(--f-default);
+    background-color: var(--c-light);
+    overflow-x: hidden;
+
+    a:not(.badge):not(.btn) {
+        color: var(--c-text-primary) !important;
+
+        &:hover {
+            color: var(--c-default) !important;
+        }
+    }
+
+    i {
+        line-height: 0;
+    }
+
+    .bg-main {
+        background-color: var(--c-default) !important;
+        color: #fff;
+    }
+
+
+    .text-main,
+    .text-body[href]:hover {
+        color: var(--c-default) !important;
+    }
+
+    
+
+    .text-body  {
+        color: var(--c-text-primary) !important;
+    }
+
+    .text-light,
+    .text-muted {
+        color: var(--c-text-muted) !important;
+    }
+
+    .text-danger {
+        color: red !important;
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+
+    .box-avatar {
+        background-color: var(--c-default);
+    }
+
+    .switcher-input {
+        &:checked {
+            &~.switcher-indicator {
+                background: var(--c-default) !important;
+            }
+        }
+    }
+
+    hr,
+    .dropdown-divider,
+    .list-group-item,
+    .card-header,
+    .card-footer,
+    .card hr .card .row-bordered>[class^="col-"]::before,
+    .card .row-bordered>[class^="col-"]::after,
+    .card .row-bordered>[class*=" col-"]::before,
+    .card .row-bordered>[class*=" col-"]::after,
+    .card .row-bordered>[class^="col "]::before,
+    .card .row-bordered>[class^="col "]::after,
+    .card .row-bordered>[class*=" col "]::before,
+    .card .row-bordered>[class*=" col "]::after,
+    .card .row-bordered>[class$=" col"]::before,
+    .card .row-bordered>[class$=" col"]::after,
+    .card .row-bordered>[class="col"]::before,
+    .card .row-bordered>[class="col"]::after,
+    .table th, 
+    .table td {
+        border-color: var(--c-grey_15) !important;
+    }
+
+    .progress {
+        background-color: var(--c-grey_15) !important;
+    }
+
+}
+
+ul,
+li,
+ol {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.theme-settings-rtl,
+.theme-settings-style,
+.theme-settings-navbarBg,
+.theme-settings-sidenavBg,
+.theme-settings-footerBg,
+.theme-settings-themes,
+.theme-settings-layoutFooterFixed {
+    display: none !important;
+}

@@ -1,4 +1,6 @@
 $(function() {
+  var isDark = themeSettings.isDarkStyle();
+
   var chart1 = new Chart(document.getElementById('statistics-chart-1').getContext("2d"), {
     type: 'line',
     data: {
@@ -25,7 +27,7 @@ $(function() {
             display: false
           },
           ticks: {
-            fontColor: '#aaa'
+            fontColor: isDark ? '#fff' : '#aaa'
           }
         }],
         yAxes: [{
@@ -33,11 +35,14 @@ $(function() {
             display: false
           },
           ticks: {
-            fontColor: '#aaa',
+            fontColor: isDark ? '#fff' : '#aaa',
             stepSize: 20
           }
         }]
       },
+      legend: isDark ? {
+        labels: { fontColor: '#fff' }
+      } : {},
 
       responsive: false,
       maintainAspectRatio: false
@@ -198,9 +203,10 @@ $(function() {
       },
       legend: {
         position: 'right',
-        labels: {
-          boxWidth: 12
-        }
+        labels: isDark ? {
+          boxWidth: 12,
+          fontColor: '#fff'
+        } : { boxWidth: 12 },
       },
       responsive: false,
       maintainAspectRatio: false

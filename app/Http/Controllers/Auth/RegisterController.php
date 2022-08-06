@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ActivateRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\Feature\Configuration;
 use App\Services\Feature\NotificationService;
 use App\Services\Feature\RegistrationService;
 use App\Services\UserService;
@@ -104,17 +103,17 @@ class RegisterController extends Controller
                         'link' => route('register.activate', ['email' => $email, 'expired' => $expired]),
                     ];
         
-                    if (Configuration::value('notif_email_register') == 1)
+                    if (config('cmsConfig.notif_email_register') == 1)
                         Mail::to($request->email)->send(new \App\Mail\ActivateAccountMail($data));
                 }
 
-                if (Configuration::value('notif_apps_register') == 1)
+                if (config('cmsConfig.notif_apps_register') == 1)
                     $this->notifService->sendNotif([
                         'user_from' => $register['data']['id'],
                         'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3, 4]], false)
                             ->pluck('id')->toArray(),
                         'attribute' => [
-                            'icon' => 'las la-user',
+                            'icon' => 'ion ion-md-person-add',
                             'color' => 'success',
                             'title' => __('feature/notification.register.title'),
                             'content' =>  __('feature/notification.register.text', [

@@ -2,7 +2,6 @@
 
 namespace App\Models\Module\Content;
 
-use App\Models\Feature\Configuration;
 use App\Models\IndexingUrl;
 use App\Models\Master\Template;
 use App\Models\Menu\Menu;
@@ -132,9 +131,8 @@ class ContentSection extends Model
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);
         } else {
-            if (!empty(Configuration::value('banner_default'))) {
-                $banner = Storage::url(config('cms.files.config.path').
-                Configuration::value('banner_default'));
+            if (!empty(config('cmsConfig.banner_default'))) {
+                $banner = config('cmsConfig.banner_default');
             } else {
                 $banner = asset(config('cms.files.config.banner_default.file'));
             }

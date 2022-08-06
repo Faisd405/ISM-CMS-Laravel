@@ -1,0 +1,68 @@
+/* LG OPTION*/
+
+.lg-backdrop {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.lg-toolbar {
+    background-color: rgba(0, 0, 0, 0.0) !important;
+}
+
+.lg-icon {
+    font-family: 'Line Awesome Free' !important;
+    font-weight: 900 !important;
+}
+
+.lg-toolbar .lg-icon {
+    font-size: 18px !important;
+}
+
+.lg-toolbar .lg-close::after {
+    content: "\f00d" !important;
+}
+
+#lg-actual-size::after {
+    content: "\f065" !important;
+}
+
+#lg-zoom-in:after {
+    content: "\f00e" !important;
+}
+
+#lg-zoom-out:after {
+    content: "\f010" !important;
+}
+
+.lg-actions .lg-prev::after {
+    content: "\f137" !important;
+}
+
+.lg-actions .lg-next::before {
+    content: "\f138" !important;
+}
+
+.lg-outer .lg-toogle-thumb::after {
+    content: "\f84c" !important;
+}
+
+.lg-fullscreen::after {
+    content: "\f31e" !important;
+}
+
+.lg-outer .lg-toogle-thumb {
+    padding: 10px 0 !important;
+}
+
+.lg-outer .lg-thumb-item {
+    border-radius: 0 !important;
+}
+
+.lg-actions .lg-next,
+.lg-actions .lg-prev {
+    background: transparent !important;
+}
+
+.lg-outer .lg-thumb-item.active,
+.lg-outer .lg-thumb-item:hover {
+    border-color: var(--c-green) !important;
+}

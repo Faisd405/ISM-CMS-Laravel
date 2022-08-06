@@ -35,10 +35,10 @@ class ProvinceRequest extends FormRequest
     public function attributes()
     {
         return [
-            'code' => __('module/regional.province.label.field1'),
-            'name' => __('module/regional.province.label.field2'),
-            'latitude' => __('module/regional.province.label.field3'),
-            'longitude' => __('module/regional.province.label.field4'),
+            'code' => __('module/regional.province.label.code'),
+            'name' => __('module/regional.province.label.name'),
+            'latitude' => __('module/regional.province.label.latitude'),
+            'longitude' => __('module/regional.province.label.longitude'),
         ];
     }
 }

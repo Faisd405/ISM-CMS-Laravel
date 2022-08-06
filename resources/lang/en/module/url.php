@@ -5,15 +5,15 @@ return [
     'caption' => 'Index Url',
     'text' => 'List Index Url',
     'label' => [
-        'field1' => 'Slug',
-        'field2' => 'Module',
-        'field3' => 'Urlable ID',
-        'field4' => 'Urlable Type'
+        'slug' => 'Slug',
+        'module' => 'Module',
+        'url_id' => 'Urlable ID',
+        'url_type' => 'Urlable Type'
     ],
     'placeholder' => [
-        'field1' => 'Enter slug',
-        'field2' => '',
-        'field3' => 'ID relation table',
-        'field4' => 'Namespace relation table',
+        'slug' => 'Enter slug',
+        'module' => '',
+        'url_id' => 'ID relation table',
+        'url_type' => 'Namespace relation table',
     ]
 ];

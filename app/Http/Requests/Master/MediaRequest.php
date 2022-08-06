@@ -41,8 +41,8 @@ class MediaRequest extends FormRequest
     public function attributes()
     {
         return [
-            'filename' => __('master/media.label.field2'),
-            'youtube_id' => __('master/media.label.field3'),
+            'filename' => __('master/media.label.file'),
+            'youtube_id' => __('master/media.label.youtubeid'),
         ];
     }
 }

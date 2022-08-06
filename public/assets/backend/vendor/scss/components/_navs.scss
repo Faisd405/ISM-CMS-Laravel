@@ -1,0 +1,26 @@
+.nav {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px;
+    background-color: var(--c-grey_15);
+    border-radius: 10px;
+    border: none;
+
+    .nav-item {
+        .nav-link {
+            border-radius: 7px;
+            padding-block: 8px;
+            line-height: 1;
+            border: none;
+            font-size: .78rem;
+            font-weight: 500;
+            color: var(--c-text-secondary) !important;
+            margin: 0 !important;
+
+            &.active {
+                background-color: var(--c-white);
+                color: var(--c-text-primary) !important;
+            }
+        }
+    }
+}

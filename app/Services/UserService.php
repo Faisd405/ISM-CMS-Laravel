@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Feature\Configuration;
 use App\Models\Feature\Registration;
 use App\Models\User;
 use App\Models\UserLog;
@@ -70,7 +69,7 @@ class UserService
             
             if ($checkRole) {
 
-                $isMaintenance = Configuration::firstWhere('name', 'maintenance')['value'];
+                $isMaintenance = config('cmsConfig.maintenance');
                 if ($isMaintenance == true && $user->roles[0]['level'] > 3) {
                     return $this->error(null, __('auth.login_'.$loginType.'.alert.failed'));
                 }
@@ -467,12 +466,12 @@ class UserService
                 $user->save();
         
                 return $this->success($user, __('global.alert.update_success', [
-                    'attribute' => __('module/user.photo.caption')
+                    'attribute' => __('module/user.label.photo')
                 ]));
     
             } else {
                 return $this->success($user, __('global.alert.update_failed', [
-                    'attribute' => __('module/user.photo.caption')
+                    'attribute' => __('module/user.label.photo')
                 ]));
             }
 
@@ -502,7 +501,7 @@ class UserService
             $user->save();
 
             return $this->success($user, __('global.alert.delete_success', [
-                'attribute' => __('module/user.photo.caption')
+                'attribute' => __('module/user.label.photo')
             ]));
 
         } catch (Exception $e) {

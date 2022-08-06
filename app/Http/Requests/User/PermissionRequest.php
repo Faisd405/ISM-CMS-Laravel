@@ -32,7 +32,7 @@ class PermissionRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('module/user.permission.label.field2'),
+            'name' => __('module/user.permission.label.name'),
         ];
     }
 }

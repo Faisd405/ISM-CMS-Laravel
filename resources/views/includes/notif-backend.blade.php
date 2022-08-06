@@ -57,12 +57,14 @@
                         }
                         $('#list-notification').append(`
                         <a href="/admin/notification/`+value.id+`/read" class="list-group-item list-group-item-action media d-flex align-items-center">
-                            <div class="ui-icon ui-icon-sm `+value.icon+` bg-`+value.color+` border-0 text-white"></div>
-                                <div class="media-body line-height-condenced ml-3">
+                            <div
+                                class="ui-icon ui-icon-sm `+value.icon+` bg-`+value.color+` border-0 text-white">
+                            </div>
+                            <div class="media-body line-height-condenced ml-3">
                                 <div class="text-body">`+value.title.substring(0, 50)+titik+`</div>
-                                    <div class="text-light small mt-1">
-                                        `+value.content.substring(0, 50)+titik+`
-                                    </div>
+                                <div class="text-light small mt-1">
+                                    `+value.content.substring(0, 50)+titik+`
+                                </div>
                                 <div class="text-light small mt-1">`+value.date+`</div>
                             </div>
                         </a>
@@ -71,7 +73,7 @@
                 } else {
                     $('#list-notification').html(`
                         <a href="javascript:void(0)" class="list-group-item list-group-item-action media text-center">
-                            <i><strong style="color:red;">! @lang('global.data_attr_empty', ['attribute' => __('feature/notification.caption')]) !</strong></i>
+                            <i><strong class="text-muted">! @lang('global.data_attr_empty', ['attribute' => __('feature/notification.caption')]) !</strong></i>
                         </a>
                     `);
                 }

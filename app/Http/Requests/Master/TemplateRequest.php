@@ -44,10 +44,10 @@ class TemplateRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('master/template.label.field1'),
-            'module' => __('master/template.label.field2'),
+            'name' => __('master/template.label.name'),
+            'module' => __('master/template.label.module'),
             'type' => __('global.type'),
-            'filename' => __('master/template.label.field4'),
+            'filename' => __('master/template.label.filename'),
         ];
     }
 }

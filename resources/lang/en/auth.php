@@ -30,14 +30,14 @@ return [
         'title' => 'Authentication required',
         'text' => 'Login to your account',
         'label' => [
-            'field1' => 'Username / Email',
-            'field2' => 'Password',
-            'field3' => 'Remember me',
+            'username' => 'Username / Email',
+            'password' => 'Password',
+            'remember' => 'Remember me',
             'signin' => 'Sign In',
         ],
         'placeholder' => [
-            'field1' => 'Enter username / email',
-            'field2' => 'Enter password',
+            'username' => 'Enter username / email',
+            'password' => 'Enter password',
         ],
         'alert' => [
             'exists' => 'The account you are trying to log into is not registered or has been deactivated',
@@ -50,14 +50,14 @@ return [
         'title' => 'Login',
         'text' => 'Login to your account',
         'label' => [
-            'field1' => 'Username / Email',
-            'field2' => 'Password',
-            'field3' => 'Remember me',
+            'username' => 'Username / Email',
+            'password' => 'Password',
+            'remember' => 'Remember me',
             'signin' => 'Sign In',
         ],
         'placeholder' => [
-            'field1' => 'Enter username / email',
-            'field2' => 'Enter password',
+            'username' => 'Enter username / email',
+            'password' => 'Enter password',
         ],
         'alert' => [
             'exists' => 'The account you are trying to log into is not registered or has been deactivated',
@@ -77,11 +77,11 @@ return [
         'title' => 'Forgot Password',
         'text' => 'Enter your email address and we will send you a link to reset your password.',
         'label' => [
-            'field1' => 'Email',
+            'email' => 'Email',
             'send' => 'Send',
         ],
         'placeholder' => [
-            'field1' => 'Enter email',
+            'email' => 'Enter email',
         ],
     ],
 
@@ -89,13 +89,13 @@ return [
         'title' => 'Reset Password',
         'text' => 'Reset Password',
         'label' => [
-            'field1' => 'New Password',
-            'field2' => 'Repeat Password',
+            'password' => 'New Password',
+            'password_confirmation' => 'Repeat Password',
             'reset' => 'Reset Password',
         ],
         'placeholder' => [
-            'field1' => 'Enter password',
-            'field2' => 'Repeat password',
+            'password' => 'Enter password',
+            'password_confirmation' => 'Repeat password',
         ],
     ],
 
@@ -103,12 +103,12 @@ return [
         'title' => 'Register',
         'text' => 'Register Form',
         'label' => [
-            'field1' => 'Full Name',
-            'field2' => 'Email',
-            'field3' => 'Username',
-            'field4' => 'Password',
-            'field5' => 'Repeat Password',
-            'field6' => 'Phone',
+            'name' => 'Full Name',
+            'email' => 'Email',
+            'username' => 'Username',
+            'password' => 'Password',
+            'password_confirmation' => 'Repeat Password',
+            'phone' => 'Phone',
             'dont_have_account' => 'Dont have an account yet?',
             'signup' => 'Register',
             'already_account' => 'Already have an account?',
@@ -117,12 +117,12 @@ return [
             'form_close' => 'Form has been closed, please come back later'
         ],
         'placeholder' => [
-            'field1' => 'Enter name',
-            'field2' => 'Enter email',
-            'field3' => 'Enter username',
-            'field4' => 'Enter password',
-            'field5' => 'Repeat password',
-            'field6' => 'Enter phone',
+            'name' => 'Enter name',
+            'email' => 'Enter email',
+            'username' => 'Enter username',
+            'password' => 'Enter password',
+            'password_confirmation' => 'Repeat password',
+            'phone' => 'Enter phone',
         ],
         'alert' => [
             'success' => 'Register successfully',
@@ -136,11 +136,11 @@ return [
         'title' => 'Activate Account',
         'text' => 'Please Enter email to send your account activation link',
         'label' => [
-            'field1' => 'Email',
+            'email' => 'Email',
             'send' => 'Send',
         ],
         'placeholder' => [
-            'field1' => 'Enter email',
+            'email' => 'Enter email',
         ],
         'alert' => [
             'info_active' => 'The activation link has been sent, please check your inbox/spam in your email',

@@ -12,6 +12,12 @@
         <lastmod>{{ $page['updated_at'] }}</lastmod>
     </sitemap>
     @endforeach
+    @foreach ($data['pages']->where('parent', '>', 0)->get() as $child)
+    <sitemap>
+        <loc>{{ route('page.read.child.'.$child['slug']) }}</loc>
+        <lastmod>{{ $child['updated_at'] }}</lastmod>
+    </sitemap>
+    @endforeach
 @endif
 @if (config('cms.module.content.section.active') == true)
     @if (config('cms.module.content.section.list_view') == true)

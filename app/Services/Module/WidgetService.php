@@ -277,6 +277,7 @@ class WidgetService
                 $widget->created_by = Auth::user()['id'];
 
             $widget->save();
+            
             $setPath = 'views/frontend/widget/'.Str::slug($template, '-').'.blade.php';
             if (!file_exists(resource_path($setPath))) {
                 File::copy(resource_path('views/frontend/widget/example.blade.php'), 

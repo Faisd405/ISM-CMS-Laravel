@@ -19,55 +19,55 @@
                 @endisset
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.iso_code') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                         <input type="text" class="form-control @error('iso_codes') is-invalid @enderror" name="iso_codes" 
                             value="{{ !isset($data['language']) ? old('iso_codes') : old('iso_codes', $data['language']['iso_codes']) }}" 
-                            placeholder="@lang('feature/language.placeholder.field1')" 
+                            placeholder="@lang('feature/language.placeholder.iso_code')" 
                             {{ isset($data['language']) ? ($data['language']['locked'] == 1 ? 'readonly' : '') : '' }} autofocus>
                             @include('components.field-error', ['field' => 'iso_codes'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.field2') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                         <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
                             value="{{ !isset($data['language']) ? old('name') : old('name', $data['language']['name']) }}" 
-                            placeholder="@lang('feature/language.placeholder.field2')">
+                            placeholder="@lang('feature/language.placeholder.name')">
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.field3')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.code')</label>
                         <div class="col-sm-10">
                         <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" 
                             value="{{ !isset($data['language']) ? old('code') : old('code', $data['language']['code']) }}" 
-                            placeholder="@lang('feature/language.placeholder.field3')">
+                            placeholder="@lang('feature/language.placeholder.code')">
                             @include('components.field-error', ['field' => 'code'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.field4')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.description')</label>
                         <div class="col-sm-10">
-                        <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="@lang('feature/language.placeholder.field4')">{{ !isset($data['language']) ? old('description') : old('description', $data['language']['description']) }}</textarea>
+                        <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="@lang('feature/language.placeholder.description')">{{ !isset($data['language']) ? old('description') : old('description', $data['language']['description']) }}</textarea>
                         @include('components.field-error', ['field' => 'description'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.field5')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.time_zone')</label>
                         <div class="col-sm-10">
                         <input type="text" class="form-control @error('time_zone') is-invalid @enderror" name="time_zone" 
                             value="{{ !isset($data['language']) ? old('time_zone') : old('time_zone', $data['language']['time_zone']) }}" 
-                            placeholder="@lang('feature/language.placeholder.field5')">
+                            placeholder="@lang('feature/language.placeholder.time_zone')">
                             @include('components.field-error', ['field' => 'time_zone'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.field6')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.gmt')</label>
                         <div class="col-sm-10">
                         <input type="text" class="form-control @error('gmt') is-invalid @enderror" name="gmt" 
                             value="{{ !isset($data['language']) ? old('gmt') : old('gmt', $data['language']['gmt']) }}" 
-                            placeholder="@lang('feature/language.placeholder.field6')">
+                            placeholder="@lang('feature/language.placeholder.gmt')">
                             @include('components.field-error', ['field' => 'gmt'])
                         </div>
                     </div>
@@ -97,16 +97,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['language']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['language']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['language']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['language']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['language']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['language']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['language']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['language']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -118,7 +123,7 @@
 @section('jsbody')
 @if(!Auth::user()->hasRole('developer|super'))
 <script>
-  $('.hide-form').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 @endsection

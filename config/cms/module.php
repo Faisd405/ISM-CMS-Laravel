@@ -50,7 +50,7 @@ return [
     // REGIONAL
     //---------------
     'regional' => [
-        'active' => false
+        'active' => true
     ],
 
     //---------------
@@ -102,7 +102,10 @@ return [
             'default' => config('app.fallback_locale')
         ],
         'registration' => [
-            'active' => true
+            'active' => true,
+            'type' => [
+                0 => 'DEFAULT'
+            ]
         ],
         'api' => [
             'active' => true,

@@ -43,6 +43,14 @@ $(function() {
 
 // Knob
 $(function() {
+  if (themeSettings.isDarkStyle()) {
+    $('.knob-example input').attr('data-bgcolor', 'rgba(255, 255, 255, .1)').each(function () {
+      if (!$(this).attr('data-fgcolor') || $(this).attr('data-fgcolor') === '#222222') {
+        $(this).attr('data-fgcolor', '#fff');
+      }
+    });
+  }
+
   $('.knob-example input').knob();
 });
 

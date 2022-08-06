@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Module\PageController;
 use App\Models\IndexingUrl;
+use App\Models\Module\Page;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin/page')->name('page.')->middleware('auth')->group(function () {
@@ -65,6 +66,12 @@ Route::group($group, function () {
             foreach ($indexing as $key => $value) {
                 Route::get($value['slug'], [PageController::class, 'read'])
                     ->name('page.read.'.$value['slug']);
+            }
+
+            $childs = Page::where('parent', '!=', 0)->whereNotNull('parent')->get();
+            foreach ($childs as $key => $value) {
+                Route::get($value['path_parent'], [PageController::class, 'read'])
+                    ->name('page.read.child.'.$value['slug']);
             }
         }
     }

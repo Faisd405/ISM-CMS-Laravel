@@ -32,8 +32,8 @@ class ApiRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('feature/api.label.field1'),
-            'ip_address' => __('feature/api.label.field6'),
+            'name' => __('feature/api.label.name'),
+            'ip_address' => __('feature/api.label.ip_address'),
         ];
     }
 }

@@ -109,6 +109,11 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
 
     });
 
+
+    // Api total unread
+    Route::get('/total-unread', [InquiryController::class, 'totalUnread'])
+        ->name('totalUnread');
+
 });
 
 /**

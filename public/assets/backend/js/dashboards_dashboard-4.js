@@ -1,4 +1,6 @@
 $(function() {
+  var isDark = themeSettings.isDarkStyle();
+
   var chart1 = new Chart(document.getElementById('statistics-chart-1').getContext("2d"), {
     type: 'doughnut',
     data: {
@@ -256,9 +258,10 @@ $(function() {
       },
       legend: {
         position: 'right',
-        labels: {
+        labels: isDark ? {
+          fontColor: '#fff',
           boxWidth: 12
-        }
+        } : { boxWidth: 12 }
       },
       responsive: false,
       maintainAspectRatio: false
@@ -318,9 +321,10 @@ $(function() {
       },
       legend: {
         position: 'right',
-        labels: {
+        labels: isDark ? {
+          fontColor: '#fff',
           boxWidth: 12
-        }
+        } : { boxWidth: 12 }
       },
       responsive: false,
       maintainAspectRatio: false

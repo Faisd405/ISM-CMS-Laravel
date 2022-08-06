@@ -1,29 +1,33 @@
-$(function() {
-  var gridColor = '#aaaaaa';
-  var gridBorder = '#eeeeee';
+$(function () {
+  var isDark = themeSettings.isDarkStyle();
+  var gridColor = isDark ? '#383b40' : '#aaaaaa';
+  var gridBorder = isDark ? '#383b40' : '#eeeeee';
+  var tickFill = isDark ? '#383b40' : '#f5f5f5';
 
   $.plot($('#flot-graph'), [
     {
       label: 'Visits',
       data: [
-        [ 6, 196 ], [ 7, 175 ], [ 8, 212 ], [ 9, 247 ], [ 10, 152 ], [ 11, 225 ], [ 12, 155 ], [ 13, 203 ], [ 14, 166 ], [ 15, 151 ]
+        [6, 196], [7, 175], [8, 212], [9, 247], [10, 152], [11, 225], [12, 155], [13, 203], [14, 166], [15, 151]
       ]
     },
     {
       label: 'Returning visits',
       data: [
-        [ 6, 49 ], [ 7, 56 ], [ 8, 30 ], [ 9, 29 ], [ 10, 66 ], [ 11, 2 ], [ 12, 2 ], [ 13, 8 ], [ 14, 34 ], [ 15, 63 ]
+        [6, 49], [7, 56], [8, 30], [9, 29], [10, 66], [11, 2], [12, 2], [13, 8], [14, 34], [15, 63]
       ]
     }
   ], {
     series: {
       lines: {
         show: true,
-        lineWidth: 2
+        lineWidth: 2,
+        fillColor: tickFill
       },
       points: {
         show: true,
-        radius: 4
+        radius: 4,
+        fillColor: tickFill
       }
     },
 
@@ -35,8 +39,8 @@ $(function() {
       clickable: true
     },
 
-    xaxis: { tickColor: gridBorder, },
-    yaxis: { tickColor: gridBorder, },
+    xaxis: { color: gridBorder },
+    yaxis: { color: gridBorder },
     legend: {
       show: true,
       position: 'ne'
@@ -49,13 +53,13 @@ $(function() {
     {
       label: 'Visits',
       data: [
-        [ 6, 156 ], [ 7, 195 ], [ 8, 171 ], [ 9, 211 ], [ 10, 150 ], [ 11, 169 ], [ 12, 173 ], [ 13, 200 ], [ 14, 233 ], [ 15, 161 ]
+        [6, 156], [7, 195], [8, 171], [9, 211], [10, 150], [11, 169], [12, 173], [13, 200], [14, 233], [15, 161]
       ]
     },
     {
       label: 'Returning visits',
       data: [
-        [ 6, 24 ], [ 7, 20 ], [ 8, 31 ], [ 9, 4 ], [ 10, 92 ], [ 11, 87 ], [ 12, 28 ], [ 13, 21 ], [ 14, 80 ], [ 15, 76 ]
+        [6, 24], [7, 20], [8, 31], [9, 4], [10, 92], [11, 87], [12, 28], [13, 21], [14, 80], [15, 76]
       ]
     }
   ], {
@@ -77,8 +81,8 @@ $(function() {
       clickable: true
     },
 
-    xaxis: { tickDecimals: 2, tickColor: gridBorder },
-    yaxis: { tickColor: gridBorder },
+    xaxis: { tickDecimals: 2, color: gridBorder },
+    yaxis: { color: gridBorder },
     legend: {
       show: true,
       position: 'ne'
@@ -92,19 +96,19 @@ $(function() {
     {
       label: 'iPhone',
       data: [
-        [ "2010.Q1", 35 ], [ '2010.Q2', 67 ], [ '2010.Q3', 13 ], [ '2010.Q4', 75 ]
+        ["2010.Q1", 35], ['2010.Q2', 67], ['2010.Q3', 13], ['2010.Q4', 75]
       ]
     },
     {
       label: 'iPad',
       data: [
-        [ "2010.Q1", 18 ], [ '2010.Q2', 80 ], [ '2010.Q3', 72 ], [ '2010.Q4', 33 ]
+        ["2010.Q1", 18], ['2010.Q2', 80], ['2010.Q3', 72], ['2010.Q4', 33]
       ]
     },
     {
       label: 'iTouch',
       data: [
-        [ '2010.Q1', 32 ], [ '2010.Q2', 49 ], [ '2010.Q3', 25 ], [ '2010.Q4', 87 ]
+        ['2010.Q1', 32], ['2010.Q2', 49], ['2010.Q3', 25], ['2010.Q4', 87]
       ]
     }
   ], {
@@ -124,8 +128,8 @@ $(function() {
       clickable: true
     },
 
-    xaxis: { mode: 'categories', tickColor: gridBorder },
-    yaxis: { tickColor: gridBorder },
+    xaxis: { mode: 'categories', color: gridBorder },
+    yaxis: { color: gridBorder },
     legend: {
       show: true,
       position: 'ne'
@@ -154,12 +158,16 @@ $(function() {
         radius: 1,
         innerRadius: 0.5,
 
+        stroke: {
+          color: tickFill
+        },
+
         label: {
           show: true,
           radius: 3 / 4,
           background: { opacity: 0 },
 
-          formatter: function(label, series) {
+          formatter: function (label, series) {
             return '<div style="font-size:11px;text-align:center;color:white;">' + Math.round(series.percent) + '%</div>';
           }
         }
@@ -174,8 +182,8 @@ $(function() {
       clickable: true
     },
 
-    xaxis: { tickColor: gridBorder },
-    yaxis: { tickColor: gridBorder },
+    xaxis: { color: gridBorder },
+    yaxis: { color: gridBorder },
     colors: ['#4CAF50', '#FF5722', '#607D8B', '#009688', '#E91E63', '#795548', '#0288D1']
   });
 });

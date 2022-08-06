@@ -37,11 +37,11 @@ class RegisterRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('auth.register.label.field1'),
-            'email' => __('auth.register.label.field2'),
-            'username' => __('auth.register.label.field3'),
-            'password' => __('auth.register.label.field4'),
-            'phone' => __('auth.register.label.field6'),
+            'name' => __('auth.register.label.name'),
+            'email' => __('auth.register.label.email'),
+            'username' => __('auth.register.label.username'),
+            'password' => __('auth.register.label.password'),
+            'phone' => __('auth.register.label.phone'),
             'g-recaptcha-response' => 'Recaptcha'
         ];
     }

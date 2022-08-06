@@ -33,8 +33,8 @@ class RoleRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('module/user.role.label.field1'),
-            'level' => __('module/user.role.label.field4'),
+            'name' => __('module/user.role.label.name'),
+            'level' => __('module/user.role.label.level'),
         ];
     }
 }

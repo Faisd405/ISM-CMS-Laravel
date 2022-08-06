@@ -32,9 +32,18 @@ $(function() {
 
 // jsTree
 $(function() {
-  $('#jstree-example-1').jstree();
+  var themeName = themeSettings.isDarkStyle() ?
+    'default-dark' :
+    'default';
+
+  $('#jstree-example-1').jstree({
+    core: {
+      themes: { name: themeName }
+    }
+  });
   $('#jstree-example-2').jstree({
     core : {
+      themes: { name: themeName },
       data : [
         {
           text: 'css',

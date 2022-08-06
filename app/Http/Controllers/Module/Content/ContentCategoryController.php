@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Module\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Content\ContentCategoryRequest;
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\TemplateService;
 use App\Services\Module\ContentService;
@@ -15,19 +14,17 @@ use Illuminate\Support\Str;
 
 class ContentCategoryController extends Controller
 {
-    private $contentService, $languageService, $templateService, $configService;
+    private $contentService, $languageService, $templateService;
 
     public function __construct(
         ContentService $contentService,
         LanguageService $languageService,
-        TemplateService $templateService,
-        ConfigurationService $configService
+        TemplateService $templateService
     )
     {
         $this->contentService = $contentService;
         $this->languageService = $languageService;
         $this->templateService = $templateService;
-        $this->configService = $configService;
 
         $this->lang = config('cms.module.feature.language.multiple');
     }
@@ -131,7 +128,6 @@ class ContentCategoryController extends Controller
         $data['config_show_description'] = (bool)$request->config_show_description;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_paginate_post'] = (bool)$request->config_paginate_post;
-        $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $category = $this->contentService->storeCategory($data);
         $data['query'] = $request->query();
@@ -178,7 +174,6 @@ class ContentCategoryController extends Controller
         $data['config_show_description'] = (bool)$request->config_show_description;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_paginate_post'] = (bool)$request->config_paginate_post;
-        $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $category = $this->contentService->updateCategory($data, ['id' => $id]);
         $data['query'] = $request->query();
@@ -277,13 +272,13 @@ class ContentCategoryController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = $this->configService->getConfigFile('banner_default');
-        $limit = $this->configService->getConfigValue('content_limit');
+        $data['banner'] = config('cmsConfig.banner_default');
+        $limit = config('cmsConfig.content_limit');
         $data['categories'] = $this->contentService->getCategoryList([
             'publish' => 1,
             'approved' => 1
         ], true, $limit, false, [], [
-            'created_at' => 'DESC'
+            'position' => 'ASC'
         ]);
         $data['no'] = $data['categories']->firstItem();
         $data['categories']->withQueryString();
@@ -314,7 +309,7 @@ class ContentCategoryController extends Controller
         }
 
         if ($data['read']['detail'] == 0) {
-            return redirect()->route('home');
+            return redirect()->route('content.section.read.'.$data['section']['slug']);
         }
 
         if ($data['read']['public'] == 0 && Auth::guard()->check() == false) {
@@ -350,7 +345,7 @@ class ContentCategoryController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = $this->configService->getConfigValue('meta_description');
+        $data['meta_description'] = config('cmsConfig.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -358,7 +353,7 @@ class ContentCategoryController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
 
-        $data['meta_keywords'] = $this->configService->getConfigValue('meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }
@@ -373,7 +368,7 @@ class ContentCategoryController extends Controller
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
             URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $this->configService->getConfigFile('cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            config('cmsConfig.cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_id'])) {

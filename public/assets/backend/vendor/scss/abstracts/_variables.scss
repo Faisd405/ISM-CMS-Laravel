@@ -1,0 +1,86 @@
+
+:root {
+    
+    --f-default:  'Rubik', sans-serif;
+    --f-title: 'Oswald', 'Noto Kufi Arabic', sans-serif;
+
+    // COLORS
+    --c-white: #fff;
+    // --c-light: #f5f5f5;
+    --c-light: #f5f8fd;
+    --c-light_12: #dee1e6;
+    --c-grey: #ccc;
+    --c-grey_12: #ecf0f8;
+    --c-grey_15: #e0e6f0;
+    --c-grey_17: #cdd3dd;
+    --c-grey_19: #8693a9;
+    --c-dark: #282a37;
+
+    
+
+
+    // text-color
+    --c-text-primary : #333;
+    --c-text-secondary: #777;
+    --c-text-third : #999;
+    --c-text-muted : #bfc3ca;
+
+    --c-default: #0084ff;
+
+    // --c-default in decimal RGB
+    --c-default_rgb: 0, 132, 255;
+
+    --c-default_2: #0084ff;
+    --c-default_3: #0084ff;
+    --c-default_4: #765092;
+    --c-default_5: #ec1c24;
+    --c-default_6: #ec1c24;
+
+    --bg-opacity-5: 0.5;
+
+    --easing: cubic-bezier(.6,.2,.0,1);
+    --box-shadow : 0 10px 15px -10px rgba(134, 147, 169, .3);
+    --box-shadow_2 :0px 4px 14px 0px rgba(134, 147, 169, .2);
+    --main-boxshadow : 0px 5px 15px -5px var(--c-default);
+    --box-shadow_thumb: 0px 15px 10px -10px rgba(134, 147, 169, .75);
+    --c-gradient: linear-gradient( 135deg, #0eb3e9 0%, #4979fd 50%, #4254f7 100%);
+}
+
+@media screen and (max-width: 575.98px) {
+    :root {
+        --box-shadow : 0 5px 15px rgba(134, 147, 169, 0.1);
+        --easing: ease-in-out;
+    }
+}
+
+
+$breakpoint-xl: 1199.98px;
+$breakpoint-lg: 991.98px;
+$breakpoint-md: 767.98px;
+$breakpoint-sm: 575.98px;
+
+$border-radius: 10px;
+
+// Dark Mode
+.active-dark-mode {
+    --c-white: #292b3c;
+    --c-light: #222433;
+    --c-light_12: #161928;
+    --c-grey_12: #2b2e3e;
+    --c-grey_15: #353848;
+    --c-grey_17: #393b4e;
+    --c-grey_19: #c3c3c3;
+    --c-dark: #fff;
+
+    --c-text-primary : #fff;
+    --c-text-secondary: #a9acb8;
+    --c-text-third : #596075;
+    --c-text-muted : #5c637b;
+    
+    
+
+    --box-shadow : 0 10px 15px -10px rgba(27, 28, 43, 0.3);
+    --box-shadow_2 :0px 4px 14px 0px rgba(27, 28, 43, .2);
+    --box-shadow_thumb: 0px 15px 10px -10px rgba(27, 28, 43, .75);
+}
+

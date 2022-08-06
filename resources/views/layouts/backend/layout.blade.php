@@ -1,56 +1,62 @@
 @extends('layouts.backend.application')
 
-@section('body-attr')
-class="alsen"
-@endsection
-
 @section('layout-content')
-<!-- Layout wrapper -->
-<div class="layout-wrapper {{ config('cms.setting.layout') == 1 ? 'layout-1 layout-without-sidenav' : 'layout-2' }}">
-    <div class="layout-inner">
-
-        @if (config('cms.setting.layout') == 1)
-            <!-- Layout navbar -->
-            @include('layouts.backend.includes.layout-navbar')
-        @else
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-{{ config('cms.setting.layout') == 3 ? '1 layout-without-sidenav' : config('cms.setting.layout') }}">
+        <div class="layout-inner">
+            
+            @if (config('cms.setting.layout') == 2)
             <!-- Layout sidenav -->
             @include('layouts.backend.includes.layout-sidenav')
-        @endif
-
-        <!-- Layout container -->
-        <div class="layout-container">
-            @if (config('cms.setting.layout') == 0)
-                <!-- Layout navbar -->
-                @include('layouts.backend.includes.layout-navbar')
-                @include('components.breadcrumbs-backend')
+            <!-- / Layout sidenav -->
+            @else
+            <!-- Layout navbar -->
+            @include('layouts.backend.includes.layout-navbar')
+            <!-- / Layout navbar -->
             @endif
-            
-            <!-- Layout content -->
-            <div class="layout-content">
+
+            <!-- Layout container -->
+            <div class="layout-container">
                 @if (config('cms.setting.layout') == 1)
-                    <!-- Layout navbar -->
-                    @include('layouts.backend.includes.layout-sidenav')
-                    @include('components.breadcrumbs-backend')
+                <!-- Layout navbar -->
+                @include('layouts.backend.includes.layout-sidenav')
+                <!-- / Layout navbar -->
                 @endif
 
-                <!-- Content -->
-                <div class="container-fluid flex-grow-1 container-p-y">
-                    @yield('content')
-                </div>
-                <!-- / Content -->
+                @if (config('cms.setting.layout') == 2)
+                <!-- Layout navbar -->
+                @include('layouts.backend.includes.layout-navbar')
+                <!-- / Layout navbar -->
+                @endif
 
-                <!-- Layout footer -->
-                @include('layouts.backend.includes.layout-footer')
+                <!-- Layout content -->
+                <div class="layout-content">
+
+                    @if (config('cms.setting.layout') == 3)
+                    <!-- Layout sidenav -->
+                    @include('layouts.backend.includes.layout-sidenav')
+                    <!-- / Layout sidenav -->
+                    @endif
+
+                    <!-- Content -->
+                    <div class="container-fluid flex-grow-1 container-p-y pb-0">
+                        @include('components.breadcrumbs-backend')
+                        
+                        @yield('content')
+                    </div>
+
+                    <!-- Layout footer -->
+                    @include('layouts.backend.includes.layout-footer')
+                    <!-- / Layout footer -->
+                </div>
+                <!-- Layout content -->
             </div>
-            <!-- Layout content -->
+            <!-- / Layout container -->
 
         </div>
-        <!-- / Layout container -->
 
+        <!-- Overlay -->
+        <div class="layout-overlay layout-sidenav-toggle"></div>
     </div>
-
-    <!-- Overlay -->
-    <div class="layout-overlay layout-sidenav-toggle"></div>
-</div>
-<!-- / Layout wrapper -->
+    <!-- / Layout wrapper -->
 @endsection

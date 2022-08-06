@@ -123,7 +123,7 @@ class BannerService
             $banner->position = $this->bannerModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('developer|super') && config('module.banner.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.banner.approval') == true) {
                     $banner->approved = 2;
                 }
                 $banner->created_by = Auth::user()['id'];
@@ -222,9 +222,14 @@ class BannerService
         $banner = $this->getBanner($where);
 
         try {
+
+            $value = !$banner[$field];
+            if ($field == 'approved') {
+                $value = $banner['approved'] == 1 ? 0 : 1;
+            }
             
             $banner->update([
-                $field => !$banner[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $banner['updated_by'],
             ]);
 
@@ -782,8 +787,13 @@ class BannerService
 
         try {
             
+            $value = !$bannerFile[$field];
+            if ($field == 'approved') {
+                $value = $bannerFile['approved'] == 1 ? 0 : 1;
+            }
+
             $bannerFile->update([
-                $field => !$bannerFile[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $bannerFile['updated_by'],
             ]);
 

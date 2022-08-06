@@ -5,14 +5,15 @@
           <h5 class="modal-title">
             @lang('global.preview') @lang('module/banner.file.caption')
           </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="las la-times"></i></button>
+          <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close"><i class="fi fi-rr-cross-small"></i></button>
         </div>
         <div class="modal-body">
             
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal" title="@lang('global.close')">
-            <i class="las la-times"></i> @lang('global.close')
+          <button type="button" class="btn btn-default w-icon" data-dismiss="modal" title="@lang('global.close')">
+            <i class="fi fi-rr-cross-circle"></i> <span>@lang('global.close')</span>
           </button>
         </div>
       </div>

@@ -23,18 +23,24 @@ class PageRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'title_'.config('cms.module.feature.language.default') => 'required|max:191',
-            'slug' => $this->method() == 'POST' ? 'required|max:191|unique:indexing_urls,slug' : 
-                'required|max:191|unique:indexing_urls,slug,'.$this->index_url_id,
-        ];
+        $field['title_'.config('cms.module.feature.language.default')] = 'required|max:191';
+
+        if ($this->parent == 0) {
+            $field['slug'] = $this->method() == 'POST' ? 'required|max:191|unique:indexing_urls,slug' : 
+                'required|max:191|unique:indexing_urls,slug,'.$this->index_url_id;
+        } else {
+            $field['slug'] = $this->method() == 'POST' ? 'required|max:191|unique:mod_pages,slug' : 
+                'required|max:191|unique:mod_pages,slug,'.$this->id;
+        }
+
+        return $field;
     }
 
     public function attributes()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => __('module/page.label.field1'),
-            'slug' => __('module/page.label.field2'),
+            'title_'.config('cms.module.feature.language.default') => __('module/page.label.title'),
+            'slug' => __('module/page.label.slug'),
         ];
     }
 }

@@ -16,26 +16,27 @@
                 @isset ($data['tag'])
                     @method('PUT')
                 @endisset
+
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/tags.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/tags.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
+                        <input type="text" class="form-control text-bolder @error('name') is-invalid @enderror" name="name" 
                             value="{{ !isset($data['tag']) ? old('name') : old('name', $data['tag']['name']) }}" 
-                            placeholder="@lang('master/tags.placeholder.field1')" autofocus>
+                            placeholder="@lang('master/tags.placeholder.name')" autofocus>
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/tags.label.field2')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('master/tags.label.description')</label>
                         <div class="col-sm-10">
-                        <textarea class="form-control @error('description') is-invalid @enderror" name="description" placeholder="@lang('master/tags.placeholder.field4')">{{ !isset($data['tag']) ? old('description') : old('description', $data['tag']['description']) }}</textarea>
+                        <textarea class="form-control text-bolder @error('description') is-invalid @enderror" name="description" placeholder="@lang('master/tags.placeholder.description')">{{ !isset($data['tag']) ? old('description') : old('description', $data['tag']['description']) }}</textarea>
                         @include('components.field-error', ['field' => 'description'])
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('master/tags.label.field3')</label>
+                          <label class="col-form-label text-sm-right">@lang('master/tags.label.flags')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -43,11 +44,12 @@
                                 {{ !isset($data['tag']) ? (old('flags') ? 'checked' : 'checked') : (old('flags', $data['tag']['flags']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.flags.1')</span>
                             </label>
+                            <small class="form-text">@lang('master/tags.placeholder.flags')</small>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('master/tags.label.field4')</label>
+                          <label class="col-form-label text-sm-right">@lang('master/tags.label.standar')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -55,23 +57,37 @@
                                 {{ !isset($data['tag']) ? (old('standar') ? 'checked' : '') : (old('standar', $data['tag']['standar']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
+                            <small class="form-text">@lang('master/tags.placeholder.standar')</small>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['tag']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['tag']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['tag']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['tag']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['tag']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['tag']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['tag']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['tag']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
 
     </div>
 </div>
+@endsection
+
+@section('jsbody')
+@if(!Auth::user()->hasRole('developer|super|support|admin'))
+<script>
+    $('.hide-form').hide();
+</script>
+@endif
 @endsection

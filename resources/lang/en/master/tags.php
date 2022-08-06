@@ -5,15 +5,15 @@ return [
     'caption' => 'Tags',
     'text' => 'Tags List',
     'label' => [
-        'field1' => 'Name',
-        'field2' => 'Description',
-        'field3' => 'Flags',
-        'field4' => 'Standar',
+        'name' => 'Name',
+        'description' => 'Description',
+        'flags' => 'Flags',
+        'standar' => 'Standar',
     ],
     'placeholder' => [
-        'field1' => 'Enter name',
-        'field2' => 'Enter description',
-        'field3' => '',
-        'field4' => '',
+        'name' => 'Enter name',
+        'description' => 'Enter description',
+        'flags' => 'Are tags approved or not',
+        'standar' => 'For markers that these tags are standard',
     ],
 ];

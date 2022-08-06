@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Module\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Content\ContentPostRequest;
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\MediaService;
 use App\Services\Master\TemplateService;
@@ -16,21 +15,19 @@ use Illuminate\Support\Str;
 
 class ContentPostController extends Controller
 {
-    private $contentService, $mediaService, $languageService, $templateService, $configService;
+    private $contentService, $mediaService, $languageService, $templateService;
 
     public function __construct(
         ContentService $contentService,
         MediaService $mediaService,
         LanguageService $languageService,
-        TemplateService $templateService,
-        ConfigurationService $configService
+        TemplateService $templateService
     )
     {
         $this->contentService = $contentService;
         $this->mediaService = $mediaService;
         $this->languageService = $languageService;
         $this->templateService = $templateService;
-        $this->configService = $configService;
 
         $this->lang = config('cms.module.feature.language.multiple');
     }
@@ -331,8 +328,8 @@ class ContentPostController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = $this->configService->getConfigFile('banner_default');
-        $limit = $this->configService->getConfigValue('content_limit');
+        $data['banner'] = config('cmsConfig.banner_default');
+        $limit = config('cmsConfig.content_limit');
         $data['posts'] = $this->contentService->getPostList([
             'publish' => 1,
             'approved' => 1
@@ -431,7 +428,7 @@ class ContentPostController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = $this->configService->getConfigValue('meta_description');
+        $data['meta_description'] = config('cmsConfig.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -442,7 +439,7 @@ class ContentPostController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('content')), 155);
         }
 
-        $data['meta_keywords'] = $this->configService->getConfigValue('meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }

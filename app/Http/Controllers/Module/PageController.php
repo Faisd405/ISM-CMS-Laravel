@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Module;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\PageRequest;
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\MediaService;
 use App\Services\Master\TemplateService;
@@ -19,21 +18,19 @@ class PageController extends Controller
 {
     use ApiResponser;
 
-    private $pageService, $mediaService, $languageService, $templateService, $configService;
+    private $pageService, $mediaService, $languageService, $templateService;
 
     public function __construct(
         PageService $pageService,
         MediaService $mediaService,
         LanguageService $languageService,
-        TemplateService $templateService,
-        ConfigurationService $configService
+        TemplateService $templateService
     )
     {
         $this->pageService = $pageService;
         $this->mediaService = $mediaService;
         $this->languageService = $languageService;
         $this->templateService = $templateService;
-        $this->configService = $configService;
 
         $this->lang = config('cms.module.feature.language.multiple');
     }
@@ -157,6 +154,10 @@ class PageController extends Controller
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'page'], false, 0);
+
+        if (!empty($data['page']['parent'])) {
+            $data['parent'] = $this->pageService->getPage(['id' => $data['page']['parent']]);
+        }
         
         if ($data['page']->tags()->count() > 0) {
             foreach ($data['page']->tags as $key => $value) {
@@ -283,8 +284,8 @@ class PageController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = $this->configService->getConfigFile('banner_default');
-        $limit = $this->configService->getConfigValue('content_limit');
+        $data['banner'] =config('cmsConfig.banner_default');
+        $limit = config('cmsConfig.content_limit');
         $data['pages'] = $this->pageService->getPageList([
             'publish' => 1,
             'approved' => 1,
@@ -304,7 +305,7 @@ class PageController extends Controller
 
     public function read(Request $request)
     {
-        $slug = $request->route('slug');
+        $slug = collect(request()->segments())->last(); //$request->route('slug');
 
         $data['read'] = $this->pageService->getPage(['slug' => $slug]);
 
@@ -362,7 +363,7 @@ class PageController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = $this->configService->getConfigValue('meta_description');
+        $data['meta_description'] = config('cmsConfig.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -373,7 +374,7 @@ class PageController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('content')), 155);
         }
 
-        $data['meta_keywords'] = $this->configService->getConfigValue('meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }

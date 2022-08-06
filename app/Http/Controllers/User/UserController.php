@@ -371,8 +371,7 @@ class UserController extends Controller
         return view('backend.users.profile', compact('data'), [
             'title' => __('module/user.profile.title'),
             'breadcrumbs' => [
-                __('module/user.profile.title') => 'javascript:;',
-                $data['user']->name => '',
+                __('module/user.profile.title') => 'javascript:;'
             ],
         ]);
     }

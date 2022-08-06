@@ -147,10 +147,10 @@ $(function() {
 
   $('#b-m-dtp-datetime').bootstrapMaterialDatePicker({
     weekStart: 1,
-    format : 'YYYY/M/D  HH:mm',
+    format : 'dddd DD MMMM YYYY - HH:mm',
     shortTime: true,
     nowButton : true,
-    //minDate : new Date()
+    minDate : new Date()
   });
 });
 

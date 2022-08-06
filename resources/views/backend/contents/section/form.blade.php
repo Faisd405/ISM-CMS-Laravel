@@ -4,117 +4,182 @@
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/pages/account.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/select2/select2.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.css') }}">
-<script src="{{ asset('assets/backend/admin.js') }}"></script>
-<script src="{{ asset('assets/backend/wysiwyg/tinymce.min.js') }}"></script>
 @endsection
 
 @section('content')
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/content.section.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['section']) ? route('content.section.store', $queryParam) : 
-                route('content.section.update', array_merge(['id' => $data['section']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset($data['section'])
-                    @method('PUT')
-                    <input type="hidden" name="index_url_id" value="{{ $data['section']['indexing']['id'] }}">
-                @endisset
+        <form action="{{ !isset($data['section']) ? route('content.section.store', $queryParam) : 
+            route('content.section.update', array_merge(['id' => $data['section']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset($data['section'])
+                @method('PUT')
+                <input type="hidden" name="index_url_id" value="{{ $data['section']['indexing']['id'] }}">
+            @endisset
 
-                {{-- MAIN --}}
-                @if (config('cms.module.feature.language.multiple') == true)
-                <div class="list-group list-group-flush account-settings-links flex-row">
-                    @foreach ($data['languages'] as $lang)
-                    <a class="list-group-item list-group-item-action {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'active' : '' }}" 
-                        data-toggle="list" href="#{{ $lang['iso_codes'] }}">
+            @if (config('cms.module.feature.language.multiple') == true)
+            <ul class="nav nav-tabs mb-4">
+                @foreach ($data['languages'] as $lang)
+                <li class="nav-item">
+                    <a class="nav-link{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' active' : '' }}"
+                        data-toggle="tab" href="#{{ $lang['iso_codes'] }}">
                         {!! $lang['name'] !!}
                     </a>
-                    @endforeach
-                </div>
-                @endif
+                </li>
+                @endforeach
+            </ul>
+            @endif
+
+            <div class="card">
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
-                    <div class="tab-pane fade {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'show active' : '' }}" id="{{ $lang['iso_codes'] }}">
-                        <div class="card-body pb-2">
-        
+                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
+                        <div class="card-header">
+                            <span class="font-weight-semibold">
+                                @lang('global.form') <b class="text-main">({{ $lang['name'] }})</b>
+                            </span>
+                        </div>
+                        <div class="card-body">
+
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.field1') <i class="text-danger">*</i></label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.name') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 {{ !isset($data['section']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                    <input type="text" class="form-control text-bolder {{ !isset($data['section']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="name_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['section']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['section']->fieldLang('name', $lang['iso_codes'])) }}" 
-                                        placeholder="@lang('module/content.section.placeholder.field1')">
+                                        placeholder="@lang('module/content.section.placeholder.name')">
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
                             </div>
                             <div class="form-group row {{ isset($data['section']) && $data['section']['config']['show_description'] == false ? 'hide-form' : '' }}">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.field3')</label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.description')</label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['section']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['section']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
+                                    <textarea class="form-control text-bolder tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['section']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['section']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
                                 </div>
                             </div>
-        
+
                         </div>
                     </div>
                     @endforeach
-                    <div class="card-body hide-form">
-                        <div class="form-group row">
-                            <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.field2') <i class="text-danger">*</i></label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
-                                    value="{{ !isset($data['section']) ? old('slug') : old('slug', $data['section']['slug']) }}" placeholder="{{ url('/') }}/url">
-                                @include('components.field-error', ['field' => 'slug'])
-                            </div>
+                </div>
+                <div class="card-body hide-form">
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.slug') <i class="text-danger">*</i></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control text-bolder slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
+                                value="{{ !isset($data['section']) ? old('slug') : old('slug', $data['section']['slug']) }}" placeholder="{{ url('/') }}/url">
+                            @include('components.field-error', ['field' => 'slug'])
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['section']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['section']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['section']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['section']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['section']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['section']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['section']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['section']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
+            </div>
 
-                {{-- SEO --}}
-                <hr class="m-0">
+            @role('developer|super')
+            <div class="card">
+                <table class="table card-table table-bordered">
+                    <thead class="text-center">
+                        <tr>
+                            <td colspan="4">
+                                <button id="add_addon_field" type="button" class="btn btn-success btn-sm w-icon">
+                                    <i class="fi fi-rr-add"></i> <span>Addon Field</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr>
+                            <td colspan="4">
+                                <small class="form-text">Checbox field caption format (JSON) : ["Field Caption",{"OPTION_VALUE1":"Option caption 1","OPTION_VALUE2":"Option caption 2"}]</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>NAME</th>
+                            <th>TYPE</th>
+                            <th>VALUE</th>
+                            <th></th>
+                        </tr>
+                    </tbody>
+                    <tbody id="list_addon_field">
+                        @if (isset($data['section']) && !empty($data['section']['addon_fields']))
+                            @foreach ($data['section']['addon_fields'] as $key => $val)
+                            <tr class="num-addon-list" id="delete-addon-{{ $key }}">
+                                <td>
+                                    <input type="text" class="form-control text-bolder" name="af_name[]" placeholder="name" 
+                                        value="{{ $val['name'] }}" {{ !Auth::user()->hasRole('super') ? 'readonly' : '' }}>
+                                </td>
+                                <td>
+                                    <select class="form-control show-tick" name="af_type[]" data-style="btn-default">
+                                        @foreach (config('cms.module.content.section.addon_field') as $keyT => $valT)
+                                            <option value="{{ $valT }}" {{ $valT == $val['type'] ? 'selected' : '' }}>
+                                                {{ $valT }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <textarea class="form-control text-bolder" name="af_value[]" placeholder="value">{{ $val['value'] }}</textarea>
+                                </td>
+                                <td style="width: 30px;">
+                                    <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_addon_field" data-id="{{ $key }}"><i class="fi fi-rr-cross-small"></i></button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            @endrole
+
+            <div class="card">
+                <h6 class="card-header text-main">
+                    SEO
+                </h6>
                 <div class="card-body">
-                    <h6 class="font-weight-bold text-primary mb-4">SEO</h6>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_title')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1" name="meta_title" value="{{ !isset($data['section']) ? old('meta_title') : old('meta_title', $data['section']['seo']['title']) }}" placeholder="@lang('global.meta_title')">
-
+                            <input type="text" class="form-control text-bolder" name="meta_title" value="{{ !isset($data['section']) ? old('meta_title') : old('meta_title', $data['section']['seo']['title']) }}" placeholder="@lang('global.meta_title')">
+        
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_description')</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control mb-1" name="meta_description" placeholder="@lang('global.meta_description')">{{ !isset($data['section']) ? old('meta_description') : old('meta_description', $data['section']['seo']['description'])  }}</textarea>
+                            <textarea class="form-control text-bolder" name="meta_description" placeholder="@lang('global.meta_description')">{{ !isset($data['section']) ? old('meta_description') : old('meta_description', $data['section']['seo']['description'])  }}</textarea>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('global.meta_keywords')</label>
                         <div class="col-sm-10">
-                            <input class="form-control tags-input mb-1" name="meta_keywords" value="{{ !isset($data['section']) ? old('meta_keywords') : old('meta_keywords', $data['section']['seo']['keywords'])  }}" placeholder="">
+                            <input class="form-control" name="meta_keywords" data-role="tagsinput" value="{{ !isset($data['section']) ? old('meta_keywords') : old('meta_keywords', $data['section']['seo']['keywords'])  }}" placeholder="">
                             <small class="form-text text-muted">@lang('global.separated_comma')</small>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {{-- SETTING --}}
-                <hr class="m-0">
+            <div class="card">
+                <h6 class="card-header text-main">
+                    SETTING
+                </h6>
                 <div class="card-body">
-                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label class="form-label">@lang('global.status')</label>
@@ -137,7 +202,7 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6 hide-form">
-                            <label class="form-label">@lang('module/content.section.label.field7')</label>
+                            <label class="form-label">@lang('module/content.section.label.template_list')</label>
                             <select class="select2 show-tick" name="template_list_id" data-style="btn-default">
                                 <option value=" " selected>DEFAULT</option>
                                 @foreach ($data['template_lists'] as $tmpList)
@@ -148,7 +213,7 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6 hide-form">
-                            <label class="form-label">@lang('module/content.section.label.field8')</label>
+                            <label class="form-label">@lang('module/content.section.label.template_detail')</label>
                             <select class="select2 show-tick" name="template_detail_id" data-style="btn-default">
                                 <option value=" " selected>DEFAULT</option>
                                 @foreach ($data['template_details'] as $tmpDetail)
@@ -162,25 +227,25 @@
                             <label class="form-label">@lang('global.banner')</label>
                             <div class="input-group mb-2">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file" placeholder="Browse file..."
+                                    <input type="text" class="form-control text-bolder" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file" placeholder="Browse file..."
                                             value="{{ !isset($data['section']) ? old('banner_file') : old('banner_file', $data['section']['banner']['filepath']) }}">
                                     <div class="input-group-append" title="browse file">
-                                        <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
+                                        <button class="btn btn-main file-name w-icon" id="button-image" type="button"><i class="fi fi-rr-folder"></i>&nbsp; @lang('global.browse')</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="banner_title" placeholder="@lang('global.title')"
+                                <input type="text" class="form-control text-bolder" name="banner_title" placeholder="@lang('global.title')"
                                     value="{{ !isset($data['section']) ? old('banner_title') : old('banner_title', $data['section']['banner']['title']) }}">
-                                <input type="text" class="form-control" name="banner_alt" placeholder="@lang('global.alt')"
+                                <input type="text" class="form-control text-bolder" name="banner_alt" placeholder="@lang('global.alt')"
                                     value="{{ !isset($data['section']) ? old('banner_alt') : old('banner_alt', $data['section']['banner']['alt']) }}">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <hr class="border-light m-0">
-                <div class="card-body">
+                <hr class="border-light m-0 hide-form">
+                <div class="card-body hide-form">
                     <div class="form-row">
                         <div class="form-group col-md-2 hide-form">
                             <label class="form-label">@lang('global.locked')</label>
@@ -189,16 +254,16 @@
                                 {{ !isset($data['section']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['section']['locked']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            <small class="form-text">@lang('global.locked_info')</small>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 hide-form">
                             <label class="form-label">@lang('global.detail')</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="detail" value="1"
                                     {{ !isset($data['section']) ? (old('detail') ? 'checked' : 'checked') : (old('detail', $data['section']['detail']) ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.detail_info')</small>
+                            <small class="form-text">@lang('global.detail_info')</small>
                         </div>
                         <div class="form-group col-md-2 hide-form">
                             <label class="form-label">Show Description</label>
@@ -220,7 +285,7 @@
                             <label class="form-label">Show Category</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_category" value="1"
-                                {{ !isset($data['section']) ? (old('config_show_category') ? 'checked' : '') : (old('config_show_category', $data['section']['config']['show_category']) == 1 ? 'checked' : '') }}>
+                                {{ !isset($data['section']) ? (old('config_show_category', 1) ? 'checked' : '') : (old('config_show_category', $data['section']['config']['show_category']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
@@ -260,7 +325,7 @@
                             <label class="form-label">Latest Post</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_latest_post" value="1"
-                                {{ !isset($data['section']) ? (old('config_latest_post') ? 'checked' : '') : (old('config_latest_post', $data['section']['config']['latest_post']) == 1 ? 'checked' : '') }}>
+                                {{ !isset($data['section']) ? (old('config_latest_post', 1) ? 'checked' : '') : (old('config_latest_post', $data['section']['config']['latest_post']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
@@ -314,17 +379,17 @@
                         </div>
                         <div class="form-group col-md-3 hide-form">
                             <label class="form-label">Category Limit</label>
-                            <input type="number" class="form-control" name="config_category_limit"
+                            <input type="number" class="form-control text-bolder" name="config_category_limit"
                                  value="{{ !isset($data['section']) ? old('config_category_limit', 6) : old('config_category_limit', $data['section']['config']['category_limit']) }}">
                         </div>
                         <div class="form-group col-md-3 hide-form">
                             <label class="form-label">Post Limit</label>
-                            <input type="number" class="form-control" name="config_post_limit"
+                            <input type="number" class="form-control text-bolder" name="config_post_limit"
                                  value="{{ !isset($data['section']) ? old('config_post_limit', 6) : old('config_post_limit', $data['section']['config']['post_limit']) }}">
                         </div>
                         <div class="form-group col-md-3 hide-form">
                             <label class="form-label">Latest Post Limit</label>
-                            <input type="number" class="form-control" name="config_latest_post_limit"
+                            <input type="number" class="form-control text-bolder" name="config_latest_post_limit"
                                  value="{{ !isset($data['section']) ? old('config_latest_post_limit', 4) : old('config_latest_post_limit', $data['section']['config']['latest_post_limit']) }}">
                         </div>
                         <div class="form-group col-md-6 hide-form">
@@ -349,75 +414,17 @@
                     </div>
                 </div>
 
-                @role('developer|super')
-                {{-- ADDON FIELD --}}
-                <hr class="m-0">
-                <div class="table-responsive text-center">
-                    <table class="table card-table table-bordered">
-                        <thead class="text-center">
-                            <tr>
-                                <td colspan="4">
-                                    <button id="add_addon_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
-                                        <i class="las la-plus"></i> Addon Field
-                                    </button>
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="4">
-                                    <small class="form-text text-muted">Checbox field caption format (JSON) : ["Field Caption",{"OPTION_VALUE1":"Option caption 1","OPTION_VALUE2":"Option caption 2"}]</small>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>NAME</th>
-                                <th>TYPE</th>
-                                <th>VALUE</th>
-                                <th></th>
-                            </tr>
-                        </tbody>
-                        <tbody id="list_addon_field">
-                            @if (isset($data['section']) && !empty($data['section']['addon_fields']))
-                                @foreach ($data['section']['addon_fields'] as $key => $val)
-                                <tr class="num-addon-list" id="delete-addon-{{ $key }}">
-                                    <td>
-                                        <input type="text" class="form-control" name="af_name[]" placeholder="name" 
-                                            value="{{ $val['name'] }}" {{ !Auth::user()->hasRole('super') ? 'readonly' : '' }}>
-                                    </td>
-                                    <td>
-                                        <select class="form-control show-tick" name="af_type[]" data-style="btn-default">
-                                            @foreach (config('cms.module.content.section.addon_field') as $keyT => $valT)
-                                                <option value="{{ $valT }}" {{ $valT == $val['type'] ? 'selected' : '' }}>
-                                                    {{ $valT }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" name="af_value[]" placeholder="value">{{ $val['value'] }}</textarea>
-                                    </td>
-                                    <td style="width: 30px;">
-                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_addon_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-                @endrole
-
                 @if (Auth::user()->hasRole('developer|super') || isset($data['section']) && $data['section']['config']['show_custom_field'] == true && !empty($data['section']['custom_fields']))
                 {{-- CUSTOM FIELD --}}
-                <hr class="m-0">
+                <hr class="border-light m-0">
                 <div class="table-responsive text-center">
-                    <table class="table card-table table-bordered">
-                        <thead>
+                    <table class="table card-table">
+                        <thead class="text-center">
                             @role('developer|super')
                             <tr>
                                 <td colspan="3" class="text-center">
-                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
-                                        <i class="las la-plus"></i> Field
+                                    <button id="add_field" type="button" class="btn btn-success btn-sm w-icon">
+                                        <i class="fi fi-rr-add"></i> <span>Field</span>
                                     </button>
                                 </td>
                             </tr>
@@ -433,15 +440,15 @@
                                 @foreach ($data['section']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
-                                        <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
+                                        <textarea class="form-control text-bolder" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
                                     </td>
                                     @role('developer|super')
                                     <td style="width: 30px;">
-                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="fi fi-rr-cross-small"></i></button>
                                     </td>
                                     @endrole
                                 </tr>
@@ -451,15 +458,17 @@
                     </table>
                 </div>
                 @endif
+            </div>
 
-            </form>
-        </div>
+        </form>
 
     </div>
 </div>
 @endsection
 
 @section('scripts')
+<script src="{{ asset('assets/backend/js/admin.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/wysiwyg/tinymce.min.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
 @endsection
@@ -470,45 +479,6 @@
     //select2
     $(function () {
         $('.select2').select2();
-    });
-
-    //tags
-    $('.tags-input').tagsinput({ tagClass: 'badge badge-primary' });
-
-    //custom field
-    $(function()  {
-
-        @if(isset($data['section']) && !empty($data['section']['custom_fields']))
-            var no = {{ count($data['section']['custom_fields']) }};
-        @else
-            var no = 1;
-        @endif
-        $("#add_field").click(function() {
-            $("#list_field").append(`
-                <tr class="num-list" id="delete-`+no+`">
-                    <td>
-                        <input type="text" class="form-control" name="cf_name[]" placeholder="name">
-                    </td>
-                    <td>
-                        <textarea class="form-control" name="cf_value[]" placeholder="value"></textarea>
-                    </td>
-                    <td style="width: 30px;">
-                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
-                    </td>
-                </tr>
-            `);
-
-            var noOfColumns = $('.num-list').length;
-            var maxNum = 10;
-            if (noOfColumns < maxNum) {
-                $("#add_field").show();
-            } else {
-                $("#add_field").hide();
-            }
-
-            no++;
-        });
-
     });
 
     //addon field
@@ -523,7 +493,7 @@
             $("#list_addon_field").append(`
                 <tr class="num-addon-list" id="delete-addon-`+no+`">
                     <td>
-                        <input type="text" class="form-control" name="af_name[]" placeholder="name">
+                        <input type="text" class="form-control text-bolder" name="af_name[]" placeholder="name">
                     </td>
                     <td>
                         <select class="form-control show-tick" name="af_type[]" data-style="btn-default">
@@ -535,10 +505,10 @@
                         </select>
                     </td>
                     <td>
-                        <textarea class="form-control" name="af_value[]" placeholder="value"></textarea>
+                        <textarea class="form-control text-bolder" name="af_value[]" placeholder="value"></textarea>
                     </td>
                     <td style="width: 30px;">
-                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_addon_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_addon_field" data-id="`+no+`"><i class="fi fi-rr-cross-small"></i></button>
                     </td>
                 </tr>
             `);
@@ -549,6 +519,42 @@
                 $("#add_addon_field").show();
             } else {
                 $("#add_addon_field").hide();
+            }
+
+            no++;
+        });
+
+    });
+
+    //custom field
+    $(function()  {
+
+        @if(isset($data['section']) && !empty($data['section']['custom_fields']))
+            var no = {{ count($data['section']['custom_fields']) }};
+        @else
+            var no = 1;
+        @endif
+        $("#add_field").click(function() {
+            $("#list_field").append(`
+                <tr class="num-list" id="delete-`+no+`">
+                    <td>
+                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name">
+                    </td>
+                    <td>
+                        <textarea class="form-control text-bolder" name="cf_value[]" placeholder="value"></textarea>
+                    </td>
+                    <td style="width: 30px;">
+                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="fi fi-rr-cross-small"></i></button>
+                    </td>
+                </tr>
+            `);
+
+            var noOfColumns = $('.num-list').length;
+            var maxNum = 10;
+            if (noOfColumns < maxNum) {
+                $("#add_field").show();
+            } else {
+                $("#add_field").hide();
             }
 
             no++;

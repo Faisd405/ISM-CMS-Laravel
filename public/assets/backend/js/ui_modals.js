@@ -113,7 +113,7 @@ $(function() {
     Swal.fire({
       title: 'Are you sure?',
       text: 'You will not be able to recover this imaginary file!',
-      type: 'warning',
+      icon: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -131,7 +131,7 @@ $(function() {
     Swal.fire({
       title: 'Ajax request example',
       text: 'Submit to run ajax request',
-      type: 'info',
+      icon: 'info',
       showCancelButton: true,
       showLoaderOnConfirm: true,
       allowOutsideClick: function () {
@@ -178,7 +178,7 @@ $(function() {
     Swal.fire({
       title: 'Are you sure?!',
       text: 'You will not be able to recover this imaginary file!',
-      type: 'info',
+      icon: 'info',
       showCancelButton: true,
       customClass: {
         confirmButton: 'btn btn-info btn-lg',
@@ -191,7 +191,7 @@ $(function() {
     Swal.fire({
       title: 'Are you sure?', 
       text: 'You will not be able to recover this imaginary file!',
-      type: 'success',
+      icon: 'success',
       showCancelButton: true,
       customClass: {
         confirmButton: 'btn btn-success btn-lg',
@@ -204,7 +204,7 @@ $(function() {
     Swal.fire({
       title: 'Are you sure?', 
       text: 'You will not be able to recover this imaginary file!',
-      type: 'warning',
+      icon: 'warning',
       showCancelButton: true,
       customClass: {
         confirmButton: 'btn btn-warning btn-lg',
@@ -217,7 +217,7 @@ $(function() {
     Swal.fire({
       title: 'Are you sure?', 
       text: 'You will not be able to recover this imaginary file!',
-      type: 'error',
+      icon: 'error',
       showCancelButton: true,
       customClass: {
         confirmButton: 'btn btn-danger btn-lg',

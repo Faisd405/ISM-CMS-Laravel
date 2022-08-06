@@ -1,184 +1,196 @@
 @extends('layouts.backend.layout')
 
 @section('content')
-<h4 class="font-weight-bold py-3 mb-3">
-    @lang('module/dashboard.caption')
-    <div class="text-muted text-tiny mt-1 time-frame">
-        <small class="font-weight-normal">@lang('module/dashboard.today_caption') {{ now()->isoFormat('dddd, D MMMM Y') }} (<em id="timenow"></em>)</small>
+<h4 class="media align-items-center font-weight-bold py-3 mb-4">
+    <img src="{{ Auth::user()['avatar'] }}" alt="{{ Auth::user()['name'] }} photo" class="ui-w-50 rounded-circle">
+    <div class="media-body ml-3">
+        @lang('module/dashboard.welcome_caption'), {{ Auth::user()['name'] }} !
+        <div class="text-muted text-tiny mt-1">
+            <small class="font-weight-normal">
+                @lang('module/dashboard.today_caption') {{ now()->isoFormat('dddd, D MMMM Y') }} (<em id="timenow"></em>)
+            </small>
+        </div>
     </div>
 </h4>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="alert alert-primary alert-dismissible fade show text-muted">
-            <i class="las la-user"></i>  @lang('module/dashboard.welcome_caption') <strong><em>{!! Auth::user()['name'] !!}</em></strong> !
-        </div>
-    </div>
-</div>
-
-@if ($data['maintenance'] == 1)
+@if (config('cmsConfig.maintenance') == 1)
 <div class="alert alert-warning alert-dismissible fade show">
-  <i class="las la-tools" style="font-size: 1.3em;"></i>
+  <i class="fi fi-rr-sensor-alert"></i>
   @lang('module/dashboard.maintenance_caption')
 </div>
 @endif
 
-   
-<div class="row"> 
-    {{-- counter --}}
-    @if (Auth::user()->can('pages') && config('cms.module.page.active') == true)
-    <div class="col-sm-6 col-xl-6">
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="d-flex align-items-center">
-            <div class="las la-bars display-4 text-primary"></div>
-            <div class="ml-3">
-              <a href="{{ route('page.index') }}" class="text-muted small">@lang('module/page.title')</a>
-              <div class="text-large">{{ $data['counter']['page'] }}</div>
+@if (Auth::user()->can('pages') && config('cms.module.page.active') == true 
+    || Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
+<div class="row">
+    <div class="d-flex col-xl-12 align-items-stretch">
+
+        <!-- Stats + Links -->
+        <div class="card d-flex w-100 mb-4">
+            <div class="row no-gutters row-bordered h-100">
+                @if (Auth::user()->can('pages') && config('cms.module.page.active') == true)
+                <div class="d-flex col-sm-6 col-md-4 col-lg-6 align-items-center">
+
+                    <a href="{{ route('page.index') }}"
+                        class="card-body media align-items-center text-body">
+                        <i class="fi fi-rr-menu-burger display-4 d-block text-main"></i>
+                        <span class="media-body d-block ml-3">
+                            <span class="text-big font-weight-bolder">{{ $data['counter']['page'] }}</span><br>
+                            <small class="text-muted">@lang('module/page.title')</small>
+                        </span>
+                    </a>
+
+                </div>
+                @endif
+                @if (Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
+                <div class="d-flex col-sm-6 col-md-4 col-lg-6 align-items-center">
+
+                    <a href="{{ route('content.section.index') }}"
+                        class="card-body media align-items-center text-body">
+                        <i class="fi fi-rr-edit display-4 d-block text-main"></i>
+                        <span class="media-body d-block ml-3">
+                            <span class="text-big"><span class="font-weight-bolder">{{ $data['counter']['post'] }}</span><br>
+                            <small class="text-muted">@lang('module/content.post.title')</small>
+                        </span>
+                    </a>
+
+                </div>
+                @endif
             </div>
-          </div>
         </div>
-      </div>
+        <!-- / Stats + Links -->
+
     </div>
-    @endif
-    @if (Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
-    <div class="col-sm-6 col-xl-6">
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="las la-newspaper display-4 text-primary"></div>
-              <div class="ml-3">
-                <a href="{{ route('content.section.index') }}" class="text-muted small">@lang('module/content.post.title')</a>
-                <div class="text-large">{{ $data['counter']['post'] }}</div>
-              </div>
-            </div>
-          </div>
+</div>
+@endif
+
+@can('visitor')
+    @if (!empty(env('ANALYTICS_VIEW_ID')))
+    <div class="card">
+        <div class="card-header">
+            <h5 class="my-2">
+                <i class="fi fi-rr-calendar-clock text-main"></i> @lang('module/dashboard.latest_visitor')
+            </h5>
         </div>
-    </div>
-    @endif
-
-    @can('visitor')
-      @if (!empty(env('ANALYTICS_VIEW_ID')))
-      {{-- visitor --}}
-      <div class="col-md-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <h6 class="card-header-title mt-0 mb-0"><i class="las la-users" style="font-size: 1.3em;"></i> @lang('module/dashboard.latest_visitor')</h6>
-          </div>
-          <div class="table-responsive">
-            <table class="table card-table">
-              <thead>
-                <tr id="analytics-head">
-
-                </tr>
-              </thead>
-              <tbody>
-                <tr id="analytics-body">
-
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card-footer">
-            <a href="{{ route('visitor') }}" class="d-block text-center text-body small font-weight-semibold">@lang('global.show_more')</a>
-          </div>
-        </div>
-      </div>
-      @endif
-    @endcan
-
-    @if (Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
-    {{-- latest post --}}
-    <div class="col-md-6">
-        <div class="card mb-4 card-list">
-            <h6 class="card-header"><i class="las la-newspaper" style="font-size: 1.3em;"></i> @lang('module/dashboard.latest_post')</h6>
-            <div class="table-responsive">
-                <table class="table card-table">
+        <div class="table-responsive">
+            <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th colspan="2">@lang('module/content.post.label.field1')</th>
-                        <th>@lang('global.hits')</th>
-                        <th style="width: 50px;"></th>
+                    <tr id="analytics-head">
+
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($data['list']['posts'] as $post)
-                    <tr>
-                        <td class="align-middle" style="width: 75px">
-                            <img class="ui-w-40" src="{{ $post['cover_src'] }}" alt="">
-                        </td>
-                        <td class="align-middle">
-                            <a href="javascript:void(0)" class="text-body">{!! Str::limit($post->fieldLang('title'), 60) !!}</a>
-                        </td>
-                        <td class="align-middle"><span class="badge badge-info">{{ $post['hits'] }}</span></td>
-                        <td class="align-middle">
-                          <a href="{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}" class="btn icon-btn btn-sm btn-primary" title="@lang('global.view_detail')" target="_blank">
-                              <i class="las la-external-link-alt"></i>
-                          </a>
-                        </td>
+                    <tr id="analytics-body">
+
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" align="center">
-                            <i>
-                            <strong style="color:red;">
-                                ! @lang('global.data_attr_empty', [
-                                        'attribute' => __('module/content.post.caption')
-                                    ]) !
-                            </strong>
-                            </i>
-                        </td>
-                    </tr>
-                    @endforelse
                 </tbody>
-                </table>
-                <a href="{{ route('content.section.index') }}" class="card-footer d-block text-center text-body small font-weight-semibold">@lang('global.show_more')</a>
-            </div>
+            </table>
         </div>
+        <a href="{{ route('visitor') }}" class="card-footer d-block text-center text-body small font-weight-semibold">
+            @lang('global.show_more')
+        </a>
     </div>
     @endif
+@endcan
 
-    @if (Auth::user()->can('inquiries') && config('cms.module.inquiry.active') == true)
-    {{-- latest inquiry --}}
+<div class="row">
+    @if (Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
     <div class="col-md-6">
-        <div class="card mb-4 card-list">
-          <h6 class="card-header">
-            <div class="title-text"><i class="las la-envelope" style="font-size: 1.3em;"></i> @lang('module/dashboard.latest_submit_inquiry')</div>
-          </h6>
-          <div class="card-body">
-            @forelse ($data['list']['inquiries'] as $inquiry)
-            @php
-                $fields = $inquiry->inquiry->fields()->firstWhere(['publish' => 1, 'approved' => 1]);
-            @endphp
-            <div class="media pb-1 mb-3">
-              <img src="{{ asset(config('cms.files.avatar.file')) }}" class="d-block ui-w-40 rounded-circle" alt="">
-              <div class="media-body flex-truncate ml-3">
-                <a href="javascript:void(0)">{!! $inquiry['fields'][$fields['name']] !!}</a>
-                <span class="text-muted">From</span>
-                <a href="{{ route('inquiry.form', ['inquiryId' => $inquiry['inquiry_id'], 'q' => $inquiry['fields'][$fields['name']]]) }}">{{ $inquiry['inquiry']->fieldLang('name') }}</a>
-                <p class="text-truncate my-1"></p>
-                <div class="clearfix">
-                  <span class="float-left text-muted small">{{ $inquiry['submit_time']->diffForHumans() }}</span>
-                </div>
-              </div>
+        <!-- Latest Post -->
+        <div class="card mb-4">
+            <h6 class="card-header">
+                @lang('module/dashboard.latest_post')
+            </h6>
+            <div class="table-responsive">
+                <table class="table card-table">
+                    <thead>
+                        <tr>
+                            <th colspan="2">@lang('module/content.post.label.title')</th>
+                            <th>@lang('global.hits')</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($data['list']['posts'] as $post)
+                        <tr>
+                            <td class="align-middle" style="width: 75px">
+                                <img class="ui-w-40" src="{{ $post['cover_src'] }}" alt="">
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-body">{!! Str::limit($post->fieldLang('title'), 60) !!}</span> &nbsp;
+                                <a href="{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}" title="@lang('global.view_detail')" target="_blank">
+                                    <i class="fi fi-rr-link text-bold" style="font-size: 14px;"></i>
+                                </a>
+                            </td>
+                            <td class="align-middle"><span class="badge badge-info">{{ $post['hits'] }}</span></td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" align="center">
+                                <i>
+                                <strong class="text-muted">
+                                    ! @lang('global.data_attr_empty', [
+                                            'attribute' => __('module/content.post.caption')
+                                        ]) !
+                                </strong>
+                                </i>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-            @empty
-            <div class="media pb-1 mb-3">
-              <div class="media-body flex-truncate ml-3 text-center">
-                <i>
-                  <strong style="color:red;">
-                    ! @lang('global.data_attr_empty', [
-                        'attribute' => __('module/inquiry.caption')
-                    ]) !
-                  </strong>
-                </i>
-              </div>
-            </div>
-            @endforelse
-  
-          </div>
-          <a href="{{ route('inquiry.index') }}" class="card-footer d-block text-center text-body small font-weight-semibold">@lang('global.show_more')</a>
+            <a href="{{ route('content.section.index') }}"
+                class="card-footer d-block text-center text-body small font-weight-semibold">
+                @lang('global.show_more')
+            </a>
         </div>
+        <!-- / Latest Post -->
+    </div>
+    @endif
+    @if (Auth::user()->can('inquiries') && config('cms.module.inquiry.active') == true)
+    <div class="col-md-6">
+
+        <!-- Feed -->
+        <div class="card mb-4">
+            <h6 class="card-header">@lang('module/dashboard.latest_submit_inquiry')</h6>
+            <div class="card-body">
+                @forelse ($data['list']['inquiries'] as $inquiry)
+                @php
+                    $fields = $inquiry->inquiry->fields()->firstWhere(['publish' => 1, 'approved' => 1]);
+                @endphp
+                <div class="media pb-1 mb-3">
+                    <img src="{{ asset(config('cms.files.avatar.file')) }}" class="d-block ui-w-40 rounded-circle" alt="">
+                    <div class="media-body flex-truncate ml-3">
+                        <a href="javascript:void(0)">{!! $inquiry['fields'][$fields['name']] !!}</a>
+                        <span class="text-muted">From</span>
+                        <a href="{{ route('inquiry.form', ['inquiryId' => $inquiry['inquiry_id'], 'q' => $inquiry['fields'][$fields['name']]]) }}">{{ $inquiry['inquiry']->fieldLang('name') }}</a>
+                        <p class="text-truncate my-1"></p>
+                        <div class="clearfix">
+                            <span class="float-left text-muted small">{{ $inquiry['submit_time']->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="media pb-1 mb-3">
+                    <div class="media-body flex-truncate ml-3 text-center">
+                        <i>
+                        <strong class="text-muted">
+                            ! @lang('global.data_attr_empty', [
+                                'attribute' => __('module/inquiry.caption')
+                            ]) !
+                        </strong>
+                        </i>
+                    </div>
+                </div>
+                @endforelse
+            </div>
+            <a href="{{ route('inquiry.index') }}"
+                class="card-footer d-block text-center text-body small font-weight-semibold">
+                @lang('global.show_more')
+            </a>
+        </div>
+        <!-- / Feed -->
+
     </div>
     @endif
 </div>
@@ -202,19 +214,19 @@
             dataType : "json",
             data : {},
             success:function(data) {
-              $('#analytics-head').html(' ');
-              $('#analytics-body').html(' ');
+                $('#analytics-head').html(' ');
+                $('#analytics-body').html(' ');
 
-              $.each(data.data ,function(index, value) {
-                $('#analytics-head').append(`
-                  <th class="text-center">`+value.date+`</th>
-                `);
-                $('#analytics-body').append(`
-                <td class="text-center">
-                  <span class="badge badge-info">`+value.visitor+`</span>
-                </td>
-                `);
-              });
+                $.each(data.data ,function(index, value) {
+                    $('#analytics-head').append(`
+                        <th class="text-center">`+value.date+`</th>
+                    `);
+                    $('#analytics-body').append(`
+                        <td class="text-center">
+                            <span class="badge badge-main">`+value.visitor+`</span>
+                        </td>
+                    `);
+                });
             }
         });
     });

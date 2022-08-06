@@ -16,40 +16,41 @@
                 @isset ($data['province'])
                     @method('PUT')
                 @endisset
+                
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.code') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="number" class="form-control @error('code') is-invalid @enderror" name="code" 
+                        <input type="number" class="form-control text-bolder @error('code') is-invalid @enderror" name="code" 
                             value="{{ !isset($data['province']) ? old('code') : old('code', $data['province']['code']) }}" 
-                            placeholder="@lang('module/regional.province.placeholder.field1')" autofocus>
+                            placeholder="@lang('module/regional.province.placeholder.code')" autofocus>
                             @include('components.field-error', ['field' => 'code'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.field2') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
+                        <input type="text" class="form-control text-bolder @error('name') is-invalid @enderror" name="name" 
                             value="{{ !isset($data['province']) ? old('name') : old('name', $data['province']['name']) }}" 
-                            placeholder="@lang('module/regional.province.placeholder.field2')">
+                            placeholder="@lang('module/regional.province.placeholder.name')">
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.field3') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.latitude') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('latitude') is-invalid @enderror" name="latitude" 
+                        <input type="text" class="form-control text-bolder @error('latitude') is-invalid @enderror" name="latitude" 
                             value="{{ !isset($data['province']) ? old('latitude') : old('latitude', $data['province']['latitude']) }}" 
-                            placeholder="@lang('module/regional.province.placeholder.field3')">
+                            placeholder="@lang('module/regional.province.placeholder.latitude')">
                             @include('components.field-error', ['field' => 'latitude'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.field4') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.province.label.longitude') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('longitude') is-invalid @enderror" name="longitude" 
+                        <input type="text" class="form-control text-bolder @error('longitude') is-invalid @enderror" name="longitude" 
                             value="{{ !isset($data['province']) ? old('longitude') : old('longitude', $data['province']['longitude']) }}" 
-                            placeholder="@lang('module/regional.province.placeholder.field4')">
+                            placeholder="@lang('module/regional.province.placeholder.longitude')">
                             @include('components.field-error', ['field' => 'longitude'])
                         </div>
                     </div>
@@ -63,21 +64,28 @@
                                 {{ !isset($data['province']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['province']['locked']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            <small class="form-text">@lang('global.locked_info')</small>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['province']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['province']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['province']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['province']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['province']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['province']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['province']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['province']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
+
             </form>
         </div>
 
@@ -88,7 +96,7 @@
 @section('jsbody')
 @if(!Auth::user()->hasRole('developer|super'))
 <script>
-  $('.hide-form').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 @endsection

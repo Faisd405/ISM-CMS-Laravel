@@ -4,7 +4,7 @@
   <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>{{ $data['title'].' | '.$config['meta_title'] }}</title>
+    <title>{{ $data['title'].' | '.config('cmsConfig.meta_title') }}</title>
     <style>
       /* -------------------------------------
           GLOBAL RESETS
@@ -307,12 +307,12 @@
               <table border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td class="content-block">
-                    <span class="apple-link">{{ $config['address'] }}</span>
+                    <span class="apple-link">{{ config('cmsConfig.address') }}</span>
                   </td>
                 </tr>
                 <tr>
                   <td class="content-block powered-by">
-                    <strong>{{ $config['website_name'] }}</strong> All Rights Reserved
+                    <strong>{{ config('cmsConfig.website_name') }}</strong> All Rights Reserved
                   </td>
                 </tr>
               </table>

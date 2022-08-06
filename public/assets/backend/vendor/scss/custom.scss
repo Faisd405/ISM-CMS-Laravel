@@ -1,0 +1,15 @@
+@import "./abstracts/variables";
+@import "./components/base";
+@import "./components/button";
+@import "./components/form";
+@import "./components/badge";
+@import "./components/card";
+@import "./components/breadcrumb";
+@import "./components/modal";
+@import "./components/table";
+@import "./components/navs";
+@import "./layouts/style";
+@import "./layouts/darkmode_style";
+
+
+// sass --watch assets/vendor/scss/custom.scss:assets/vendor/css/custom/custom.css --style compressed

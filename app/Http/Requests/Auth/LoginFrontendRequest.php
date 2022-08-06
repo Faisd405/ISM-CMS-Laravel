@@ -34,8 +34,8 @@ class LoginFrontendRequest extends FormRequest
     public function attributes()
     {
         return [
-            'username' => __('auth.login_frontend.label.field1'),
-            'password' => __('auth.login_frontend.label.field2'),
+            'username' => __('auth.login_frontend.label.username'),
+            'password' => __('auth.login_frontend.label.password'),
             'g-recaptcha-response' => 'Recaptcha'
         ];
     }

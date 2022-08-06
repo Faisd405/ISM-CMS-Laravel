@@ -1,0 +1,38 @@
+
+.badge {
+    transition: none;
+    font-size: .8em;
+
+    &:not(.badge-pill) {
+        border-radius: 4px;
+    }
+
+    &.badge-default {
+        background-color: var(--c-grey_15);
+        color: var(--c-text-primary);
+
+        &:hover {
+            background-color: var(--c-grey_15);
+            
+        }
+    }
+
+    &.badge-outline-default {
+        color: var(--c-text-primary);
+        box-shadow: 0 0 0 1px var(--c-grey_15) inset;
+    }
+
+    &.badge-main {
+        background-color: var(--c-default) !important;
+        color: #fff;
+    }
+
+    &.badge-outline-main {
+        background-color: transparent;
+        box-shadow: 0 0 0 1px var(--c-default) inset;
+        color: var(--c-default);
+    }
+
+
+}
+

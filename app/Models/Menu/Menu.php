@@ -246,8 +246,12 @@ class Menu extends Model
         if ($this->module == null) {
 
             $url = $this->config['url'];
-            if (App::getLocale() != config('cms.module.feature.language.default'))
+
+            if(!filter_var($url, FILTER_VALIDATE_URL)) {
+                if (App::getLocale() != config('cms.module.feature.language.default'))
                 $url = '/'.App::getLocale().$this->config['url'];
+
+            }
 
             $module = [
                 'title' => $this->title[App::getLocale()],

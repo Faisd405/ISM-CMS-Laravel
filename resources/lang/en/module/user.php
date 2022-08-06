@@ -9,18 +9,15 @@ return [
         'caption' => 'Role',
         'text' => 'List Role',
         'label' => [
-            'field1' => 'Name',
-            'field2' => 'Code',
-            'field3' => 'Guard Name',
-            'field4' => 'Level',
-            'field5' => 'Role Register'
+            'name' => 'Name',
+            'code' => 'Code',
+            'guard_name' => 'Guard Name',
+            'level' => 'Level',
+            'role_register' => 'Role Register'
         ],
         'placeholder' => [
-            'field1' => 'Enter namee',
-            'field2' => '',
-            'field3' => '',
-            'field4' => '',
-            'field5' => 'Show role during user registration'
+            'guard_name' => 'Default web',
+            'role_register' => 'Show role during user registration'
         ],
     ],
 
@@ -30,16 +27,14 @@ return [
         'caption' => 'Permission',
         'text' => 'List Permission',
         'label' => [
-            'field1' => 'Parent',
-            'field2' => 'Name',
-            'field3' => 'Code',
-            'field4' => 'Guard Name'
+            'parent' => 'Parent',
+            'name' => 'Name',
+            'code' => 'Code',
+            'guard_name' => 'Guard Name'
         ],
         'placeholder' => [
-            'field1' => '',
-            'field2' => 'Enter name',
-            'field3' => '',
-            'field4' => '',
+            'name' => 'Enter name',
+            'guard_name' => 'Default web',
         ],
     ],
 
@@ -48,26 +43,26 @@ return [
     'caption' => 'User',
     'text' => 'List User',
     'label' => [
-        'field1' => 'Name',
-        'field2' => 'Email',
-        'field3' => 'Username',
-        'field4' => 'Phonee',
-        'field5' => 'Password',
-        'field6' => 'Repeat Password',
-        'field7' => 'Current Password',
+        'name' => 'Name',
+        'email' => 'Email',
+        'username' => 'Username',
+        'phone' => 'Phone',
+        'password' => 'Password',
+        'password_confirmation' => 'Repeat Password',
+        'password_old' => 'Current Password',
         'last_activity' => 'Last Activity',
         'ip_address' => 'IP Address',
         'photo' => 'Photo',
         'no_activity' => 'not activity yet',
     ],
     'placeholder' => [
-        'field1' => 'Enter name',
-        'field2' => 'Enter email',
-        'field3' => 'Enter username',
-        'field4' => 'xxxxxxxxxxxx',
-        'field5' => 'Enter password',
-        'field6' => 'Repeat password',
-        'field7' => 'Enter current password',
+        'name' => 'Enter name',
+        'email' => 'Enter email',
+        'username' => 'Enter username',
+        'phone' => 'xxxxxxxxxxxx',
+        'password' => 'Enter password',
+        'password_confirmation' => 'Repeat password',
+        'password_old' => 'Enter current password',
     ],
 
     //--- Log
@@ -76,10 +71,10 @@ return [
         'caption' => 'Log',
         'text' => 'List Logs',
         'label' => [
-            'field1' => 'IP Address',
-            'field2' => 'Event',
-            'field3' => 'Description',
-            'field4' => 'Date',
+            'ip_address' => 'IP Address',
+            'event' => 'Event',
+            'description' => 'Description',
+            'date' => 'Date',
         ],
         'you' => 'You'
     ],
@@ -90,10 +85,10 @@ return [
         'caption' => 'Login Failed',
         'text' => 'List Login Failed',
         'label' => [
-            'field1' => 'IP Address',
-            'field2' => 'Username',
-            'field3' => 'Password',
-            'field4' => 'Date',
+            'ip_address' => 'IP Address',
+            'username' => 'Username',
+            'password' => 'Password',
+            'date' => 'Date',
             'login_type' => 'Login Type'
         ],
     ],

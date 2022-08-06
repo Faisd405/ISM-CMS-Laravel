@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\Feature\ConfigurationService;
-use App\Services\Module\ContentService;
 use App\Services\Module\DocumentService;
 use App\Services\Module\EventService;
 use App\Services\Module\GalleryService;
@@ -16,15 +15,6 @@ use Illuminate\Support\Facades\App;
 
 class HomeController extends Controller
 {
-    private $configService;
-
-    public function __construct(
-        ConfigurationService $configService
-    )
-    {
-        $this->configService = $configService;
-    }
-
     public function landing(Request $request)
     {
         if (config('cms.setting.url.landing') == false)
@@ -141,8 +131,8 @@ class HomeController extends Controller
 
     public function feed(Request $request)
     {
-        $data['title'] = $this->configService->getConfigValue('meta_title');
-        $data['description'] = $this->configService->getConfigValue('meta_description');
+        $data['title'] = config('cmsConfig.meta_title');
+        $data['description'] = config('cmsConfig.meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
             'approved' => 1,
@@ -153,8 +143,8 @@ class HomeController extends Controller
 
     public function post(Request $request)
     {
-        $data['title'] = $this->configService->getConfigValue('meta_title');
-        $data['description'] = $this->configService->getConfigValue('meta_description');
+        $data['title'] = config('cmsConfig.meta_title');
+        $data['description'] = config('cmsConfig.meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
             'approved' => 1
@@ -165,7 +155,7 @@ class HomeController extends Controller
 
     public function maintenance(Request $request)
     {
-        if ($this->configService->getConfigValue('maintenance') == 0) {
+        if (config('cmsConfig.maintenance') == 0) {
             return redirect()->route('home');
         }
 

@@ -104,7 +104,7 @@ class IndexUrlController extends Controller
             'title' => __('global.edit_attr', [
                 'attribute' =>  __('module/url.caption')
             ]),
-            'routeBack' => route('url.index', $request),
+            'routeBack' => route('url.index', $request->query()),
             'breadcrumbs' => [
                 __('module/url.caption') => route('url.index'),
                 __('global.edit') => '',

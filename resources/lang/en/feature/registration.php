@@ -5,22 +5,17 @@ return [
     'caption' => 'Registration',
     'text' => 'List Registration',
     'label' => [
-        'field1' => 'Name',
-        'field2' => 'Role',
-        'field3' => 'Start Date',
-        'field4' => 'End Date',
+        'name' => 'Name',
+        'start_date' => 'Start Date',
+        'end_date' => 'End Date',
     ],
     'placeholder' => [
-        'field1' => 'Enter name',
-        'field2' => 'Pilih role',
-        'field3' => 'Enter start date',
-        'field4' => 'Enter end date',
+        'name' => 'Enter name',
+        'start_date' => 'Enter start date',
+        'end_date' => 'Enter end date',
     ],
     'alert' => [
         'form_open' => 'Registration is not open yet',
         'form_close' => 'Registration is closed',
     ],
-    'type' => [
-        0 => 'DEFAULT'
-    ]
 ];

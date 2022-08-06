@@ -33,8 +33,8 @@ class LanguageRequest extends FormRequest
     public function attributes()
     {
         return [
-            'iso_codes' => __('feature/language.label.field1'),
-            'name' => __('feature/language.label.field2'),
+            'iso_codes' => __('feature/language.label.iso_code'),
+            'name' => __('feature/language.label.name'),
         ];
     }
 }

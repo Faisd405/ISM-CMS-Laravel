@@ -35,10 +35,10 @@ class CityRequest extends FormRequest
     public function attributes()
     {
         return [
-            'code' => __('module/regional.city.label.field1'),
-            'name' => __('module/regional.city.label.field2'),
-            'latitude' => __('module/regional.city.label.field3'),
-            'longitude' => __('module/regional.city.label.field4'),
+            'code' => __('module/regional.city.label.code'),
+            'name' => __('module/regional.city.label.name'),
+            'latitude' => __('module/regional.city.label.latitude'),
+            'longitude' => __('module/regional.city.label.longitude'),
         ];
     }
 }

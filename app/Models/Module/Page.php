@@ -2,7 +2,6 @@
 
 namespace App\Models\Module;
 
-use App\Models\Feature\Configuration;
 use App\Models\IndexingUrl;
 use App\Models\Master\Media;
 use App\Models\Master\TagType;
@@ -25,6 +24,7 @@ class Page extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'path' => 'json',
         'title' => 'json',
         'intro' => 'json',
         'content' => 'json',
@@ -36,6 +36,7 @@ class Page extends Model
     ];
 
     protected $appends = [
+        'path_parent',
         'cover_src',
         'banner_src'
     ];
@@ -55,6 +56,28 @@ class Page extends Model
     public function childRecursive()
     {
         return $this->childs()->with('childs');
+    }
+
+    public function getParent()
+    {
+        return $this->firstWhere('id', $this->parent);
+    }
+
+    public function getPathParentAttribute()
+    {
+        $path = [];
+
+        $slug = '';
+        if (!empty($this->path)) {
+            foreach ($this->whereIn('id', $this->path)->get() as $key => $value) {
+                $path[$key] = $value->slug;
+            }
+    
+            $getSlug = implode('/', $path);
+            $slug = $getSlug.'/'.$this->slug;
+        }
+
+        return $slug;
     }
 
     public function indexing()
@@ -102,11 +125,6 @@ class Page extends Model
         return $this->belongsTo(User::class, 'deleted_by');
     }
 
-    public function getParent()
-    {
-        return $this->firstWhere('id', $this->parent);
-    }
-
     public function fieldLang($field, $lang = null)
     {
         if ($lang == null)
@@ -145,9 +163,8 @@ class Page extends Model
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
         } else {
-            if (!empty(Configuration::value('cover_default'))) {
-                $cover = Storage::url(config('cms.files.config.path').
-                Configuration::value('cover_default'));
+            if (!empty(config('cmsConfig.cover_default'))) {
+                $cover = config('cmsConfig.cover_default');
             } else {
                 $cover = asset(config('cms.files.config.cover_default.file'));
             }
@@ -161,9 +178,8 @@ class Page extends Model
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);
         } else {
-            if (!empty(Configuration::value('banner_default'))) {
-                $banner = Storage::url(config('cms.files.config.path').
-                Configuration::value('banner_default'));
+            if (!empty(config('cmsConfig.banner_default'))) {
+                $banner = config('cmsConfig.banner_default');
             } else {
                 $banner = asset(config('cms.files.config.banner_default.file'));
             }

@@ -35,10 +35,10 @@ class DistrictRequest extends FormRequest
     public function attributes()
     {
         return [
-            'code' => __('module/regional.district.label.field1'),
-            'name' => __('module/regional.district.label.field2'),
-            'latitude' => __('module/regional.district.label.field3'),
-            'longitude' => __('module/regional.district.label.field4'),
+            'code' => __('module/regional.district.label.code'),
+            'name' => __('module/regional.district.label.name'),
+            'latitude' => __('module/regional.district.label.latitude'),
+            'longitude' => __('module/regional.district.label.longitude'),
         ];
     }
 }

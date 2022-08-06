@@ -33,8 +33,8 @@ class ContentSectionRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/content.section.label.field1'),
-            'slug' => __('module/content.section.label.field2'),
+            'name_'.config('cms.module.feature.language.default') => __('module/content.section.label.name'),
+            'slug' => __('module/content.section.label.slug'),
         ];
     }
 }

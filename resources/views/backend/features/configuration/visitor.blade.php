@@ -2,130 +2,163 @@
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-xl-10 col-lg-10 col-md-10">
+    <div class="col-xl-12 col-lg-12 col-md-12">
 
-        @if (isset($data['error']) && empty(env('ANALYTICS_VIEW_ID')))
+        @if (isset($data['error']))
         <div class="alert alert-warning alert-dismissible">
-            @lang('feature/configuration.visitor.warning_caption')
+            {{ $data['error'] }}
         </div>
         @else
-        {{-- Filter --}}
         <div class="card">
-            <div class="card-body d-flex flex-wrap justify-content-between">
-                <div class="d-flex w-100 w-xl-auto">
-                    <button type="button" class="btn btn-dark icon-btn-only-sm btn-sm mr-2" title="@lang('global.filter')" id="filter-btn">
-                        <i class="las la-filter"></i> <span>@lang('global.filter')</span>
+            <div class="card-header">
+                <h5 class="my-2">
+                    @lang('global.visitor')
+                </h5>
+                <div class="box-btn">
+                    <button type="button" class="btn btn-default w-icon" data-toggle="modal"
+                        data-target="#modals-slide" title="@lang('global.filter')">
+                        <i class="fi fi-rr-filter"></i>
+                        <span>@lang('global.filter')</span>
                     </button>
-                    @if ($totalQueryParam > 0)
-                    <a href="{{ url()->current() }}" class="btn btn-warning icon-btn-only-sm btn-sm" title="Clear @lang('global.filter')">
-                        <i class="las la-redo-alt"></i> <span>Clear @lang('global.filter')</span>
-                    </a>
-                    @endif
                 </div>
-            </div>
-            <hr class="m-0">
-            <div class="card-body" id="{{ $totalQueryParam == 0 ? 'filter-form' : '' }}">
-                <form action="" method="GET">
-                    <div class="form-row align-items-center">
-                        <div class="col-md">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.filter')</label>
-                                <select id="filter" class="custom-select" name="filter">
-                                    <option value=" " selected disabled>@lang('global.select')</option>
-                                    @foreach (__('feature/configuration.visitor.filter') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('filter') == ''.$key.'' ? 'selected' : '' }} 
-                                        title="@lang('global.limit') {{ $val }}">{{ $val }}</option>
-                                    @endforeach
-                                </select>
+                <!-- Modal Filter -->
+                <div class="modal modal-slide fade" id="modals-slide">
+                    <div class="modal-dialog">
+                        <form class="modal-content pb-0" action="" method="GET">
+                            <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close"><i class="fi fi-rr-cross-small"></i></button>
+                            <div class="modal-body mt-3">
+                                <div class="form-group">
+                                    <label class="form-label" for="filter">Range</label>
+                                    <select id="filter" class="custom-select" name="filter">
+                                        <option value=" " selected disabled>@lang('global.select')</option>
+                                        @foreach (__('feature/configuration.visitor.filter') as $key => $val)
+                                        <option value="{{ $key }}" {{ Request::get('filter') == ''.$key.'' ? 'selected' : '' }} 
+                                            title="Range {{ $val }}">{{ $val }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                            <div class="modal-footer">
+                                <div class="box-btn justify-content-between w-100 m-0">
+                                    @if ($totalQueryParam > 0)
+                                    <a href="{{ url()->current() }}" class="btn btn-default w-100 text-bolder">Clear @lang('global.filter')</a>
+                                    @endif
+                                    <button type="submit" class="btn btn-main w-100">@lang('global.filter')</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="card mb-4">
-                    <h6 class="card-header">@lang('feature/configuration.visitor.label.card1')</h6>
-                    <div class="d-flex justify-content-center">
+                    <div class="card-header">
+                        <h5 class="my-2">
+                            @lang('feature/configuration.visitor.label.session')
+                        </h5>
+                    </div>
+                    <div class="card-body d-flex justify-content-center">
                         <canvas id="chart-pie" height="450" class="chartjs-demo"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="card mb-4">
-                    <h6 class="card-header">@lang('feature/configuration.visitor.label.card2')</h6>
-                    <canvas id="chart-bars" height="450" class="chartjs-demo"></canvas>
+                    <div class="card-header">
+                        <h5 class="my-2">
+                            @lang('feature/configuration.visitor.label.most_browser')
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chart-bars" height="450" class="chartjs-demo"></canvas>
+                    </div>
                 </div>
             </div>
             <div class="col-md-12">
                 <div class="card mb-4">
-                    <h6 class="card-header">@lang('feature/configuration.visitor.title')</h6>
-                    <canvas id="chart-graph" height="450" class="chartjs-demo"></canvas>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <h6 class="card-header">@lang('feature/configuration.visitor.label.card3')</h6>
-                    <div class="table-responsive">
-                    <table class="table card-table">
-                        <thead>
-                            <tr>
-                                <th>@lang('feature/configuration.visitor.label.field1')</th>
-                                <th class="text-center">@lang('global.hits')</th>
-                                <th class="text-center">@lang('feature/configuration.visitor.title')</th>
-                                <th style="width: 160px;">@lang('feature/configuration.visitor.label.field2')</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($data['vp']->take(5)->sortbydesc('visitors') as $v)
-                            <tr>
-                            <td title="{{ $v['pageTitle'] }}">{{ Str::limit($v['pageTitle'], 40) }}</td>
-                            <td class="text-center">
-                                <span class="badge badge-info">{{ $v['pageViews'] }}</span>
-                            </td>
-                            <td class="text-center">
-                                <span class="badge badge-primary">{{ $v['visitors'] }}</span>
-                            </td>
-                            <td>{{ Carbon\Carbon::parse($v['date'])->format('d F Y') }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="card-header">
+                        <h5 class="my-2">
+                            @lang('feature/configuration.visitor.title')
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chart-graph" height="450" class="chartjs-demo"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card mb-4">
-                    <h6 class="card-header">@lang('feature/configuration.visitor.label.card3')</h6>
+                    <div class="card-header">
+                        <h5 class="my-2">
+                            @lang('feature/configuration.visitor.label.visitor_page')
+                        </h5>
+                    </div>
                     <div class="table-responsive">
-                    <table class="table card-table">
-                        <thead>
-                            <tr>
-                                <th>@lang('feature/configuration.visitor.label.field1')</th>
-                                <th class="text-center">@lang('global.hits')</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($data['top']->take(5) as $tt)
-                            <tr>
-                                <td>
-                                    <a href="{{ url('/').$tt['url'] }}" title="{{ $tt['pageTitle'] }}">
-                                        @if ($tt['pageTitle'] == '(not set)')
-                                            @lang('menu.frontend.home') 
-                                        @else
-                                            {{ Str::limit($tt['pageTitle'], 65) }}
-                                        @endif
-                                    </a>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge badge-info">{{ $tt['pageViews'] }}</span> 
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                        <table class="table card-table">
+                            <thead>
+                                <tr>
+                                    <th>@lang('feature/configuration.visitor.label.title')</th>
+                                    <th class="text-center">@lang('global.hits')</th>
+                                    <th class="text-center">@lang('feature/configuration.visitor.title')</th>
+                                    <th style="width: 160px;">@lang('feature/configuration.visitor.label.date')</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data['vp']->take(5)->sortbydesc('visitors') as $v)
+                                <tr>
+                                    <td title="{{ $v['pageTitle'] }}">{{ Str::limit($v['pageTitle'], 40) }}</td>
+                                    <td class="text-center">
+                                        <span class="badge badge-info">{{ $v['pageViews'] }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-main">{{ $v['visitors'] }}</span>
+                                    </td>
+                                    <td>{{ Carbon\Carbon::parse($v['date'])->format('d F Y') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="my-2">
+                            @lang('feature/configuration.visitor.label.top_page')
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table card-table">
+                            <thead>
+                                <tr>
+                                    <th>@lang('feature/configuration.visitor.label.title')</th>
+                                    <th class="text-center">@lang('global.hits')</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data['top']->take(5) as $tt)
+                                <tr>
+                                    <td>
+                                        <a href="{{ url('/').$tt['url'] }}" title="{{ $tt['pageTitle'] }}">
+                                            @if ($tt['pageTitle'] == '(not set)')
+                                                @lang('menu.frontend.home') 
+                                            @else
+                                                {{ Str::limit($tt['pageTitle'], 65) }}
+                                            @endif
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-info">{{ $tt['pageViews'] }}</span> 
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -187,8 +220,8 @@
 
         // Demo
         options: {
-        responsive: false,
-        maintainAspectRatio: false
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
 
@@ -208,8 +241,8 @@
 
         // Demo
         options: {
-        responsive: false,
-        maintainAspectRatio: false
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
 </script>

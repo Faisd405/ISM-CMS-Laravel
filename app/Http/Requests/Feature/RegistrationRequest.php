@@ -36,11 +36,11 @@ class RegistrationRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('feature/registration.label.field1'),
-            'roles' => __('feature/registration.label.field2'),
+            'name' => __('feature/registration.label.name'),
+            'roles' => __('module/user.role.caption'),
             'type' => __('global.type'),
-            'start_date' => __('feature/registration.label.field3'),
-            'end_date' => __('feature/registration.label.field4'),
+            'start_date' => __('feature/registration.label.start_date'),
+            'end_date' => __('feature/registration.label.end_date'),
         ];
     }
 }

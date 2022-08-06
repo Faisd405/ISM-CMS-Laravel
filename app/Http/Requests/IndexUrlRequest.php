@@ -37,7 +37,7 @@ class IndexUrlRequest extends FormRequest
     public function attributes()
     {
         return [
-            'slug' => __('module/url.label.field1'),
+            'slug' => __('module/url.label.slug'),
         ];
     }
 }

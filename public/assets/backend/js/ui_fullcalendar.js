@@ -4,72 +4,71 @@ $(function () {
   var m = today.getMonth();
   var d = today.getDate();
 
-//   var eventList = [
-//   {
-//     title: 'All Day Event',
-//     start: new Date(y, m, d - 12)
-//   },
-//   {
-//     title: 'Long Event',
-//     start: new Date(y, m, d - 8),
-//     end: new Date(y, m, d - 5),
-//     className: 'fc-event-warning'
-//   },
-//   {
-//     id: 999,
-//     title: 'Repeating Event',
-//     start: new Date(y, m, d - 6, 16, 0)
-//   },
-//   {
-//     id: 999,
-//     title: 'Repeating Event',
-//     start: new Date(y, m, d + 1, 16, 0),
-//     className: 'fc-event-success',
-//   },
-//   {
-//     title: 'Conference',
-//     start: new Date(y, m, d - 4),
-//     end: new Date(y, m, d - 2),
-//   },
-//   {
-//     title: 'Meeting',
-//     start: new Date(y, m, d - 3, 10, 30),
-//     end: new Date(y, m, d - 3, 12, 30),
-//     className: 'fc-event-danger'
-//   },
-//   {
-//     title: 'Lunch',
-//     start: new Date(y, m, d  - 3, 12, 0),
-//     className: 'fc-event-info'
-//   },
-//   {
-//     title: 'Meeting',
-//     start: new Date(y, m, d - 3, 14, 30),
-//     className: 'fc-event-dark'
-//   },
-//   {
-//     title: 'Happy Hour',
-//     start: new Date(y, m, d - 3, 17, 30)
-//   },
-//   {
-//     title: 'Dinner',
-//     start: new Date(y, m, d - 3, 20, 0)
-//   },
-//   {
-//     title: 'Birthday Party',
-//     start: new Date(y, m, d - 2, 7, 0)
-//   },
-//   {
-//     title: 'Background event',
-//     start: new Date(y, m, d + 5),
-//     end: new Date(y, m, d + 7),
-//     rendering: 'background'
-//   },
-//   {
-//     title: 'Click for Google',
-//     url: 'http://google.com/',
-//     start: new Date(y, m, d + 13)
-//   }];
+  var eventList = [{
+    title: 'All Day Event',
+    start: new Date(y, m, d - 12)
+  },
+  {
+    title: 'Long Event',
+    start: new Date(y, m, d - 8),
+    end: new Date(y, m, d - 5),
+    className: 'fc-event-warning'
+  },
+  {
+    id: 999,
+    title: 'Repeating Event',
+    start: new Date(y, m, d - 6, 16, 0)
+  },
+  {
+    id: 999,
+    title: 'Repeating Event',
+    start: new Date(y, m, d + 1, 16, 0),
+    className: 'fc-event-success',
+  },
+  {
+    title: 'Conference',
+    start: new Date(y, m, d - 4),
+    end: new Date(y, m, d - 2),
+  },
+  {
+    title: 'Meeting',
+    start: new Date(y, m, d - 3, 10, 30),
+    end: new Date(y, m, d - 3, 12, 30),
+    className: 'fc-event-danger'
+  },
+  {
+    title: 'Lunch',
+    start: new Date(y, m, d  - 3, 12, 0),
+    className: 'fc-event-info'
+  },
+  {
+    title: 'Meeting',
+    start: new Date(y, m, d - 3, 14, 30),
+    className: 'fc-event-dark'
+  },
+  {
+    title: 'Happy Hour',
+    start: new Date(y, m, d - 3, 17, 30)
+  },
+  {
+    title: 'Dinner',
+    start: new Date(y, m, d - 3, 20, 0)
+  },
+  {
+    title: 'Birthday Party',
+    start: new Date(y, m, d - 2, 7, 0)
+  },
+  {
+    title: 'Background event',
+    start: new Date(y, m, d + 5),
+    end: new Date(y, m, d + 7),
+    rendering: 'background'
+  },
+  {
+    title: 'Click for Google',
+    url: 'http://google.com/',
+    start: new Date(y, m, d + 13)
+  }];
 
   // Default view
   // color classes: [ fc-event-success | fc-event-info | fc-event-warning | fc-event-danger | fc-event-dark ]
@@ -151,35 +150,7 @@ $(function () {
     },
 
     eventClick: function(calEvent) {
-        $('#fullcalendar-detail-modal')
-        .on('shown.bs.modal', function() {
-          $(this).find('input[type="text"]').trigger('focus');
-        })
-        .on('hidden.bs.modal', function() {
-          $(this)
-            .off('shown.bs.modal hidden.bs.modal submit')
-            .find('input[type="text"], select').val('');
-          defaultCalendar.unselect();
-        })
-        .on('submit', function(e) {
-          e.preventDefault();
-          var title = $(this).find('input[type="text"]').val();
-          var className = $(this).find('select').val() || null;
-
-          if (title) {
-            var eventData = {
-              title: title,
-              start: selectionData.startStr,
-              end: selectionData.endStr,
-              className: className
-            }
-            defaultCalendar.addEvent(eventData);
-          }
-
-          $(this).modal('hide');
-        })
-        .modal('show');
-    //   alert('Event: ' + calEvent.event.title);
+      alert('Event: ' + calEvent.event.title);
     }
   });
 

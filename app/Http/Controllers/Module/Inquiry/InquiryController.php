@@ -11,6 +11,7 @@ use App\Services\Feature\LanguageService;
 use App\Services\Feature\NotificationService;
 use App\Services\Module\InquiryService;
 use App\Services\UserService;
+use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -21,6 +22,8 @@ use Illuminate\Support\Str;
 
 class InquiryController extends Controller
 {
+    use ApiResponser;
+
     private $inquiryService, $languageService, $configService, $userService,
         $notifService;
 
@@ -298,6 +301,13 @@ class InquiryController extends Controller
                 __('module/inquiry.form.caption') => ''
             ]
         ]);
+    }
+
+    public function totalUnread()
+    {
+        $totalUnread = $this->inquiryService->getFormList(['status' => 0], false, 0)->count();
+
+        return $this->success($totalUnread, 'Load form inquiry Unread successfully');
     }
 
     public function exportForm(Request $request, $inquiryId)

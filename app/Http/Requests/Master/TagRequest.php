@@ -37,7 +37,7 @@ class TagRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('master/tags.label.field1'),
+            'name' => __('master/tags.label.name'),
         ];
     }
 }

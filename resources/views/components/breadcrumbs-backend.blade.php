@@ -1,28 +1,25 @@
 @isset($breadcrumbs)
-<div class="d-flex justify-content-between align-items-center w-100 mb-2 border-bottom">
-    <div class="d-flex align-items-center">
+<!-- Breadcrumb -->
+<div class="d-flex align-items-center justify-content-between flex-wrap mb-lg-3">
+    <div>
         @isset ($routeBack)
-        <a href="{{ $routeBack }}" 
-            class="btn py-2 rounded-0 btn btn-outline-default bg-light border-right d-inline-block borderless text-muted text-nowrap btn-secondary" 
-            title="@lang('global.back')">
-            <span class="ion ion-ios-arrow-back"></span>&nbsp; @lang('global.back')
+        <a href="{{ $routeBack }}" class="btn btn-sm btn-outline-secondary w-icon" title="@lang('global.back')">
+            <i class="fi fi-rr-arrow-left"></i> <span>@lang('global.back')</span>
         </a>
         @endisset
-        <h5 class="p-2 pl-4 m-0 d-inline-block text-nowrap font-weight-normal">
+        <h4 class="font-weight-bold py-3 m-0">
             {!! $title !!}
-        </h5>
+        </h4>
     </div>
-    <div class="p-2 pr-4 text-right bread-right">
-        <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item">
-                <a href="{{ route('dashboard') }}" title="@lang('module/dashboard.caption')">@lang('module/dashboard.caption')</a>
-            </li>
-            @foreach ($breadcrumbs as $key => $val)
-            <li class="breadcrumb-item {{ empty($val) ? 'active' : '' }}">
-                <a href="{{ $val }}" title="{{ $key }}">{{ Str::limit($key, 15) }}</a>
-            </li>
-            @endforeach
-        </ol>
-    </div>
+    <ol class="breadcrumb my-lg-3">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard') }}" title="@lang('module/dashboard.caption')">@lang('module/dashboard.caption')</a>
+        </li>
+        @foreach ($breadcrumbs as $key => $val)
+        <li class="breadcrumb-item {{ empty($val) ? 'active' : '' }}">
+            <a href="{{ $val }}" title="{{ $key }}">{{ Str::limit($key, 15) }}</a>
+        </li>
+        @endforeach
+    </ol>
 </div>
 @endisset

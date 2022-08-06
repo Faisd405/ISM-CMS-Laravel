@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Feature\ConfigurationService;
 use App\Services\Module\ContentService;
 use App\Services\Module\InquiryService;
 use App\Services\Module\PageService;
@@ -19,22 +18,11 @@ class DashboardController extends Controller
 {
     use ApiResponser; 
 
-    private $configService;
-
-    public function __construct(
-        ConfigurationService $configService
-    )
-    {
-        $this->configService = $configService;
-    }
-
     public function index(Request $request)
     {
         $roleBackend = config('cms.module.auth.login.backend.role');
         if (!Auth::user()->hasRole($roleBackend))
            return redirect()->route('home');
-
-        $data['maintenance'] = $this->configService->getConfigValue('maintenance');
 
         $data['counter'] = [
             'page' => App::make(PageService::class)->getPageList([

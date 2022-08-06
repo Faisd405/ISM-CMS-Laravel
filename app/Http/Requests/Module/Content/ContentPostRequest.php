@@ -33,8 +33,8 @@ class ContentPostRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => __('module/content.post.label.field1'),
-            'slug' => __('module/content.post.label.field2'),
+            'title_'.config('cms.module.feature.language.default') => __('module/content.post.label.title'),
+            'slug' => __('module/content.post.label.slug'),
         ];
     }
 }

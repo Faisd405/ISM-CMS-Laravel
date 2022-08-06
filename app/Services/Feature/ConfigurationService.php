@@ -98,6 +98,24 @@ class ConfigurationService
 
         return $file;
     }
+
+    /**
+     * Set config cache
+     */
+    public function setConfigCache()
+    {
+        $setConfigs = [];
+        foreach ($this->configModel->active()->get() as $key => $value) {
+            if ($value['is_upload'] == 1) {
+                $setConfigs[$value['name']] = $this->getConfigFile($value['name']);
+            } else {
+                $setConfigs[$value['name']] = $this->getConfigValue($value['name']);
+            }
+        }
+
+        $config = app('config');
+        $config->set('cmsConfig', $setConfigs);
+    }
     
     /**
      * Create Confg

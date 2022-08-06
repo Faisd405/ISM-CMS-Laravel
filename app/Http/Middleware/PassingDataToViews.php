@@ -2,9 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
-use App\Services\Feature\NotificationService;
 use App\Services\MenuService;
 use App\Services\Module\WidgetService;
 use Closure;
@@ -14,16 +12,14 @@ use Illuminate\Support\Facades\View;
 
 class PassingDataToViews
 {
-    protected $config, $languange, $menu, $widget;
+    protected $languange, $menu, $widget;
 
     public function __construct(
-        ConfigurationService $config,
         LanguageService $languange,
         MenuService $menu,
         WidgetService $widget
     )
     {
-        $this->config = $config;
         $this->languange = $languange;
         $this->menu = $menu;
         $this->widget = $widget;
@@ -41,15 +37,6 @@ class PassingDataToViews
         $passingData = [];
         $passingData['queryParam'] = $request->query();
         $passingData['totalQueryParam'] = count($passingData['queryParam']);
-
-        //--- Configuration
-        foreach ($this->config->getConfigList(['active' => 1]) as $item) {
-            if ($item['is_upload'] == 1) {
-                $passingData['config'][$item['name']] = $item->file($item['name']);
-            } else {
-                $passingData['config'][$item['name']] = $item->value($item['name']);
-            }
-        }
         
         if (request()->segment(1) != 'backend' || request()->segment(1) != 'admin') {
 

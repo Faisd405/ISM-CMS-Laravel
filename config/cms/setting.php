@@ -27,8 +27,12 @@ return [
         100 => '100',
     ],
 
-    'layout' => 0, // 0 = vertical, 1 = horizontal
-    'layout_logo' => 1, // 0 = small, 0 = default
+    // design / halaman
+    'theme_setting' => false,
+    'layout_auth' => 1, // 1 = default, 2 = + background
+    'layout' => 1, // 1 = vertical 1, 2 = vertical 2, 3 = horizontal
+    'layout_logo' => 1, // 1 = small, 2 = default
+    'layout_fixed' => 1,
 
     // Copyright
     'copyright' => [

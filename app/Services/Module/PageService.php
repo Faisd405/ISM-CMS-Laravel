@@ -133,11 +133,24 @@ class PageService
 
             $page = new Page;
             $page->parent = $data['parent'] ?? 0;
+
+            $parent = $this->getPage(['id' => $data['parent']]);
+            if (!empty($parent)) {
+                $path = [];
+                if(!empty($parent['path']))
+                    $path = $parent['path'];
+
+                if(!in_array($parent['id'], $path))
+                    array_push($path, $parent['id']);
+
+                $page->path = $path;
+            }
+
             $this->setField($data, $page);
             $page->position = $this->pageModel->where('parent', (int)$data['parent'])->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.page.approval') == true) {
+                if (Auth::user()->hasRole('editor') && config('module.page.approval') == true) {
                     $page->approved = 2;
                 }
                 $page->created_by = Auth::user()['id'];
@@ -147,10 +160,13 @@ class PageService
             try {
                 
                 DB::commit();
-                $slug = Str::slug(strip_tags($data['slug']), '-');
-                $data['slug'] = $slug;
-                $data['module'] = 'page';
-                $this->indexUrl->storeAssociate($data, $page);
+
+                if ($page['parent'] == 0) {
+                    $slug = Str::slug(strip_tags($data['slug']), '-');
+                    $data['slug'] = $slug;
+                    $data['module'] = 'page';
+                    $this->indexUrl->storeAssociate($data, $page);
+                }
 
                 if (isset($data['tags']))
                     App::make(TagService::class)->wipeStore($data['tags'], $page);
@@ -189,8 +205,10 @@ class PageService
 
             $page->save();
 
-            $slug = Str::slug(strip_tags($data['slug']), '-');
-            $this->indexUrl->updateAssociate($slug, ['id' => $page['indexing']['id']]);
+            if ($page['parent'] == 0) {
+                $slug = Str::slug(strip_tags($data['slug']), '-');
+                $this->indexUrl->updateAssociate($slug, ['id' => $page['indexing']['id']]);
+            }
 
             if (isset($data['tags']))
                 App::make(TagService::class)->wipeStore($data['tags'], $page);
@@ -294,9 +312,14 @@ class PageService
         $page = $this->getPage($where);
 
         try {
+
+            $value = !$page[$field];
+            if ($field == 'approved') {
+                $value = $page['approved'] == 1 ? 0 : 1;
+            }
             
             $page->update([
-                $field => !$page[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $page['updated_by'],
             ]);
 
@@ -486,7 +509,9 @@ class PageService
             $page->tags()->delete();
             $page->menus()->forceDelete();
             $page->widgets()->forceDelete();
-            $page->indexing()->forceDelete();
+            if ($page['parent'] == 0) {
+                $page->indexing()->forceDelete();
+            }
             $page->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [

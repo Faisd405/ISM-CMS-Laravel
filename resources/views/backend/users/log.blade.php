@@ -8,24 +8,21 @@
 <div class="row justify-content-center">
     <div class="col-xl-12 col-lg-12 col-md-12">
 
-        {{-- Filter --}}
         <div class="card">
-            <div class="card-body d-flex flex-wrap justify-content-between">
-                <div class="d-flex w-100 w-xl-auto">
-                    <button type="button" class="btn btn-dark icon-btn-only-sm btn-sm mr-2" title="@lang('global.filter')" id="filter-btn">
-                        <i class="las la-filter"></i> <span>@lang('global.filter')</span>
+            <div class="card-header">
+                <h5 class="my-2">
+                    @lang('module/user.log.text')
+                </h5>
+                <div class="box-btn">
+                    <button type="button" class="btn btn-default w-icon" data-toggle="modal"
+                        data-target="#modals-slide" title="@lang('global.filter')">
+                        <i class="fi fi-rr-filter"></i>
+                        <span>@lang('global.filter')</span>
                     </button>
-                    @if ($totalQueryParam > 0)
-                    <a href="{{ url()->current() }}" class="btn btn-warning icon-btn-only-sm btn-sm" title="Clear @lang('global.filter')">
-                        <i class="las la-redo-alt"></i> <span>Clear @lang('global.filter')</span>
-                    </a>
-                    @endif
-                </div>
-                <div class="d-flex w-100 w-xl-auto">
-                    @role ('developer|super')
-                    <button type="button" class="btn btn-danger icon-btn-only-sm btn-sm" onclick="$(this).find('#form-reset').submit();"
+                    @role('developer|super')
+                    <button type="button" class="btn btn-danger w-icon" onclick="$(this).find('#form-reset').submit();"
                         title="Reset @lang('module/user.log.caption')">
-                        <i class="las la-redo-alt"></i> Reset @lang('module/user.log.caption')
+                        <i class="fi fi-rr-refresh"></i> <span>Reset @lang('module/user.log.caption')</span>
                         <form action="{{ route('user.log.reset', $queryParam) }}" method="POST" id="form-reset">
                             @csrf
                             @method('DELETE')
@@ -33,65 +30,62 @@
                     </button>
                     @endrole
                 </div>
-            </div>
-            <hr class="m-0">
-            <div class="card-body" id="{{ $totalQueryParam == 0 ? 'filter-form' : '' }}">
-                <form action="" method="GET">
-                    <div class="form-row align-items-center">
-                        <div class="col-md-1">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.limit')</label>
-                                <select class="custom-select" name="limit">
-                                    @foreach (config('cms.setting.limit') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }} 
-                                        title="@lang('global.limit') {{ $val }}">{{ $val }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.event')</label>
-                                <select class="custom-select" name="event">
-                                    <option value=" " selected>@lang('global.show_all')</option>
-                                    @foreach (__('global.label.event_log') as $key => $val)
-                                    <option value="{{ $key }}" {{ Request::get('event') == ''.$key.'' ? 'selected' : '' }} 
-                                        title="{{ $val['title'] }}">{{ $val['title'] }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md">
-                            <div class="form-group">
-                                <label class="form-label">@lang('global.search')</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="q" value="{{ Request::get('q') }}" placeholder="@lang('global.search_keyword')">
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-dark" title="@lang('global.search')"><i class="las la-search"></i></button>
-                                    </div>
+                <!-- Modal Filter -->
+                <div class="modal modal-slide fade" id="modals-slide">
+                    <div class="modal-dialog">
+                        <form class="modal-content pb-0" action="" method="GET">
+                            <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close"><i class="fi fi-rr-cross-small"></i></button>
+                            <div class="modal-body mt-3">
+                                <div class="form-group">
+                                    <label class="form-label" for="limit">@lang('global.limit')</label>
+                                    <select id="limit" class="form-control" name="limit" data-style="btn-default">
+                                        @foreach (config('cms.setting.limit') as $key => $val)
+                                        <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }} 
+                                            title="@lang('global.limit') {{ $val }}">
+                                            {{ $val }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">@lang('global.event')</label>
+                                    <select class="form-control" name="event">
+                                        <option value=" " selected>@lang('global.show_all')</option>
+                                        @foreach (__('global.label.event_log') as $key => $val)
+                                        <option value="{{ $key }}" {{ Request::get('event') == ''.$key.'' ? 'selected' : '' }} 
+                                            title="{{ $val['title'] }}">{{ $val['title'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="" for="search-filter">@lang('global.search')</label>
+                                    <input id="search-filter" type="text" class="form-control" name="q" value="{{ Request::get('q') }}" 
+                                        placeholder="@lang('global.search_keyword')">
                                 </div>
                             </div>
-                        </div>
+                            <div class="modal-footer">
+                                <div class="box-btn justify-content-between w-100 m-0">
+                                    @if ($totalQueryParam > 0)
+                                    <a href="{{ url()->current() }}" class="btn btn-default w-100 text-bolder">Clear @lang('global.filter')</a>
+                                    @endif
+                                    <button type="submit" class="btn btn-main w-100">@lang('global.filter')</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header with-elements">
-                <h5 class="card-header-title mt-1 mb-0">@lang('module/user.log.text')</h5>
-            </div>
-
             <div class="table-responsive">
-                <table class="table card-table table-striped table-hover">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th style="width: 10px;">#</th>
-                            <th style="width: 140px;">@lang('module/user.log.label.field1')</th>
+                            <th style="width: 140px;">@lang('module/user.log.label.ip_address')</th>
                             <th>User</th>
-                            <th style="width: 120px;">@lang('module/user.log.label.field2')</th>
-                            <th>@lang('module/user.log.label.field3')</th>
-                            <th style="width: 230px;">@lang('module/user.log.label.field4')</th>
+                            <th style="width: 120px;">@lang('module/user.log.label.event')</th>
+                            <th>@lang('module/user.log.label.description')</th>
+                            <th style="width: 230px;">@lang('module/user.log.label.date')</th>
                             @role ('developer|super')
                             <th style="width: 80px;" class="text-center">@lang('global.action')</th>
                             @endrole
@@ -112,7 +106,7 @@
                                         <span class="badge badge-success">{{ __('global.label.event_log.'.$item['event'].'.title') }}</span>
                                         @break
                                     @case(2)
-                                        <span class="badge badge-primary">{{ __('global.label.event_log.'.$item['event'].'.title') }}</span>
+                                        <span class="badge badge-main">{{ __('global.label.event_log.'.$item['event'].'.title') }}</span>
                                         @break
                                     @default
                                         <span class="badge badge-danger">{{ __('global.label.event_log.'.$item['event'].'.title') }}</span>
@@ -124,12 +118,17 @@
                             </td>
                             <td>{{ $item['created_at']->format('d F Y (H:i A)') }}</td>
                             @role ('developer|super')
-                            <td class="text-center">
-                                <button type="button" data-id="{{ $item['id'] }}" class="btn icon-btn btn-sm btn-danger swal-delete" title="@lang('global.delete_attr', [
-                                    'attribute' => __('module/user.log.caption')
-                                    ])">
-                                    <i class="las la-trash-alt"></i>
-                                </button>
+                            <td>
+                                <div class="box-btn flex-wrap justify-content-end">
+                                    <button type="button" class="btn icon-btn btn-sm btn-danger swal-delete"
+                                        data-id="{{ $item['id'] }}"
+                                        data-toggle="tooltip" data-placement="bottom"
+                                        data-original-title="@lang('global.delete_attr', [
+                                        'attribute' => __('module/user.log.caption')
+                                        ])">
+                                        <i class="fi fi-rr-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                             @endrole
                         </tr>
@@ -137,7 +136,7 @@
                         <tr>
                             <td colspan="7" align="center">
                                 <i>
-                                    <strong style="color:red;">
+                                    <strong class="text-muted">
                                     @if ($totalQueryParam > 0)
                                         ! @lang('global.data_attr_not_found', [
                                             'attribute' => __('module/user.log.caption')
@@ -154,18 +153,19 @@
                         @endforelse
                     </tbody>
                 </table>
-                <div class="card-footer">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 m--valign-middle">
-                            @lang('pagination.showing') : <strong>{{ $data['logs']->firstItem() }}</strong> - <strong>{{ $data['logs']->lastItem() }}</strong> @lang('pagination.of')
-                            <strong>{{ $data['logs']->total() }}</strong>
-                        </div>
-                        <div class="col-lg-6 m--align-right">
-                            {{ $data['logs']->onEachSide(1)->links() }}
-                        </div>
-                    </div>
-                </div>
             </div>
+            @if ($data['logs']->total() > 0)
+            <div class="card-footer justify-content-center justify-content-lg-between align-items-center flex-wrap">
+                <div class="text-muted mb-3 m-lg-0">
+                    @lang('pagination.showing') 
+                    <strong>{{ $data['logs']->firstItem() }}</strong> - 
+                    <strong>{{ $data['logs']->lastItem() }}</strong> 
+                    @lang('pagination.of')
+                    <strong>{{ $data['logs']->total() }}</strong>
+                </div>
+                {{ $data['logs']->onEachSide(1)->links() }}
+            </div>
+            @endif
         </div>
 
     </div>
@@ -173,6 +173,7 @@
 @endsection
 
 @section('scripts')
+<script src="{{ asset('assets/backend/js/ui_tooltips.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
 @endsection
 
@@ -185,11 +186,11 @@
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
                 text: "@lang('global.alert.delete_confirm_text')",
-                type: "warning",
+                icon: "warning",
                 confirmButtonText: "@lang('global.alert.delete_btn_yes')",
                 customClass: {
                     confirmButton: "btn btn-danger btn-lg",
-                    cancelButton: "btn btn-primary btn-lg"
+                    cancelButton: "btn btn-secondary btn-lg"
                 },
                 showLoaderOnConfirm: true,
                 showCancelButton: true,
@@ -218,14 +219,14 @@
             }).then(response => {
                 if (response.value.success) {
                     Swal.fire({
-                        type: 'success',
+                        icon: 'success',
                         text: "@lang('global.alert.delete_success', ['attribute' => __('module/user.log.caption')])"
                     }).then(() => {
                         window.location.reload();
                     })
                 } else {
                     Swal.fire({
-                        type: 'error',
+                        icon: 'error',
                         text: response.value.message
                     }).then(() => {
                         window.location.reload();

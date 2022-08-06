@@ -1,0 +1,39 @@
+.card {
+    border-radius: 10px;
+    border: none;
+    background-color: var(--c-white);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 30px;
+
+    .card-header {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        border-bottom: none;
+        padding: 1.5rem;
+        // padding-bottom: 0;
+
+        + .card-body {
+            padding-top: 0 !important;
+        }
+    }
+
+    .card-body {
+        padding: 1.5rem 1.5rem;
+    }
+
+    .card-footer {
+        display: flex;
+        border-top: none;
+        padding: 1.5rem;
+        padding-top: 0;
+    }
+
+    table, .table-responsive {
+        + .card-footer {
+            padding-top: 1.5rem !important;
+        }
+    }
+}

@@ -9,18 +9,16 @@ return [
         'caption' => 'Role',
         'text' => 'List Role',
         'label' => [
-            'field1' => 'Nama',
-            'field2' => 'Kode',
-            'field3' => 'Guard Name',
-            'field4' => 'Level',
-            'field5' => 'Role Register'
+            'name' => 'Nama',
+            'code' => 'Kode',
+            'guard_name' => 'Guard Name',
+            'level' => 'Level',
+            'role_register' => 'Role Register'
         ],
         'placeholder' => [
-            'field1' => 'Masukan nama',
-            'field2' => '',
-            'field3' => '',
-            'field4' => '',
-            'field5' => 'Tampilkan role saat registrasi user'
+            'name' => 'Masukan nama',
+            'guard_name' => 'Default web',
+            'role_register' => 'Tampilkan role saat registrasi user'
         ],
     ],
 
@@ -30,16 +28,14 @@ return [
         'caption' => 'Permission',
         'text' => 'List Permission',
         'label' => [
-            'field1' => 'Parent',
-            'field2' => 'Nama',
-            'field3' => 'Kode',
-            'field4' => 'Guard Name'
+            'parent' => 'Parent',
+            'name' => 'Nama',
+            'code' => 'Kode',
+            'guard_name' => 'Guard Name'
         ],
         'placeholder' => [
-            'field1' => '',
-            'field2' => 'Masukan nama',
-            'field3' => '',
-            'field4' => '',
+            'name' => 'Masukan nama',
+            'guard_name' => 'Default web',
         ],
     ],
 
@@ -48,26 +44,26 @@ return [
     'caption' => 'User',
     'text' => 'List User',
     'label' => [
-        'field1' => 'Nama',
-        'field2' => 'Email',
-        'field3' => 'Username',
-        'field4' => 'Telpon',
-        'field5' => 'Password',
-        'field6' => 'Ulangi Password',
-        'field7' => 'Password Lama',
+        'name' => 'Nama',
+        'email' => 'Email',
+        'username' => 'Username',
+        'phone' => 'Telpon',
+        'password' => 'Password',
+        'password_confirmation' => 'Ulangi Password',
+        'password_old' => 'Password Lama',
         'last_activity' => 'Terakhir Aktivitas',
         'ip_address' => 'IP Address',
         'photo' => 'Foto',
         'no_activity' => 'Belum ada aktivitas',
     ],
     'placeholder' => [
-        'field1' => 'Masukan nama',
-        'field2' => 'Masukan email',
-        'field3' => 'Masukan username',
-        'field4' => 'xxxxxxxxxxxx',
-        'field5' => 'Masukan password',
-        'field6' => 'Ulangi password',
-        'field7' => 'Masukan password lama',
+        'name' => 'Masukan nama',
+        'email' => 'Masukan email',
+        'username' => 'Masukan username',
+        'phone' => '08xxxxxxxxxxx',
+        'password' => 'Masukan password',
+        'password_confirmation' => 'Ulangi password',
+        'password_old' => 'Masukan password lama',
     ],
 
     //--- Log
@@ -76,10 +72,10 @@ return [
         'caption' => 'Log',
         'text' => 'List Logs',
         'label' => [
-            'field1' => 'IP Address',
-            'field2' => 'Event',
-            'field3' => 'Deskripsi',
-            'field4' => 'Tanggal',
+            'ip_address' => 'IP Address',
+            'event' => 'Event',
+            'description' => 'Deskripsi',
+            'date' => 'Tanggal',
         ],
         'you' => 'Anda'
     ],
@@ -90,10 +86,10 @@ return [
         'caption' => 'Login Gagal',
         'text' => 'List Login Gagal',
         'label' => [
-            'field1' => 'IP Address',
-            'field2' => 'Username',
-            'field3' => 'Password',
-            'field4' => 'Tanggal',
+            'ip_address' => 'IP Address',
+            'username' => 'Username',
+            'password' => 'Password',
+            'date' => 'Tanggal',
             'login_type' => 'Tipe Login '
         ],
     ],

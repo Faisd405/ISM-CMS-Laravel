@@ -20,18 +20,19 @@
                 @isset ($data['registration'])
                     @method('PUT')
                 @endisset
+
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/registration.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/registration.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
+                        <input type="text" class="form-control text-bolder @error('name') is-invalid @enderror" name="name" 
                             value="{{ !isset($data['registration']) ? old('name') : old('name', $data['registration']['name']) }}" 
-                            placeholder="@lang('feature/registration.placeholder.field1')" autofocus>
+                            placeholder="@lang('feature/registration.placeholder.name')" autofocus>
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/registration.label.field2') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/user.role.caption') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                             <table class="table table-striped" style="width: 30%;">
                                 <tbody>
@@ -58,9 +59,7 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            @error('roles')
-                            <label class="small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
-                            @enderror
+                            @include('components.field-error', ['field' => 'roles'])
                         </div>
                     </div>
                     <div class="form-group row">
@@ -70,30 +69,28 @@
                         <div class="col-md-10">
                             <select class="form-control show-tick @error('type') is-invalid @enderror" name="type" data-style="btn-default">
                                 <option value="" disabled selected>@lang('global.select')</option>
-                                @foreach (__('feature/registration.type') as $key => $val)
+                                @foreach (config('cms.module.feature.registration.type') as $key => $val)
                                     <option value="{{ $key }}" {{ !isset($data['registration']) ? (old('type') == ''.$key.'' ? 'selected' : '') : 
                                         (old('type', $data['registration']['type']) == ''.$key.'' ? 'selected' : '') }}>
                                         {{ $val }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('type')
-                            <label class="error jquery-validation-error small form-text invalid-feedback" style="display: inline-block; color:red;">{!! $message !!}</label>
-                            @enderror
+                            @include('components.field-error', ['field' => 'type'])
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                            <label class="col-form-label text-sm-right">@lang('feature/registration.label.field3')</label>
+                            <label class="col-form-label text-sm-right">@lang('feature/registration.label.start_date')</label>
                         </div>
                         <div class="col-sm-10">
                             <div class="input-group">
-                                <input id="start_date" type="text" class="datetime-picker form-control @error('start_date') is-invalid @enderror" name="start_date"
+                                <input id="start_date" type="text" class="datetime-picker form-control text-bolder @error('start_date') is-invalid @enderror" name="start_date"
                                     value="{{ !isset($data['registration']) ? old('start_date') : (!empty($data['registration']['start_date']) ? 
                                         old('start_date', $data['registration']['start_date']->format('Y-m-d H:i')) : old('start_date')) }}" 
-                                    placeholder="@lang('feature/registration.placeholder.field3')">
+                                    placeholder="@lang('feature/registration.placeholder.start_date')">
                                 <div class="input-group-append">
-                                    <span class="input-group-text"><i class="las la-calendar"></i></span>
+                                    <span class="input-group-text"><i class="fi fi-rr-calendar"></i></span>
                                     <span class="input-group-text">
                                         <input type="checkbox" id="enable_start" value="1">&nbsp; NULL
                                     </span>
@@ -104,16 +101,16 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                            <label class="col-form-label text-sm-right">@lang('feature/registration.label.field4')</label>
+                            <label class="col-form-label text-sm-right">@lang('feature/registration.label.end_date')</label>
                         </div>
                         <div class="col-sm-10">
                             <div class="input-group">
-                                <input id="end_date" type="text" class="datetime-picker form-control @error('end_date') is-invalid @enderror" name="end_date"
+                                <input id="end_date" type="text" class="datetime-picker form-control text-bolder @error('end_date') is-invalid @enderror" name="end_date"
                                     value="{{ !isset($data['registration']) ? old('end_date') : (!empty($data['registration']['end_date']) ? 
                                         old('end_date', $data['registration']['end_date']->format('Y-m-d H:i')) : old('end_date')) }}" 
-                                    placeholder="@lang('feature/registration.placeholder.field4')">
+                                    placeholder="@lang('feature/registration.placeholder.end_date')">
                                 <div class="input-group-append">
-                                    <span class="input-group-text"><i class="las la-calendar"></i></span>
+                                    <span class="input-group-text"><i class="fi fi-rr-calendar"></i></span>
                                     <span class="input-group-text">
                                         <input type="checkbox" id="enable_end" value="1">&nbsp; NULL
                                     </span>
@@ -148,16 +145,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['registration']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['registration']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['registration']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['registration']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['registration']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['registration']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['registration']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['registration']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -201,7 +203,7 @@
 
 @if(!Auth::user()->hasRole('developer|super'))
 <script>
-  $('.hide-form').hide();
+    $('.hide-form').hide();
 </script>
 @endif
 @endsection

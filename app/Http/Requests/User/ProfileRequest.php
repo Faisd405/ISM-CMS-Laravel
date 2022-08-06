@@ -50,12 +50,12 @@ class ProfileRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('module/user.label.field1'),
-            'email' => __('module/user.label.field2'),
-            'username' => __('module/user.label.field3'),
-            'phone' => __('module/user.label.field4'),
-            'old_password' =>  __('module/user.label.field7'),
-            'password' => __('module/user.label.field5'),
+            'name' => __('module/user.label.name'),
+            'email' => __('module/user.label.email'),
+            'username' => __('module/user.label.username'),
+            'phone' => __('module/user.label.phone'),
+            'old_password' =>  __('module/user.label.old_password'),
+            'password' => __('module/user.label.password'),
         ];
     }
 }

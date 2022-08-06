@@ -31,7 +31,7 @@ class ActivateRequest extends FormRequest
     public function attributes()
     {
         return [
-            'email' => __('auth.activate.label.field1')
+            'email' => __('auth.activate.label.email')
         ];
     }
 

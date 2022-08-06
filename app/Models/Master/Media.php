@@ -83,7 +83,10 @@ class Media extends Model
 
     public function getIconAttribute()
     {
-        $type = $this->getExtension($this->filepath['filename']);
+        $type = '';
+        if ($this->filepath['filename'] != null) {
+            $type = $this->getExtension($this->filepath['filename']);
+        }
 
         if ($type == 'jpg' || $type == 'jpeg' || $type == 'png' ||
             $type == 'svg' || $type == 'jpg') {

@@ -16,6 +16,7 @@ class CreateModPagesTable extends Migration
         Schema::create('mod_pages', function (Blueprint $table) {
             $table->id();
             $table->integer('parent')->default(0);
+            $table->json('path')->nullable();
             $table->string('slug')->index();
             $table->json('title');
             $table->json('intro')->nullable();

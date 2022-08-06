@@ -1,4 +1,6 @@
 $(function() {
+  var isDark = themeSettings.isDarkStyle();
+
   var chart1 = new Chart(document.getElementById('statistics-chart-1').getContext("2d"), {
     type: 'line',
     data: {
@@ -26,7 +28,7 @@ $(function() {
             display: false
           },
           ticks: {
-            fontColor: '#aaa',
+            fontColor: isDark ? '#fff' : '#aaa',
             autoSkipPadding: 50
           }
         }],
@@ -35,11 +37,14 @@ $(function() {
             display: false
           },
           ticks: {
-            fontColor: '#aaa',
+            fontColor: isDark ? '#fff' : '#aaa',
             maxTicksLimit: 5
           }
-        }]
+        }],
       },
+      legend: isDark ? {
+        labels: { fontColor: '#fff' }
+      } : {},
 
       responsive: false,
       maintainAspectRatio: false
@@ -210,9 +215,10 @@ $(function() {
       },
       legend: {
         position: 'right',
-        labels: {
+        labels: isDark ? {
+          fontColor: '#fff',
           boxWidth: 12
-        }
+        } : { boxWidth: 12 }
       },
       responsive: false,
       maintainAspectRatio: false
@@ -272,9 +278,10 @@ $(function() {
       },
       legend: {
         position: 'right',
-        labels: {
+        labels: isDark ? {
+          fontColor: '#fff',
           boxWidth: 12
-        }
+        } : { boxWidth: 12 }
       },
       responsive: false,
       maintainAspectRatio: false

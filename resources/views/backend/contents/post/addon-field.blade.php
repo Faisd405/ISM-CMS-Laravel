@@ -4,7 +4,7 @@
         @case('textarea')
             <label class="col-form-label col-sm-2 text-sm-right">{{ $val['value'] }}</label>
             <div class="col-sm-10">
-                <textarea class="form-control" name="af_{{ $val['name'] }}" placeholder="{{ $val['value'] }}">{{ isset($post) && isset($post['addon_fields'][$val['name']]) ? old($val['name'], $post['addon_fields'][$val['name']]) : old($val['name']) }}</textarea>
+                <textarea class="form-control text-bolder" name="af_{{ $val['name'] }}" placeholder="{{ $val['value'] }}">{{ isset($post) && isset($post['addon_fields'][$val['name']]) ? old($val['name'], $post['addon_fields'][$val['name']]) : old($val['name']) }}</textarea>
             </div>
             @break
         @case('date')
@@ -14,7 +14,7 @@
                     <input type="text" class="form-control datepicker" name="af_{{ $val['name'] }}" 
                         value="{{ isset($post) && isset($post['addon_fields'][$val['name']]) ? old($val['name'], $post['addon_fields'][$val['name']]) : old($val['name'])}}" placeholder="{{ $val['value'] }}" readonly>
                     <div class="input-group-append">
-                        <span class="input-group-text"><i class="las la-calendar"></i></span>
+                        <span class="input-group-text"><i class="fi fi-rr-calendar-lines"></i></span>
                     </div>
                 </div>
             </div>
@@ -27,12 +27,10 @@
             <div class="col-sm-10">
                 <div>
                     @foreach ($checkbox[1] as $keyC => $valC)
-                    <label class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" name="af_{{ $val['name'] }}[{{ $keyC }}]" value="{{ $keyC }}" 
-                            {{ isset($post) && isset($post['addon_fields'][$val['name']][$keyC]) ? ($keyC == $post['addon_fields'][$val['name']][$keyC] ? 'checked' : '') : '' }}>
-                        <span class="form-check-label">
-                        {{ $valC }}
-                        </span>
+                    <label class="custom-control custom-checkbox m-0">
+                        <input type="checkbox" class="custom-control-input" name="af_{{ $val['name'] }}[{{ $keyC }}]" value="{{ $keyC }}" 
+                        {{ isset($post) && isset($post['addon_fields'][$val['name']][$keyC]) ? ($keyC == $post['addon_fields'][$val['name']][$keyC] ? 'checked' : '') : '' }}>
+                        <span class="custom-control-label">{{ $valC }}</span>
                     </label>
                     @endforeach
                 </div>
@@ -41,11 +39,10 @@
         @default
         <label class="col-form-label col-sm-2 text-sm-right">{{ $val['value'] }}</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" name="af_{{ $val['name'] }}" 
+            <input type="text" class="form-control text-bolder" name="af_{{ $val['name'] }}" 
                 value="{{ isset($post) && isset($post['addon_fields'][$val['name']]) ? old($val['name'], $post['addon_fields'][$val['name']]) : old($val['name']) }}" 
                 placeholder="{{ $val['value'] }}">
         </div>
-            
     @endswitch
 </div>
 @endforeach

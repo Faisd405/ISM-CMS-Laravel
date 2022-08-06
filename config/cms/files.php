@@ -4,7 +4,7 @@ return [
     // Profile
     'avatar' => [
         'path' => 'public/avatars/',
-        'file' => 'assets/dummy/profile.jpg',
+        'file' => 'assets/dummy/avatar.png',
         'mimes' => 'jpg,jpeg,png,svg,gif',
         'pixel' => '500 x 500',
         'size' => '2 MB',
@@ -66,7 +66,7 @@ return [
             'size_byte' => '2048'
         ],
         'logo_2' => [
-            'file' => 'assets/dummy/logo_2.svg',
+            'file' => 'assets/dummy/logo_2.png',
             'mimes' => 'jpg,jpeg,png,svg,gif',
             'pixel' => '500 x 500',
             'size' => '2 MB',

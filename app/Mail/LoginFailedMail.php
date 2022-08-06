@@ -31,7 +31,7 @@ class LoginFailedMail extends Mailable
      */
     public function build()
     {
-        $webname = Configuration::value('website_name');
+        $webname = config('cmsConfig.website_name');
 
         return $this->from(env('MAIL_FROM_ADDRESS'), $webname)
             ->subject(__('mail.login_failed.title'))

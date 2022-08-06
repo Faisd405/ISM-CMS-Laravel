@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 
-<html lang="{{ App::getLocale() }}" class="layout-fixed default-style layout-collapsed">
+<html lang="{{ App::getLocale() }}" class="light-style{{ config('cms.setting.layout_fixed') == 1 ? ' layout-navbar-fixed layout-fixed' : '' }}">
 
 <head>
 
     <!-- Meta default -->
     <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
-    <meta name="title" content="{{ isset($title) ? $title.' | ' : '' }} @yield('title') {{ strip_tags($config['meta_title']) }}">
+	<meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
+	<meta name="title" content="{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.meta_title')) !!}">
     <meta name="description" content="Backend Panel Content Management System">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ isset($title) ? $title.' | ' : '' }} @yield('title') {{ strip_tags($config['meta_title']) }}</title>
+    <title>{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.meta_title')) !!}</title>
 
     <!-- Open graph -->
     <meta property="og:locale" content="{{ App::getLocale().'_'.Str::upper(App::getLocale()) }}" />
     <meta property="og:url" name="url" content="{{ url()->full() }}">
     <meta property="og:site_name" content="{{ route('login') }}">
-    <meta property="og:title" content="{{ isset($title) ? $title.' | ' : '' }} @yield('title') {{ strip_tags($config['meta_title']) }}"/>
+    <meta property="og:title" content="{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.meta_title')) !!}"/>
     <meta property="og:description" content="Backend Panel Content Management System"/>
-    <meta property="og:image" content="{{ $config['open_graph'] }}"/>
+    <meta property="og:image" content="{{ config('cmsConfig.open_graph') }}"/>
     <meta property="og:image:width" content="650" />
     <meta property="og:image:height" content="366" />
     <meta property="og:type" content="website" />
@@ -43,104 +43,94 @@
     <meta name="msapplication-TileImage" content="{{ asset('assets/favicon/ms-icon-144x144.png') }}">
 
     <!-- Main font -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700&display=swap" 
+		rel="stylesheet">
 
     <!-- Icon fonts -->
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/fontawesome.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/ionicons.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/linearicons.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/open-iconic.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/pe-icon-7-stroke.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/fontawesome.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/ionicons.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/linearicons.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/open-iconic.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/pe-icon-7-stroke.css') }}">
 
-    <!-- Core stylesheets -->
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/bootstrap.css') }}" class="theme-settings-bootstrap-css">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/appwork.css') }}" class="theme-settings-appwork-css">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/theme-corporate.css') }}" class="theme-settings-theme-css">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/colors.css') }}" class="theme-settings-colors-css">
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/uikit.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/backend/css/demo.css') }}">
-
-    <!-- Additional CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/backend/css/custom-alsen.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/backend/css/line-awesome.css') }}">
+	<!-- Core stylesheets -->
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/bootstrap.css') }}" class="theme-settings-bootstrap-css">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/appwork.css') }}" class="theme-settings-appwork-css">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/theme-corporate.css') }}" class="theme-settings-theme-css">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/colors.css') }}" class="theme-settings-colors-css">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/rtl/uikit.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/backend/css/demo.css') }}">
 
     <!-- Load polyfills -->
-    <script src="{{ asset('assets/backend/vendor/js/polyfills.js') }}"></script>
-    <script>document['documentMode']===10&&document.write('<script src="https://polyfill.io/v3/polyfill.min.js?features=Intl.~locale.en"><\/script>')</script>
+	<script src="{{ asset('assets/backend/vendor/js/polyfills.js') }}"></script>
+	<script>
+		document['documentMode'] === 10 && document.write(
+			'<script src="https://polyfill.io/v3/polyfill.min.js?features=Intl.~locale.en"><\/script>')
+	</script>
 
-    <!-- Layout helpers -->
-    <script src="{{ asset('assets/backend/vendor/js/layout-helpers.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/js/material-ripple.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/js/layout-helpers.js') }}"></script>
 
-    <!-- Libs -->
-    <style type="text/css">
-		.preloader {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			z-index: 9999;
-			background-color: rgba(255,255,255,0.5);
-		}
-		.preloader .loading {
-			position: absolute;
-			left: 50%;
-			top: 50%;
-			transform: translate(-50%,-50%);
-			font: 14px arial;
-        }
-        @media screen and (max-width: 1199.98px) {
-            #notif-bar, .bread-right {
-                visibility: hidden;
-                display: none;
-            }
-        }
-    </style>
+	@if (config('setting.theme_setting') == true)
+	<!-- Theme settings -->
+	<!-- This file MUST be included after core stylesheets and layout-helpers.js in the <head> section -->
+	<script src="{{ asset('assets/backend/vendor/js/theme-settings.js') }}"></script>
+	<script>
+		window.themeSettings = new ThemeSettings({
+			cssPath: '../assets/backend/vendor/css/rtl/',
+			themesPath: '../assets/backend/vendor/css/rtl/'
+		});
+	</script>
+	@endif
 
-    <!-- Core scripts -->
-    <script src="{{ asset('assets/backend/vendor/js/pace.js') }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<!-- Core scripts -->
+	<script src="{{ asset('assets/backend/vendor/js/pace.js') }}"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     @yield('jshead')
 
-    <!-- `perfect-scrollbar` library required by SideNav plugin -->
-    <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}">
+	<!-- Libs -->
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}">
+
+	<!-- Custome Css -->
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/custom/custom.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/backend/vendor/fonts/uicons-all.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/toastr/toastr.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/spinkit/spinkit.css') }}">
     @yield('styles')
 
 </head>
 
-<body @yield('body-attr')>
+<body @yield('body-attribute')>
 
-    <div class="page-loader">
-        <div class="bg-danger"></div>
-    </div>
-
-    <div class="preloader">
-        <div class="loading">
-            <div class="col-xs-12">
-                <div class="sk-double-bounce sk-primary">
-                    <div class="sk-child sk-double-bounce1"></div>
-                    <div class="sk-child sk-double-bounce2"></div>
-                </div>
-            </div>
-        </div>
+	<div class="page-loader">
+        <div class="bg-{{ Request::segment(1) == 'admin' ? 'main' : 'primary' }}"></div>
     </div>
 
     @yield('layout-content')
-
+    
     <!-- Core scripts -->
-    <script src="{{ asset('assets/backend/vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('assets/backend/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets/backend/vendor/js/sidenav.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/libs/popper/popper.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/js/bootstrap.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/js/sidenav.js') }}"></script>
 
-    <!-- Libs -->
-
-    <!-- `perfect-scrollbar` library required by SideNav plugin -->
-    <script src="{{ asset('assets/backend/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+	<!-- Libs -->
+	<script src="{{ asset('assets/backend/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ asset('assets/backend/vendor/libs/toastr/toastr.js') }}"></script>
     @yield('scripts')
-    <script src="{{ asset('assets/backend/js/demo.js') }}"></script>
+
+	<!-- Demo -->
+	<script src="{{ asset('assets/backend/js/demo.js') }}"></script>
+	<script src="{{ asset('assets/backend/js/forms_validation.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/libs/validate/validate.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
+
+	<!-- switcher -->
+	<script src="{{ asset('assets/backend/vendor/js/custom/jquery.style.switcher.js') }}"></script>
+	<script src="{{ asset('assets/backend/vendor/js/custom/js.cookie.js') }}"></script>
+
     <script>
         // CSRF
         $.ajaxSetup({
@@ -149,49 +139,31 @@
            }
         });
 
-        // FILE BROWSE
-        function callfileBrowser() {
-            $(".custom-file-input").on("change", function() {
-                const fileName = Array.from(this.files).map((value, index) => {
-                    if (this.files.length == index + 1) {
-                        return value.name
-                    } else {
-                        return value.name + ', '
-                    }
-                });
-                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-            });
-        }
-        callfileBrowser();
-
-        // FOCUSED-FORM
-        FormControl = function() {
-            var e = $(".form-control, label");
-            e.length && e.on("focus blur", function(e) {
-                var $this = $(this);
-                // console.log($this);
-                if ($this.val() !== '') {
-                    $this.parents('.form-group').addClass('completed');
-                } else {
-                    $this.parents('.form-group').removeClass('completed');
-                }
-                $(this).parents(".form-group").toggleClass("focused", "focus" === e.type)
-            }).trigger("blur")
-        }();
-
-        //PRE-LOAD
-        $(document).ready(function(){
-            $('.preloader').delay(1000).fadeOut();
-            $('#main').delay(1000).fadeIn();
-        });
-
-        //filter
-        $("#filter-form").hide();
-        $("#filter-btn").click(function() {
-            $("#filter-form").toggle();
-        });
+		@if (Request::segment(1) == 'admin')
+		// total inquiry unread
+		$(document).ready(function() {
+			$.ajax({
+				url : "/admin/inquiry/total-unread",
+				type : "GET",
+				dataType : "json",
+				data : {},
+				success:function(data) {
+					const totalUnread = data.data;
+					if (totalUnread > 0) {
+						$('#inquiry-form').show();
+					} else {
+						$('#inquiry-form').hide();
+					}
+				}
+			});
+		});
+		@endif
     </script>
-    @include('includes.notif-backend')
+	
     @include('components.toastr')
+	@include('includes.notif-backend')
     @yield('jsbody')
+
 </body>
+
+</html>
