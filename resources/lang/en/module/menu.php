@@ -6,35 +6,28 @@ return [
         'caption' => 'Menu Category',
         'text' => 'Menu Category List',
         'label' => [
-            'field1' => 'Name',
-            'field2' => 'Writing'
+            'name' => 'Name',
+            'code' => 'Kode'
         ],
         'placeholder' => [
-            'field1' => 'Enter name',
-            'field2' => '',
+            'name' => 'Enter name',
         ],
     ],
     'title' => 'Menu',
     'caption' => 'Menu',
     'text' => 'List Menu',
     'label' => [
-        'field1' => 'Title',
-        'field2' => 'External Link',
-        'field3' => 'URL',
-        'field4' => 'Module',
-        'field5' => 'Module Content',
-        'field6' => 'Edit Public Menu',
+        'title' => 'Title',
+        'external_link' => 'External Link',
+        'url' => 'URL',
+        'module' => 'Module',
+        'module_content' => 'Module Content',
+        'edit_public_menu' => 'Edit Public Menu',
         'icon' => 'Icon',
         'target_blank' => 'Target Blank',
         'child' => 'Child'
     ],
     'placeholder' => [
-        'field1' => 'Enter title',
-        'field2' => '',
-        'field3' => '',
-        'field4' => '',
-        'field5' => '',
-        'field6' => '',
-        'field7' => '',
+        'title' => 'Enter title',
     ],
 ];

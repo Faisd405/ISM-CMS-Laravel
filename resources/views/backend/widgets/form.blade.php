@@ -4,81 +4,88 @@
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/pages/account.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/select2/select2.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.css') }}">
-<script src="{{ asset('assets/backend/wysiwyg/tinymce.min.js') }}"></script>
 @endsection
 
 @section('content')
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/widget.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['widget']) ? route('widget.store', array_merge(['type' => $data['type']], $queryParam)) : 
-                route('widget.update', array_merge(['type' => $data['type'], 'id' => $data['widget']['id']], $queryParam)) }}" method="POST">
-                @csrf
+        <form action="{{ !isset($data['widget']) ? route('widget.store', array_merge(['type' => $data['type']], $queryParam)) : 
+            route('widget.update', array_merge(['type' => $data['type'], 'id' => $data['widget']['id']], $queryParam)) }}" method="POST">
+            @csrf
+    
+            @if (isset($data['widget']))
+                @method('PUT')
+            @endif
 
-                @if (isset($data['widget']))
-                    @method('PUT')
-                @endif
-
-                <div class="card-body pb-2 {{ isset($data['widget']) ? 'hide-form' : '' }}">
+            <div class="card {{ isset($data['widget']) ? 'hide-form' : '' }}">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/widget.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
+                <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field1') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control mb-1 @error('name') is-invalid @enderror" name="name" 
                                 value="{{ !isset($data['widget']) ? old('name') : old('name', $data['widget']['name']) }}" 
-                                placeholder="@lang('module/widget.placeholder.field1')">
+                                placeholder="@lang('module/widget.placeholder.name')">
                             <small class="form-text text-muted">@lang('global.lower_case')</small>
                             @include('components.field-error', ['field' => 'name'])
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {{-- MAIN --}}
-                @if (config('cms.module.feature.language.multiple') == true)
-                <div class="list-group list-group-flush account-settings-links flex-row">
-                    @foreach ($data['languages'] as $lang)
-                    <a class="list-group-item list-group-item-action {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'active' : '' }}" 
-                        data-toggle="list" href="#{{ $lang['iso_codes'] }}">
+            @if (config('cms.module.feature.language.multiple') == true)
+            <ul class="nav nav-tabs mb-4">
+                @foreach ($data['languages'] as $lang)
+                <li class="nav-item">
+                    <a class="nav-link{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' active' : '' }}"
+                        data-toggle="tab" href="#{{ $lang['iso_codes'] }}">
                         {!! $lang['name'] !!}
                     </a>
-                    @endforeach
-                </div>
-                @endif
+                </li>
+                @endforeach
+            </ul>
+            @endif
+
+            <div class="card">
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
-                    <div class="tab-pane fade {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'show active' : '' }}" id="{{ $lang['iso_codes'] }}">
-                        <div class="card-body pb-2">
-
+                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
+                        <div class="card-header d-flex justify-content-center">
+                            <span class="font-weight-semibold">
+                                @lang('global.language') : <b class="text-main">{{ $lang['name'] }}</b>
+                            </span>
+                        </div>
+                        <div class="card-body">
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field2') <i class="text-danger">*</i></label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.title') <i class="text-danger">{{ $data['type'] == 'text' ? '*' : '' }}</i></label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control mb-1 @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="title_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['widget']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['widget']->fieldLang('title', $lang['iso_codes'])) }}" 
-                                        placeholder="@lang('module/widget.placeholder.field2')">
+                                        placeholder="@lang('module/widget.placeholder.title')">
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field3')</label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.description')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['widget']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['widget']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     @endforeach
                 </div>
-
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row hide-form">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.field4')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.widget_set')</label>
                         <div class="col-sm-10">
                             <select class="form-control show-tick" name="widget_set" data-style="btn-default">
                                 @foreach (config('cms.module.widget.set') as $key => $value)
@@ -89,7 +96,7 @@
                             </select>
                         </div>
                     </div>
-                    <h6 class="font-weight-bold text-primary mb-4"><b class="text-primary">{{ Str::replace('_', ' ', Str::upper($data['type'])) }}</b></h6>
+                    {{-- <h6 class="font-weight-bold text-main mb-4"><b>{{ Str::replace('_', ' ', Str::upper($data['type'])) }}</b></h6> --}}
                     @include('backend.widgets.type.'.$data['type'])
                     @if ($data['type'] != 'text')
                     <div class="form-group row">
@@ -124,23 +131,29 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['widget']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['widget']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['widget']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['widget']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['widget']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['widget']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['widget']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['widget']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
+            </div>
 
-                {{-- SETTING --}}
-                <hr class="m-0">
+            <div class="card">
+                <h6 class="card-header text-main">
+                    SETTING
+                </h6>
                 <div class="card-body">
-                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
                     <div class="form-row">
                         <div class="form-group col-md-12 hide-form">
                             <label class="form-label">@lang('global.template')</label>
@@ -176,20 +189,20 @@
                     </div>
                 </div>
 
-                <hr class="border-light m-0">
-                <div class="card-body">
+                <hr class="border-light m-0 hide-form">
+                <div class="card-body hide-form">
                     <div class="form-row">
-                        <div class="form-group col-md-2 form-hide">
+                        <div class="form-group col-md-3 form-hide">
                             <label class="form-label">@lang('global.locked')</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="locked" value="1"
                                 {{ !isset($data['widget']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['widget']['locked']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            <small class="form-text">@lang('global.locked_info')</small>
                         </div>
                         <div class="form-group col-md-2 form-hide">
-                            <label class="form-label">@lang('module/widget.label.field5')</label>
+                            <label class="form-label">@lang('module/widget.label.global')</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="global" value="1"
                                     {{ !isset($data['widget']) ? (old('global') ? 'checked' : '') : (old('global', $data['widget']['global']) ? 'checked' : '') }}>
@@ -225,15 +238,15 @@
 
                 @if (Auth::user()->hasRole('developer|super') || isset($data['widget']) && $data['widget']['config']['show_custom_field'] == true && !empty($data['widget']['custom_fields']))
                 {{-- CUSTOM FIELD --}}
-                <hr class="m-0">
+                <hr class="border-light m-0">
                 <div class="table-responsive text-center">
-                    <table class="table card-table table-bordered">
-                        <thead>
+                    <table class="table card-table">
+                        <thead class="text-center">
                             @role('developer|super')
                             <tr>
                                 <td colspan="3" class="text-center">
-                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
-                                        <i class="las la-plus"></i> Field
+                                    <button id="add_field" type="button" class="btn btn-success btn-sm w-icon">
+                                        <i class="fi fi-rr-add"></i> <span>Field</span>
                                     </button>
                                 </td>
                             </tr>
@@ -249,15 +262,15 @@
                                 @foreach ($data['widget']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
-                                        <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
+                                        <textarea class="form-control text-bolder" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
                                     </td>
                                     @role('developer|super')
                                     <td style="width: 30px;">
-                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="fi fi-rr-cross-small"></i></button>
                                     </td>
                                     @endrole
                                 </tr>
@@ -267,21 +280,21 @@
                     </table>
                 </div>
                 @endif
-
-            </form>
-        </div>
+            </div>
+        </form>
         
     </div>
 </div>
 @endsection
 
 @section('scripts')
+<script src="{{ asset('assets/backend/vendor/libs/wysiwyg/tinymce.min.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/ace/ace.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/ace/theme-monokai.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/ace/mode-html.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/jquery-ace.min.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/ace/ace.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/ace/theme-monokai.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/ace/mode-html.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/jquery-ace.min.js') }}"></script>
 @endsection
 
 @section('jsbody')
@@ -342,7 +355,7 @@
                         <textarea class="form-control" name="cf_value[]" placeholder="value"></textarea>
                     </td>
                     <td style="width: 30px;">
-                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="fi fi-rr-cross-small"></i></button>
                     </td>
                 </tr>
             `);

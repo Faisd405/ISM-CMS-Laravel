@@ -10,11 +10,11 @@
             </tr>
             <tr>
                 <th style="width: 5px;">#</th>
-                <th style="width: 25px;">@lang('module/inquiry.form.label.field1')</th>
+                <th style="width: 25px;">@lang('module/inquiry.form.label.ip_address')</th>
                 @foreach ($fields as $item)
                 <th style="width: 35px;">{{ $item->fieldLang('label') }}</th>
                 @endforeach
-                <th style="width: 30px;">@lang('module/inquiry.form.label.field3')</th>
+                <th style="width: 30px;">@lang('module/inquiry.form.label.submit_time')</th>
             </tr>
         </thead>
         <tbody>

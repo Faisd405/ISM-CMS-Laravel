@@ -32,16 +32,21 @@
             @endif
 
             <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/content.section.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
                     <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
-                        <div class="card-header">
+                        <div class="card-header d-flex justify-content-center">
                             <span class="font-weight-semibold">
-                                @lang('global.form') <b class="text-main">({{ $lang['name'] }})</b>
+                                @lang('global.language') : <b class="text-main">{{ $lang['name'] }}</b>
                             </span>
                         </div>
                         <div class="card-body">
-
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.name') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
@@ -58,11 +63,11 @@
                                     <textarea class="form-control text-bolder tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['section']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['section']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     @endforeach
                 </div>
+                <hr class="border-light m-0">
                 <div class="card-body hide-form">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.slug') <i class="text-danger">*</i></label>

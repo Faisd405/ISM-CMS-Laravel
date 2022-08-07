@@ -8,20 +8,20 @@
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/user.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['user']) ? route('user.store', $queryParam) : 
-              route('user.update', array_merge(['id' => $data['user']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset ($data['user'])
-                    @method('PUT')
-                    <input type="hidden" name="old_email" value="{{ $data['user']['email'] }}">
-                @endisset
-
+        <form action="{{ !isset($data['user']) ? route('user.store', $queryParam) : 
+            route('user.update', array_merge(['id' => $data['user']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset ($data['user'])
+                @method('PUT')
+                <input type="hidden" name="old_email" value="{{ $data['user']['email'] }}">
+            @endisset
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/user.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
@@ -91,7 +91,7 @@
                     @endif
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.status')</label>
+                            <label class="col-form-label text-sm-right">@lang('global.status')</label>
                         </div>
                         <div class="col-md-10">
                             <div class="custom-control custom-checkbox">
@@ -103,7 +103,7 @@
                     </div>
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                            <label class="col-form-label text-sm-right">@lang('global.locked')</label>
                         </div>
                         <div class="col-md-10">
                             <div class="custom-control custom-checkbox">
@@ -116,7 +116,7 @@
                     </div>
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('module/user.label.password')</label>
+                            <label class="col-form-label text-sm-right">@lang('module/user.label.password')</label>
                         </div>
                         <div class="col-md-10">
                             <div class="input-group input-group-merge">
@@ -134,7 +134,7 @@
                     </div>
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('module/user.label.password_confirmation')</label>
+                            <label class="col-form-label text-sm-right">@lang('module/user.label.password_confirmation')</label>
                         </div>
                         <div class="col-md-10">
                             <div class="input-group input-group-merge">
@@ -180,7 +180,7 @@
                         <tbody>
                             @forelse ($data['permissions'] as $item)
                             <tr class="table-secondary">
-                              <td><strong>{{ $loop->iteration }}</strong></td>
+                                <td><strong>{{ $loop->iteration }}</strong></td>
                                 <td>
                                     <strong>
                                         {!! Str::replace('_', ' ', Str::upper($item['name'])) !!}
@@ -199,9 +199,9 @@
                             </tr>
                             @php
                                 if (Auth::user()->hasRole('developer')) {
-                                  $childs = $item->where('parent', $item['id'])->get();
+                                    $childs = $item->where('parent', $item['id'])->get();
                                 } else {
-                                  $childs = Auth::user()['roles'][0]['permissions']->where('parent', $item['id']);
+                                    $childs = Auth::user()['roles'][0]['permissions']->where('parent', $item['id']);
                                 }
                             @endphp
                             @foreach ($childs as $child)
@@ -212,7 +212,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td></td>
                                 <td>
-                                  <i>{!! Str::replace('_', ' ', Str::upper($child['name'])) !!}</i>
+                                    <i>{!! Str::replace('_', ' ', Str::upper($child['name'])) !!}</i>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-group m-0">
@@ -242,8 +242,8 @@
                     </table>
                 </div>  
                 @endif
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

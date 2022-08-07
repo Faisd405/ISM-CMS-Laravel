@@ -4,19 +4,19 @@
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('master/tags.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['tag']) ? route('tags.store', $queryParam) : 
-                route('tags.update', array_merge(['id' => $data['tag']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset ($data['tag'])
-                    @method('PUT')
-                @endisset
-
+        <form action="{{ !isset($data['tag']) ? route('tags.store', $queryParam) : 
+            route('tags.update', array_merge(['id' => $data['tag']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset ($data['tag'])
+                @method('PUT')
+            @endisset
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('master/tags.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('master/tags.label.name') <i class="text-danger">*</i></label>
@@ -36,7 +36,7 @@
                     </div>
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('master/tags.label.flags')</label>
+                        <label class="col-form-label text-sm-right">@lang('master/tags.label.flags')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -49,7 +49,7 @@
                     </div>
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('master/tags.label.standar')</label>
+                        <label class="col-form-label text-sm-right">@lang('master/tags.label.standar')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -77,8 +77,8 @@
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
     </div>
 </div>

@@ -5,29 +5,24 @@ return [
     'caption' => 'Link',
     'text' => 'List Link',
     'label' => [
-        'field1' => 'Nama',
-        'field2' => 'Slug / URL',
-        'field3' => 'Deskripsi',
-        'field4' => 'Media Limit',
+        'name' => 'Nama',
+        'slug' => 'Slug / URL',
+        'description' => 'Deskripsi',
     ],
     'placeholder' => [
-        'field1' => 'Masukan nama',
-        'field2' => '',
-        'field3' => '',
-        'field4' => '',
-        'field5' => '',
+        'name' => 'Masukan nama',
     ],
     'media' => [
         'title' => 'Media Link',
         'caption' => 'Media Link',
         'text' => 'List Media Link',
         'label' => [
-            'field1' => 'Judul',
-            'field2' => 'Deskripsi',
-            'field3' => 'URL',
+            'title' => 'Judul',
+            'description' => 'Deskripsi',
+            'url' => 'URL',
         ],
         'placeholder' => [
-            'field1' => 'Masukan judul',
+            'title' => 'Masukan judul',
         ],
     ]
 ];

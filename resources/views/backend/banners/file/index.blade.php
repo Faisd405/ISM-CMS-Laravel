@@ -22,7 +22,7 @@
                         ])">
                         <i class="fi fi-rr-add"></i> <span>@lang('module/banner.file.caption')</span>
                     </a>
-                    @if ($data['banner']['config']['type_image'] == true)
+                    @if (Auth::user()->hasRole('developer|super') || $data['banner']['config']['type_image'] == true)
                     <button class="btn btn-secondary w-icon" data-toggle="modal" data-target="#modals-dragDrop" title="@lang('global.add_attr_new', [
                         'attribute' => __('module/banner.file.caption')
                         ])">
@@ -140,6 +140,7 @@
                     </li>
                 </ol>
             </div>
+            <hr class="border-light m-0">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>

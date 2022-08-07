@@ -109,6 +109,7 @@
                                         </form>
                                     </button>
                                     <button type="button" class="btn icon-btn btn-sm btn-danger swal-delete" 
+                                        data-section-id="{{ $item['section_id'] }}"
                                         data-id="{{ $item['id'] }}"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('global.delete')">
@@ -167,8 +168,8 @@
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
-            var id = $(this).attr('data-id');
             var sectionId = $(this).attr('data-section-id');
+            var id = $(this).attr('data-id');
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
                 text: "@lang('global.alert.delete_confirm_text')",

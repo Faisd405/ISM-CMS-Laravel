@@ -8,19 +8,20 @@
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/url.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['url']) ? route('url.store', $queryParam) : 
-                route('url.update', array_merge(['id' => $data['url']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset ($data['url'])
-                    @method('PUT')
-                @endisset
+        <form action="{{ !isset($data['url']) ? route('url.store', $queryParam) : 
+            route('url.update', array_merge(['id' => $data['url']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset ($data['url'])
+                @method('PUT')
+            @endisset
 
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/url.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/url.label.slug') <i class="text-danger">*</i></label>
@@ -65,7 +66,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        <label class="col-form-label text-sm-right">@lang('global.locked')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -73,7 +74,7 @@
                                 {{ !isset($data['registration']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['registration']['locked']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            <small class="form-text">@lang('global.locked_info')</small>
                         </div>
                     </div>
                 </div>
@@ -93,8 +94,8 @@
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
     </div>
 </div>

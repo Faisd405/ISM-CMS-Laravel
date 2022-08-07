@@ -6,7 +6,6 @@ use App\Exports\InquiryFormExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Inquiry\InquiryFormRequest;
 use App\Http\Requests\Module\Inquiry\InquiryRequest;
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Feature\NotificationService;
 use App\Services\Module\InquiryService;
@@ -24,20 +23,18 @@ class InquiryController extends Controller
 {
     use ApiResponser;
 
-    private $inquiryService, $languageService, $configService, $userService,
+    private $inquiryService, $languageService, $userService,
         $notifService;
 
     public function __construct(
         InquiryService $inquiryService,
         LanguageService $languageService,
-        ConfigurationService $configService,
         UserService $userService,
         NotificationService $notifService
     )
     {
         $this->inquiryService = $inquiryService;
         $this->languageService = $languageService;
-        $this->configService = $configService;
         $this->userService = $userService;
         $this->notifService = $notifService;
 
@@ -369,8 +366,8 @@ class InquiryController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = $this->configService->getConfigFile('banner_default');
-        $limit = $this->configService->getConfigValue('content_limit');
+        $data['banner'] = config('cmsConfig.banner_default');
+        $limit = config('cmsConfig.content_limit');
 
         // inquiry
         $data['inquiries'] = $this->inquiryService->getInquiryList([
@@ -426,7 +423,7 @@ class InquiryController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = $this->configService->getConfigValue('meta_description');
+        $data['meta_description'] = config('cmsConfig.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -437,7 +434,7 @@ class InquiryController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('after_body')), 155);
         }
 
-        $data['meta_keywords'] = $this->configService->getConfigValue('meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }
@@ -452,7 +449,7 @@ class InquiryController extends Controller
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
             URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $this->configService->getConfigFile('cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            config('cmsConfig.cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         // record hits
         $this->inquiryService->recordHits(['id' => $data['read']['id']]);
@@ -497,7 +494,7 @@ class InquiryController extends Controller
             'title' => $inquiry->fieldLang('name'),
             'inquiry' => $inquiry,
             'request' => $request->all(),
-            'webname' => $this->configService->getConfigValue('website_name'),
+            'webname' => config('cmsConfig.website_name'),
         ];
 
         $formData = $request->all();
@@ -511,13 +508,13 @@ class InquiryController extends Controller
         $this->inquiryService->recordForm($formData);
         
 
-        if ($this->configService->getConfigValue('notif_apps_inquiry') == 1) {
+        if (config('cmsConfig.notif_apps_inquiry') == 1) {
             $this->notifService->sendNotif([
                 'user_from' => null,
                 'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3]], false)
                     ->pluck('id')->toArray(),
                 'attribute' => [
-                    'icon' => 'las la-envelope',
+                    'icon' => 'ion ion-md-mail-open',
                     'color' => 'success',
                     'title' => __('feature/notification.inquiry.title'),
                     'content' =>  __('feature/notification.inquiry.text', [
@@ -540,7 +537,7 @@ class InquiryController extends Controller
 
         try {
             
-            if ($this->configService->getConfigValue('notif_email_inquiry') == 1 && !empty($inquiry['email'])) {
+            if (config('cmsConfig.notif_email_inquiry') == 1 && !empty($inquiry['email'])) {
                 Mail::to($inquiry['email'])->send(new \App\Mail\InquiryFormMail($data));
             }
 

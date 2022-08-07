@@ -16,7 +16,7 @@ return [
 
             ],
             'frontend' => [
-                'active' => true, //status
+                'active' => false, //status
                 'role' => 'developer|super|support|admin', //role user login
                 'lock_time' => 2, //jam penguncian form login
                 'lock_total' => 10, //jumlah gagal yang akan dilock
@@ -28,11 +28,11 @@ return [
         ],
         //-- FORGOT PASSWORD
         'forgot_password' => [
-            'active' => true,
+            'active' => false,
         ],
         //-- REGISTER
         'register' => [
-            'active' => true,
+            'active' => false,
             'agree' => true, //persetujuan pendaftaran
             'is_login' => false, //otomatis login setelah register,
             'activate_account' => true
@@ -50,7 +50,7 @@ return [
     // REGIONAL
     //---------------
     'regional' => [
-        'active' => true
+        'active' => false
     ],
 
     //---------------
@@ -102,13 +102,13 @@ return [
             'default' => config('app.fallback_locale')
         ],
         'registration' => [
-            'active' => true,
+            'active' => false,
             'type' => [
                 0 => 'DEFAULT'
             ]
         ],
         'api' => [
-            'active' => true,
+            'active' => false,
             'mod' => [],
         ],
         'maintenance' => [
@@ -172,7 +172,7 @@ return [
             ],
         ],
         'tags' => [
-            'active' => true
+            'active' => false
         ],
     ],
 
@@ -212,7 +212,7 @@ return [
     //---------------
     'page' => [
         'active' => true,
-        'list_view' => true,
+        'list_view' => false,
         'approval' => true,
         'search' => true,
         'ordering' => [
@@ -226,7 +226,7 @@ return [
     'content' => [
         'section' => [
             'active' => true,
-            'list_view' => true,
+            'list_view' => false,
             'approval' => true,
             'search' => true,
             'ordering' => [
@@ -241,14 +241,14 @@ return [
         ],
         'category' => [
             'active' => true,
-            'list_view' => true,
-            'approval' => true,
+            'list_view' => false,
+            'approval' => false,
             'search' => true
         ],
         'post' => [
             'active' => true,
-            'list_view' => true,
-            'approval' => true,
+            'list_view' => false,
+            'approval' => false,
             'search' => true,
             'ordering' => [
                 'created_at' => 'Created',
@@ -268,7 +268,7 @@ return [
             'position' => 'ASC'
         ],
         'file' => [
-            'approval' => true,
+            'approval' => false,
             'type' => [
                 0 => 'IMAGE',
                 1 => 'VIDEO',
@@ -294,21 +294,21 @@ return [
         'list_view' => true,
         'category' => [
             'active' => true,
-            'approval' => true,
+            'approval' => false,
             'search' => true,
             'ordering' => [
                 'position' => 'ASC',
             ]
         ],
         'album' => [
-            'approval' => true,
+            'approval' => false,
             'search' => true,
             'ordering' => [
                 'position' => 'ASC',
             ]
         ],
         'file' => [
-            'approval' => true,
+            'approval' => false,
             'type' => [
                 0 => 'IMAGE',
                 1 => 'VIDEO',
@@ -330,14 +330,14 @@ return [
     //---------------
     'document' => [
         'active' => true,
-        'list_view' => true,
-        'approval' => true,
+        'list_view' => false,
+        'approval' => false,
         'search' => true,
         'ordering' => [
             'position' => 'ASC'
         ],
         'file' => [
-            'approval' => true,
+            'approval' => false,
             'type' => [
                 0 => 'UPLOAD',
                 1 => 'FILEMANAGER',
@@ -351,14 +351,14 @@ return [
     //---------------
     'link' => [
         'active' => true,
-        'list_view' => true,
-        'approval' => true,
+        'list_view' => false,
+        'approval' => false,
         'search' => true,
         'ordering' => [
             'position' => 'ASC'
         ],
         'media' => [
-            'approval' => true,
+            'approval' => false,
         ]
     ],
 
@@ -367,7 +367,7 @@ return [
     //---------------
     'inquiry' => [
         'active' => true,
-        'list_view' => true,
+        'list_view' => false,
         'approval' => true,
         'search' => true,
         'ordering' => [
@@ -399,7 +399,7 @@ return [
     'event' => [
         'active' => true,
         'list_view' => true,
-        'approval' => true,
+        'approval' => false,
         'search' => true,
         'ordering' => [
             'position' => 'ASC'

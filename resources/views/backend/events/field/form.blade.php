@@ -9,28 +9,35 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/event.field.caption')
-                ])
-            </h6>
-            <div class="card-header">
-                <span class="text-muted">
-                    {{ Str::upper(__('module/event.caption')) }} : <b class="text-primary">{{ $data['event']->fieldLang('name') }}</b>
-                </span>
-            </div>
-            <form action="{{ !isset($data['field']) ? route('event.field.store', array_merge(['eventId' => $data['event']['id']], $queryParam)) : 
-                route('event.field.update', array_merge(['eventId' => $data['event']['id'], 'id' => $data['field']['id']], $queryParam)) }}" method="POST" 
-                    enctype="multipart/form-data">
-                @csrf
-                @isset($data['field'])
-                    @method('PUT')
-                @endisset
+        <form action="{{ !isset($data['field']) ? route('event.field.store', array_merge(['eventId' => $data['event']['id']], $queryParam)) : 
+            route('event.field.update', array_merge(['eventId' => $data['event']['id'], 'id' => $data['field']['id']], $queryParam)) }}" method="POST" 
+                enctype="multipart/form-data">
+            @csrf
+            @isset($data['field'])
+                @method('PUT')
+            @endisset
 
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/event.field.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
+                <div class="card-header m-0">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item">
+                            <span>{{ Str::upper(__('module/event.caption')) }}</span>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <b class="text-main">{{ $data['event']->fieldLang('name') }}</b>
+                        </li>
+                    </ol>
+                </div>
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field2') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 
                             value="{{ !isset($data['field']) ? old('name') : old('name', $data['field']['name']) }}" placeholder="">
@@ -38,53 +45,61 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                 {{-- MAIN --}}
-                 @if (config('cms.module.feature.language.multiple') == true)
-                <div class="list-group list-group-flush account-settings-links flex-row">
-                    @foreach ($data['languages'] as $lang)
-                    <a class="list-group-item list-group-item-action {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'active' : '' }}" 
-                        data-toggle="list" href="#{{ $lang['iso_codes'] }}">
+            @if (config('cms.module.feature.language.multiple') == true)
+            <ul class="nav nav-tabs mb-4">
+                @foreach ($data['languages'] as $lang)
+                <li class="nav-item">
+                    <a class="nav-link{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' active' : '' }}"
+                        data-toggle="tab" href="#{{ $lang['iso_codes'] }}">
                         {!! $lang['name'] !!}
                     </a>
-                    @endforeach
-                </div>
-                @endif
+                </li>
+                @endforeach
+            </ul>
+            @endif
+
+            <div class="card">
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
-                    <div class="tab-pane fade {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'show active' : '' }}" id="{{ $lang['iso_codes'] }}">
-                        <div class="card-body pb-2">
-        
+                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
+                        <div class="card-header d-flex justify-content-center">
+                            <span class="font-weight-semibold">
+                                @lang('global.language') : <b class="text-main">{{ $lang['name'] }}</b>
+                            </span>
+                        </div>
+                        <div class="card-body">
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field1') <i class="text-danger">*</i></label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.label') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control mb-1 @error('label_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="label_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['field']) ? old('label_'.$lang['iso_codes']) : old('label_'.$lang['iso_codes'], $data['field']->fieldLang('label', $lang['iso_codes'])) }}" 
-                                        placeholder="@lang('module/event.field.placeholder.field1')">
+                                        value="{{ !isset($data['field']) ? old('label_'.$lang['iso_codes']) : old('label_'.$lang['iso_codes'], $data['field']->fieldLang('label', $lang['iso_codes'])) }}">
                                     @include('components.field-error', ['field' => 'label_'.$lang['iso_codes']])
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field10')</label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.placeholder')</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control mb-1 @error('placeholder_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" name="placeholder_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['field']) ? old('placeholder_'.$lang['iso_codes']) : old('placeholder_'.$lang['iso_codes'], $data['field']->fieldLang('placeholder', $lang['iso_codes'])) }}" 
-                                        placeholder="@lang('module/event.field.placeholder.field10')">
+                                        value="{{ !isset($data['field']) ? old('placeholder_'.$lang['iso_codes']) : old('placeholder_'.$lang['iso_codes'], $data['field']->fieldLang('placeholder', $lang['iso_codes'])) }}">
                                     @include('components.field-error', ['field' => 'placeholder_'.$lang['iso_codes']])
                                 </div>
                             </div>
-        
                         </div>
                     </div>
                     @endforeach
                 </div>
+            </div>
 
-                <hr class="m-0">
+            <div class="card">
+                <h6 class="card-header text-main">
+                    SETTING
+                </h6>
                 <div class="card-body">
-                    <h6 class="font-weight-bold text-primary mb-4">FIELD SETTING</h6>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field3')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.form_type')</label>
                         <div class="col-sm-10">
                             <select class="select2 show-tick" name="type" data-style="btn-default">
                                 @foreach (config('cms.module.event.field.type') as $key => $field)
@@ -96,9 +111,9 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field4')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.type')</label>
                         <div class="col-sm-10">
-                            <select class="custom-select show-tick" name="property_type" data-style="btn-default">
+                            <select class="form-control show-tick" name="property_type" data-style="btn-default">
                                 @foreach (config('cms.module.event.field.input') as $key => $value)
                                     <option value="{{ $key }}" {{ !isset($data['field']) ? (old('property_type') == ''.$key.'' ? 'selected' : '') : (old('property_type', $data['field']['properties']['type']) == ''.$key.'' ? 'selected' : '') }}>
                                         {{ $value }}
@@ -108,23 +123,23 @@
                         </div>
                     </div>
                     <div class="form-group row hide-form">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field6')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.class')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('property_class') is-invalid @enderror" name="property_class" 
                                 value="{{ !isset($data['field']) ? old('property_class') : old('property_class', $data['field']['properties']['class']) }}" 
-                                placeholder="@lang('module/event.field.placeholder.field6')">
+                                placeholder="@lang('module/event.field.placeholder.class')">
                         </div>
                     </div>
                     <div class="form-group row hide-form">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field7')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.attribute')</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control @error('property_attribute') is-invalid @enderror" name="property_attribute" 
                                 value="{{ !isset($data['field']) ? old('property_attribute') : old('property_attribute', $data['field']['properties']['attribute']) }}" 
-                                placeholder="@lang('module/event.field.placeholder.field7')">
+                                placeholder="@lang('module/event.field.placeholder.attribute')">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.field8')</label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.field.label.validation')</label>
                         <div class="col-sm-10">
                             @foreach (__('module/event.field.validations') as $key => $val)
                             <label class="custom-control custom-checkbox">
@@ -154,19 +169,18 @@
                     </div>
                 </div>
 
-                {{-- CUSTOM FIELD --}}
-                <hr class="m-0 hide-form">
-                <div class="table-responsive text-center hide-form">
-                    <table class="table card-table table-bordered">
+                <hr class="border-light m-0 hide-form">
+                <div class="card-body hide-form">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <td colspan="3" class="text-center">
-                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
-                                        <i class="las la-plus"></i> @lang('module/event.field.label.field11')
+                                    <button id="add_field" type="button" class="btn btn-success btn-sm w-icon">
+                                        <i class="fi fi-rr-add"></i> <span>@lang('module/event.field.label.option')</span>
                                     </button>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="text-center">
                                 <th>Label</th>
                                 <th>Value</th>
                                 <th></th>
@@ -177,13 +191,13 @@
                                 @foreach ($data['field']['options'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control" name="opt_label[]" placeholder="label" value="{{ $key }}">
+                                        <input type="text" class="form-control text-bolder" name="opt_label[]" placeholder="label" value="{{ $key }}">
                                     </td>
                                     <td>
-                                        <textarea class="form-control" name="opt_value[]" placeholder="value">{{ $val }}</textarea>
+                                        <textarea class="form-control text-bolder" name="opt_value[]" placeholder="value">{{ $val }}</textarea>
                                     </td>
                                     <td style="width: 30px;">
-                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="fi fi-rr-cross-small"></i></button>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -192,10 +206,8 @@
                     </table>
                 </div>
 
-                 {{-- SETTING --}}
-                 <hr class="m-0">
-                 <div class="card-body">
-                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
+                <hr class="border-light m-0">
+                <div class="card-body">
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label class="form-label">@lang('global.status')</label>
@@ -217,31 +229,36 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group col-md-2 hide-form">
+                        <div class="form-group col-md-4 hide-form">
                             <label class="form-label">@lang('global.locked')</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="locked" value="1"
                                 {{ !isset($data['field']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['field']['locked']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            <small class="form-text">@lang('global.locked_info')</small>
                         </div>
                     </div>
-                 </div>
-
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['field']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['field']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['field']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['field']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
                 </div>
-            </form>
-        </div>
+
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['field']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['field']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['field']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['field']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
 
     </div>
 </div>
@@ -271,13 +288,13 @@
         $("#list_field").append(`
             <tr class="num-list" id="delete-`+no+`">
                 <td>
-                    <input type="text" class="form-control" name="opt_label[]" placeholder="label">
+                    <input type="text" class="form-control text-bolder" name="opt_label[]" placeholder="label">
                 </td>
                 <td>
-                    <textarea class="form-control" name="opt_value[]" placeholder="value"></textarea>
+                    <textarea class="form-control text-bolder" name="opt_value[]" placeholder="value"></textarea>
                 </td>
                 <td style="width: 30px;">
-                    <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                    <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="fi fi-rr-cross-small"></i></button>
                 </td>
             </tr>
         `);

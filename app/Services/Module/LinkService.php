@@ -258,8 +258,13 @@ class LinkService
 
         try {
             
+            $value = !$link[$field];
+            if ($field == 'approved') {
+                $value = $link['approved'] == 1 ? 0 : 1;
+            }
+
             $link->update([
-                $field => !$link[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $link['updated_by'],
             ]);
 
@@ -677,9 +682,14 @@ class LinkService
         $media = $this->getMedia($where);
 
         try {
+
+            $value = !$media[$field];
+            if ($field == 'approved') {
+                $value = $media['approved'] == 1 ? 0 : 1;
+            }
             
             $media->update([
-                $field => !$media[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $media['updated_by'],
             ]);
 

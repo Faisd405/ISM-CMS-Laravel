@@ -9,11 +9,10 @@ use App\Services\Module\BannerService;
 use App\Services\Module\WidgetService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
 
 class WidgetController extends Controller
 {
-    private $widgetService, $languageService, $apiService;
+    private $widgetService, $languageService;
 
     public function __construct(
         WidgetService $widgetService,

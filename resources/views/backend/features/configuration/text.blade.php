@@ -28,6 +28,7 @@
                         <h6 class="card-header">
                             @lang('global.form') ({{ Str::upper($data['lang']['name']) }})
                         </h6>
+                        <hr class="border-light m-0">
                         <div class="card-body">
                             @foreach ($data['files'] as $key => $value)
                             <div class="form-group row">

@@ -32,7 +32,7 @@ class MenuCategoryRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('module/menu.category.label.field1'),
+            'name' => __('module/menu.category.label.name'),
         ];
     }
 }

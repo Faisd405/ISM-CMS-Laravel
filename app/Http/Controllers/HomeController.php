@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Feature\ConfigurationService;
+use App\Services\Feature\LanguageService;
+use App\Services\Module\ContentService;
 use App\Services\Module\DocumentService;
 use App\Services\Module\EventService;
 use App\Services\Module\GalleryService;
@@ -114,6 +115,8 @@ class HomeController extends Controller
         $filter['approved'] = 1;
         $filter['detail'] = 1;
 
+        $multiple = config('cms.module.feature.language.multiple');
+        $data['languages'] = App::make(LanguageService::class)->getLanguageActive($multiple);
         $data['pages'] = App::make(PageService::class)->getPageList($filter, false, 0, false, [], []);
         $data['content_sections'] = App::make(ContentService::class)->getSectionList($filter, false, 0, false, [], []);
         $data['content_categories'] = App::make(ContentService::class)->getCategoryList($filter, false, 0, false, [], []);
@@ -131,6 +134,9 @@ class HomeController extends Controller
 
     public function feed(Request $request)
     {
+        if (config('cms.setting.url.feed') == false)
+            return redirect()->route('home');
+
         $data['title'] = config('cmsConfig.meta_title');
         $data['description'] = config('cmsConfig.meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
@@ -143,6 +149,9 @@ class HomeController extends Controller
 
     public function post(Request $request)
     {
+        if (config('cms.setting.url.feed') == false)
+            return redirect()->route('home');
+            
         $data['title'] = config('cmsConfig.meta_title');
         $data['description'] = config('cmsConfig.meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([

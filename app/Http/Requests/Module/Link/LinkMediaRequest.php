@@ -32,8 +32,8 @@ class LinkMediaRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => __('module/link.media.label.field1'),
-            'url' => __('module/link.media.label.field3'),
+            'title_'.config('cms.module.feature.language.default') => __('module/link.media.label.title'),
+            'url' => __('module/link.media.label.url'),
         ];
     }
 }

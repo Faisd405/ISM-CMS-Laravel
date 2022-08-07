@@ -35,7 +35,7 @@ class WidgetRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name' => __('module/widget.label.field1'),
+            'name' => __('module/widget.label.name'),
             // 'title_'.config('cms.module.feature.language.default') => __('module/widget.label.field2'),
             // 'template' => __('global.template'),
             'moduleable_id' => $this->type

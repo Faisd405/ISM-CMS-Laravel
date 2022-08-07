@@ -127,13 +127,12 @@ class EventService
     {
         try {
 
-
             $event = new Event;
             $this->setFieldEvent($data, $event);
             $event->position = $this->eventModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.event.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.event.approval') == true) {
                     $event->approved = 2;
                 }
                 $event->created_by = Auth::user()['id'];
@@ -295,8 +294,13 @@ class EventService
 
         try {
             
+            $value = !$event[$field];
+            if ($field == 'approved') {
+                $value = $event['approved'] == 1 ? 0 : 1;
+            }
+            
             $event->update([
-                $field => !$event[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $event['updated_by'],
             ]);
 
@@ -614,7 +618,7 @@ class EventService
             $field->position = $this->eventFieldModel->where('event_id', $data['event_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.event.field.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.event.field.approval') == true) {
                     $field->approved = 2;
                 }
                 $field->created_by = Auth::user()['id'];
@@ -731,8 +735,13 @@ class EventService
 
         try {
             
+            $value = !$field[$fieldd];
+            if ($fieldd == 'approved') {
+                $value = $field['approved'] == 1 ? 0 : 1;
+            }
+
             $field->update([
-                $fieldd => !$field[$fieldd],
+                $fieldd => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $field['updated_by'],
             ]);
 

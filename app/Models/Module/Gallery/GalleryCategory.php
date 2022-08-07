@@ -2,7 +2,6 @@
 
 namespace App\Models\Module\Gallery;
 
-use App\Models\Feature\Configuration;
 use App\Models\Master\Template;
 use App\Models\Menu\Menu;
 use App\Models\Module\Widget;
@@ -128,9 +127,9 @@ class GalleryCategory extends Model
             $cover = Storage::url($this->cover['filepath']);
         } else {
 
-            if (!empty(Configuration::value('cover_default'))) {
+            if (!empty(config('cmsConfig.cover_default'))) {
                 $cover = Storage::url(config('cms.files.config.path').
-                Configuration::value('cover_default'));
+                config('cmsConfig.cover_default'));
             } else {
                 $cover = asset(config('cms.files.config.cover_default.file'));
             }
@@ -144,9 +143,9 @@ class GalleryCategory extends Model
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);
         } else {
-            if (!empty(Configuration::value('banner_default'))) {
+            if (!empty(config('cmsConfig.banner_default'))) {
                 $banner = Storage::url(config('cms.files.config.path').
-                Configuration::value('banner_default'));
+                config('cmsConfig.banner_default'));
             } else {
                 $banner = asset(config('cms.files.config.banner_default.file'));
             }

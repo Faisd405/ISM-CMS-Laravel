@@ -8,19 +8,20 @@
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('master/template.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['template']) ? route('template.store', $queryParam) : 
-                route('template.update', array_merge(['id' => $data['template']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset ($data['template'])
-                    @method('PUT')
-                @endisset
+        <form action="{{ !isset($data['template']) ? route('template.store', $queryParam) : 
+            route('template.update', array_merge(['id' => $data['template']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset ($data['template'])
+                @method('PUT')
+            @endisset
 
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('master/template.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('master/template.label.name') <i class="text-danger">*</i></label>
@@ -103,8 +104,8 @@
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
     </div>
 </div>
@@ -112,10 +113,10 @@
 
 @section('scripts')
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/ace/ace.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/ace/theme-monokai.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/ace/mode-html.js') }}"></script>
-<script src="{{ asset('assets/backend/jquery-ace/jquery-ace.min.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/ace/ace.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/ace/theme-monokai.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/ace/mode-html.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/jquery-ace/jquery-ace.min.js') }}"></script>
 @endsection
 
 @section('jsbody')

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Module\Document;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Document\DocumentRequest;
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\TemplateService;
 use App\Services\Module\DocumentService;
@@ -16,21 +15,19 @@ use Illuminate\Support\Str;
 
 class DocumentController extends Controller
 {
-    private $documentService, $languageService, $templateService, $configService,
+    private $documentService, $languageService, $templateService,
         $userService;
 
     public function __construct(
         DocumentService $documentService,
         LanguageService $languageService,
         TemplateService $templateService,
-        ConfigurationService $configService,
         UserService $userService
     )
     {
         $this->documentService = $documentService;
         $this->languageService = $languageService;
         $this->templateService = $templateService;
-        $this->configService = $configService;
         $this->userService = $userService;
 
         $this->lang = config('cms.module.feature.language.multiple');
@@ -95,7 +92,7 @@ class DocumentController extends Controller
     {
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document'], false, 0);
-        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false, 0);
+        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4, 5]], false, 0);
 
         return view('backend.documents.form', compact('data'), [
             'title' => __('global.add_attr_new', [
@@ -136,7 +133,7 @@ class DocumentController extends Controller
 
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
         $data['templates'] = $this->templateService->getTemplateList(['type' => 0, 'module' => 'document'], false, 0);
-        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4]], false, 0);
+        $data['roles'] = $this->userService->getRoleList(['role_not' => [1, 2, 3, 4, 5]], false, 0);
 
         return view('backend.documents.form', compact('data'), [
             'title' => __('global.edit_attr', [
@@ -256,8 +253,8 @@ class DocumentController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = $this->configService->getConfigFile('banner_default');
-        $limit = $this->configService->getConfigValue('content_limit');
+        $data['banner'] = config('cmsConfig.banner_default');
+        $limit = config('cmsConfig.content_limit');
 
         // category
         $data['categories'] = $this->documentService->getDocumentList([
@@ -330,7 +327,7 @@ class DocumentController extends Controller
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-        $data['meta_description'] = $this->configService->getConfigValue('meta_description');
+        $data['meta_description'] = config('cmsConfig.meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
@@ -345,7 +342,7 @@ class DocumentController extends Controller
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
             URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            $this->configService->getConfigFile('cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            config('cmsConfig.cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_id'])) {

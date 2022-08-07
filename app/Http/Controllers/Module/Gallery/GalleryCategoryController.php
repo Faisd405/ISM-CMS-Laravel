@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Module\Gallery;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Gallery\GalleryCategoryRequest;
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Master\TemplateService;
 use App\Services\Module\GalleryService;
@@ -15,19 +14,17 @@ use Illuminate\Support\Str;
 
 class GalleryCategoryController extends Controller
 {
-    private $galleryService, $languageService, $templateService, $configService;
+    private $galleryService, $languageService, $templateService;
 
     public function __construct(
         GalleryService $galleryService,
         LanguageService $languageService,
-        TemplateService $templateService,
-        ConfigurationService $configService
+        TemplateService $templateService
     )
     {
         $this->galleryService = $galleryService;
         $this->languageService = $languageService;
         $this->templateService = $templateService;
-        $this->configService = $configService;
 
         $this->lang = config('cms.module.feature.language.multiple');
     }
@@ -261,8 +258,8 @@ class GalleryCategoryController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = $this->configService->getConfigFile('banner_default');
-        $limit = $this->configService->getConfigValue('content_limit');
+        $data['banner'] = config('cmsConfig.banner_default');
+        $limit = config('cmsConfig.content_limit');
 
         // category
         $data['categories'] = $this->galleryService->getCategoryList([
@@ -352,7 +349,7 @@ class GalleryCategoryController extends Controller
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-        $data['meta_description'] = $this->configService->getConfigValue('meta_description');
+        $data['meta_description'] = config('cmsConfig.meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }

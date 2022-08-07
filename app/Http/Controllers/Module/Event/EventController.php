@@ -6,7 +6,6 @@ use App\Exports\EventFormExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Event\EventFormRequest;
 use App\Http\Requests\Module\Event\EventRequest;
-use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Feature\NotificationService;
 use App\Services\Module\EventService;
@@ -21,20 +20,17 @@ use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
-    private $eventService, $languageService, $configService, $userService,
-        $notifService;
+    private $eventService, $languageService, $userService, $notifService;
 
     public function __construct(
         EventService $eventService,
         LanguageService $languageService,
-        ConfigurationService $configService,
         UserService $userService,
         NotificationService $notifService
     )
     {
         $this->eventService = $eventService;
         $this->languageService = $languageService;
-        $this->configService = $configService;
         $this->userService = $userService;
         $this->notifService = $notifService;
 
@@ -365,8 +361,8 @@ class EventController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = $this->configService->getConfigFile('banner_default');
-        $limit = $this->configService->getConfigValue('content_limit');
+        $data['banner'] = config('cmsConfig.banner_default');
+        $limit = config('cmsConfig.content_limit');
 
         // eveet
         $data['events'] = $this->eventService->getEventList([
@@ -437,7 +433,7 @@ class EventController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = $this->configService->getConfigValue('meta_description');
+        $data['meta_description'] = config('cmsConfig.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -445,7 +441,7 @@ class EventController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
 
-        $data['meta_keywords'] = $this->configService->getConfigValue('meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }
@@ -517,13 +513,13 @@ class EventController extends Controller
 
         $this->eventService->recordForm($formData);
 
-        if ($this->configService->getConfigValue('notif_apps_event') == 1) {
+        if (config('cmsConfig.notif_apps_event') == 1) {
             $this->notifService->sendNotif([
                 'user_from' => null,
                 'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3]], false)
                     ->pluck('id')->toArray(),
                 'attribute' => [
-                    'icon' => 'las la-calendar',
+                    'icon' => 'ion ion-md-calendar',
                     'color' => 'success',
                     'title' => __('feature/notification.event.title'),
                     'content' =>  __('feature/notification.event.text', [
@@ -548,7 +544,7 @@ class EventController extends Controller
 
         try {
             
-            if ($this->configService->getConfigValue('notif_email_event') == 1 && !empty($event['email'])) {
+            if (config('cmsConfig.notif_email_event') == 1 && !empty($event['email'])) {
                 Mail::to($event['email'])->send(new \App\Mail\EventFormMail($data));
             }
             

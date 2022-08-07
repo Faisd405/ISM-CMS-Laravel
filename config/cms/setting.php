@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'cms_code' => 'cms', // kode cms untuuk generate password dll.
+
     'index_url' => true, //untuk mengaktifkan permalink short
     'locales' => true,  //untuk mengaktifkan auto redirect ke ISO CODE bahasa
 
@@ -9,9 +11,10 @@ return [
 
     // url
     'url' => [
-        'landing' => true,
+        'landing' => false,
         'search' => true,
-        'sitemap' => true
+        'sitemap' => false,
+        'feed' => true,
     ],
 
     //icon refernce

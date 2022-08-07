@@ -27,8 +27,8 @@ class EventFieldRequest extends FormRequest
     public function attributes()
     {
         return [
-            'label_'.config('cms.module.feature.language.default') => __('module/inquiry.field.label.field1'),
-            'name' => __('module/inquiry.field.label.field2'),
+            'label_'.config('cms.module.feature.language.default') => __('module/inquiry.field.label.label'),
+            'name' => __('module/inquiry.field.label.name'),
         ];
     }
 }

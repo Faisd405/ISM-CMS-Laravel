@@ -88,7 +88,7 @@ return [
     'view_detail' => 'Lihat Detail',
     'lower_case' => 'Disarankan menggunakan huruf kecil',
     'approval_info' => 'Membutuhkan persetujuan',
-
+    
     // form module
     'setting' => 'Setting',
     'custom' => 'Custom',
@@ -97,6 +97,7 @@ return [
     'cover' => 'Cover',
     'banner' => 'Banner',
     'browse' => 'Browse',
+    'language' => 'Bahasa',
 
     //maintenance
     'maintenance' => [

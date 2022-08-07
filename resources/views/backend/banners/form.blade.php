@@ -29,12 +29,18 @@
             @endif
 
             <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/banner.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
                     <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
-                        <div class="card-header">
+                        <div class="card-header d-flex justify-content-center">
                             <span class="font-weight-semibold">
-                                @lang('global.form') <b class="text-main">({{ $lang['name'] }})</b>
+                                @lang('global.language') : <b class="text-main">{{ $lang['name'] }}</b>
                             </span>
                         </div>
                         <div class="card-body">

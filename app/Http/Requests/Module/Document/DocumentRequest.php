@@ -33,8 +33,8 @@ class DocumentRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/document.label.field1'),
-            'slug' => __('module/document.label.field2'),
+            'name_'.config('cms.module.feature.language.default') => __('module/document.label.name'),
+            'slug' => __('module/document.label.slug'),
         ];
     }
 }

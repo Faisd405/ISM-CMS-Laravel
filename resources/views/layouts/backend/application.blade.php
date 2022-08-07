@@ -149,6 +149,7 @@
 				data : {},
 				success:function(data) {
 					const totalUnread = data.data;
+					$('#total-inquiry-unread').text(totalUnread);
 					if (totalUnread > 0) {
 						$('#inquiry-form').show();
 					} else {

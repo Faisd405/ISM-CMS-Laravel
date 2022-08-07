@@ -248,8 +248,13 @@ class GalleryService
 
         try {
             
+            $value = !$category[$field];
+            if ($field == 'approved') {
+                $value = $category['approved'] == 1 ? 0 : 1;
+            }
+
             $category->update([
-                $field => !$category[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $category['updated_by'],
             ]);
 
@@ -682,8 +687,13 @@ class GalleryService
 
         try {
             
+            $value = !$album[$field];
+            if ($field == 'approved') {
+                $value = $album['approved'] == 1 ? 0 : 1;
+            }
+
             $album->update([
-                $field => !$album[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $album['updated_by'],
             ]);
 
@@ -1280,8 +1290,13 @@ class GalleryService
 
         try {
             
+            $value = !$file[$field];
+            if ($field == 'approved') {
+                $value = $file['approved'] == 1 ? 0 : 1;
+            }
+
             $file->update([
-                $field => !$file[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $file['updated_by'],
             ]);
 

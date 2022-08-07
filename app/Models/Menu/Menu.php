@@ -29,6 +29,7 @@ class Menu extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'path' => 'json',
         'title' => 'json',
         'config' => 'json',
     ];
@@ -51,7 +52,7 @@ class Menu extends Model
 
     public function childs()
     {
-        return $this->hasMany(Menu::class, 'parent', 'id')->orderBy('position', 'ASC');
+        return $this->hasMany(Menu::class, 'parent', 'id');
     }
 
     public function childRecursive()
@@ -59,15 +60,9 @@ class Menu extends Model
         return $this->childs()->with('childs');
     }
 
-    public function childPublish()
+    public function getParent()
     {
-        $query = $this->hasMany(Menu::class, 'parent', 'id')->publish()
-            ->orderBy('position', 'ASC');
-        
-        if (Auth::guard()->check() == false)
-            $query->public();
-
-        return $query;
+        return $this->firstWhere('id', $this->parent);
     }
 
     public function category()

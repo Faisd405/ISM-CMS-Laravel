@@ -13,9 +13,7 @@
         <td align="left">
         <table border="0" cellpadding="0" cellspacing="0">
             <tbody>
-                <p>
-                    {!! $data['inquiry']['mail_sender_template'] !!}
-                </p>
+                {!! $data['inquiry']['mail_sender_template'] !!}
             </tbody>
         </table>
         </td>

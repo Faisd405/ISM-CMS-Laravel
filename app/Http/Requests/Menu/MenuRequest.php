@@ -36,10 +36,10 @@ class MenuRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => __('module/menu.label.field1'),
-            'module' => __('module/menu.label.field4'),
-            'menuable_id' => __('module/menu.label.field5'),
-            'url' => __('module/menu.label.field3'),
+            'title_'.config('cms.module.feature.language.default') => __('module/menu.label.title'),
+            'module' => __('module/menu.label.module'),
+            'menuable_id' => __('module/menu.label.module_content'),
+            'url' => __('module/menu.label.url'),
         ];
     }
 }

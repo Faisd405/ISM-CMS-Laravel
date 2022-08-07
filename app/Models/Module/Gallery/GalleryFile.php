@@ -2,7 +2,6 @@
 
 namespace App\Models\Module\Gallery;
 
-use App\Models\Feature\Configuration;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -125,9 +124,8 @@ class GalleryFile extends Model
 
             $thumbnail = Storage::url(config('cms.files.gallery.thumbnail.path').$this->gallery_album_id.'/'.$this->thumbnail);
             if (empty($this->thumbnail)) {
-                if (!empty(Configuration::value('cover_default'))) {
-                    $thumbnail = Storage::url(config('cms.files.config.path').
-                    Configuration::value('cover_default'));
+                if (!empty(config('cmsConfig.cover_default'))) {
+                    $thumbnail = config('cmsConfig.cover_default');
                 } else {
                     $thumbnail = asset(config('cms.files.config.cover_default.file'));
                 }

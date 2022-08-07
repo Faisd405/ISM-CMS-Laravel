@@ -2,7 +2,6 @@
 
 namespace App\Models\Module\Link;
 
-use App\Models\Feature\Configuration;
 use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -94,9 +93,8 @@ class LinkMedia extends Model
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
         } else {
-            if (!empty(Configuration::value('cover_default'))) {
-                $cover = Storage::url(config('cms.files.config.path').
-                Configuration::value('cover_default'));
+            if (!empty(config('cmsConfig.cover_default'))) {
+                $cover = config('cmsConfig.cover_default');
             } else {
                 $cover = asset(config('cms.files.config.cover_default.file'));
             }
@@ -110,9 +108,8 @@ class LinkMedia extends Model
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);
         } else {
-            if (!empty(Configuration::value('banner_default'))) {
-                $banner = Storage::url(config('cms.files.config.path').
-                Configuration::value('banner_default'));
+            if (!empty(config('cmsConfig.banner_default'))) {
+                $banner = config('cmsConfig.banner_default');
             } else {
                 $banner = asset(config('cms.files.config.banner_default.file'));
             }

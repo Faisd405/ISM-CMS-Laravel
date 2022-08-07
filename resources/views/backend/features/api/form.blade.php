@@ -3,20 +3,19 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
-
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('feature/api.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['api']) ? route('api.store', $queryParam) : 
-                route('api.update', array_merge(['id' => $data['api']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset ($data['api'])
-                    @method('PUT')
-                @endisset
-
+        <form action="{{ !isset($data['api']) ? route('api.store', $queryParam) : 
+            route('api.update', array_merge(['id' => $data['api']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset ($data['api'])
+                @method('PUT')
+            @endisset
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('feature/api.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/api.label.name') <i class="text-danger">*</i></label>
@@ -36,7 +35,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.status')</label>
+                            <label class="col-form-label text-sm-right">@lang('global.status')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -48,7 +47,7 @@
                     </div>
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                            <label class="col-form-label text-sm-right">@lang('global.locked')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -138,8 +137,8 @@
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
     </div>
 </div>

@@ -34,9 +34,9 @@ class InquiryRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/inquiry.label.field1'),
-            'slug' => __('module/inquiry.label.field2'),
-            'body_'.config('cms.module.feature.language.default') => __('module/inquiry.label.field3'),
+            'name_'.config('cms.module.feature.language.default') => __('module/inquiry.label.name'),
+            'slug' => __('module/inquiry.label.slug'),
+            'body_'.config('cms.module.feature.language.default') => __('module/inquiry.label.body'),
         ];
     }
 }

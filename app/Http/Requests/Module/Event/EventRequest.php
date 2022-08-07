@@ -34,8 +34,8 @@ class EventRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/event.label.field1'),
-            'slug' => __('module/event.label.field2'),
+            'name_'.config('cms.module.feature.language.default') => __('module/event.label.name'),
+            'slug' => __('module/event.label.slug'),
             'type' => __('global.type'),
         ];
     }

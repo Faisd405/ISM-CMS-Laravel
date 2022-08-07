@@ -6,35 +6,28 @@ return [
         'caption' => 'Kategori Menu',
         'text' => 'List Kategori Menu',
         'label' => [
-            'field1' => 'Nama',
-            'field2' => 'Penulisan'
+            'name' => 'Nama',
+            'code' => 'Kode'
         ],
         'placeholder' => [
-            'field1' => 'Masukan nama',
-            'field2' => '',
+            'name' => 'Masukan nama',
         ],
     ],
     'title' => 'Menu',
     'caption' => 'Menu',
     'text' => 'List Menu',
     'label' => [
-        'field1' => 'Judul',
-        'field2' => 'External Link',
-        'field3' => 'URL',
-        'field4' => 'Module',
-        'field5' => 'Module Content',
-        'field6' => 'Edit Publik Menu',
+        'title' => 'Judul',
+        'external_link' => 'External Link',
+        'url' => 'URL',
+        'module' => 'Module',
+        'module_content' => 'Module Content',
+        'edit_public_menu' => 'Edit Publik Menu',
         'icon' => 'Icon',
         'target_blank' => 'Target Blank',
         'child' => 'Child'
     ],
     'placeholder' => [
-        'field1' => 'Masukan Judul',
-        'field2' => '',
-        'field3' => '',
-        'field4' => '',
-        'field5' => '',
-        'field6' => '',
-        'field7' => '',
+        'title' => 'Masukan Judul',
     ],
 ];

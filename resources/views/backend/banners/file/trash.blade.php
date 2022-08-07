@@ -152,6 +152,7 @@
                                         </form>
                                     </button>
                                     <button type="button" class="btn icon-btn btn-sm btn-danger swal-delete" 
+                                        data-banner-id="{{ $item['banner_id'] }}"
                                         data-id="{{ $item['id'] }}"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('global.delete')">

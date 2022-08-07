@@ -271,7 +271,7 @@ class WidgetService
             $widget->position = $this->widgtModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.widget.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.widget.approval') == true) {
                     $widget->approved = 2;
                 }
                 $widget->created_by = Auth::user()['id'];
@@ -533,8 +533,13 @@ class WidgetService
 
         try {
             
+            $value = !$widget[$field];
+            if ($field == 'approved') {
+                $value = $widget['approved'] == 1 ? 0 : 1;
+            }
+            
             $widget->update([
-                $field => !$widget[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $widget['updated_by'],
             ]);
 

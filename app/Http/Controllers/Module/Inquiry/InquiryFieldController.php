@@ -7,7 +7,6 @@ use App\Http\Requests\Module\Inquiry\InquiryFieldRequest;
 use App\Services\Feature\LanguageService;
 use App\Services\Module\InquiryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class InquiryFieldController extends Controller
 {

@@ -299,8 +299,8 @@
     //delete
     $(document).ready(function () {
         $('.swal-delete').on('click', function () {
-            var id = $(this).attr('data-id');
             var sectionId = $(this).attr('data-section-id');
+            var id = $(this).attr('data-id');
             Swal.fire({
                 title: "@lang('global.alert.delete_confirm_title')",
                 text: "@lang('global.alert.delete_confirm_text')",

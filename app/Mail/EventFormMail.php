@@ -38,7 +38,7 @@ class EventFormMail extends Mailable
         $name = isset($this->data['request']['name']) ? $this->data['request']['name'] : __('global.visitor');
         return $this->from($from, $webname)
             ->subject(__('mail.event.title', [
-                'attribute' => $$name
+                'attribute' => $name
             ]))->view('mail.event-form');
     }
 }

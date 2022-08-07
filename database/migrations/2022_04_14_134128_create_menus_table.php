@@ -17,6 +17,7 @@ class CreateMenusTable extends Migration
             $table->id();
             $table->unsignedBigInteger('menu_category_id');
             $table->integer('parent')->default(0);
+            $table->json('path')->nullable();
             $table->json('title')->nullable();
             $table->json('config')->nullable();
             $table->string('module')->nullable();

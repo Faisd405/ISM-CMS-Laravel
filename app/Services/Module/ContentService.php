@@ -137,7 +137,7 @@ class ContentService
             $section->position = $this->sectionModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.content.section.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.content.section.approval') == true) {
                     $section->approved = 2;
                 }
                 $section->created_by = Auth::user()['id'];

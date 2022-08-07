@@ -4,35 +4,34 @@
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/regional.district.caption')
-                ])
-            </h6>
-            <hr class="border-light m-0">
-            <div class="card-header">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item">
-                        <span>{{ Str::upper(__('module/regional.province.caption')) }}</span>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <span>{{ $data['city']['province']['name'] }}</span>
-                    </li>
-                    <li class="breadcrumb-item active">
-                        <b class="text-main">{{ $data['city']['name'] }}</b>
-                    </li>
-                </ol>
-            </div>
-            <hr class="border-light m-0">
+        <form action="{{ !isset($data['district']) ? route('district.store', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']], $queryParam)) : 
+            route('district.update', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code'], 'id' => $data['district']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset ($data['district'])
+                @method('PUT')
+            @endisset
 
-            <form action="{{ !isset($data['district']) ? route('district.store', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code']], $queryParam)) : 
-                route('district.update', array_merge(['provinceCode' => $data['city']['province_code'], 'cityCode' => $data['city']['code'], 'id' => $data['district']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset ($data['district'])
-                    @method('PUT')
-                @endisset
-
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/regional.district.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
+                <div class="card-header">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item">
+                            <span>{{ Str::upper(__('module/regional.province.caption')) }}</span>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <span>{{ $data['city']['province']['name'] }}</span>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <b class="text-main">{{ $data['city']['name'] }}</b>
+                        </li>
+                    </ol>
+                </div>
+                <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/regional.district.label.code') <i class="text-danger">*</i></label>
@@ -72,7 +71,7 @@
                     </div>
                     <div class="form-group row hide-form">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                        <label class="col-form-label text-sm-right">@lang('global.locked')</label>
                         </div>
                         <div class="col-md-10">
                             <label class="custom-control custom-checkbox m-0">
@@ -101,9 +100,8 @@
                         </button>
                     </div>
                 </div>
-            </form>
-            
-        </div>
+            </div>
+        </form>
         
     </div>
 </div>

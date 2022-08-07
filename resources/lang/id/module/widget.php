@@ -5,17 +5,17 @@ return [
     'caption' => 'Widget',
     'text' => 'List Widget',
     'label' => [
-        'field1' => 'Nama',
-        'field2' => 'Judul',
-        'field3' => 'Deskripsi',
-        'field4' => 'Widget Set',
-        'field5' => 'Global',
+        'name' => 'Nama',
+        'title' => 'Judul',
+        'description' => 'Deskripsi',
+        'widget_set' => 'Widget Set',
+        'global' => 'Global',
         'url' => 'URL',
         'image' => 'Gambar'
     ],
     'placeholder' => [
-        'field1' => 'Masukan nama',
-        'field2' => 'Masukan judul',
+        'name' => 'Masukan nama',
+        'title' => 'Masukan judul',
     ],
     'alert' => [
         'file_exist' => 'Nama Template sudah ada'

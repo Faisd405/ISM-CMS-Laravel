@@ -97,6 +97,7 @@ return [
     'cover' => 'Cover',
     'banner' => 'Banner',
     'browse' => 'Browse',
+    'language' => 'Language',
 
     //maintenance
     'maintenance' => [

@@ -33,8 +33,8 @@ class GalleryCategoryRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/gallery.category.label.field1'),
-            'slug' => __('module/gallery.category.label.field2'),
+            'name_'.config('cms.module.feature.language.default') => __('module/gallery.category.label.name'),
+            'slug' => __('module/gallery.category.label.slug'),
         ];
     }
 }

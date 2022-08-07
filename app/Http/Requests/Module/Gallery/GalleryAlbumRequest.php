@@ -33,8 +33,8 @@ class GalleryAlbumRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/gallery.album.label.field1'),
-            'slug' => __('module/gallery.album.label.field2'),
+            'name_'.config('cms.module.feature.language.default') => __('module/gallery.album.label.name'),
+            'slug' => __('module/gallery.album.label.slug'),
         ];
     }
 }

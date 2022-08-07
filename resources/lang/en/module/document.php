@@ -5,32 +5,26 @@ return [
     'caption' => 'Document',
     'text' => 'Document List',
     'label' => [
-        'field1' => 'Name',
-        'field2' => 'Slug / URL',
-        'field3' => 'Description',
-        'field4' => 'Role Download',
-        'field5' => 'File Limit',
+        'name' => 'Name',
+        'slug' => 'Slug / URL',
+        'description' => 'Description',
+        'role_download' => 'Role Download',
     ],
     'placeholder' => [
-        'field1' => 'Enter name',
-        'field2' => '',
-        'field3' => '',
-        'field4' => '',
-        'field5' => '',
+        'name' => 'Enter name',
     ],
     'file' => [
         'title' => 'Document File',
         'caption' => 'Document File',
         'text' => 'Document File List',
         'label' => [
-            'field1' => 'Title',
-            'field2' => 'Description',
-            'field3' => 'File',
-            'field4' => 'URL File',
-            'file' => 'File'
+            'title' => 'Title',
+            'description' => 'Description',
+            'file' => 'File',
+            'url_file' => 'URL File',
         ],
         'placeholder' => [
-            'field1' => 'Enter title',
+            'title' => 'Enter title',
         ],
     ]
 ];

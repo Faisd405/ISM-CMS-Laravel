@@ -9,10 +9,11 @@
             {{-- <br>
             <small class="text-muted">form is required & name is unique</small> --}}
           </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+          <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close"><i class="fi fi-rr-cross-small"></i></button>
         </div>
         <div class="modal-body">
-          <table class="table table-bordered">
+          <table class="table table-bordered table-striped">
               @foreach ($data['fields'] as $keyF => $field)
               <tr>
                   <th style="width: 240px;">{{ $field->fieldLang('label') }}</th>
@@ -22,13 +23,13 @@
           </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal" title="@lang('global.close')">
-            <i class="las la-times"></i> @lang('global.close')
+          <button type="button" class="btn btn-default w-icon" data-dismiss="modal" title="@lang('global.close')">
+            <i class="fi fi-rr-cross-circle"></i> <span>@lang('global.close')</span>
           </button>
           @if (isset($item['fields']['email']))
           <a href="mailto:{{ $item['fields']['email'] }}?subject={{ !empty($item['fields']['subject']) ? $item['fields']['subject'] :  $data['inquiry']->fieldLang('name') }}"
-            class="btn btn-primary">
-            <i class="las la-reply"></i> @lang('global.reply')
+            class="btn btn-main w-icon">
+            <i class="fi fi-rr-arrows"></i> <span>@lang('global.reply')</span>
           </a>
           @endif
         </div>

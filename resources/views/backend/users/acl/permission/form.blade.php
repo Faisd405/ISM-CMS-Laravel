@@ -4,33 +4,32 @@
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/user.permission.caption')
-                ])
-            </h6>
-            @isset($data['parent'])
-            <hr class="border-light m-0">
-            <div class="card-header">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item">
-                        <span>{{ Str::upper(__('module/user.permission.label.parent')) }}</span>
-                    </li>
-                    <li class="breadcrumb-item active">
-                        <b class="text-main">{!! Str::replace('_', ' ', Str::upper($data['parent']['name'])) !!}</b>
-                    </li>
-                </ol>
-            </div>
-            <hr class="border-light m-0">
+        <form action="{{ !isset($data['permission']) ? route('permission.store', $queryParam) : 
+            route('permission.update', $data['permission']['id']) }}" method="POST">
+            @csrf
+            @isset ($data['permission'])
+                @method('PUT')
             @endisset
-            <form action="{{ !isset($data['permission']) ? route('permission.store', $queryParam) : 
-                route('permission.update', $data['permission']['id']) }}" method="POST">
-                @csrf
-                @isset ($data['permission'])
-                    @method('PUT')
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/user.permission.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
+                @isset($data['parent'])
+                <div class="card-header">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item">
+                            <span>{{ Str::upper(__('module/user.permission.label.parent')) }}</span>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <b class="text-main">{!! Str::replace('_', ' ', Str::upper($data['parent']['name'])) !!}</b>
+                        </li>
+                    </ol>
+                </div>
+                <hr class="border-light m-0">
                 @endisset
-
                 <div class="card-body">
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/user.permission.label.name') <i class="text-danger">*</i></label>
@@ -44,7 +43,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">@lang('global.locked')</label>
+                            <label class="col-form-label text-sm-right">@lang('global.locked')</label>
                         </div>
                         <div class="col-md-10">
                             <div class="custom-control custom-checkbox">
@@ -73,8 +72,8 @@
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
 
     </div>
 </div>

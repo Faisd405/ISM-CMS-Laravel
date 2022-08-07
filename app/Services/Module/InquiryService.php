@@ -135,7 +135,7 @@ class InquiryService
             $inquiry->position = $this->inquiryModel->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.inquiry.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.inquiry.approval') == true) {
                     $inquiry->approved = 2;
                 }
                 $inquiry->created_by = Auth::user()['id'];
@@ -301,8 +301,13 @@ class InquiryService
 
         try {
             
+            $value = !$inquiry[$field];
+            if ($field == 'approved') {
+                $value = $inquiry['approved'] == 1 ? 0 : 1;
+            }
+
             $inquiry->update([
-                $field => !$inquiry[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $inquiry['updated_by'],
             ]);
 
@@ -623,7 +628,7 @@ class InquiryService
             $field->position = $this->inquiryFieldModel->where('inquiry_id', $data['inquiry_id'])->max('position') + 1;
 
             if (Auth::guard()->check())
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.inquiry.field.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.inquiry.field.approval') == true) {
                     $field->approved = 2;
                 }
                 $field->created_by = Auth::user()['id'];
@@ -740,8 +745,13 @@ class InquiryService
 
         try {
             
+            $value = !$field[$fieldd];
+            if ($fieldd == 'approved') {
+                $value = $field['approved'] == 1 ? 0 : 1;
+            }
+
             $field->update([
-                $fieldd => !$field[$fieldd],
+                $fieldd => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $field['updated_by'],
             ]);
 

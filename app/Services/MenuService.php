@@ -368,14 +368,27 @@ class MenuService
             $menu = new Menu;
             $menu->menu_category_id = $data['menu_category_id'];
             $menu->parent = $data['parent'];
+
+            $parent = $this->getMenu(['id' => $data['parent']]);
+            if (!empty($parent)) {
+                $path = [];
+                if(!empty($parent['path']))
+                    $path = $parent['path'];
+
+                if(!in_array($parent['id'], $path))
+                    array_push($path, $parent['id']);
+
+                $menu->path = $path;
+            }
             
             $this->setFieldMenu($data, $menu);
 
             $menu->position = $this->menuModel->where('menu_category_id', $data['menu_category_id'])
+                ->where('parent', (int)$data['parent']) 
                 ->max('position') + 1;
             if (Auth::guard()->check()) {
 
-                if (Auth::user()->hasRole('support|admin|editor') && config('module.menu.approval') == true) {
+                if (!Auth::user()->hasRole('developer|super') && config('module.menu.approval') == true) {
                     $menu->approved = 2;
                 }
                 $menu->created_by = Auth::user()['id'];
@@ -526,8 +539,13 @@ class MenuService
 
         try {
             
+            $value = !$menu[$field];
+            if ($field == 'approved') {
+                $value = $menu['approved'] == 1 ? 0 : 1;
+            }
+            
             $menu->update([
-                $field => !$menu[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $menu['updated_by'],
             ]);
 

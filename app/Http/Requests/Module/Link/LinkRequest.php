@@ -33,8 +33,8 @@ class LinkRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/link.label.field1'),
-            'slug' => __('module/link.label.field2'),
+            'name_'.config('cms.module.feature.language.default') => __('module/link.label.name'),
+            'slug' => __('module/link.label.slug'),
         ];
     }
 }

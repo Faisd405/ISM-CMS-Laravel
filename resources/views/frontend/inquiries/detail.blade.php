@@ -1,5 +1,11 @@
 @extends('layouts.frontend.layout')
 
+@if (config('cms.setting.recaptcha') == true)    
+@section('jshead')
+{!! htmlScriptTagJsApi() !!}
+@endsection
+@endif
+
 @section('content')
 {{-- DETAIL
 

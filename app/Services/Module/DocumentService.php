@@ -242,8 +242,13 @@ class DocumentService
 
         try {
             
+            $value = !$document[$field];
+            if ($field == 'approved') {
+                $value = $document['approved'] == 1 ? 0 : 1;
+            }
+
             $document->update([
-                $field => !$document[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $document['updated_by'],
             ]);
 
@@ -765,8 +770,13 @@ class DocumentService
 
         try {
             
+            $value = !$file[$field];
+            if ($field == 'approved') {
+                $value = $file['approved'] == 1 ? 0 : 1;
+            }
+
             $file->update([
-                $field => !$file[$field],
+                $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $file['updated_by'],
             ]);
 

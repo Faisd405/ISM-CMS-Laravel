@@ -3,103 +3,115 @@
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/css/pages/account.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/select2/select2.css') }}">
-<script src="{{ asset('assets/backend/admin.js') }}"></script>
-<script src="{{ asset('assets/backend/wysiwyg/tinymce.min.js') }}"></script>
 @endsection
 
 @section('content')
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <div class="card">
-            <h6 class="card-header">
-                @lang('global.form_attr', [
-                    'attribute' => __('module/gallery.album.caption')
-                ])
-            </h6>
-            <form action="{{ !isset($data['album']) ? route('gallery.album.store', $queryParam) : 
-                route('gallery.album.update', array_merge(['id' => $data['album']['id']], $queryParam)) }}" method="POST">
-                @csrf
-                @isset($data['album'])
-                    @method('PUT')
-                @endisset
+        <form action="{{ !isset($data['album']) ? route('gallery.album.store', $queryParam) : 
+            route('gallery.album.update', array_merge(['id' => $data['album']['id']], $queryParam)) }}" method="POST">
+            @csrf
+            @isset($data['album'])
+                @method('PUT')
+            @endisset
 
-                {{-- MAIN --}}
-                @if (config('cms.module.feature.language.multiple') == true)
-                <div class="list-group list-group-flush account-settings-links flex-row">
-                    @foreach ($data['languages'] as $lang)
-                    <a class="list-group-item list-group-item-action {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'active' : '' }}" 
-                        data-toggle="list" href="#{{ $lang['iso_codes'] }}">
+            @if (config('cms.module.feature.language.multiple') == true)
+            <ul class="nav nav-tabs mb-4">
+                @foreach ($data['languages'] as $lang)
+                <li class="nav-item">
+                    <a class="nav-link{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' active' : '' }}"
+                        data-toggle="tab" href="#{{ $lang['iso_codes'] }}">
                         {!! $lang['name'] !!}
                     </a>
-                    @endforeach
-                </div>
-                @endif
+                </li>
+                @endforeach
+            </ul>
+            @endif
+
+            <div class="card">
+                <h5 class="card-header my-2">
+                    @lang('global.form_attr', [
+                        'attribute' => __('module/gallery.album.caption')
+                    ])
+                </h5>
+                <hr class="border-light m-0">
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
-                    <div class="tab-pane fade {{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? 'show active' : '' }}" id="{{ $lang['iso_codes'] }}">
-                        <div class="card-body pb-2">
-        
+                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
+                        <div class="card-header d-flex justify-content-center">
+                            <span class="font-weight-semibold">
+                                @lang('global.language') : <b class="text-main">{{ $lang['name'] }}</b>
+                            </span>
+                        </div>
+                        <div class="card-body">
                             <div class="form-group row">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.category.label.field1') <i class="text-danger">*</i></label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.album.label.name') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control mb-1 {{ !isset($data['album']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
                                         name="name_{{ $lang['iso_codes'] }}" 
                                         value="{{ !isset($data['album']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['album']->fieldLang('name', $lang['iso_codes'])) }}" 
-                                        placeholder="@lang('module/content.category.placeholder.field1')">
+                                        placeholder="@lang('module/gallery.album.placeholder.name')">
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
                             </div>
                             <div class="form-group row {{ isset($data['album']) && $data['album']['config']['show_description'] == false ? 'hide-form' : '' }}">
-                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.category.label.field3')</label>
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.album.label.description')</label>
                                 <div class="col-sm-10">
                                     <textarea class="form-control tiny-mce" name="description_{{ $lang['iso_codes'] }}">{!! !isset($data['album']) ? old('description_'.$lang['iso_codes']) : old('description_'.$lang['iso_codes'], $data['album']->fieldLang('description', $lang['iso_codes'])) !!}</textarea>
                                 </div>
                             </div>
-        
                         </div>
                     </div>
                     @endforeach
-                    <div class="card-body">
-                        <div class="form-group row">
-                            <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.category.label.field2') <i class="text-danger">*</i></label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
-                                    value="{{ !isset($data['album']) ? old('slug') : old('slug', $data['album']['slug']) }}" placeholder="{{ url('/') }}/gallery/SLUG">
-                                @include('components.field-error', ['field' => 'slug'])
-                            </div>
+                </div>
+                <hr class="border-light m-0">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.album.label.slug') <i class="text-danger">*</i></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control text-bolder slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
+                                value="{{ !isset($data['album']) ? old('slug') : old('slug', $data['album']['slug']) }}" placeholder="{{ url('/') }}/gallery/url">
+                            @include('components.field-error', ['field' => 'slug'])
                         </div>
-                        <div class="form-group row {{ Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true ? '' : 'hide-form' }}">
-                            <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.category.caption')</label>
-                            <div class="col-sm-10">
-                                <select class="select2 show-tick" name="gallery_category_id" data-style="btn-default">
-                                    <option value=" " selected disabled>@lang('global.select')</option>
-                                    @foreach ($data['categories'] as $cat)
-                                        <option value="{{ $cat['id'] }}" {{ !isset($data['album']) ? (old('gallery_category_id') == $cat['id'] ? 'selected' : '') : (old('gallery_category_id', $data['album']['gallery_category_id']) == $cat['id'] ? 'selected' : '') }}>
-                                            {{ $cat->fieldLang('name') }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    </div>
+                    <div class="form-group row {{ Auth::user()->hasRole('developer|super') || config('cms.module.gallery.category.active') == true ? '' : 'hide-form' }}">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/gallery.category.caption')</label>
+                        <div class="col-sm-10">
+                            <select class="select2 show-tick" name="gallery_category_id" data-style="btn-default">
+                                <option value=" " selected disabled>@lang('global.select')</option>
+                                @foreach ($data['categories'] as $cat)
+                                    <option value="{{ $cat['id'] }}" {{ !isset($data['album']) ? (old('gallery_category_id') == $cat['id'] ? 'selected' : '') : (old('gallery_category_id', $data['album']['gallery_category_id']) == $cat['id'] ? 'selected' : '') }}>
+                                        {{ $cat->fieldLang('name') }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary" name="action" value="back" title="{{ isset($data['album']) ? __('global.save_change') : __('global.save') }}">
-                        <i class="las la-save"></i> {{ isset($data['album']) ? __('global.save_change') : __('global.save') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="submit" class="btn btn-danger" name="action" value="exit" title="{{ isset($data['album']) ? __('global.save_change_exit') : __('global.save_exit') }}">
-                        <i class="las la-save"></i> {{ isset($data['album']) ? __('global.save_change_exit') : __('global.save_exit') }}
-                    </button>&nbsp;&nbsp;
-                    <button type="reset" class="btn btn-secondary" title="{{ __('global.reset') }}">
-                    <i class="las la-redo-alt"></i> {{ __('global.reset') }}
-                    </button>
+                <div class="card-footer justify-content-center">
+                    <div class="box-btn">
+                        <button class="btn btn-main w-icon" type="submit" name="action" value="back" title="{{ isset($data['album']) ? __('global.save_change') : __('global.save') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['album']) ? __('global.save_change') : __('global.save') }}</span>
+                        </button>
+                        <button class="btn btn-success w-icon" type="submit" name="action" value="exit" title="{{ isset($data['album']) ? __('global.save_change_exit') : __('global.save_exit') }}">
+                            <i class="fi fi-rr-disk"></i>
+                            <span>{{ isset($data['album']) ? __('global.save_change_exit') : __('global.save_exit') }}</span>
+                        </button>
+                        <button type="reset" class="btn btn-default w-icon" title="{{ __('global.reset') }}">
+                            <i class="fi fi-rr-refresh"></i>
+                            <span>{{ __('global.reset') }}</span>
+                        </button>
+                    </div>
                 </div>
+            </div>
 
-                {{-- SETTING --}}
-                <hr class="m-0">
+            <div class="card">
+                <h6 class="card-header text-main">
+                    SETTING
+                </h6>
                 <div class="card-body">
-                    <h6 class="font-weight-bold text-primary mb-4">SETTING</h6>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label class="form-label">@lang('global.status')</label>
@@ -135,60 +147,60 @@
                         <div class="form-group col-md-12 {{ isset($data['album']) && $data['album']['config']['show_cover'] == false ? 'hide-form' : '' }}">
                             <label class="form-label">@lang('global.cover')</label>
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" id="image1" aria-label="Image" aria-describedby="button-image" name="cover_file"
+                                <input type="text" class="form-control text-bolder" id="image1" aria-label="Image" aria-describedby="button-image" name="cover_file"
                                         value="{{ !isset($data['album']) ? old('cover_file') : old('cover_file', $data['album']['cover']['filepath']) }}" placeholder="@lang('global.browse') file...">
                                 <div class="input-group-append" title="browse file">
-                                    <button class="btn btn-primary file-name" id="button-image" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
+                                    <button class="btn btn-main file-name w-icon" id="button-image" type="button"><i class="fi fi-rr-folder"></i>&nbsp; @lang('global.browse')</button>
                                 </div>
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="cover_title" placeholder="@lang('global.title')"
+                                <input type="text" class="form-control text-bolder" name="cover_title" placeholder="@lang('global.title')"
                                     value="{{ !isset($data['album']) ? old('cover_title') : old('cover_title', $data['album']['cover']['title']) }}">
-                                <input type="text" class="form-control" name="cover_alt" placeholder="@lang('global.alt')"
+                                <input type="text" class="form-control text-bolder" name="cover_alt" placeholder="@lang('global.alt')"
                                     value="{{ !isset($data['album']) ? old('cover_alt') : old('cover_alt', $data['album']['cover']['alt']) }}">
                             </div>
                         </div>
                         <div class="form-group col-md-12 {{ isset($data['album']) && $data['album']['config']['show_banner'] == false ? 'hide-form' : '' }}">
                             <label class="form-label">@lang('global.banner')</label>
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" id="image2" aria-label="Image2" aria-describedby="button-image2" name="banner_file"
+                                <input type="text" class="form-control text-bolder" id="image2" aria-label="Image2" aria-describedby="button-image2" name="banner_file"
                                     value="{{ !isset($data['album']) ? old('banner_file') : old('banner_file', $data['album']['banner']['filepath']) }}" placeholder="@lang('global.browse') file...">
                                 <div class="input-group-append" title="browse file">
-                                    <button class="btn btn-primary file-name" id="button-image2" type="button"><i class="las la-image"></i>&nbsp; @lang('global.browse')</button>
+                                    <button class="btn btn-main file-name w-icon" id="button-image2" type="button"><i class="fi fi-rr-folder"></i>&nbsp; @lang('global.browse')</button>
                                 </div>
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="banner_title" placeholder="@lang('global.title')"
+                                <input type="text" class="form-control text-bolder" name="banner_title" placeholder="@lang('global.title')"
                                     value="{{ !isset($data['album']) ? old('banner_title') : old('banner_title', $data['album']['banner']['title']) }}">
-                                <input type="text" class="form-control" name="banner_alt" placeholder="@lang('global.alt')"
+                                <input type="text" class="form-control text-bolder" name="banner_alt" placeholder="@lang('global.alt')"
                                     value="{{ !isset($data['album']) ? old('banner_alt') : old('banner_alt', $data['album']['banner']['alt']) }}">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <hr class="border-light m-0">
-                <div class="card-body">
+                <hr class="border-light m-0 hide-form">
+                <div class="card-body hide-form">
                     <div class="form-row">
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 hide-form">
                             <label class="form-label">@lang('global.locked')</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="locked" value="1"
                                 {{ !isset($data['album']) ? (old('locked') ? 'checked' : '') : (old('locked', $data['album']['locked']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.locked_info')</small>
+                            <small class="form-text">@lang('global.locked_info')</small>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 hide-form">
                             <label class="form-label">@lang('global.detail')</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="detail" value="1"
                                     {{ !isset($data['album']) ? (old('detail') ? 'checked' : 'checked') : (old('detail', $data['album']['detail']) ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
-                            <small class="form-text text-muted">@lang('global.detail_info')</small>
+                            <small class="form-text">@lang('global.detail_info')</small>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 hide-form">
                             <label class="form-label">Show Description</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_description" value="1"
@@ -196,7 +208,7 @@
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 hide-form">
                             <label class="form-label">Show Cover</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_cover" value="1"
@@ -204,7 +216,7 @@
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 hide-form">
                             <label class="form-label">Show Banner</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_banner" value="1"
@@ -224,7 +236,7 @@
                             <label class="form-label">Type Video</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_type_video" value="1"
-                                {{ !isset($data['album']) ? (old('config_type_video', 1) ? 'checked' : '') : (old('config_type_video', $data['album']['config']['type_video']) == 1 ? 'checked' : '') }}>
+                                {{ !isset($data['album']) ? (old('config_type_video') ? 'checked' : '') : (old('config_type_video', $data['album']['config']['type_video']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
@@ -246,7 +258,7 @@
                         </div>
                         <div class="form-group col-md-2 hide-form">
                             <label class="form-label">File Limit</label>
-                            <input type="number" class="form-control" name="config_file_limit"
+                            <input type="number" class="form-control text-bolder" name="config_file_limit"
                                  value="{{ !isset($data['album']) ? old('config_file_limit', 12) : old('config_file_limit', $data['album']['config']['file_limit']) }}">
                         </div>
                         <div class="form-group col-md-4 hide-form">
@@ -273,15 +285,15 @@
 
                 @if (Auth::user()->hasRole('developer|super') || isset($data['album']) && $data['album']['config']['show_custom_field'] == true && !empty($data['album']['custom_fields']))
                 {{-- CUSTOM FIELD --}}
-                <hr class="m-0">
+                <hr class="border-light m-0">
                 <div class="table-responsive text-center">
-                    <table class="table card-table table-bordered">
-                        <thead>
+                    <table class="table card-table">
+                        <thead class="text-center">
                             @role('developer|super')
                             <tr>
                                 <td colspan="3" class="text-center">
-                                    <button id="add_field" type="button" class="btn btn-success icon-btn-only-sm btn-sm">
-                                        <i class="las la-plus"></i> Field
+                                    <button id="add_field" type="button" class="btn btn-success btn-sm w-icon">
+                                        <i class="fi fi-rr-add"></i> <span>Field</span>
                                     </button>
                                 </td>
                             </tr>
@@ -297,15 +309,15 @@
                                 @foreach ($data['album']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
-                                        <textarea class="form-control" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
+                                        <textarea class="form-control text-bolder" name="cf_value[]" placeholder="value">{{ $val }}</textarea>
                                     </td>
                                     @role('developer|super')
                                     <td style="width: 30px;">
-                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="las la-times"></i></button>
+                                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="{{ $key }}"><i class="fi fi-rr-cross-small"></i></button>
                                     </td>
                                     @endrole
                                 </tr>
@@ -315,15 +327,16 @@
                     </table>
                 </div>
                 @endif
-
-            </form>
-        </div>
+            </div>
+        </form>
 
     </div>
 </div>
 @endsection
 
 @section('scripts')
+<script src="{{ asset('assets/backend/js/admin.js') }}"></script>
+<script src="{{ asset('assets/backend/vendor/libs/wysiwyg/tinymce.min.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 @endsection
 
@@ -353,7 +366,7 @@
                         <textarea class="form-control" name="cf_value[]" placeholder="value"></textarea>
                     </td>
                     <td style="width: 30px;">
-                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="las la-times"></i></button>
+                        <button type="button" class="btn icon-btn btn-sm btn-danger" id="remove_field" data-id="`+no+`"><i class="fi fi-rr-cross-small"></i></button>
                     </td>
                 </tr>
             `);

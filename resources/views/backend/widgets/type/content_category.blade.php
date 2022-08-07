@@ -28,34 +28,20 @@
 <div class="form-group row">
     <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.post.caption') Selected</label>
     <div class="col-sm-10">
-        <label class="switcher switcher-success">
-            <input type="checkbox" class="switcher-input" name="post_selected" value="1" 
+        <label class="custom-control custom-checkbox m-0">
+            <input type="checkbox" class="custom-control-input" name="post_selected" value="1"
                 {{ !isset($data['widget']) ? (old('post_selected') ? 'checked' : '') : (old('post_selected', $data['widget']['content']['post_selected']) ? 'checked' : '') }}>
-            <span class="switcher-indicator">
-            <span class="switcher-yes">
-                <span class="ion ion-md-checkmark"></span>
-            </span>
-            <span class="switcher-no">
-                <span class="ion ion-md-close"></span>
-            </span>
-            </span>
+            <span class="custom-control-label">@lang('global.label.optional.1')</span>
         </label>
     </div>
 </div>
 <div class="form-group row">
     <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.post.caption') Hits</label>
     <div class="col-sm-10">
-        <label class="switcher switcher-success">
-            <input type="checkbox" class="switcher-input" name="post_hits" value="1" 
+        <label class="custom-control custom-checkbox m-0">
+            <input type="checkbox" class="custom-control-input" name="post_hits" value="1"
                 {{ !isset($data['widget']) ? (old('post_hits') ? 'checked' : '') : (old('post_hits', $data['widget']['content']['post_hits']) ? 'checked' : '') }}>
-            <span class="switcher-indicator">
-            <span class="switcher-yes">
-                <span class="ion ion-md-checkmark"></span>
-            </span>
-            <span class="switcher-no">
-                <span class="ion ion-md-close"></span>
-            </span>
-            </span>
+            <span class="custom-control-label">@lang('global.label.optional.1')</span>
         </label>
     </div>
 </div>

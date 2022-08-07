@@ -96,37 +96,40 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 // FRONTEND
 //------------------------------------------------------------------------------
 
-Route::get('/sitemap', [HomeController::class, 'sitemap'])
-    ->name('sitemap');
 Route::get('/sitemap.xml', [HomeController::class, 'sitemapXml'])
     ->name('sitemap.xml');
 
-//--- RSS
-Route::get('/feed', [HomeController::class, 'feed'])
-    ->name('rss.feed');
-Route::get('/feed/post', [HomeController::class, 'post'])
-    ->name('rss.post');
-
 Route::group($group, function () {
     
-    //--- Landing
-    Route::get('/landing', [HomeController::class, 'landing'])
-        ->name('landing');
     //--- Home
     Route::get('/', [HomeController::class, 'home'])
         ->name('home');
+    //--- Landing
+    Route::get('/landing', [HomeController::class, 'landing'])
+        ->name('landing');
+
     //--- Search
     Route::get('/search', [HomeController::class, 'search'])
         ->name('home.search');
 
+    //--- RSS
+    Route::get('/feed', [HomeController::class, 'feed'])
+        ->name('rss.feed');
+    Route::get('/feed/post', [HomeController::class, 'post'])
+        ->name('rss.post');
+
+    //--- Sitemap
+    Route::get('/sitemap', [HomeController::class, 'sitemap'])
+        ->name('sitemap');
+
+    //--- Offline
+    Route::get('offline', function() {
+        return view('vendor.laravelpwa.offline');
+    });
+
     //--- Maintenance
     Route::get('/maintenance', [HomeController::class, 'maintenance'])
         ->name('maintenance');
-
-});
-
-Route::get('offline', function() {
-    return view('vendor.laravelpwa.offline');
 });
 
 //------------------------------------------------------------------------------
