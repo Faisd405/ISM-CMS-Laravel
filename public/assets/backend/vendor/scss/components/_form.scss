@@ -760,6 +760,201 @@
         border-color: red !important;
     }
 
+
+
+}
+
+.dtp {
+    .dtp-content {
+        border-radius: 10px !important;
+        box-shadow: var(--box-shadow) !important;
+        overflow: hidden !important;
+        background-color: var(--c-white) !important;
+
+        .dtp-date-view {
+            .dtp-header {
+                background-color: var(--c-default) !important;
+
+                a {
+                    color: #fff !important;
+                }
+            }
+
+            .dtp-date,
+            .dtp-time {
+                background-color: var(--c-light);
+                color: var(--c-default);
+
+                .dtp-actual-month,
+                .dtp-actual-year {
+                    font-size: 1rem;
+                }
+            }
+
+            .dtp-picker {
+                .dtp-picker-days {
+                    tr {
+                        >th {
+                            border: none;
+                            color: var(--c-default);
+                            font-weight: 500;
+                        }
+
+                        >td {
+                            font-weight: 400;
+
+
+                            >a {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                height: 32px;
+                                width: 32px;
+                                padding: 0;
+                                border-radius: 10px !important;
+
+                                &:hover:not(.selected) {
+                                    background-color: var(--c-grey_15) !important;
+                                    color: var(--c-default);
+                                }
+
+                                &.selected {
+                                    background-color: var(--c-default);
+                                    color: #fff !important;
+                                }
+                            }
+                        }
+
+                        td {
+                            height: 38px;
+                            border-radius: 10px !important;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            padding: 3px;
+
+                        }
+                    }
+                }
+
+                .dtp-picker-month {
+                    padding-bottom: 1rem !important;
+                }
+
+                .dtp-picker-datetime {
+                    #dtp-svg-clock {
+                        circle[r="192"] {
+                            fill: var(--c-light);
+                            stroke: var(--c-grey_15);
+                        }
+
+                        circle[r="15"] {
+                            fill: var(--c-grey_17);
+                        }
+
+                        circle[fill="#8BC34A"] {
+                            fill: var(--c-default) !important;
+                        }
+
+                        line.minute-hand {
+                            stroke: var(--c-grey_17);
+
+                            &[stroke="#8BC34A"] {
+                                 stroke: var(--c-default) !important;
+                            }
+                        }
+
+                        line.hour-hand {
+                            stroke: var(--c-default) !important;
+                        }
+
+                        text {
+                            font-weight: 400 !important;
+                            fill: var(--c-text-primary);
+                        }
+                    }
+
+                    a.dtp-meridien-am, a.dtp-meridien-pm {
+                        width: 35px !important;
+                        height: 35px !important;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        &.selected {
+                            background-color: var(--c-default) !important;
+                            color: #fff !important;
+                        }
+                    }   
+                }
+            }
+        }
+
+        .dtp-buttons {
+            .dtp-btn-ok {
+                background-color: var(--c-default) !important;
+            }
+        }
+    }
+
+    .dtp-select-month-before::before,
+    .dtp-select-year-before::before,
+    .dtp-select-month-after::before,
+    .dtp-select-year-after::before {
+        font-family: uicons-regular-rounded !important;
+        font-style: normal;
+        font-weight: normal !important;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: .87em;
+    }
+
+    .dtp-select-month-before::before,
+    .dtp-select-year-before::before {
+        content: "\f11d";
+    }
+
+    .dtp-select-month-after::before,
+    .dtp-select-year-after::before {
+        content: "\f11e";
+    }
+}
+
+// TIME PICKER 
+.ui-timepicker-wrapper {
+    background-color: var(--c-white) !important;
+    min-width: 200px;
+    max-width: 100%;
+    border-radius: 10px !important;
+    box-shadow: var(--box-shadow) !important;
+
+    .ui-timepicker-list {
+        li {
+            color: var(--c-text-primary) !important;
+
+            &.ui-timepicker-selected {
+                background-color: var(--c-default) !important;
+                color: #fff !important;
+
+                &.ui-timepicker-disabled {
+                    background-color: var(--c-light_12) !important;
+                    color: var(--c-text-third) !important;
+                }
+            }
+
+            &.ui-timepicker-disabled {
+                background-color: var(--c-light_12) !important;
+                color: var(--c-text-third) !important;
+            }
+
+            &:hover:not(.ui-timepicker-disabled) {
+                background-color: var(--c-grey_15) !important;
+                color: var(--c-default) !important;
+            }
+        }
+    }
 }
 
 
@@ -796,6 +991,13 @@ body .datepicker {
                 height: 30px;
                 border-radius: 10px !important;
                 font-size: 13px;
+
+                &.day {
+                    &:hover {
+                        background-color: var(--c-grey_15) !important;
+                        color: var(--c-default) !important;
+                    }
+                }
 
                 &.range,
                 &.range.highlighted,

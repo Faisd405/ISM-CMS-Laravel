@@ -213,7 +213,7 @@ return [
     'page' => [
         'active' => true,
         'list_view' => false,
-        'approval' => true,
+        'approval' => false,
         'search' => true,
         'ordering' => [
             'position' => 'ASC'

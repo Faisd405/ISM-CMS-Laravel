@@ -1,8 +1,10 @@
 table {
-    &.table {
+    &.table:not(.dtp-picker-days) {
         color: var(--c-text-primary);
         margin-bottom: 0;
         table-layout: auto;
+
+       
 
         thead {
             tr {

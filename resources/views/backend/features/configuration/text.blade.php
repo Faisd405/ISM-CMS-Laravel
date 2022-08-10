@@ -25,9 +25,11 @@
             <div class="tab-content">
                 <div class="tab-pane fade active show" id="navs-top-responsive-link-1">
                     <div class="card">
-                        <h6 class="card-header">
-                            @lang('global.form') ({{ Str::upper($data['lang']['name']) }})
-                        </h6>
+                        <div class="card-header">
+                            <span class="font-weight-semibold">
+                                @lang('global.language') : <b class="text-main">{{ $data['lang']['name'] }}</b>
+                            </span>
+                        </div>
                         <hr class="border-light m-0">
                         <div class="card-body">
                             @foreach ($data['files'] as $key => $value)

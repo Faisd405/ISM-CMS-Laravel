@@ -727,13 +727,6 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        foreach (Permission::all() as $value) {
-            DB::table('role_has_permissions')->insert([
-                'role_id' => 3,
-                'permission_id' => $value->id
-            ]);
-        }
-
         // custom permission
         // $permissions = [];
         // foreach ($permissions as $key => $value) {

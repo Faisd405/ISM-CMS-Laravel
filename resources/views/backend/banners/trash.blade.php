@@ -117,7 +117,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" align="center">
+                            <td colspan="5" align="center">
                                 <i>
                                     <strong class="text-muted">
                                     @if ($totalQueryParam > 0)
