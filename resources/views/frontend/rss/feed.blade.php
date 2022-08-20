@@ -3,36 +3,24 @@
 
 <rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:feedpress="https://feed.press/xmlns" version="2.0">
   <channel>
-    {{-- <feedpress:locale>{{ app()->getlocale() }}</feedpress:locale>
-    <atom:link rel="hub" href="http://feedpress.superfeedr.com/"/> --}}
-    <title>{!! $data['title'] !!}</title>
-    {{-- <atom:link href="{{ route('rss.feed') }}" rel="self" type="application/rss+xml"/>
-    <link>{{ route('home') }}</link>
-    <description>{!! $data['description'] !!}</description>
-    <lastBuildDate>Mon, 06 Apr 2020 13:00:25 +0000</lastBuildDate>
-    <language>{{ app()->getlocale().'_'.Str::upper(app()->getlocale()) }}</language>
-    <sy:updatePeriod>hourly</sy:updatePeriod>
-    <sy:updateFrequency>1</sy:updateFrequency>
-    <generator>{{ route('home') }}</generator> --}}
-    @foreach($data['posts'] as $post)
-    <item>
-      <title>{!! $post->fieldLang('title') !!}</title>
-      <link>{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}</link>
-      <pubDate>{{ $post['created_at'] }}</pubDate>
-      <dc:creator><![CDATA[{!! $post['createBy']['name'] !!}]]></dc:creator>
-      @if (!empty($post['category_id']))
-      <category><![CDATA[@foreach($post['categories'] as $cat) {!! $cat->fieldLang('name') !!}, @endforeach]]></category>
-      @endif
-      <guid isPermaLink="false">{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}</guid>
-      <description><![CDATA[
-                <p>
-                <img style="float:left;height:150px;width:250px;" src="{{ $post['cover_src'] }}">{!! $post->fieldLang('intro') !!}
-                </p>
+        <title>{!! $data['title'] !!}</title>
+        <link><![CDATA[{{ route('rss.feed') }}]]></link>
+        <description><![CDATA[{!! $data['description'] !!}]]></description>
+        <language><![CDATA[{{ App::getLocale() }}]]></language>
+        <pubDate><![CDATA[{{ now()->toDayDateTimeString('Asia/Jakarta') }}]]></pubDate>
 
-                <hr>
-                ]]></description>
-    </item>
-    @endforeach
-
+        @foreach($data['posts'] as $post)
+        <item>
+            <title><![CDATA[{!! $post->fieldLang('title') !!}]]></title>
+            <link><![CDATA[{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}]]></link>
+            <description><![CDATA[{!! !empty($post->fieldLang('intro')) ? strip_tags($post->fieldLang('intro')) : strip_tags($post->fieldLang('content')) !!}]]></description>
+            @if (!empty($post['category_id']))
+            <category><![CDATA[@foreach($post['categories'] as $cat) {!! $cat->fieldLang('name') !!}, @endforeach]]></category>
+            @endif
+            <author><![CDATA[{{ $post->posted_by_alias ?? $post->createBy['name']  }}]]></author>
+            <guid isPermaLink="false"><![CDATA[{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}]]></guid>
+            <pubDate><![CDATA[{{ $post->created_at->toRssString() }}]]></pubDate>
+        </item>
+        @endforeach
   </channel>
 </rss>

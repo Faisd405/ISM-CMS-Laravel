@@ -172,7 +172,7 @@ return [
             ],
         ],
         'tags' => [
-            'active' => false
+            'active' => true
         ],
     ],
 

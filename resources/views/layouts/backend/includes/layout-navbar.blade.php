@@ -23,7 +23,6 @@
         </span>
     </div>
 
-
     <button class="navbar-toggler" type="button" data-toggle="collapse"
         data-target="#layout-navbar-collapse">
         <span class="navbar-toggler-icon"></span>
@@ -74,28 +73,28 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
                     <a href="{{ route('profile') }}" class="dropdown-item" title="@lang('module/user.profile.title')">
-                        <i class="fi fi-rr-man-head"></i> @lang('module/user.profile.title')
+                        <i class="fi fi-rr-man-head text-primary"></i> @lang('module/user.profile.title')
                     </a>
                     @if (config('cms.module.feature.notification.active') == true)
                     <a href="{{ route('notification') }}" class="dropdown-item" title="@lang('feature/notification.caption')">
-                        <i class="fi fi-rr-bell"></i> @lang('feature/notification.caption')
+                        <i class="fi fi-rr-bell text-warning"></i> @lang('feature/notification.caption')
                     </a>
                     @endif
                     @can ('configurations')
                     <a href="{{ route('configuration.website') }}" class="dropdown-item" title="@lang('feature/configuration.caption')">
-                        <i class="fi fi-rr-settings-sliders"></i> @lang('feature/configuration.caption')
+                        <i class="fi fi-rr-settings-sliders text-dark"></i> @lang('feature/configuration.caption')
                     </a>
                     @endcan
                     @role ('developer|super')
                     <a href="{{ route('cache.clear') }}" class="dropdown-item" title="Clear Cache">
-                        <i class="fi fi-rr-cookie"></i> Clear Cache
+                        <i class="fi fi-rr-cookie text-secondary"></i> Clear Cache
                     </a>
                     <a href="{{ route('optimize.clear') }}" class="dropdown-item" title="Optimize Clear">
-                        <i class="fi fi-rr-rocket-lunch"></i> Optimize Clear
+                        <i class="fi fi-rr-rocket-lunch text-main"></i> Optimize Clear
                     </a>
                     @endrole
                     <a href="{{ URL::current() }}" class="dropdown-item" title="Reload">
-                        <i class="fi fi-rr-refresh"></i> Reload
+                        <i class="fi fi-rr-refresh text-info"></i> Reload
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="javascript:void(0)" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
