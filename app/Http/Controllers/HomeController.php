@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
 use App\Services\Module\ContentService;
 use App\Services\Module\DocumentService;
@@ -164,7 +165,7 @@ class HomeController extends Controller
 
     public function maintenance(Request $request)
     {
-        if (config('cmsConfig.maintenance') == 0) {
+        if (App::make(ConfigurationService::class)->getConfigValue('maintenance') == 0) {
             return redirect()->route('home');
         }
 

@@ -54,10 +54,10 @@ class RouteServiceProvider extends ServiceProvider
                     array_key_exists(request()->segment(1), 
                         config('cms.module.feature.language.listLocale'))
             ]);
-        }
 
-        // set config cache
-        App::make(ConfigurationService::class)->setConfigCache();
+            // set config cache
+            App::make(ConfigurationService::class)->setConfigCache();
+        }
 
         $this->configureRateLimiting();
 

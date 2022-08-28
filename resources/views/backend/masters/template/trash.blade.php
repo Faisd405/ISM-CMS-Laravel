@@ -241,7 +241,7 @@
         Swal.fire({
         title: "@lang('global.alert.delete_confirm_restore_title')",
         text: "@lang('global.alert.delete_confirm_text')",
-        type: 'warning',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonText: "@lang('global.restore')",
         cancelButtonText: "@lang('global.cancel')",

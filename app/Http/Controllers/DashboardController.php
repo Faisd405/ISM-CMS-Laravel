@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Analytics\Period;
 use Analytics;
+use App\Services\Feature\ConfigurationService;
 use App\Traits\ApiResponser;
 use Carbon\Carbon;
 use Exception;
@@ -47,6 +48,8 @@ class DashboardController extends Controller
                 'submit_time' => 'DESC'
             ]),
         ];
+        
+        $data['maintenance'] = App::make(ConfigurationService::class)->getConfigValue('maintenance');
 
         return view('backend.dashboard.index', compact('data'), [
             'title' => __('module/dashboard.caption')

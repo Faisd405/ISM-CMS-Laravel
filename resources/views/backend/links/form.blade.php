@@ -69,7 +69,7 @@
                 <hr class="border-light m-0">
                 <div class="card-body">
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/document.label.slug') <i class="text-danger">*</i></label>
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/link.label.slug') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control text-bolder slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
                                 value="{{ !isset($data['link']) ? old('slug') : old('slug', $data['link']['slug']) }}" placeholder="{{ url('/') }}/url">
