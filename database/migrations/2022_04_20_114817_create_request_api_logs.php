@@ -25,7 +25,7 @@ class CreateRequestApiLogs extends Migration
             $table->integer('response_code');
             $table->text('response_headers');
             $table->text('response_body');
-            $table->timestamp('response_received');
+            $table->timestamp('response_received')->nullable();
             $table->timestamps();
         });
     }

@@ -64,7 +64,7 @@ return [
     'updated' => 'Edited',
     'deleted' => 'Deleted',
     'status' => 'Status',
-    'public' => 'PubliC',
+    'public' => 'Public',
     'approved' => 'Approved',
     'reject' => 'Reject',
     'locked' => 'Locked',
