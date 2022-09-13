@@ -240,6 +240,11 @@ class InquiryService
         $inquiry->name = $name;
         $inquiry->body = $body;
         $inquiry->after_body = $afterBody;
+        $inquiry->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
+        ];
         $inquiry->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
@@ -262,6 +267,7 @@ class InquiryService
         $inquiry->config = [
             'show_body' => (bool)$data['config_show_body'],
             'show_after_body' => (bool)$data['config_show_after_body'],
+            'show_cover' => (bool)$data['config_show_cover'],
             'show_banner' => (bool)$data['config_show_banner'],
             'show_map' => (bool)$data['config_show_map'],
             'show_form' => (bool)$data['config_show_form'],

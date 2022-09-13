@@ -25,6 +25,7 @@ class Inquiry extends Model
         'name' => 'json',
         'body' => 'json',
         'after_body' => 'json',
+        'cover' => 'json',
         'banner' => 'json',
         'email' => 'array',
         'config' => 'json',
@@ -33,7 +34,8 @@ class Inquiry extends Model
     ];
 
     protected $appends = [
-        'banner_src'
+        'banner_src',
+        'cover_src'
     ];
 
     public static function boot()
@@ -117,13 +119,28 @@ class Inquiry extends Model
         return $query->where('locked', 1);
     }
 
+    public function getCoverSrcAttribute()
+    {
+        if (!empty($this->cover['filepath'])) {
+            $cover = Storage::url($this->cover['filepath']);
+        } else {
+            if (!empty(config('cmsConfig.file.cover_default'))) {
+                $cover = config('cmsConfig.file.cover_default');
+            } else {
+                $cover = asset(config('cms.files.config.cover_default.file'));
+            }
+        }
+
+        return $cover;
+    }
+
     public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);
         } else {
-            if (!empty(config('cmsConfig.banner_default'))) {
-                $banner = config('cmsConfig.banner_default');
+            if (!empty(config('cmsConfig.file.banner_default'))) {
+                $banner = config('cmsConfig.file.banner_default');
             } else {
                 $banner = asset(config('cms.files.config.banner_default.file'));
             }

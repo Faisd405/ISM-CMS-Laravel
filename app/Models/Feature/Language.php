@@ -58,13 +58,18 @@ class Language extends Model
 
     public function getUrlSwitcherAttribute()
     {
+        $lang = 'id';
+        if (config('cms.module.feature.language.default') == 'id') {
+            $lang = 'en';
+        }
+
         $checkUrl = Str::replaceFirst(url('/'), '', URL::full());
         $replaceUrl = Str::replace(url(''), '', URL::full());
         
-        if ($checkUrl == '' || $checkUrl == '/en') {
-            $url = Str::replaceFirst('en', '', Str::replaceFirst('en/', '', $replaceUrl));
+        if ($checkUrl == '' || $checkUrl == '/'.$lang) {
+            $url = Str::replaceFirst($lang, '', Str::replaceFirst($lang.'/', '', $replaceUrl));
         } else {
-            $url = Str::replaceFirst('/en', '', Str::replaceFirst('en/', '', $replaceUrl));
+            $url = Str::replaceFirst('/'.$lang, '', Str::replaceFirst($lang.'/', '', $replaceUrl));
         }
         
         if ($this->iso_codes != config('cms.module.feature.language.default')) {

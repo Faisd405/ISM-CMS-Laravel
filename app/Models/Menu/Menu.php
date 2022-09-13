@@ -124,7 +124,7 @@ class Menu extends Model
             $module = [
                 'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
                     : $model['title'][App::getLocale()],
-                'routes' => route('page.read.'.$model['slug']),
+                'routes' => $model['parent'] == 0 ? route('page.read.'.$model['slug']) : route('page.read.child.'.$model['slug']),
                 'active' => '',
                 'is_trash' => Page::onlyTrashed()->find($id),
             ];

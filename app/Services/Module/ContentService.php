@@ -220,6 +220,11 @@ class ContentService
         $section->slug = Str::slug(strip_tags($data['slug']), '-');
         $section->name = $name;
         $section->description = $description;
+        $section->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
+        ];
         $section->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
@@ -231,6 +236,7 @@ class ContentService
         $section->locked = (bool)$data['locked'];
         $section->config = [
             'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
             'show_banner' => (bool)$data['config_show_banner'],
             'show_category' => (bool)$data['config_show_category'],
             'multiple_category' => (bool)$data['config_multiple_category'],
@@ -685,6 +691,11 @@ class ContentService
         $category->slug = Str::slug(strip_tags($data['slug']), '-');
         $category->name = $name;
         $category->description = $description;
+        $category->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
+        ];
         $category->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
@@ -697,6 +708,7 @@ class ContentService
 
         $category->config = [
             'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
             'show_banner' => (bool)$data['config_show_banner'],
             'paginate_post' => (bool)$data['config_paginate_post'],
             'show_custom_field' => (bool)$data['config_show_custom_field'],

@@ -3,7 +3,7 @@
 return [
     'title' => 'API',
     'caption' => 'API',
-    'text' => 'API List',
+    'text' => 'List API',
     'label' => [
         'name' => 'Name',
         'description' => 'Description',
@@ -12,14 +12,14 @@ return [
         'module' => 'Module',
         'ip_address' => 'IP Address',
         'regenerate' => 'Re-Generate API',
-        'whitelist' => 'For whitelist IP Address',
+        'whitelist' => 'To whitelist IP addresses',
     ],
     'placeholder' => [
         'name' => 'Enter name',
         'description' => 'Enter description',
         'api_key' => 'Enter api key',
         'api_secret' => 'Enter api secret',
-        'module' => 'sorting API module access',
-        'ip_address' => 'whitelist IP Address access',
+        'module' => 'For sorting which API modules can be accessed by API users',
+        'ip_address' => 'To whitelist IP addresses that can be accessed by API users',
     ],
 ];

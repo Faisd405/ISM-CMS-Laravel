@@ -191,8 +191,10 @@
                             <small class="text-muted">
                                 Icon Refence :
                                 <ul>
-                                    @foreach (config('cms.setting.icon_refernces') as $icon)
-                                    <li><a href="{{ $icon }}" target="_blank">{{ $icon }} <i class="las la-external-link-alt"></i></a></li>
+                                    @foreach (config('cms.setting.icon_references') as $icon)
+                                    <li>
+                                        <a href="{{ $icon['url'] }}" target="_blank"><span>{{ $icon['label'] }}</span> <i class="fi fi-rr-link text-bold"></i></a>
+                                    </li>
                                     @endforeach
                                 </ul>
                             </small>

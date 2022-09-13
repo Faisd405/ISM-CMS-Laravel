@@ -31,8 +31,8 @@ class InquirySenderMail extends Mailable
      */
     public function build()
     {
-        $webname = config('cmsConfig.website_name');
-        $email = config('cmsConfig.system_email');
+        $webname = config('cmsConfig.general.website_name');
+        $email = config('cmsConfig.dev.system_email');
         
         $from = env('MAIL_FROM_ADDRESS');
         return $this->from($from, $webname)

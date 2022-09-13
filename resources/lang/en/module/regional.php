@@ -6,9 +6,9 @@ return [
 
     //--- Province
     'province' => [
-        'title' => 'Provinsi',
-        'caption' => 'Provinsi',
-        'text' => 'List Provinsi',
+        'title' => 'Provincies',
+        'caption' => 'Province',
+        'text' => 'Province List',
         'label' => [
             'code' => 'Code',
             'name' => 'Name',
@@ -16,8 +16,8 @@ return [
             'longitude' => 'Longitude',
         ],
         'placeholder' => [
-            'code' => 'Enter Code',
-            'name' => 'Enter Name',
+            'code' => 'Enter code',
+            'name' => 'Enter name',
             'latitude' => 'Enter latitude',
             'longitude' => 'Enter longitude',
         ],
@@ -25,7 +25,7 @@ return [
 
     //--- City
     'city' => [
-        'title' => 'City',
+        'title' => 'Cities',
         'caption' => 'City',
         'text' => 'City List',
         'label' => [
@@ -35,8 +35,8 @@ return [
             'longitude' => 'Longitude',
         ],
         'placeholder' => [
-            'code' => 'Enter Code',
-            'name' => 'Enter Name',
+            'code' => 'Enter code',
+            'name' => 'Enter name',
             'latitude' => 'Enter latitude',
             'longitude' => 'Enter longitude',
         ],
@@ -44,9 +44,9 @@ return [
 
     //--- District
     'district' => [
-        'title' => 'Kecamatan',
-        'caption' => 'Kecamatan',
-        'text' => 'List Kecamatan',
+        'title' => 'Districts',
+        'caption' => 'District',
+        'text' => 'District List',
         'label' => [
             'code' => 'Code',
             'name' => 'Name',
@@ -54,8 +54,8 @@ return [
             'longitude' => 'Longitude',
         ],
         'placeholder' => [
-            'code' => 'Enter Code',
-            'name' => 'Enter Name',
+            'code' => 'Enter code',
+            'name' => 'Enter name',
             'latitude' => 'Enter latitude',
             'longitude' => 'Enter longitude',
         ],

@@ -117,14 +117,15 @@ class InquiryController extends Controller
         $data = $request->all();
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
-        $data['config_show_body'] = $request->config_show_body;
-        $data['config_show_after_body'] = $request->config_show_after_body;
-        $data['config_show_banner'] = $request->config_show_banner;
-        $data['config_show_map'] = $request->config_show_map;
-        $data['config_show_form'] = $request->config_show_form;
-        $data['config_lock_form'] = $request->config_lock_form;
-        $data['config_send_mail_sender'] = $request->config_send_mail_sender;
-        $data['config_show_custom_field'] = $request->config_show_custom_field;
+        $data['config_show_body'] = (bool)$request->config_show_body;
+        $data['config_show_after_body'] = (bool)$request->config_show_after_body;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_map'] = (bool)$request->config_show_map;
+        $data['config_show_form'] = (bool)$request->config_show_form;
+        $data['config_lock_form'] = (bool)$request->config_lock_form;
+        $data['config_send_mail_sender'] = (bool)$request->config_send_mail_sender;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $inquiry = $this->inquiryService->storeInquiry($data);
         $data['query'] = $request->query();
 
@@ -160,14 +161,15 @@ class InquiryController extends Controller
         $data = $request->all();
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
-        $data['config_show_body'] = $request->config_show_body;
-        $data['config_show_after_body'] = $request->config_show_after_body;
-        $data['config_show_banner'] = $request->config_show_banner;
-        $data['config_show_map'] = $request->config_show_map;
-        $data['config_show_form'] = $request->config_show_form;
-        $data['config_lock_form'] = $request->config_lock_form;
-        $data['config_send_mail_sender'] = $request->config_send_mail_sender;
-        $data['config_show_custom_field'] = $request->config_show_custom_field;
+        $data['config_show_body'] = (bool)$request->config_show_body;
+        $data['config_show_after_body'] = (bool)$request->config_show_after_body;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_banner'] = (bool)$request->config_show_banner;
+        $data['config_show_map'] = (bool)$request->config_show_map;
+        $data['config_show_form'] = (bool)$request->config_show_form;
+        $data['config_lock_form'] = (bool)$request->config_lock_form;
+        $data['config_send_mail_sender'] = (bool)$request->config_send_mail_sender;
+        $data['config_show_custom_field'] = (bool)$request->config_show_custom_field;
         $inquiry = $this->inquiryService->updateInquiry($data, ['id' => $id]);
         $data['query'] = $request->query();
 
@@ -366,8 +368,8 @@ class InquiryController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = config('cmsConfig.banner_default');
-        $limit = config('cmsConfig.content_limit');
+        $data['banner'] = config('cmsConfig.file.banner_default');
+        $limit = config('cmsConfig.general.content_limit');
 
         // inquiry
         $data['inquiries'] = $this->inquiryService->getInquiryList([
@@ -415,6 +417,7 @@ class InquiryController extends Controller
 
         $data['custom_fields'] = $data['read']['custom_fields'];
         $data['creator'] = $data['read']['createBy']['name'];
+        $data['cover'] = $data['read']['cover_src'];
         $data['banner'] = $data['read']['banner_src'];
 
         // meta data
@@ -423,7 +426,7 @@ class InquiryController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = config('cmsConfig.meta_description');
+        $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -434,7 +437,7 @@ class InquiryController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('after_body')), 155);
         }
 
-        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.seo.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }
@@ -449,7 +452,7 @@ class InquiryController extends Controller
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
             URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-            config('cmsConfig.cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         // record hits
         $this->inquiryService->recordHits(['id' => $data['read']['id']]);
@@ -494,7 +497,7 @@ class InquiryController extends Controller
             'title' => $inquiry->fieldLang('name'),
             'inquiry' => $inquiry,
             'request' => $request->all(),
-            'webname' => config('cmsConfig.website_name'),
+            'webname' => config('cmsConfig.general.website_name'),
         ];
 
         $formData = $request->all();
@@ -508,7 +511,7 @@ class InquiryController extends Controller
         $this->inquiryService->recordForm($formData);
         
 
-        if (config('cmsConfig.notif_apps_inquiry') == 1) {
+        if (config('cmsConfig.notif.notif_apps_inquiry') == 1) {
             $this->notifService->sendNotif([
                 'user_from' => null,
                 'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3]], false)
@@ -537,7 +540,7 @@ class InquiryController extends Controller
 
         try {
             
-            if (config('cmsConfig.notif_email_inquiry') == 1 && !empty($inquiry['email'])) {
+            if (config('cmsConfig.notif.notif_email_inquiry') == 1 && !empty($inquiry['email'])) {
                 Mail::to($inquiry['email'])->send(new \App\Mail\InquiryFormMail($data));
             }
 

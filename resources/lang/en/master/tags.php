@@ -12,7 +12,7 @@ return [
     ],
     'placeholder' => [
         'name' => 'Enter name',
-        'description' => 'Enter description',
+        'description' => 'Enter Description',
         'flags' => 'Are tags approved or not',
         'standar' => 'For markers that these tags are standard',
     ],

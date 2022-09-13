@@ -112,6 +112,7 @@ class ContentSectionController extends Controller
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_category'] = (bool)$request->config_show_category;
         $data['config_multiple_category'] = (bool)$request->config_multiple_category;
@@ -165,6 +166,7 @@ class ContentSectionController extends Controller
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_category'] = (bool)$request->config_show_category;
         $data['config_multiple_category'] = (bool)$request->config_multiple_category;
@@ -276,8 +278,8 @@ class ContentSectionController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = config('cmsConfig.banner_default');
-        $limit = config('cmsConfig.content_limit');
+        $data['banner'] = config('cmsConfig.file.banner_default');
+        $limit = config('cmsConfig.general.content_limit');
         $data['sections'] = $this->contentService->getSectionList([
             'publish' => 1,
             'approved' => 1
@@ -348,6 +350,7 @@ class ContentSectionController extends Controller
 
         $data['fields'] = $data['read']['custom_fields'];
         $data['creator'] = $data['read']['createBy']['name'];
+        $data['cover'] = $data['read']['cover_src'];
         $data['banner'] = $data['read']['banner_src'];
 
         // meta data
@@ -356,7 +359,7 @@ class ContentSectionController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = config('cmsConfig.meta_description');
+        $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -364,7 +367,7 @@ class ContentSectionController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
 
-        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.seo.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }
@@ -379,7 +382,7 @@ class ContentSectionController extends Controller
         $data['share_linkedin'] = "https://www.linkedin.com/shareArticle?mini=true&url=".
             URL::full()."&title=".$data['read']->fieldLang('name')."&source=".request()->root()."";
         $data['share_pinterest'] = "https://pinterest.com/pin/create/bookmarklet/?media=".
-           config('cmsConfig.cover_default')."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
+            $data['cover']."&url=".URL::full()."&is_video=false&description=".$data['read']->fieldLang('name')."";
 
         $blade = 'detail';
         if (!empty($data['read']['template_list_id'])) {

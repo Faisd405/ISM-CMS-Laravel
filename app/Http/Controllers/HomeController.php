@@ -138,8 +138,8 @@ class HomeController extends Controller
         if (config('cms.setting.url.feed') == false)
             return redirect()->route('home');
 
-        $data['title'] = config('cmsConfig.meta_title');
-        $data['description'] = config('cmsConfig.meta_description');
+        $data['title'] = config('cmsConfig.seo.meta_title');
+        $data['description'] = config('cmsConfig.seo.meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
             'approved' => 1,
@@ -153,8 +153,8 @@ class HomeController extends Controller
         if (config('cms.setting.url.feed') == false)
             return redirect()->route('home');
             
-        $data['title'] = config('cmsConfig.meta_title');
-        $data['description'] = config('cmsConfig.meta_description');
+        $data['title'] = config('cmsConfig.seo.meta_title');
+        $data['description'] = config('cmsConfig.seo.meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([
             'publish' => 1,
             'approved' => 1

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Event',
+    'title' => 'Events',
     'caption' => 'Event',
     'text' => 'Event List',
     'label' => [
@@ -13,8 +13,8 @@ return [
         'place' => 'Place',
         'start_date' => 'Start Date',
         'end_date' => 'End Date',
-        'email' => 'Email (for submit event notifications)',
-        'lock_form' => 'Lock the form after submit?'
+        'email' => 'Email (for notification submit event)',
+        'lock_form' => 'Lock form after submit ?'
     ],
     'placeholder' => [
         'name' => 'Enter name',
@@ -22,7 +22,7 @@ return [
     'field' => [
         'title' => 'Fields',
         'caption' => 'Field',
-        'text' => 'List Field',
+        'text' => 'Field List',
         'label' => [
             'label' => 'Label',
             'name' => 'Name',
@@ -35,13 +35,13 @@ return [
             'properties' => 'Properties',
             'placeholder' => 'Placeholder',
             'option' => 'Options',
-            'is_unique' => 'Unique Field (uniq field check validation)',
+            'is_unique' => 'Unique Field (unique field checking validation)',
         ],
         'placeholder' => [
             'type' => 'Input type html',
             'id' => 'id html',
             'class' => 'class css html for tag form group',
-            'attribute' => 'attribute html form tag input',
+            'attribute' => 'attribute html for tag form input',
             'validation' => 'laravel validation, example : required|email etc.',
         ],
         'validations' => [
@@ -51,14 +51,14 @@ return [
             ],
             'email' => [
                 'caption' => 'Email',
-                'desc' => 'Field must email type'
+                'desc' => 'Field must be email type'
             ]
         ],
     ],
     'form' => [
-        'title' => 'Submit Form',
+        'title' => 'Submit Forms',
         'caption' => 'Submit Form',
-        'text' => 'List Submit Form',
+        'text' => 'Submit Form List',
         'label' => [
             'ip_address' => 'IP Address',
             'exported' => 'Exported',
@@ -67,9 +67,9 @@ return [
         'placeholder' => [
             
         ],
-        'submit_success' => 'Submit form success',
-        'unique_warning' => 'Email / Phone already exists',
-        'form_open_warning' => 'The form hasnt been opened yet',
-        'form_close_warning' => 'The form has been closed',
+        'submit_success' => 'Submit form successfully',
+        'unique_warning' => 'The email / phone you entered already exists',
+        'form_open_warning' => 'Form not open yet',
+        'form_close_warning' => 'Form closed',
     ],
 ];

@@ -361,8 +361,8 @@ class EventController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = config('cmsConfig.banner_default');
-        $limit = config('cmsConfig.content_limit');
+        $data['banner'] = config('cmsConfig.file.banner_default');
+        $limit = config('cmsConfig.general.content_limit');
 
         // eveet
         $data['events'] = $this->eventService->getEventList([
@@ -433,7 +433,7 @@ class EventController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = config('cmsConfig.meta_description');
+        $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -441,7 +441,7 @@ class EventController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
 
-        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.seo.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }
@@ -513,7 +513,7 @@ class EventController extends Controller
 
         $this->eventService->recordForm($formData);
 
-        if (config('cmsConfig.notif_apps_event') == 1) {
+        if (config('cmsConfig.notif.notif_apps_event') == 1) {
             $this->notifService->sendNotif([
                 'user_from' => null,
                 'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3]], false)
@@ -544,7 +544,7 @@ class EventController extends Controller
 
         try {
             
-            if (config('cmsConfig.notif_email_event') == 1 && !empty($event['email'])) {
+            if (config('cmsConfig.notif.notif_email_event') == 1 && !empty($event['email'])) {
                 Mail::to($event['email'])->send(new \App\Mail\EventFormMail($data));
             }
             

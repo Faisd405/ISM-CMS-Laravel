@@ -9,8 +9,8 @@
             </a>
         </div>
         <span class="app-brand-logo demo{{ config('cms.setting.layout') != 3 ? ' square' : '' }}">
-            <img src="{{ config('cms.setting.layout') == 3 ? config('cmsConfig.logo') :  config('cmsConfig.logo_2') }}" alt="{{ config('cmsConfig.website_name') }}"
-                title="{{ config('cmsConfig.website_name') }}">
+            <img src="{{ config('cms.setting.layout') == 3 ? config('cmsConfig.file.logo') :  config('cmsConfig.file.logo_2') }}" alt="{{ config('cmsConfig.general.website_name') }}"
+                title="{{ config('cmsConfig.general.website_name') }}">
         </span>
         <!-- Divider -->
         <div

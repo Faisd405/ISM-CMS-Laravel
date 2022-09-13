@@ -21,7 +21,7 @@ return [
             'file' => 'File',
             'thumbnail' => 'Thumbnail',
             'youtube_id' => 'Youtube ID',
-            'url_image' => 'Image URL',
+            'url_image' => 'URL Image',
             'url' => 'URL',
             'image' => 'Image',
             'video' => 'Video'

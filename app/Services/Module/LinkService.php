@@ -212,6 +212,11 @@ class LinkService
         $link->slug = Str::slug(strip_tags($data['slug']), '-');
         $link->name = $name;
         $link->description = $description;
+        $link->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
+        ];
         $link->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
@@ -223,6 +228,7 @@ class LinkService
         $link->detail = (bool)$data['detail'];
         $link->config = [
             'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
             'show_banner' => (bool)$data['config_show_banner'],
             'paginate_media' => (bool)$data['config_paginate_media'],
             'show_custom_field' => (bool)$data['config_show_custom_field'],

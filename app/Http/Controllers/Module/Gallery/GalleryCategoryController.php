@@ -258,8 +258,8 @@ class GalleryCategoryController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] = config('cmsConfig.banner_default');
-        $limit = config('cmsConfig.content_limit');
+        $data['banner'] = config('cmsConfig.file.banner_default');
+        $limit = config('cmsConfig.general.content_limit');
 
         // category
         $data['categories'] = $this->galleryService->getCategoryList([
@@ -349,7 +349,7 @@ class GalleryCategoryController extends Controller
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-        $data['meta_description'] = config('cmsConfig.meta_description');
+        $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }

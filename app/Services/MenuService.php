@@ -319,6 +319,12 @@ class MenuService
         if (isset($filter['limit']))
             $limit = $filter['limit'];
 
+        $menu->withCount([
+            'childs' => function($menuB) {
+                $menuB->publish();
+            }
+        ]);
+
         if (!empty($with))
             $menu->with($with);
 

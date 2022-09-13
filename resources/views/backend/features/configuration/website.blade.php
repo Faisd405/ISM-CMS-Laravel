@@ -12,12 +12,13 @@
 
         <div class="card overflow-hidden">
             <div class="row no-gutters row-bordered row-border-light">
+
                 <div class="col-md-3 pt-0">
                     <div class="list-group list-group-flush account-settings-links">
-                        @if ($data['upload']->count() > 0)
-                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'upload') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'upload']) }}" 
-                            title="@lang('feature/configuration.website.label.upload')">
-                            @lang('feature/configuration.website.label.upload')
+                        @if ($data['file']->count() > 0)
+                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'file') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'file']) }}" 
+                            title="@lang('feature/configuration.website.label.file')">
+                            @lang('feature/configuration.website.label.file')
                         </a>
                         @endif
                         @if ($data['general']->count() > 0)
@@ -26,28 +27,28 @@
                             @lang('feature/configuration.website.label.general')
                         </a>
                         @endif
-                        @if ($data['meta_data']->count() > 0)
-                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'meta-data') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'meta-data']) }}"
+                        @if ($data['seo']->count() > 0)
+                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'seo') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'seo']) }}"
                             title="@lang('feature/configuration.website.label.seo')">
                             @lang('feature/configuration.website.label.seo')
                         </a>
                         @endif
                         @if ($data['social_media']->count() > 0)
-                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'social-media') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'social-media']) }}"
-                            title="@lang('feature/configuration.website.label.social_media')">
-                            @lang('feature/configuration.website.label.social_media')
+                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'socmed') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'socmed']) }}"
+                            title="@lang('feature/configuration.website.label.socmed')">
+                            @lang('feature/configuration.website.label.socmed')
                         </a>
                         @endif
                         @if ($data['notification']->count() > 0)
-                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'notification') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'notification']) }}"
-                            title="@lang('feature/configuration.website.label.notification')">
-                            @lang('feature/configuration.website.label.notification')
+                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'notif') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'notif']) }}"
+                            title="@lang('feature/configuration.website.label.notif')">
+                            @lang('feature/configuration.website.label.notif')
                         </a>
                         @endif
                         @role ('developer|super')
-                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'dev-only') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'dev-only']) }}"
-                            title="@lang('feature/configuration.website.label.developer')">
-                            @lang('feature/configuration.website.label.developer')
+                        <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'dev') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'dev']) }}"
+                            title="@lang('feature/configuration.website.label.dev')">
+                            @lang('feature/configuration.website.label.dev')
                         </a>
                         <a class="list-group-item list-group-item-action {{ (Request::get('tab') == 'set-config') ? 'active' : '' }}" href="{{ route('configuration.website', ['tab' => 'set-config']) }}"
                             title="@lang('feature/configuration.website.label.set')">
@@ -60,29 +61,29 @@
                 <div class="col-md-9">
                     <div class="tab-content">
 
-                        @if ($data['upload']->count() > 0)
+                        @if ($data['file']->count() > 0)
                         {{-- Upload --}}
-                        <div class="tab-pane fade {{ (Request::get('tab') == 'upload') ? 'show active' : '' }}">
-                            @foreach ($data['upload'] as $upload)
+                        <div class="tab-pane fade {{ (Request::get('tab') == 'file') ? 'show active' : '' }}">
+                            @foreach ($data['file'] as $file)
                             <div class="card-body media align-items-center">
-                                <a href="{{ $upload->file($upload['name']) }}" data-fancybox="gallery">
-                                    <img src="{{ $upload->file($upload['name']) }}" alt="" class="d-block ui-w-80">
+                                <a href="{{ $file->file($file['name']) }}" data-fancybox="gallery">
+                                    <img src="{{ $file->file($file['name']) }}" alt="" class="d-block ui-w-80">
                                 </a>
                                 <div class="media-body ml-4">
-                                    <form id="upload-{{ $upload['name'] }}" action="{{ route('configuration.website.upload', ['name' => $upload['name']]) }}" 
+                                    <form id="file-{{ $file['name'] }}" action="{{ route('configuration.website.upload', ['name' => $file['name']]) }}" 
                                         method="POST" enctype="multipart/form-data">
                                         @csrf
                                         @method('PUT')
                                         <div class="box-btn">
                                             <label class="btn btn-outline-main btn-sm">
-                                                {{ $upload['label'] }}
-                                                <input type="hidden" name="old_{{ $upload['name'] }}" value="{{ $upload['value'] }}">
-                                                <input type="file" id="{{ $upload['name'] }}" name="{{ $upload['name'] }}" class="account-settings-fileinput">
+                                                {{ $file['label'] }}
+                                                <input type="hidden" name="old_{{ $file['name'] }}" value="{{ $file['value'] }}">
+                                                <input type="file" id="{{ $file['name'] }}" name="{{ $file['name'] }}" class="account-settings-fileinput">
                                             </label>
-                                            @if ($upload['value'] != null)
+                                            @if ($file['value'] != null)
                                             <button type="button" class="btn icon-btn btn-sm btn-danger swal-delete"
-                                                data-name="{{ $upload['name'] }}" title="@lang('global.delete_attr', [
-                                                    'attribute' => __('feature/configuration.website.label.tabs1')
+                                                data-name="{{ $file['name'] }}" title="@lang('global.delete_attr', [
+                                                    'attribute' => __('feature/configuration.website.label.file')
                                                 ])">
                                                 <i class="fi fi-rr-cross-circle"></i>
                                             </button>
@@ -90,15 +91,15 @@
                                         </div>
                                     </form>
 
-                                    @error($upload['name'])
+                                    @error($file['name'])
                                     <div class="small mt-1" style="color:#d9534f;">{{ $message }}</div>
                                     @enderror
                                     <div class="text-light small mt-1">
-                                        Allowed : <strong>{{ Str::upper(config('cms.files.config.'.$upload['name'].'.mimes')) }}</strong></span>.
-                                        @if(config('cms.files.config.'.$upload['name'].'.pixel'))
-                                        Pixel : <strong>{{ config('cms.files.config.'.$upload['name'].'.pixel') }}</strong>. 
+                                        Allowed : <strong>{{ Str::upper(config('cms.files.config.'.$file['name'].'.mimes')) }}</strong></span>.
+                                        @if(config('cms.files.config.'.$file['name'].'.pixel'))
+                                        Pixel : <strong>{{ config('cms.files.config.'.$file['name'].'.pixel') }}</strong>. 
                                         @endif
-                                        Max Upload : <strong>{{ config('cms.files.config.'.$upload['name'].'.size') }}</strong>
+                                        Max Upload : <strong>{{ config('cms.files.config.'.$file['name'].'.size') }}</strong>
                                     </div>
                                 </div>
                             </div>
@@ -131,18 +132,18 @@
                         </div>
                         @endif
 
-                        @if ($data['meta_data']->count() > 0)
+                        @if ($data['seo']->count() > 0)
                         {{-- SEO --}}
-                        <div class="tab-pane fade {{ (Request::get('tab') == 'meta-data') ? 'show active' : '' }}">
+                        <div class="tab-pane fade {{ (Request::get('tab') == 'seo') ? 'show active' : '' }}">
                             <form action="{{ route('configuration.website.update') }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body">
-                                    @foreach ($data['meta_data'] as $meta)
+                                    @foreach ($data['seo'] as $seo)
                                     <div class="form-group">
-                                        <label class="form-label">{{ $meta['label'] }}</label>
-                                        <textarea class="form-control mb-1" name="name[{{ $meta['name'] }}]" 
-                                            placeholder="{{ Str::replace('_', ' ', $meta['name']) }}">{!! old($meta['name'], $meta['value']) !!}</textarea>
+                                        <label class="form-label">{{ $seo['label'] }}</label>
+                                        <textarea class="form-control mb-1" name="name[{{ $seo['name'] }}]" 
+                                            placeholder="{{ Str::replace('_', ' ', $seo['name']) }}">{!! old($seo['name'], $seo['value']) !!}</textarea>
                                     </div>
                                     @endforeach
                                     <hr>
@@ -158,7 +159,7 @@
 
                         @if ($data['social_media']->count() > 0)
                         {{-- Socmed --}}
-                        <div class="tab-pane fade {{ (Request::get('tab') == 'social-media') ? 'show active' : '' }}">
+                        <div class="tab-pane fade {{ (Request::get('tab') == 'socmed') ? 'show active' : '' }}">
                             <form action="{{ route('configuration.website.update') }}" method="POST">
                                 @csrf
                                 @method('PUT')
@@ -183,7 +184,7 @@
 
                         @if ($data['notification']->count() > 0)
                         {{-- Notif --}}
-                        <div class="tab-pane fade {{ (Request::get('tab') == 'notification') ? 'show active' : '' }}">
+                        <div class="tab-pane fade {{ (Request::get('tab') == 'notif') ? 'show active' : '' }}">
                             <form action="{{ route('configuration.website.update') }}" method="POST">
                                 @csrf
                                 @method('PUT')
@@ -214,7 +215,7 @@
 
                         @role ('developer|super')
                         {{-- Developer Only --}}
-                        <div class="tab-pane fade {{ (Request::get('tab') == 'dev-only') ? 'show active' : '' }}">
+                        <div class="tab-pane fade {{ (Request::get('tab') == 'dev') ? 'show active' : '' }}">
                             <form action="{{ route('configuration.website.update') }}" method="POST">
                                 @csrf
                                 @method('PUT')
@@ -261,10 +262,20 @@
                                     @foreach ($data['all_config'] as $all)
                                     <h6 class="text-main">{{ $loop->iteration.'. '.Str::upper(str_replace('_', ' ', $all['name'])) }}</h6>
                                     <div class="form-row">
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-6">
                                             <label class="form-label">Label</label>
                                             <input type="text" class="form-control text-bolder" name="label[{{ $all['name'] }}]" 
                                                 value="{!! old($all['name'], $all['label']) !!}">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label class="form-label">Group</label>
+                                            <select class="form-control show-tick" name="group[{{ $all['name'] }}]" data-style="btn-default">
+                                                @foreach (config('cms.module.feature.configuration.group') as $key => $value)
+                                                    <option value="{{ $value }}" {{ old('group', $all['group']) == ''.$value.'' ? 'selected' : '' }}>
+                                                        @lang('feature/configuration.website.label.'.$value)
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="form-group col-md-2">
                                             <label class="form-label">Show Form</label> <br>
@@ -324,7 +335,8 @@
                                             </button>
                                         </div>
                                         @endif
-                                      </div>
+                                    </div>
+                                    <hr class="border-light mb-2">
                                     @endforeach
                                 </div>
                                 <hr>
@@ -340,9 +352,10 @@
                             </form>
                         </div>
                         @endrole
-                        
+
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -368,8 +381,8 @@
                         <select class="form-control show-tick" name="group" data-style="btn-default">
                             <option value=" " selected disabled>@lang('global.select')</option>
                             @foreach (config('cms.module.feature.configuration.group') as $key => $value)
-                                <option value="{{ $key }}" {{ old('group') == ''.$key.'' ? 'selected' : '' }}>
-                                    @lang('feature/configuration.website.label.tabs'.$key)
+                                <option value="{{ $value }}" {{ old('group') == ''.$value.'' ? 'selected' : '' }}>
+                                    @lang('feature/configuration.website.label.'.$value)
                                 </option>
                             @endforeach
                         </select>
@@ -480,9 +493,9 @@
 
 @section('jsbody')
 <script>
-    @foreach ($data['upload'] as $upload)
-    $('#{{ $upload['name'] }}').change(function() {
-        $('#upload-{{ $upload['name'] }}').submit();
+    @foreach ($data['file'] as $file)
+    $('#{{ $file['name'] }}').change(function() {
+        $('#file-{{ $file['name'] }}').submit();
     });
     @endforeach
 
@@ -527,7 +540,7 @@
                 if (response.value.success) {
                     Swal.fire({
                         icon: 'success',
-                        text: "@lang('global.alert.delete_success', ['attribute' => __('feature/configuration.website.label.upload')])"
+                        text: "@lang('global.alert.delete_success', ['attribute' => __('feature/configuration.website.label.file')])"
                     }).then(() => {
                         window.location.reload();
                     })

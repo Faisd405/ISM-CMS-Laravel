@@ -19,6 +19,7 @@ class CreateModInquiriesTable extends Migration
             $table->json('name');
             $table->json('body')->nullable();
             $table->json('after_body')->nullable();
+            $table->json('cover')->nullable();
             $table->json('banner')->nullable();
             $table->json('email')->nullable();
             $table->string('longitude')->nullable();

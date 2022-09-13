@@ -3,7 +3,7 @@
 return [
     'title' => 'Pages',
     'caption' => 'Page',
-    'text' => 'List Page',
+    'text' => 'Page List',
     'label' => [
         'title' => 'Title',
         'slug' => 'Slug / URL',

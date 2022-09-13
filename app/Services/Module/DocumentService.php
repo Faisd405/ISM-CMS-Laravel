@@ -196,6 +196,11 @@ class DocumentService
         } else {
             $document->roles = null;
         }
+        $document->cover = [
+            'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
+            'title' => $data['cover_title'] ?? null,
+            'alt' => $data['cover_alt'] ?? null,
+        ];
         $document->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
@@ -207,6 +212,7 @@ class DocumentService
         $document->detail = (bool)$data['detail'];
         $document->config = [
             'show_description' => (bool)$data['config_show_description'],
+            'show_cover' => (bool)$data['config_show_cover'],
             'show_banner' => (bool)$data['config_show_banner'],
             'paginate_file' => (bool)$data['config_paginate_file'],
             'show_custom_field' => (bool)$data['config_show_custom_field'],

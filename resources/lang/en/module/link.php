@@ -13,9 +13,9 @@ return [
         'name' => 'Enter name',
     ],
     'media' => [
-        'title' => 'Media Link',
-        'caption' => 'Media Link',
-        'text' => 'Media Link List',
+        'title' => 'Link Media',
+        'caption' => 'Link Media',
+        'text' => 'Link Media List',
         'label' => [
             'title' => 'Title',
             'description' => 'Description',

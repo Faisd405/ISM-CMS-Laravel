@@ -3,6 +3,7 @@
 return [
     'code' => 'cms', // kode cms untuuk generate password dll.
 
+    // untuk setup pertama, set 2 variable ini menjadi false
     'index_url' => true, //untuk mengaktifkan permalink short
     'locales' => true,  //untuk mengaktifkan auto redirect ke ISO CODE bahasa
 
@@ -17,9 +18,12 @@ return [
         'feed' => true,
     ],
 
-    //icon refernce
-    'icon_refernces' => [
-        'https://icons8.com/line-awesome',
+    //icon reference
+    'icon_references' => [
+        'line_awesome' => [
+            'label' => 'Line Awesome',
+            'url' => 'https://icons8.com/line-awesome',
+        ]
     ],
 
     // Limit default
@@ -36,6 +40,7 @@ return [
     'layout' => 1, // 1 = vertical 1, 2 = vertical 2, 3 = horizontal
     'layout_logo' => 1, // 1 = small, 2 = default
     'layout_fixed' => 1,
+    'theme_color' => '#0084ff',
 
     // Copyright
     'copyright' => [

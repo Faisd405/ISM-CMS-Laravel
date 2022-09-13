@@ -34,23 +34,23 @@ class ConfigurationController extends Controller
      */
     public function configWeb(Request $request)
     {
-        $data['upload'] = $this->configService->getConfigList([
-            'group' => 1, 'is_upload' => 1, 'show_form' => 1
+        $data['file'] = $this->configService->getConfigList([
+            'group' => 'file', 'is_upload' => 1, 'show_form' => 1
         ]);
         $data['general'] = $this->configService->getConfigList([
-            'group' => 2, 'show_form' => 1
+            'group' => 'general', 'show_form' => 1
         ]);
-        $data['meta_data'] = $this->configService->getConfigList([
-            'group' => 3, 'show_form' => 1
+        $data['seo'] = $this->configService->getConfigList([
+            'group' => 'seo', 'show_form' => 1
         ]);
         $data['social_media'] = $this->configService->getConfigList([
-            'group' => 4, 'show_form' => 1
+            'group' => 'socmed', 'show_form' => 1
         ]);
         $data['notification'] = $this->configService->getConfigList([
-            'group' => 5, 'show_form' => 1
+            'group' => 'notif', 'show_form' => 1
         ]);
         $data['dev_only'] = $this->configService->getConfigList([
-            'group' => 100, 'show_form' => 1
+            'group' => 'dev', 'show_form' => 1
         ]);
         $data['all_config'] = $this->configService->getConfigList([], [
             'group' => 'ASC'

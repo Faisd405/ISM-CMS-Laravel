@@ -14,7 +14,7 @@ class CreateFeatureConfigurationsTable extends Migration
     public function up()
     {
         Schema::create('feature_configurations', function (Blueprint $table) {
-            $table->integer('group');
+            $table->string('group');
             $table->string('name')->primary();
             $table->string('label');
             $table->text('value')->nullable();

@@ -318,7 +318,7 @@ class GalleryAlbumController extends Controller
 
         // meta data
         $data['meta_title'] = $data['read']->fieldLang('name');
-        $data['meta_description'] = config('cmsConfig.meta_description');
+        $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }

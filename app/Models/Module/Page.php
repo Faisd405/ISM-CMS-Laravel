@@ -163,8 +163,8 @@ class Page extends Model
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
         } else {
-            if (!empty(config('cmsConfig.cover_default'))) {
-                $cover = config('cmsConfig.cover_default');
+            if (!empty(config('cmsConfig.file.cover_default'))) {
+                $cover = config('cmsConfig.file.cover_default');
             } else {
                 $cover = asset(config('cms.files.config.cover_default.file'));
             }
@@ -178,8 +178,8 @@ class Page extends Model
         if (!empty($this->banner['filepath'])) {
             $banner = Storage::url($this->banner['filepath']);
         } else {
-            if (!empty(config('cmsConfig.banner_default'))) {
-                $banner = config('cmsConfig.banner_default');
+            if (!empty(config('cmsConfig.file.banner_default'))) {
+                $banner = config('cmsConfig.file.banner_default');
             } else {
                 $banner = asset(config('cms.files.config.banner_default.file'));
             }

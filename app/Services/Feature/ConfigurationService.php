@@ -107,9 +107,9 @@ class ConfigurationService
         $setConfigs = [];
         foreach ($this->configModel->active()->get() as $key => $value) {
             if ($value['is_upload'] == 1) {
-                $setConfigs[$value['name']] = $this->getConfigFile($value['name']);
+                $setConfigs[$value['group']][$value['name']] = $this->getConfigFile($value['name']);
             } else {
-                $setConfigs[$value['name']] = $this->getConfigValue($value['name']);
+                $setConfigs[$value['group']][$value['name']] = $this->getConfigValue($value['name']);
             }
         }
 
@@ -157,6 +157,7 @@ class ConfigurationService
             foreach ($data['label'] as $key => $value) {
                 $this->getConfig(['name' => $key])->update([
                     'label' => $value,
+                    'group' => $data['group'][$key],
                     'show_form' => isset($data['show_form'][$key]) ? 1 : 0,
                     'active' => isset($data['active'][$key]) ? 1 : 0,
                     'locked' => isset($data['locked'][$key]) ? 1 : 0,

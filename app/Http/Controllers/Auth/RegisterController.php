@@ -103,11 +103,11 @@ class RegisterController extends Controller
                         'link' => route('register.activate', ['email' => $email, 'expired' => $expired]),
                     ];
         
-                    if (config('cmsConfig.notif_email_register') == 1)
+                    if (config('cmsConfig.notif.notif_email_register') == 1)
                         Mail::to($request->email)->send(new \App\Mail\ActivateAccountMail($data));
                 }
 
-                if (config('cmsConfig.notif_apps_register') == 1)
+                if (config('cmsConfig.notif.notif_apps_register') == 1)
                     $this->notifService->sendNotif([
                         'user_from' => $register['data']['id'],
                         'user_to' => $this->userService->getUserList(['role_in' => [1, 2, 3, 4]], false)

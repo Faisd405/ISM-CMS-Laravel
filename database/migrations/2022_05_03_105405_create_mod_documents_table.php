@@ -19,6 +19,7 @@ class CreateModDocumentsTable extends Migration
             $table->json('name');
             $table->json('description')->nullable();
             $table->json('roles')->nullable();
+            $table->json('cover')->nullable();
             $table->json('banner')->nullable();
             $table->json('config');
             $table->json('custom_fields')->nullable();

@@ -18,6 +18,7 @@ class CreateModContentSectionsTable extends Migration
             $table->string('slug')->index();
             $table->json('name');
             $table->json('description')->nullable();
+            $table->json('cover')->nullable();
             $table->json('banner')->nullable();
             $table->json('addon_fields')->nullable();
             $table->json('config');

@@ -7,12 +7,12 @@ return [
         'title' => 'Website',
         'caption' => 'Website',
         'label' => [
-            'upload' => 'Upload',
+            'file' => 'File',
             'general' => 'General',
             'seo' => 'SEO',
-            'social_media' => 'Sosial Media',
-            'notification' => 'Notifikasi',
-            'developer' => 'Developer Only',
+            'socmed' => 'Sosial Media',
+            'notif' => 'Notifikasi',
+            'dev' => 'Developer Only',
             'set' => 'Atur Konfigurasi',
         ]
     ],

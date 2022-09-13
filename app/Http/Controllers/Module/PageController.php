@@ -284,8 +284,8 @@ class PageController extends Controller
             return redirect()->route('home');
 
         //data
-        $data['banner'] =config('cmsConfig.banner_default');
-        $limit = config('cmsConfig.content_limit');
+        $data['banner'] =config('cmsConfig.file.banner_default');
+        $limit = config('cmsConfig.general.content_limit');
         $data['pages'] = $this->pageService->getPageList([
             'publish' => 1,
             'approved' => 1,
@@ -363,7 +363,7 @@ class PageController extends Controller
             $data['meta_title'] = Str::limit(strip_tags($data['read']['seo']['title']), 69);
         }
 
-        $data['meta_description'] = config('cmsConfig.meta_description');
+        $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
         } elseif (empty($data['read']['seo']['description']) && 
@@ -374,7 +374,7 @@ class PageController extends Controller
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('content')), 155);
         }
 
-        $data['meta_keywords'] = config('cmsConfig.meta_keywords');
+        $data['meta_keywords'] = config('cmsConfig.seo.meta_keywords');
         if (!empty($data['read']['seo']['keywords'])) {
             $data['meta_keywords'] = $data['read']['seo']['keywords'];
         }

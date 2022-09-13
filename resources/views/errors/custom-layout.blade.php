@@ -7,12 +7,12 @@
     <!-- Meta default -->
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
-    <meta name="title" content="{{ isset($title) ? $title : config('cmsConfig.meta_title') }}">
+    <meta name="title" content="{{ isset($title) ? $title : config('cmsConfig.seo.meta_title') }}">
     <meta name="description" content="website error">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') | {{ config('cmsConfig.meta_title') }}</title>
+    <title>@yield('title') | {{ config('cmsConfig.seo.meta_title') }}</title>
 
     <link rel="shortcut icon" type="image/png" href="{{ asset('assets/backend/images/favicon.ico') }}" sizes="32x32">
     <!-- Main font -->

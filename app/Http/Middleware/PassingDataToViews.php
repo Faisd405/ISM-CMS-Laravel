@@ -57,6 +57,13 @@ class PassingDataToViews
                 $passingData['menu'][$value['name']] = $this->menu->getMenuList($filterMenu, false, 10, false, [], [
                     'position' => 'ASC'
                 ]);
+                foreach ($passingData['menu'][$value['name']] as $keyB => $valB) {
+                    unset($filterMenu['parent']);
+                    $filterMenu['parent'] = $valB['id'];
+                    $passingData['menu'][$value['name']][$keyB]['childs'] = $this->menu->getMenuList($filterMenu, false, 10, false, [], [
+                        'position' => 'ASC'
+                    ]);
+                }
             }
 
             //--- Widget Global

@@ -18,6 +18,6 @@ return [
         'title' => 'Enter title',
     ],
     'alert' => [
-        'file_exist' => 'Template name already exists'
+        'file_exist' => 'File Template already exist'
     ]
 ];

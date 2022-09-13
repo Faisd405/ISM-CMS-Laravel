@@ -228,15 +228,29 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group col-md-12 {{ isset($data['section']) && $data['section']['config']['show_cover'] == false ? 'hide-form' : '' }}">
+                            <label class="form-label">@lang('global.cover')</label>
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control text-bolder" id="image1" aria-label="Image" aria-describedby="button-image" name="cover_file"
+                                        value="{{ !isset($data['section']) ? old('cover_file') : old('cover_file', $data['section']['cover']['filepath']) }}" placeholder="@lang('global.browse') file...">
+                                <div class="input-group-append" title="browse file">
+                                    <button class="btn btn-main file-name w-icon" id="button-image" type="button"><i class="fi fi-rr-folder"></i>&nbsp; @lang('global.browse')</button>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control text-bolder" name="cover_title" placeholder="@lang('global.title')"
+                                    value="{{ !isset($data['section']) ? old('cover_title') : old('cover_title', $data['section']['cover']['title']) }}">
+                                <input type="text" class="form-control text-bolder" name="cover_alt" placeholder="@lang('global.alt')"
+                                    value="{{ !isset($data['section']) ? old('cover_alt') : old('cover_alt', $data['section']['cover']['alt']) }}">
+                            </div>
+                        </div>
                         <div class="form-group col-md-12 {{ isset($data['section']) && $data['section']['config']['show_banner'] == false ? 'hide-form' : '' }}">
                             <label class="form-label">@lang('global.banner')</label>
                             <div class="input-group mb-2">
-                                <div class="input-group">
-                                    <input type="text" class="form-control text-bolder" id="image1" aria-label="Image" aria-describedby="button-image" name="banner_file" placeholder="Browse file..."
-                                            value="{{ !isset($data['section']) ? old('banner_file') : old('banner_file', $data['section']['banner']['filepath']) }}">
-                                    <div class="input-group-append" title="browse file">
-                                        <button class="btn btn-main file-name w-icon" id="button-image" type="button"><i class="fi fi-rr-folder"></i>&nbsp; @lang('global.browse')</button>
-                                    </div>
+                                <input type="text" class="form-control text-bolder" id="image2" aria-label="Image2" aria-describedby="button-image2" name="banner_file"
+                                    value="{{ !isset($data['section']) ? old('banner_file') : old('banner_file', $data['section']['banner']['filepath']) }}" placeholder="@lang('global.browse') file...">
+                                <div class="input-group-append" title="browse file">
+                                    <button class="btn btn-main file-name w-icon" id="button-image2" type="button"><i class="fi fi-rr-folder"></i>&nbsp; @lang('global.browse')</button>
                                 </div>
                             </div>
                             <div class="input-group">
@@ -275,6 +289,14 @@
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_description" value="1"
                                 {{ !isset($data['section']) ? (old('config_show_description', 1) ? 'checked' : '') : (old('config_show_description', $data['section']['config']['show_description']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Cover</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_cover" value="1"
+                                {{ !isset($data['section']) ? (old('config_show_cover', 1) ? 'checked' : '') : (old('config_show_cover', $data['section']['config']['show_cover']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>

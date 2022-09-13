@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Language',
+    'title' => 'Languages',
     'caption' => 'Language',
-    'text' => 'List Language',
+    'text' => 'Language List',
     'label' => [
         'iso_code' => 'ISO Code',
         'name' => 'Name',

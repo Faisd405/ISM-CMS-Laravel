@@ -31,8 +31,8 @@ class EventFormMail extends Mailable
      */
     public function build()
     {
-        $webname = config('cmsConfig.website_name');
-        $email = config('cmsConfig.system_email');
+        $webname = config('cmsConfig.general.website_name');
+        $email = config('cmsConfig.dev.system_email');
         
         $from = isset($this->data['request']['email']) ? $this->data['request']['email'] : $email;
         $name = isset($this->data['request']['name']) ? $this->data['request']['name'] : __('global.visitor');

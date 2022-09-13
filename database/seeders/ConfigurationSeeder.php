@@ -17,52 +17,52 @@ class ConfigurationSeeder extends Seeder
         $configurations = [
             // Group 1
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'logo',
                 'label' => 'Logo',
                 'value' => null,
                 'is_upload' => true,
-                'show_form' => true,
+                'show_form' => false,
                 'active' => true,
             ],
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'logo_2',
                 'label' => 'Logo 2',
                 'value' => null,
                 'is_upload' => true,
-                'show_form' => true,
+                'show_form' => false,
                 'active' => true,
             ],
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'logo_small',
                 'label' => 'Logo Small',
                 'value' => null,
                 'is_upload' => true,
-                'show_form' => true,
+                'show_form' => false,
                 'active' => true,
             ],
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'logo_small_2',
                 'label' => 'Logo Small 2',
                 'value' => null,
                 'is_upload' => true,
-                'show_form' => true,
+                'show_form' => false,
                 'active' => true,
             ],
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'logo_mail',
                 'label' => 'Logo Mail',
                 'value' => null,
                 'is_upload' => true,
                 'show_form' => false,
-                'active' => false,
+                'active' => true,
             ],
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'open_graph',
                 'label' => 'Open Graph',
                 'value' => null,
@@ -71,7 +71,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true,
             ],
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'banner_default',
                 'label' => 'Banner',
                 'value' => null,
@@ -80,7 +80,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true,
             ],
             [
-                'group' => 1,
+                'group' => 'file',
                 'name' => 'cover_default',
                 'label' => 'Cover Default',
                 'value' => null,
@@ -91,7 +91,7 @@ class ConfigurationSeeder extends Seeder
 
             // Group 2
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'website_name',
                 'label' => 'Website Name',
                 'value' => '4 Vision Media',
@@ -100,7 +100,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'website_description',
                 'label' => 'Website Description',
                 'value' => 'Perusahaan Jasa Pembuatan Website Software Aplikasi Desain Video & Konsultan IT',
@@ -109,7 +109,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             // [
-            //     'group' => 2,
+            //     'group' => 'general',
             //     'name' => 'banner_limit',
             //     'label' => 'Banner Limit',
             //     'value' => 3,
@@ -118,16 +118,16 @@ class ConfigurationSeeder extends Seeder
             //     'active' => false
             // ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'content_limit',
                 'label' => 'Content Limit',
                 'value' => 9,
                 'is_upload' => false,
                 'show_form' => true,
-                'active' => false
+                'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'address',
                 'label' => 'Address',
                 'value' => null,
@@ -136,7 +136,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'email',
                 'label' => 'Email',
                 'value' => null,
@@ -145,7 +145,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'email_2',
                 'label' => 'Email 2',
                 'value' => null,
@@ -154,7 +154,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'fax',
                 'label' => 'FAX',
                 'value' => null,
@@ -163,7 +163,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'phone',
                 'label' => 'Phone',
                 'value' => null,
@@ -172,7 +172,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'phone_2',
                 'label' => 'Phone 2',
                 'value' => null,
@@ -181,7 +181,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 2,
+                'group' => 'general',
                 'name' => 'phone_whatsapp',
                 'label' => 'Phone / URL Whatsapp',
                 'value' => null,
@@ -192,7 +192,7 @@ class ConfigurationSeeder extends Seeder
 
             // Group 3
             [
-                'group' => 3,
+                'group' => 'seo',
                 'name' => 'meta_title',
                 'label' => 'Meta Title',
                 'value' => '4 Vision Media',
@@ -201,7 +201,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 3,
+                'group' => 'seo',
                 'name' => 'meta_description',
                 'label' => 'Meta Description',
                 'value' => 'Perusahaan Jasa Pembuatan Website Software Aplikasi Desain Video & Konsultan IT',
@@ -210,7 +210,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 3,
+                'group' => 'seo',
                 'name' => 'meta_keywords',
                 'label' => 'Meta Keywords',
                 'value' => null,
@@ -219,7 +219,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 3,
+                'group' => 'seo',
                 'name' => 'google_analytics',
                 'label' => 'Google Analytics (script)',
                 'value' => null,
@@ -228,7 +228,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 3,
+                'group' => 'seo',
                 'name' => 'google_verification',
                 'label' => 'Google Verification',
                 'value' => null,
@@ -237,7 +237,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 3,
+                'group' => 'seo',
                 'name' => 'domain_verification',
                 'label' => 'Domain Verification',
                 'value' => null,
@@ -248,7 +248,7 @@ class ConfigurationSeeder extends Seeder
 
             // Group 4
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'app_store',
                 'label' => 'App Store',
                 'value' => null,
@@ -257,7 +257,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'google_play_store',
                 'label' => 'Google Play Store',
                 'value' => null,
@@ -266,7 +266,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'facebook',
                 'label' => 'Facebook URL',
                 'value' => null,
@@ -275,7 +275,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'instagram',
                 'label' => 'Instagram URL',
                 'value' => null,
@@ -284,7 +284,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'linkedin',
                 'label' => 'LinkedIn URL',
                 'value' => null,
@@ -293,7 +293,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'pinterest',
                 'label' => 'Pinterest URL',
                 'value' => null,
@@ -302,7 +302,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'twitter',
                 'label' => 'Twitter URL',
                 'value' => null,
@@ -311,7 +311,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'whatsapp',
                 'label' => 'WhatsApp URL',
                 'value' => null,
@@ -320,7 +320,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'youtube',
                 'label' => 'Youtube URL',
                 'value' => null,
@@ -329,7 +329,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'youtube_id',
                 'label' => 'Youtube ID',
                 'value' => null,
@@ -338,7 +338,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 4,
+                'group' => 'socmed',
                 'name' => 'website',
                 'label' => 'Website URL',
                 'value' => null,
@@ -349,7 +349,7 @@ class ConfigurationSeeder extends Seeder
 
             // Notification
             [
-                'group' => 5,
+                'group' => 'notif',
                 'name' => 'notif_email_register',
                 'label' => 'Register (Email)',
                 'value' => true,
@@ -358,7 +358,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 5,
+                'group' => 'notif',
                 'name' => 'notif_email_inquiry',
                 'label' => 'Inquiry (Email)',
                 'value' => true,
@@ -367,7 +367,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 5,
+                'group' => 'notif',
                 'name' => 'notif_email_event',
                 'label' => 'Event (Email)',
                 'value' => true,
@@ -376,7 +376,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 5,
+                'group' => 'notif',
                 'name' => 'notif_apps_register',
                 'label' => 'Register (App)',
                 'value' => true,
@@ -385,7 +385,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 5,
+                'group' => 'notif',
                 'name' => 'notif_apps_inquiry',
                 'label' => 'Inquiry (App)',
                 'value' => true,
@@ -394,7 +394,7 @@ class ConfigurationSeeder extends Seeder
                 'active' => true
             ],
             [
-                'group' => 5,
+                'group' => 'notif',
                 'name' => 'notif_apps_event',
                 'label' => 'Event (App)',
                 'value' => true,
@@ -405,16 +405,16 @@ class ConfigurationSeeder extends Seeder
             
             // Only Developer
             [
-                'group' => 100,
+                'group' => 'dev',
                 'name' => 'maintenance',
                 'label' => 'Set web on maintenance ?',
                 'value' => false,
                 'is_upload' => false,
                 'show_form' => true,
-                'active' => false
+                'active' => true
             ],
             // [
-            //     'group' => 100,
+            //     'group' => 'dev',
             //     'name' => 'default_lang',
             //     'label' => 'Default Language',
             //     'value' => 'id',
@@ -423,16 +423,16 @@ class ConfigurationSeeder extends Seeder
             //     'active' => false
             // ],
             [
-                'group' => 100,
+                'group' => 'dev',
                 'name' => 'system_email',
                 'label' => 'System Email',
                 'value' => 'developer@4visionmedia.com',
                 'is_upload' => false,
                 'show_form' => true,
-                'active' => false
+                'active' => true
             ],
             [
-                'group' => 100,
+                'group' => 'dev',
                 'name' => 'pwa',
                 'label' => 'Progressive Web App',
                 'value' => false,

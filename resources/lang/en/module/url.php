@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'Indexing Url',
+    'title' => 'Indexing Urls',
     'caption' => 'Index Url',
-    'text' => 'List Index Url',
+    'text' => 'Index Url List',
     'label' => [
         'slug' => 'Slug',
         'module' => 'Module',
@@ -13,7 +13,7 @@ return [
     'placeholder' => [
         'slug' => 'Enter slug',
         'module' => '',
-        'url_id' => 'ID relation table',
-        'url_type' => 'Namespace relation table',
+        'url_id' => 'ID table relation',
+        'url_type' => 'Namespace table relation',
     ]
 ];

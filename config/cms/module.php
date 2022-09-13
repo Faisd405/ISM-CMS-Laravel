@@ -60,24 +60,12 @@ return [
         'configuration' => [
             'active' => true,
             'group' => [
-                1 => [
-                    'key' => 'upload'
-                ],
-                2 => [
-                    'key' => 'general'
-                ],
-                3 => [
-                    'key' => 'meta-data'
-                ],
-                4 => [
-                    'key' => 'social-media'
-                ],
-                5 => [
-                    'key' => 'notification'
-                ],
-                100 => [
-                    'key' => 'dev-only'
-                ],
+                'file',
+                'general',
+                'seo',
+                'socmed',
+                'notif',
+                'dev'
             ]
         ],
         'notification' => [

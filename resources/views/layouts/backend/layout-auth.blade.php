@@ -32,8 +32,8 @@
         <!-- Logo -->
         <div class="d-flex justify-content-center align-items-center mb-5">
             <div class="logo-box square">
-                <img src="{!! config('cmsConfig.logo_2') !!}" alt="{{ config('cmsConfig.website_name') }}" 
-                    title="{{ config('cmsConfig.website_name') }}">
+                <img src="{!! config('cmsConfig.file.logo_2') !!}" alt="{{ config('cmsConfig.general.website_name') }}" 
+                    title="{{ config('cmsConfig.general.website_name') }}">
             </div>
         </div>
         <!-- / Logo -->

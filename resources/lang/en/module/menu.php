@@ -2,12 +2,12 @@
 
 return [
     'category' => [
-        'title' => 'Menu Category',
+        'title' => 'Menu Categories',
         'caption' => 'Menu Category',
         'text' => 'Menu Category List',
         'label' => [
             'name' => 'Name',
-            'code' => 'Kode'
+            'code' => 'Code'
         ],
         'placeholder' => [
             'name' => 'Enter name',
@@ -15,7 +15,7 @@ return [
     ],
     'title' => 'Menu',
     'caption' => 'Menu',
-    'text' => 'List Menu',
+    'text' => 'Menu List',
     'label' => [
         'title' => 'Title',
         'external_link' => 'External Link',

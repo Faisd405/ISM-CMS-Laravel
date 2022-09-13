@@ -2,7 +2,7 @@
     <div
         class="container-fluid d-flex flex-wrap justify-content-between text-center container-p-x pb-3">
         <div class="pt-3">
-            <span class="footer-text font-weight-bolder">{!! config('cmsConfig.website_name') !!}</span> © {{ now()->format('Y') }}
+            <span class="footer-text font-weight-bolder">{!! config('cmsConfig.general.website_name') !!}</span> © {{ now()->format('Y') }}
         </div>
         <div class="pt-3">
             @if (config('cms.setting.copyright.show') == true)

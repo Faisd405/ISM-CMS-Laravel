@@ -31,7 +31,7 @@ class VerificationEmail extends Mailable
      */
     public function build()
     {
-        $webname = config('cmsConfig.website_name');
+        $webname = config('cmsConfig.general.website_name');
 
         return $this->from($this->data['email'], $webname)
             ->subject(__('mail.verification_email.title'))

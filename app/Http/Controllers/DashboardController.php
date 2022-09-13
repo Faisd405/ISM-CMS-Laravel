@@ -48,8 +48,6 @@ class DashboardController extends Controller
                 'submit_time' => 'DESC'
             ]),
         ];
-        
-        $data['maintenance'] = App::make(ConfigurationService::class)->getConfigValue('maintenance');
 
         return view('backend.dashboard.index', compact('data'), [
             'title' => __('module/dashboard.caption')

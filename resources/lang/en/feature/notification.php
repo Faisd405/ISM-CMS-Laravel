@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Notification',
+    'title' => 'Notifications',
     'caption' => 'Notification',
     'text' => 'Notification List',
     'label' => [
@@ -13,14 +13,14 @@ return [
         'text' => 'User named :attribute just registered',
     ],
     'inquiry' => [
-        'title' => 'New Message',
+        'title' => 'New message',
         'text' => 'New message from :attribute',
     ],
     'event' => [
-        'title' => 'New Event Register',
-        'text' => 'New event register from :attribute',
+        'title' => 'New Event registered',
+        'text' => 'New Event registered from :attribute',
     ],
     'alert' => [
-        'success_read' => 'read notification success',
+        'success_read' => 'Read notif success',
     ]
 ];

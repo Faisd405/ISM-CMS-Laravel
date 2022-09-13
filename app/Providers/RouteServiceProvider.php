@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Feature\Language;
 use App\Services\Feature\ConfigurationService;
+use App\Services\Feature\LanguageService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;

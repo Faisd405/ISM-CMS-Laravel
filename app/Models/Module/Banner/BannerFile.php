@@ -119,8 +119,8 @@ class BannerFile extends Model
 
             $thumbnail = Storage::url(config('cms.files.banner.thumbnail.path').$this->banner_id.'/'.$this->thumbnail);
             if (empty($this->thumbnail)) {
-                if (!empty(config('cmsConfig.cover_default'))) {
-                    $thumbnail = config('cmsConfig.cover_default');
+                if (!empty(config('cmsConfig.file.cover_default'))) {
+                    $thumbnail = config('cmsConfig.file.cover_default');
                 } else {
                     $thumbnail = asset(config('cms.files.config.cover_default.file'));
                 }

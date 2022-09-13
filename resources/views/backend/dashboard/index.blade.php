@@ -13,7 +13,7 @@
     </div>
 </h4>
 
-@if ($data['maintenance'] == 1)
+@if (config('cmsConfig.dev.maintenance') == 1)
 <div class="alert alert-warning alert-dismissible fade show">
   <i class="fi fi-rr-sensor-alert"></i>
   @lang('module/dashboard.maintenance_caption')

@@ -15,7 +15,7 @@
 
         </div>
         <div class="text-center mt-4">
-          <h1 class="font-weight-bolder">{!! config('cmsConfig.website_name') !!}</h1>
+          <h1 class="font-weight-bolder">{!! config('cmsConfig.general.website_name') !!}</h1>
         </div>
       </div>
 

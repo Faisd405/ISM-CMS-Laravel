@@ -7,20 +7,20 @@
     <!-- Meta default -->
     <meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1">
-	<meta name="title" content="{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.meta_title')) !!}">
+	<meta name="title" content="{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.seo.meta_title')) !!}">
     <meta name="description" content="Backend Panel Content Management System">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.meta_title')) !!}</title>
+    <title>{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.seo.meta_title')) !!}</title>
 
     <!-- Open graph -->
     <meta property="og:locale" content="{{ App::getLocale().'_'.Str::upper(App::getLocale()) }}" />
     <meta property="og:url" name="url" content="{{ url()->full() }}">
     <meta property="og:site_name" content="{{ route('login') }}">
-    <meta property="og:title" content="{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.meta_title')) !!}"/>
+    <meta property="og:title" content="{!! isset($title) ? $title.' | ' : '' !!} @yield('title') {!! strip_tags(config('cmsConfig.seo.meta_title')) !!}"/>
     <meta property="og:description" content="Backend Panel Content Management System"/>
-    <meta property="og:image" content="{{ config('cmsConfig.open_graph') }}"/>
+    <meta property="og:image" content="{{ config('cmsConfig.file.open_graph') }}"/>
     <meta property="og:image:width" content="650" />
     <meta property="og:image:height" content="366" />
     <meta property="og:type" content="website" />

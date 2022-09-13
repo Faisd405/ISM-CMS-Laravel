@@ -69,7 +69,7 @@ class UserService
             
             if ($checkRole) {
 
-                $isMaintenance = config('cmsConfig.maintenance');
+                $isMaintenance = config('cmsConfig.dev.maintenance');
                 if ($isMaintenance == true && $user->roles[0]['level'] > 3) {
                     return $this->error(null, __('auth.login_'.$loginType.'.alert.failed'));
                 }

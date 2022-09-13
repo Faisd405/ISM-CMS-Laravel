@@ -3,10 +3,10 @@
 return [
     'caption' => 'Gallery',
     'category' => [
-        'title' => 'Gallery Category',
+        'title' => 'Gallery Categories',
         'caption' => 'Gallery Category',
         'text' => 'Gallery Category List',
-        'manage' => 'Manage Categorry',
+        'manage' => 'Manage Category',
         'label' => [
             'name' => 'Name',
             'slug' => 'Slug / URL',
@@ -19,9 +19,9 @@ return [
         ],
     ],
     'album' => [
-        'title' => 'Album Gallery',
-        'caption' => 'Album Gallery',
-        'text' => 'List Album Gallery',
+        'title' => 'Gallery Albums',
+        'caption' => 'Gallery Album',
+        'text' => 'Gallery Album List',
         'label' => [
             'name' => 'Name',
             'slug' => 'Slug / URL',
@@ -32,7 +32,7 @@ return [
         ],
     ],
     'file' => [
-        'title' => 'Gallery File',
+        'title' => 'Gallery Files',
         'caption' => 'Gallery File',
         'text' => 'Gallery File List',
         'label' => [

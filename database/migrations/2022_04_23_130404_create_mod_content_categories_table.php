@@ -19,6 +19,7 @@ class CreateModContentCategoriesTable extends Migration
             $table->string('slug')->index();
             $table->json('name');
             $table->json('description')->nullable();
+            $table->json('cover')->nullable();
             $table->json('banner')->nullable();
             $table->json('config');
             $table->json('custom_fields')->nullable();

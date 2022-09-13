@@ -91,8 +91,8 @@ class DocumentFile extends Model
         if (!empty($this->cover['filepath'])) {
             $cover = Storage::url($this->cover['filepath']);
         } else {
-            if (!empty(config('cmsConfig.cover_default'))) {
-                $cover = config('cmsConfig.cover_default');
+            if (!empty(config('cmsConfig.file.cover_default'))) {
+                $cover = config('cmsConfig.file.cover_default');
             } else {
                 $cover = asset(config('cms.files.config.cover_default.file'));
             }

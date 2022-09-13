@@ -14,14 +14,14 @@ return [
         'name' => 'Enter name',
     ],
     'file' => [
-        'title' => 'Document File',
+        'title' => 'Document Files',
         'caption' => 'Document File',
         'text' => 'Document File List',
         'label' => [
             'title' => 'Title',
             'description' => 'Description',
             'file' => 'File',
-            'url_file' => 'URL File',
+            'url_file' => 'URL File'
         ],
         'placeholder' => [
             'title' => 'Enter title',

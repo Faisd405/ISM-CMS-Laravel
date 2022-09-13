@@ -89,7 +89,7 @@ class LoginController extends Controller
                     if ($totalFailed == ($totalLock-1)) {
                 
                         //--- Email Developer
-                        $dev = config('cmsConfig.system_email');
+                        $dev = config('cmsConfig.dev.system_email');
                         $data = [
                             'title' => __('mail.login_failed.title'),
                             'ip_address' => $request->ip(),
@@ -185,7 +185,7 @@ class LoginController extends Controller
                     if ($totalFailed == ($totalLock-1)) {
                 
                         //--- Email Developer
-                        $dev = config('cmsConfig.system_email');
+                        $dev = config('cmsConfig.dev.system_email');
                         $data = [
                             'title' => __('mail.login_failed.title'),
                             'ip_address' => $request->ip(),

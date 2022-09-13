@@ -5,9 +5,9 @@
     <div class="app-brand demo">
         @if (config('cms.setting.layout') == 2)
         <a href="{{ route('dashboard') }}" class="app-brand-logo demo">
-            <img src="{{ config('cmsConfig.logo') }}" alt="{{ config('cmsConfig.website_name') }}">
+            <img src="{{ config('cmsConfig.file.logo') }}" alt="{{ config('cmsConfig.general.website_name') }}">
         </a>
-        <a href="{{ route('dashboard') }}" class="app-brand-text demo sidenav-text">{{ config('cmsConfig.website_name') }}</a>
+        <a href="{{ route('dashboard') }}" class="app-brand-text demo sidenav-text">{{ config('cmsConfig.general.website_name') }}</a>
         @endif
         <a href="javascript:void(0)" class="layout-sidenav-toggle sidenav-link ml-auto">
             <i class="fi fi-rr-caret-left"></i>
