@@ -375,7 +375,7 @@ class ContentCategoryController extends Controller
 
         $blade = 'detail';
         if (!empty($data['read']['template_id'])) {
-            $blade = 'list.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
+            $blade = 'custom.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
         }
 
         // record hits
