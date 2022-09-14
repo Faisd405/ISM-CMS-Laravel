@@ -324,7 +324,7 @@ class ContentCategoryController extends Controller
             $filter['q'] = $keyword;
         }
 
-        $filter['category_id'] = $data['read']['id'];
+        $filter['category_id'] = (string)$data['read']['id'];
         $filter['publish'] = 1;
         $filter['approved'] = 1;
 

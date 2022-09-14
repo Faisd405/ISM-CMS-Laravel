@@ -1054,6 +1054,37 @@ class ContentService
         return $result;
     }
 
+     /**
+     * Get Latest Post
+     * @param int $id
+     * @param array $filter
+     * @param int $limit
+     */
+    public function getLatestPost($id, $filter, $limit = 4)
+    {
+        $post = $this->postModel->query();
+
+        if (isset($filter['section_id']))
+            $post->where('section_id', $filter['section_id']);
+
+        if (isset($filter['category_id']))
+            $post->whereJsonContains('category_id', $filter['category_id']);
+
+        $post->publish()->approved()->detail();
+        if (!Auth::guard()->check())
+            $post->public();
+
+        $post->where('id', '!=', $id);
+
+        if ($limit > 0) {
+            $post->limit($limit);
+        }
+
+        $result = $post->inRandomOrder()->get();
+        
+        return $result;
+    }
+
     /**
      * Get Post Prev Next
      * @param int $id
@@ -1070,17 +1101,9 @@ class ContentService
         if (isset($filter['category_id']))
             $post->whereJsonContains('category_id', $filter['category_id']);
 
-        if (isset($filter['publish']))
-            $post->where('publish', $filter['publish']);
-
-        if (isset($filter['public']))
-            $post->where('public', $filter['public']);
-
-        if (isset($filter['approved']))
-            $post->where('approved', $filter['approved']);
-
-        if (isset($filter['detail']))
-            $post->where('detail', $filter['detail']);
+        $post->publish()->approved()->detail();
+        if (!Auth::guard()->check())
+            $post->public();
 
         if ($type == 'prev') {
             $post->where('id', '<', $id);
@@ -1090,7 +1113,7 @@ class ContentService
             $post->where('id', '>', $id);
         }
 
-        $post->whereNotIn('id', [$id]);
+        $post->where('id', '!=', $id);
 
         $result = $post->inRandomOrder()->limit($limit)->get();
         

@@ -391,25 +391,16 @@ class ContentPostController extends Controller
             $data['medias']->withQueryString();
         }
 
-        $data['latest_posts'] = $this->contentService->getPostList([
+        $data['latest_posts'] = $this->contentService->getLatestPost($data['read']['id'], [
             'section_id' => $data['read']['section_id'],
-            'publish' => 1,
-            'approved' => 1,
-            'detail' => 1,
-        ], false)->take($data['section']['config']['latest_post_limit']);
+        ], $data['section']['config']['latest_post_limit']);
 
         $data['prev'] = $this->contentService->postPrevNext($data['read']['id'], [
             'section_id' => $data['read']['section_id'],
-            'publish' => 1,
-            'approved' => 1,
-            'detail' => 1,
         ], 'prev');
 
         $data['next'] = $this->contentService->postPrevNext($data['read']['id'], [
             'section_id' => $data['read']['section_id'],
-            'publish' => 1,
-            'approved' => 1,
-            'detail' => 1,
         ], 'next');
 
         $data['addon_fields'] = $data['read']['addon_fields'];

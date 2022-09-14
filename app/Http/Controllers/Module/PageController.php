@@ -338,6 +338,14 @@ class PageController extends Controller
             $data['no_childs'] = $data['childs']->firstItem();
             $data['childs']->withQueryString();
         }
+
+        $data['parent'] = $data['read']->getParent();
+        $data['other_pages'] = $this->pageService->getPageList([
+            'parent' => $data['read']['parent'],
+            'publish' => 1,
+            'approved' => 1
+        ], false, 0, false, [], ['position' => 'ASC']);
+
         
         // media
         $data['medias'] = $this->mediaService->getMediaList([
@@ -394,6 +402,8 @@ class PageController extends Controller
         $blade = 'detail';
         if (!empty($data['read']['template_id'])) {
             $blade = 'custom.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
+        } elseif (empty($data['read']['template_id']) && !empty($data['parent']) && !empty($data['parent']['template_id'])) {
+            $blade = 'custom.'.Str::replace('.blade.php', '', $data['parent']['template']['filename']);
         }
 
         // record hits
