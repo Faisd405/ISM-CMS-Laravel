@@ -4,6 +4,7 @@ namespace App\Services\Feature;
 
 use App\Models\Feature\Notification;
 use App\Traits\ApiResponser;
+use Illuminate\Support\Facades\App;
 
 class NotificationService
 {

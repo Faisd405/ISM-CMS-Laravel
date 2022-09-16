@@ -41,9 +41,14 @@ class Template extends Model
         return $this->hasMany(ContentSection::class, 'template_list_id');
     }
 
-    public function contentSectionDetails()
+    public function contentSectionCategoryDetails()
     {
-        return $this->hasMany(ContentSection::class, 'template_detail_id');
+        return $this->hasMany(ContentSection::class, 'template_detail_category_id');
+    }
+
+    public function contentSectionPostDetails()
+    {
+        return $this->hasMany(ContentSection::class, 'template_detail_post_id');
     }
 
     public function contentCategories()

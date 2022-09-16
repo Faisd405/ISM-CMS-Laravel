@@ -209,7 +209,8 @@ class TemplateService
 
             $pages = $template->pages()->withTrashed()->count();
             $contentSectionLists = $template->contentSectionLists()->withTrashed()->count();
-            $contentSectionDetails = $template->contentSectionDetails()->withTrashed()->count();
+            $contentSectionCategoryDetails = $template->contentSectionCategoryDetails()->withTrashed()->count();
+            $contentSectionPostDetails = $template->contentSectionPostDetails()->withTrashed()->count();
             $contentCategories = $template->contentCategories()->withTrashed()->count();
             $contentPosts = $template->contentPosts()->withTrashed()->count();
             $galleryCategoryLists = $template->galleryCategoryLists()->withTrashed()->count();
@@ -218,7 +219,7 @@ class TemplateService
             $documents = $template->documents()->withTrashed()->count();
             $links = $template->links()->withTrashed()->count();
             
-            if ($pages == 0 || $contentSectionLists == 0 && $contentSectionDetails == 0
+            if ($pages == 0 || $contentSectionLists == 0 && $contentSectionCategoryDetails == 0 && $contentSectionPostDetails == 0
                 || $contentCategories == 0 || $contentPosts == 0 || $galleryCategoryLists == 0
                 || $galleryCategoryDetails == 0 || $galleryAlbums == 0 || $documents == 0
                 || $links == 0) {

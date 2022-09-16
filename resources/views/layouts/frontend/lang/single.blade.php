@@ -1,4 +1,4 @@
-@foreach ($languages->whereNotIn('iso_codes', App::getLocale()) as $lang) 
-{{-- manggil url : {{ $lang['url_switcher'] }} --}}
-{{-- manggil icon : {{ $lang['flag_icon'] }} --}}
-@endforeach
+@php
+    $langActive = $languages->firstWhere('iso_codes', App::getLocale());
+    $langOther = $languages->firstWhere('iso_codes', '!=', App::getLocale());
+@endphp

@@ -75,9 +75,14 @@ class ContentSection extends Model
         return $this->belongsTo(Template::class, 'template_list_id');
     }
 
-    public function templateDetail()
+    public function templateDetailCategory()
     {
-        return $this->belongsTo(Template::class, 'template_detail_id');
+        return $this->belongsTo(Template::class, 'template_detail_category_id');
+    }
+
+    public function templateDetailPost()
+    {
+        return $this->belongsTo(Template::class, 'template_detail_post_id');
     }
 
     public function createBy()

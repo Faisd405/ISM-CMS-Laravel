@@ -413,15 +413,15 @@ class ConfigurationSeeder extends Seeder
                 'show_form' => true,
                 'active' => true
             ],
-            // [
-            //     'group' => 'dev',
-            //     'name' => 'default_lang',
-            //     'label' => 'Default Language',
-            //     'value' => 'id',
-            //     'is_upload' => false,
-            //     'show_form' => false,
-            //     'active' => false
-            // ],
+            [
+                'group' => 'dev',
+                'name' => 'default_lang',
+                'label' => 'Default Language',
+                'value' => 'id',
+                'is_upload' => false,
+                'show_form' => true,
+                'active' => true
+            ],
             [
                 'group' => 'dev',
                 'name' => 'system_email',

@@ -450,8 +450,8 @@ class ContentPostController extends Controller
         $blade = 'post.detail';
         if (!empty($data['read']['template_id'])) {
             $blade = 'post.custom.'.Str::replace('.blade.php', '', $data['read']['template']['filename']);
-        } elseif (!empty($data['read']['section']['template_detail_id'])) {
-            $blade = 'section.detail.'.Str::replace('.blade.php', '', $data['section']['templateDetail']['filename']);
+        } elseif (empty($data['read']['template_id']) && !empty($data['read']['section']['template_detail_post_id'])) {
+            $blade = 'section.detail.'.Str::replace('.blade.php', '', $data['section']['templateDetailPost']['filename']);
         }
 
         // record hits

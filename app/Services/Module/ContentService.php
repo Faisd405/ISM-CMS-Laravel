@@ -257,7 +257,8 @@ class ContentService
             'post_order_type' => $data['config_post_order_type'],
         ];
         $section->template_list_id = $data['template_list_id'] ?? null;
-        $section->template_detail_id = $data['template_detail_id'] ?? null;
+        $section->template_detail_category_id = $data['template_detail_category_id'] ?? null;
+        $section->template_detail_post_id = $data['template_detail_post_id'] ?? null;
         $section->seo = [
             'title' => $data['meta_title'] ?? null,
             'description' => $data['meta_description'] ?? null,

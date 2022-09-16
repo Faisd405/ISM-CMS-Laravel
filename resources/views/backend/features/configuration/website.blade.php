@@ -230,13 +230,13 @@
                                                 title="{{ $key }}">{{ $value}}</option>
                                             @endforeach
                                         </select>
-                                        {{-- @elseif ($dev['name'] == 'default_lang')
-                                        <select class="custom-select" name="name[{{ $dev['name'] }}]">
+                                        @elseif ($dev['name'] == 'default_lang')
+                                        <select class="form-control" name="name[{{ $dev['name'] }}]">
                                             @foreach ($data['languages'] as $key => $value)
-                                            <option value="{{ $value['iso_codes'] }}" {{ $value['iso_codes'] == App::getLocale() ? 'selected' : '' }} 
+                                            <option value="{{ $value['iso_codes'] }}" {{ $value['iso_codes'] == $dev['value'] ? 'selected' : '' }} 
                                                 title="{{ $value['iso_codes'] }}">{{ $value['name'] }}</option>
                                             @endforeach
-                                        </select> --}}
+                                        </select>
                                         @else
                                         <textarea class="form-control text-bolder" name="name[{{ $dev['name'] }}]" 
                                             placeholder="{{ Str::replace('_', ' ', $dev['name']) }}">{!! old($dev['name'], $dev['value']) !!}</textarea> 

@@ -34,7 +34,7 @@
                             <div class="tab-pane fade{{ empty(Request::get('tab')) ? ' show active' : '' }}">
                                 <div class="card-body media align-items-center">
                                     <a href="{{ $data['user']['avatar'] }}" data-fancybox="gallery">
-                                        <img src="{{ $data['user']['avatar'] }}" alt="{{ $data['user']['name'] }} photo" class="d-block ui-w-80 rounded-circle">
+                                        <img src="{{ $data['user']['avatar'] }}" alt="{{ $data['user']['name'] }} photo" class="d-block ui-w-80 rounded-circle box-avatar">
                                     </a>
                                     <div class="media-body ml-4">
                                         <button type="button" class="btn btn-outline-main w-icon mr-2" data-toggle="modal" data-target="#modal-change-photo" title="@lang('global.change')">

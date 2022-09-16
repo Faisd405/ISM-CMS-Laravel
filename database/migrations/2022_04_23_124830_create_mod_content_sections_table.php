@@ -25,7 +25,8 @@ class CreateModContentSectionsTable extends Migration
             $table->json('custom_fields')->nullable();
             $table->json('seo')->nullable();
             $table->unsignedBigInteger('template_list_id')->nullable();
-            $table->unsignedBigInteger('template_detail_id')->nullable();
+            $table->unsignedBigInteger('template_detail_category_id')->nullable();
+            $table->unsignedBigInteger('template_detail_post_id')->nullable();
             $table->integer('position');
             $table->boolean('publish')->default(true)->comment('1 = publish, 0 draft');
             $table->boolean('public')->default(true)->comment('1 = public, 0 = not public');
@@ -42,7 +43,9 @@ class CreateModContentSectionsTable extends Migration
 
             $table->foreign('template_list_id')->references('id')->on('master_templates')
                 ->onDelete('SET NULL');
-            $table->foreign('template_detail_id')->references('id')->on('master_templates')
+            $table->foreign('template_detail_category_id')->references('id')->on('master_templates')
+                ->onDelete('SET NULL');
+            $table->foreign('template_detail_post_id')->references('id')->on('master_templates')
                 ->onDelete('SET NULL');
             $table->foreign('created_by')->references('id')->on('users')
                 ->onDelete('SET NULL');

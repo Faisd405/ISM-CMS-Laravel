@@ -16,6 +16,8 @@ class CreateFeatureLanguagesTable extends Migration
         Schema::create('feature_languages', function (Blueprint $table) {
             $table->id();
             $table->string('iso_codes', 5);
+            $table->string('fallback_locale', 5)->nullable();
+            $table->string('faker_locale')->nullable();
             $table->string('name');
             $table->string('code')->nullable();
             $table->text('description')->nullable();

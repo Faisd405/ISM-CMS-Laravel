@@ -114,7 +114,7 @@
                             <td>{{ $data['no']++ }} </td>
                             <td>
                                 <a href="{{ $item['avatar'] }}" data-fancybox="gallery">
-                                    <img src="{{ $item['avatar'] }}" class="d-block ui-w-40 rounded-circle" alt="">
+                                    <img src="{{ $item['avatar'] }}" class="d-block ui-w-40 rounded-circle box-avatar" alt="">
                                 </a>
                             </td>
                             <td>

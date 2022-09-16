@@ -206,7 +206,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group col-md-6 hide-form">
+                        <div class="form-group col-md-4 hide-form">
                             <label class="form-label">@lang('module/content.section.label.template_list')</label>
                             <select class="select2 show-tick" name="template_list_id" data-style="btn-default">
                                 <option value=" " selected>DEFAULT</option>
@@ -217,12 +217,23 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group col-md-6 hide-form">
-                            <label class="form-label">@lang('module/content.section.label.template_detail')</label>
-                            <select class="select2 show-tick" name="template_detail_id" data-style="btn-default">
+                        <div class="form-group col-md-4 hide-form">
+                            <label class="form-label">@lang('module/content.section.label.template_detail') Category</label>
+                            <select class="select2 show-tick" name="template_detail_category_id" data-style="btn-default">
                                 <option value=" " selected>DEFAULT</option>
-                                @foreach ($data['template_details'] as $tmpDetail)
-                                    <option value="{{ $tmpDetail['id'] }}" {{ !isset($data['section']) ? (old('template_detail_id') == $tmpDetail['id'] ? 'selected' : '') : (old('template_detail_id', $data['section']['template_detail_id']) == $tmpDetail['id'] ? 'selected' : '') }}>
+                                @foreach ($data['template_category_details'] as $tmpDetailCat)
+                                    <option value="{{ $tmpDetailCat['id'] }}" {{ !isset($data['section']) ? (old('template_detail_category_id') == $tmpDetailCat['id'] ? 'selected' : '') : (old('template_detail_category_id', $data['section']['template_detail_category_id']) == $tmpDetailCat['id'] ? 'selected' : '') }}>
+                                        {{ $tmpDetail['name'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4 hide-form">
+                            <label class="form-label">@lang('module/content.section.label.template_detail') Post</label>
+                            <select class="select2 show-tick" name="template_detail_post_id" data-style="btn-default">
+                                <option value=" " selected>DEFAULT</option>
+                                @foreach ($data['template_post_details'] as $tmpDetailPost)
+                                    <option value="{{ $tmpDetailPost['id'] }}" {{ !isset($data['section']) ? (old('template_detail_post_id') == $tmpDetailPost['id'] ? 'selected' : '') : (old('template_detail_post_id', $data['section']['template_detail_post_id']) == $tmpDetailPost['id'] ? 'selected' : '') }}>
                                         {{ $tmpDetail['name'] }}
                                     </option>
                                 @endforeach

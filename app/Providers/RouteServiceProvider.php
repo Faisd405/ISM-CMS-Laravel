@@ -58,6 +58,25 @@ class RouteServiceProvider extends ServiceProvider
 
             // set config cache
             App::make(ConfigurationService::class)->setConfigCache();
+
+            // set lang cache
+            $language = Language::where('iso_codes', config('cmsConfig.dev.default_lang'))->active()->first();
+            $config = app('config');
+            if (!empty($language)) {
+                $config->set('language', [
+                    'locale' => $language['iso_codes'],
+                    'fallback_locale' => $language['fallback_locale'],
+                    'faker_locale' => $language['faker_locale'],
+                    'time_zone' => $language['time_zone'],
+                ]);
+            } else {
+                $config->set('language', [
+                    'locale' => 'id',
+                    'fallback_locale' => 'id',
+                    'faker_locale' => 'id_ID',
+                    'time_zone' => 'Asia/Jakarta',
+                ]);
+            }
         }
 
         $this->configureRateLimiting();

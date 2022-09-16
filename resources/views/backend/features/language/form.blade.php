@@ -31,6 +31,24 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">Fallback Locale</label>
+                        <div class="col-sm-10">
+                        <input type="text" class="form-control @error('fallback_locale') is-invalid @enderror" name="fallback_locale" 
+                            value="{{ !isset($data['language']) ? old('fallback_locale') : old('fallback_locale', $data['language']['fallback_locale']) }}" 
+                            placeholder="Fallback Locale">
+                            @include('components.field-error', ['field' => 'fallback_locale'])
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">Faker Locale</label>
+                        <div class="col-sm-10">
+                        <input type="text" class="form-control @error('faker_locale') is-invalid @enderror" name="faker_locale" 
+                            value="{{ !isset($data['language']) ? old('faker_locale') : old('faker_locale', $data['language']['faker_locale']) }}" 
+                            placeholder="Faker Locale">
+                            @include('components.field-error', ['field' => 'faker_locale'])
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('feature/language.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
                         <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" 

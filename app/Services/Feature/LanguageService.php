@@ -125,6 +125,8 @@ class LanguageService
             $iso = Str::lower($data['iso_codes']);
             $language = $this->languageModel->create([
                 'iso_codes' => $iso,
+                'fallback_locale' => $data['fallback_locale'] ?? null,
+                'faker_locale' => $data['faker_locale'] ?? null,
                 'name' => $data['name'],
                 'code' => $data['code'] ?? null,
                 'description' => $data['description'] ?? null,
@@ -164,6 +166,8 @@ class LanguageService
             $iso = Str::lower($data['iso_codes']);
             $language->update([
                 'iso_codes' => $iso,
+                'fallback_locale' => $data['fallback_locale'] ?? null,
+                'faker_locale' => $data['faker_locale'] ?? null,
                 'name' => $data['name'],
                 'code' => $data['code'] ?? null,
                 'description' => $data['description'] ?? null,

@@ -2,7 +2,7 @@
 
 @section('content')
 <h4 class="media align-items-center font-weight-bold py-3 mb-4">
-    <img src="{{ Auth::user()['avatar'] }}" alt="{{ Auth::user()['name'] }} photo" class="ui-w-50 rounded-circle">
+    <img src="{{ Auth::user()['avatar'] }}" alt="{{ Auth::user()['name'] }} photo" class="ui-w-50 rounded-circle box-avatar">
     <div class="media-body ml-3">
         @lang('module/dashboard.welcome_caption'), {{ Auth::user()['name'] }} !
         <div class="text-muted text-tiny mt-1">
@@ -106,7 +106,7 @@
                     <thead>
                         <tr>
                             <th colspan="2">@lang('module/content.post.label.title')</th>
-                            <th>@lang('global.hits')</th>
+                            <th style="width: 100px;">@lang('global.hits')</th>
                         </tr>
                     </thead>
                     <tbody>
