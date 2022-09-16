@@ -15,7 +15,7 @@
             <link><![CDATA[{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}]]></link>
             <description><![CDATA[{!! !empty($post->fieldLang('intro')) ? strip_tags($post->fieldLang('intro')) : strip_tags($post->fieldLang('content')) !!}]]></description>
             @if (!empty($post['category_id']))
-            <category><![CDATA[@foreach($post['categories'] as $cat) {!! $cat->fieldLang('name') !!}, @endforeach]]></category>
+            <category><![CDATA[@foreach($post->categories() as $cat) {!! $cat->fieldLang('name') !!}, @endforeach]]></category>
             @endif
             <author><![CDATA[{{ $post->posted_by_alias ?? $post->createBy['name']  }}]]></author>
             <guid isPermaLink="false"><![CDATA[{{ route('content.post.read.'.$post['section']['slug'], ['slugPost' => $post['slug']]) }}]]></guid>

@@ -70,8 +70,8 @@ class PassingDataToViews
                 'position' => 'ASC'
             ]);
             foreach ($widgets as $key => $value) {
-                $passingData['widget_globals'][$value['name']] = $value;
-                $passingData['widget_globals'][$value['name']]['module'] = $this->widget->getModuleData($value);
+                $passingData['widgetGlobals'][$value['name']] = $value;
+                $passingData['widgetGlobals'][$value['name']]['module'] = $this->widget->getModuleData($value);
             }
         }
 

@@ -99,7 +99,9 @@
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.category.caption')</label>
                         <div class="col-sm-10">
                             <select class="select2 show-tick" name="category_id[]" data-style="btn-default" {{ $data['section']['config']['multiple_category'] == true ? 'multiple' : '' }}>
+                                @if ($data['section']['config']['multiple_category'] == false)
                                 <option value=" " selected disabled></option>
+                                @endif
                                 @foreach ($data['categories'] as $cat)
                                     <option value="{{ $cat['id'] }}" {{ isset($data['post']) && !empty($data['post']['category_id']) ? (in_array($cat['id'], $data['post']['category_id']) ? 'selected' : '') : '' }}>
                                         {{ $cat->fieldLang('name') }}
