@@ -24,7 +24,7 @@ class ContentPostRequest extends FormRequest
     public function rules()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'title_'.config('app.fallback_locale') => 'required|max:191',
             'slug' => $this->method() == 'POST' ? 'required|max:191|unique:mod_content_posts,slug' : 
                 'required|max:191|unique:mod_content_posts,slug,'.$this->id,
         ];
@@ -33,7 +33,7 @@ class ContentPostRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => __('module/content.post.label.title'),
+            'title_'.config('app.fallback_locale') => __('module/content.post.label.title'),
             'slug' => __('module/content.post.label.slug'),
         ];
     }

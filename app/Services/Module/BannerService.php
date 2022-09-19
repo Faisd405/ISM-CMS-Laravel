@@ -175,7 +175,7 @@ class BannerService
     private function setField($data, $banner)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
@@ -738,7 +738,7 @@ class BannerService
     private function setFieldFile($data, $bannerFile)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $title[$value['iso_codes']] = ($data['title_'.$value['iso_codes']] == null) ?

@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', config('language.time_zone') ?? 'Asia/Jakarta'),
+    'timezone' => env('APP_TIMEZONE', 'Asia/Jakarta'),
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'locale' => config('language.locale') ?? 'id',
+    'locale' => 'id',
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return [
     |
     */
 
-    'fallback_locale' => config('language.fallback_locale') ?? 'id',
+    'fallback_locale' => 'id',
 
     /*
     |--------------------------------------------------------------------------
@@ -106,7 +106,7 @@ return [
     |
     */
 
-    'faker_locale' => config('language.faker_locale') ?? 'id_ID',
+    'faker_locale' => 'id_ID',
 
     /*
     |--------------------------------------------------------------------------

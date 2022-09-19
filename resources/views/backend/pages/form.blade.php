@@ -24,7 +24,7 @@
             <ul class="nav nav-tabs mb-4">
                 @foreach ($data['languages'] as $lang)
                 <li class="nav-item">
-                    <a class="nav-link{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' active' : '' }}"
+                    <a class="nav-link{{ $lang['iso_codes'] == config('app.fallback_locale') ? ' active' : '' }}"
                         data-toggle="tab" href="#{{ $lang['iso_codes'] }}">
                         {!! $lang['name'] !!}
                     </a>
@@ -55,7 +55,7 @@
                 @endif
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
-                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
+                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('app.fallback_locale') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
                         <div class="card-header d-flex justify-content-center">
                             <span class="font-weight-semibold">
                                 @lang('global.language') : <b class="text-main">{{ $lang['name'] }}</b>

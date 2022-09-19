@@ -178,7 +178,7 @@ class DocumentService
     private function setFieldDocument($data, $document)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
@@ -723,7 +723,7 @@ class DocumentService
     private function setFieldFile($data, $documentFile)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $title[$value['iso_codes']] = ($data['title_'.$value['iso_codes']] == null) ?

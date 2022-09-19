@@ -6,7 +6,7 @@ Route::get('/backend', function () {
     return redirect('/backend/authentication');
 });
 
-Route::get('/'.config('cms.module.feature.language.default'), function () {
+Route::get('/'.config('app.fallback_locale'), function () {
     return redirect()->route('home');
 });
 

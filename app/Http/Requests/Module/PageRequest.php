@@ -23,7 +23,7 @@ class PageRequest extends FormRequest
      */
     public function rules()
     {
-        $field['title_'.config('cms.module.feature.language.default')] = 'required|max:191';
+        $field['title_'.config('app.fallback_locale')] = 'required|max:191';
 
         if ($this->parent == 0) {
             $field['slug'] = $this->method() == 'POST' ? 'required|max:191|unique:indexing_urls,slug' : 
@@ -39,7 +39,7 @@ class PageRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => __('module/page.label.title'),
+            'title_'.config('app.fallback_locale') => __('module/page.label.title'),
             'slug' => __('module/page.label.slug'),
         ];
     }

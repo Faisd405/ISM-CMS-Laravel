@@ -199,7 +199,7 @@ class LinkService
     private function setFieldLink($data, $link)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
@@ -629,7 +629,7 @@ class LinkService
     private function setFieldMedia($data, $media)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $title[$value['iso_codes']] = ($data['title_'.$value['iso_codes']] == null) ?

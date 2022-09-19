@@ -55,6 +55,12 @@ return [
         'size_byte' => '5048',
     ],
 
+    //inquiry
+    'inquiry' => [],
+
+    //event
+    'event' => [],
+
     // Config
     'config' => [
         'path' => 'public/config/',

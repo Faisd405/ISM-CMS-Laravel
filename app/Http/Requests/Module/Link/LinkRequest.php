@@ -24,7 +24,7 @@ class LinkRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'name_'.config('app.fallback_locale') => 'required|max:191',
             'slug' => $this->method() == 'POST' ? 'required|max:191|unique:indexing_urls,slug' : 
                 'required|max:191|unique:indexing_urls,slug,'.$this->index_url_id,
         ];
@@ -33,7 +33,7 @@ class LinkRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/link.label.name'),
+            'name_'.config('app.fallback_locale') => __('module/link.label.name'),
             'slug' => __('module/link.label.slug'),
         ];
     }

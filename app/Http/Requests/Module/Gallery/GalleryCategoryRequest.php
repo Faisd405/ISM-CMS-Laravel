@@ -24,7 +24,7 @@ class GalleryCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'name_'.config('app.fallback_locale') => 'required|max:191',
             'slug' => $this->method() == 'POST' ? 'required|max:191|unique:mod_gallery_categories,slug' : 
                 'required|max:191|unique:mod_gallery_categories,slug,'.$this->id,
         ];
@@ -33,7 +33,7 @@ class GalleryCategoryRequest extends FormRequest
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/gallery.category.label.name'),
+            'name_'.config('app.fallback_locale') => __('module/gallery.category.label.name'),
             'slug' => __('module/gallery.category.label.slug'),
         ];
     }

@@ -18,7 +18,7 @@ class Languages
      */
     public function handle(Request $request, Closure $next)
     {
-        $lang = config('cms.module.feature.language.default');
+        $lang = config('app.fallback_locale');
 
         if (array_key_exists($request->segment(1), 
             config('cms.module.feature.language.listLocale') )) {
@@ -27,7 +27,7 @@ class Languages
             if($request->segment(2))
                 $request->route()->setParameter('slug', $request->segment(2));
 
-        } elseif ($request->segment(1) == config('cms.module.feature.language.default')) {
+        } elseif ($request->segment(1) == config('app.fallback_locale')) {
 
             $segments = $request->segments();
             unset($segments[0]);
@@ -38,7 +38,7 @@ class Languages
         }
 
         App::setLocale($lang);
-        if($lang != config('cms.module.feature.language.default'))
+        if($lang != config('app.fallback_locale'))
             URL::defaults(['locale' => App::getLocale()]);
 
         return $next($request);

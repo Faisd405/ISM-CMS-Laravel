@@ -100,7 +100,7 @@ class UrlSeeder extends Seeder
                 'locked' => true
             ],
             [
-                'slug' => config('cms.module.feature.language.default'),
+                'slug' => config('app.fallback_locale'),
                 'module' => null,
                 'id' => null,
                 'type' => null,

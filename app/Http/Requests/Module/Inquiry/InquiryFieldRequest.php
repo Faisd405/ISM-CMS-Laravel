@@ -19,7 +19,7 @@ class InquiryFieldRequest extends FormRequest
     public function rules()
     {
         return [
-            'label_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'label_'.config('app.fallback_locale') => 'required|max:191',
             'name' => 'required|max:191',
         ];
     }
@@ -27,7 +27,7 @@ class InquiryFieldRequest extends FormRequest
     public function attributes()
     {
         return [
-            'label_'.config('cms.module.feature.language.default') => __('module/inquiry.field.label.label'),
+            'label_'.config('app.fallback_locale') => __('module/inquiry.field.label.label'),
             'name' => __('module/inquiry.field.label.name'),
         ];
     }

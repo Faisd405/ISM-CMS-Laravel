@@ -214,7 +214,7 @@ class MediaService
     private function setField($data, $media)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $title[$value['iso_codes']] = ($data['title_'.$value['iso_codes']] == null) ?

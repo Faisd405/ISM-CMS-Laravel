@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Feature\Language;
+use App\Services\Feature\ConfigurationService;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +34,21 @@ class AppServiceProvider extends ServiceProvider
 
         // Bootstrap pagination default
         Paginator::useBootstrap();
+
+        if (config('cms.setting.index_url') == true) {
+            // set config cache
+            App::make(ConfigurationService::class)->setConfigCache();
+
+            // set lang cache
+            $language = Language::where('iso_codes', config('cmsConfig.dev.default_lang'))->active()->first();
+            if (!empty($language)) {
+                $config = app('config');
+                $config->set('app.timezone', $language['time_zone']);
+                $config->set('app.locale', $language['iso_codes']);
+                $config->set('app.fallback_locale', $language['fallback_locale']);
+                $config->set('app.faker_locale', $language['faker_locale']);
+            }
+        }
 
         // Format mata uang
         //-- rupiah

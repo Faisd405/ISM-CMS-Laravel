@@ -24,7 +24,7 @@ class LinkMediaRequest extends FormRequest
     public function rules()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'title_'.config('app.fallback_locale') => 'required|max:191',
             'url' => 'required',
         ];
     }
@@ -32,7 +32,7 @@ class LinkMediaRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title_'.config('cms.module.feature.language.default') => __('module/link.media.label.title'),
+            'title_'.config('app.fallback_locale') => __('module/link.media.label.title'),
             'url' => __('module/link.media.label.url'),
         ];
     }

@@ -22,7 +22,7 @@
             <ul class="nav nav-tabs mb-4">
                 @foreach ($data['languages'] as $lang)
                 <li class="nav-item">
-                    <a class="nav-link{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' active' : '' }}"
+                    <a class="nav-link{{ $lang['iso_codes'] == config('app.fallback_locale') ? ' active' : '' }}"
                         data-toggle="tab" href="#{{ $lang['iso_codes'] }}">
                         {!! $lang['name'] !!}
                     </a>
@@ -40,7 +40,7 @@
                 <hr class="border-light m-0">
                 <div class="tab-content">
                     @foreach ($data['languages'] as $lang)
-                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('cms.module.feature.language.default') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
+                    <div class="tab-pane fade{{ $lang['iso_codes'] == config('app.fallback_locale') ? ' show active' : '' }}" id="{{ $lang['iso_codes'] }}">
                         <div class="card-header d-flex justify-content-center">
                             <span class="font-weight-semibold">
                                 @lang('global.language') : <b class="text-main">{{ $lang['name'] }}</b>
@@ -223,7 +223,7 @@
                                 <option value=" " selected>DEFAULT</option>
                                 @foreach ($data['template_category_details'] as $tmpDetailCat)
                                     <option value="{{ $tmpDetailCat['id'] }}" {{ !isset($data['section']) ? (old('template_detail_category_id') == $tmpDetailCat['id'] ? 'selected' : '') : (old('template_detail_category_id', $data['section']['template_detail_category_id']) == $tmpDetailCat['id'] ? 'selected' : '') }}>
-                                        {{ $tmpDetail['name'] }}
+                                        {{ $tmpDetailCat['name'] }}
                                     </option>
                                 @endforeach
                             </select>
@@ -234,7 +234,7 @@
                                 <option value=" " selected>DEFAULT</option>
                                 @foreach ($data['template_post_details'] as $tmpDetailPost)
                                     <option value="{{ $tmpDetailPost['id'] }}" {{ !isset($data['section']) ? (old('template_detail_post_id') == $tmpDetailPost['id'] ? 'selected' : '') : (old('template_detail_post_id', $data['section']['template_detail_post_id']) == $tmpDetailPost['id'] ? 'selected' : '') }}>
-                                        {{ $tmpDetail['name'] }}
+                                        {{ $tmpDetailPost['name'] }}
                                     </option>
                                 @endforeach
                             </select>

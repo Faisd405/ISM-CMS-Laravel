@@ -24,14 +24,14 @@ class BannerRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'name_'.config('app.fallback_locale') => 'required|max:191',
         ];
     }
 
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/banner.label.name'),
+            'name_'.config('app.fallback_locale') => __('module/banner.label.name'),
         ];
     }
 }

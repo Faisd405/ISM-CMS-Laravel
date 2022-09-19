@@ -59,7 +59,7 @@ class Language extends Model
     public function getUrlSwitcherAttribute()
     {
         $lang = 'id';
-        if (config('cms.module.feature.language.default') == 'id') {
+        if (config('app.fallback_locale') == 'id') {
             $lang = 'en';
         }
 
@@ -72,7 +72,7 @@ class Language extends Model
             $url = Str::replaceFirst('/'.$lang, '', Str::replaceFirst($lang.'/', '', $replaceUrl));
         }
         
-        if ($this->iso_codes != config('cms.module.feature.language.default')) {
+        if ($this->iso_codes != config('app.fallback_locale')) {
             $varCode = '';
             if (App::getLocale() != $this->iso_codes) {
                 $varCode = '/'.$this->iso_codes;

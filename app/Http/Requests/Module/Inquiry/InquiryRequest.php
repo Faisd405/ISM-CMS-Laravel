@@ -24,19 +24,19 @@ class InquiryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => 'required|max:191',
+            'name_'.config('app.fallback_locale') => 'required|max:191',
             'slug' => $this->method() == 'POST' ? 'required|max:191|unique:indexing_urls,slug' : 
                 'required|max:191|unique:indexing_urls,slug,'.$this->index_url_id,
-            // 'body_'.config('cms.module.feature.language.default') => 'required',
+            // 'body_'.config('app.fallback_locale') => 'required',
         ];
     }
 
     public function attributes()
     {
         return [
-            'name_'.config('cms.module.feature.language.default') => __('module/inquiry.label.name'),
+            'name_'.config('app.fallback_locale') => __('module/inquiry.label.name'),
             'slug' => __('module/inquiry.label.slug'),
-            'body_'.config('cms.module.feature.language.default') => __('module/inquiry.label.body'),
+            'body_'.config('app.fallback_locale') => __('module/inquiry.label.body'),
         ];
     }
 }

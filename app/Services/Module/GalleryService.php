@@ -182,7 +182,7 @@ class GalleryService
     private function setFieldCategory($data, $category)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
@@ -614,7 +614,7 @@ class GalleryService
     private function setFieldAlbum($data, $album)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
@@ -1243,7 +1243,7 @@ class GalleryService
     private function setFieldFile($data, $galleryFile)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $title[$value['iso_codes']] = ($data['title_'.$value['iso_codes']] == null) ?

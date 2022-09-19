@@ -3,12 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Feature\Language;
-use App\Services\Feature\ConfigurationService;
-use App\Services\Feature\LanguageService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
@@ -43,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
             
             $locales = [];
             foreach (Language::active()->get() as $val) {
-                if($val->iso_codes != config('cms.module.feature.language.default'))
+                if($val->iso_codes != config('app.fallback_locale'))
                     $locales[$val->iso_codes] = $val->name;
             }
             
@@ -51,32 +48,10 @@ class RouteServiceProvider extends ServiceProvider
             
             // set needLocale yang digunakan di semua routes
             config(['cms.module.feature.language.needLocale' => 
-                    request()->segment(1)!=config('cms.module.feature.language.default') && 
+                    request()->segment(1)!=config('app.fallback_locale') && 
                     array_key_exists(request()->segment(1), 
                         config('cms.module.feature.language.listLocale'))
             ]);
-
-            // set config cache
-            App::make(ConfigurationService::class)->setConfigCache();
-
-            // set lang cache
-            $language = Language::where('iso_codes', config('cmsConfig.dev.default_lang'))->active()->first();
-            $config = app('config');
-            if (!empty($language)) {
-                $config->set('language', [
-                    'locale' => $language['iso_codes'],
-                    'fallback_locale' => $language['fallback_locale'],
-                    'faker_locale' => $language['faker_locale'],
-                    'time_zone' => $language['time_zone'],
-                ]);
-            } else {
-                $config->set('language', [
-                    'locale' => 'id',
-                    'fallback_locale' => 'id',
-                    'faker_locale' => 'id_ID',
-                    'time_zone' => 'Asia/Jakarta',
-                ]);
-            }
         }
 
         $this->configureRateLimiting();

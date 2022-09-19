@@ -204,7 +204,7 @@ class EventService
     private function setFieldEvent($data, $event)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $name[$value['iso_codes']] = ($data['name_'.$value['iso_codes']] == null) ?
@@ -681,7 +681,7 @@ class EventService
     private function setField($data, $field)
     {
         $multiple = config('cms.module.feature.language.multiple');
-        $langDefault = config('cms.module.feature.language.default');
+        $langDefault = config('app.fallback_locale');
         $languages = $this->language->getLanguageActive($multiple);
         foreach ($languages as $key => $value) {
             $label[$value['iso_codes']] = ($data['label_'.$value['iso_codes']] == null) ?
