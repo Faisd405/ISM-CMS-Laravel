@@ -10,6 +10,7 @@ use App\Services\Feature\LanguageService;
 use App\Services\Feature\NotificationService;
 use App\Services\Module\EventService;
 use App\Services\UserService;
+use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -20,6 +21,8 @@ use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
+    use ApiResponser;
+    
     private $eventService, $languageService, $userService, $notifService;
 
     public function __construct(
@@ -300,6 +303,13 @@ class EventController extends Controller
                 __('module/event.form.caption') => ''
             ]
         ]);
+    }
+
+    public function totalUnread()
+    {
+        $totalUnread = $this->eventService->getFormList(['status' => 0], false, 0)->count();
+
+        return $this->success($totalUnread, 'Load form event Unread successfully');
     }
 
     public function exportForm(Request $request, $eventId)

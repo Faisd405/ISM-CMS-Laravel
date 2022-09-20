@@ -158,6 +158,25 @@
 				}
 			});
 		});
+
+		// total event unread
+		$(document).ready(function() {
+			$.ajax({
+				url : "/admin/event/total-unread",
+				type : "GET",
+				dataType : "json",
+				data : {},
+				success:function(data) {
+					const totalUnread = data.data;
+					$('#total-event-unread').text(totalUnread);
+					if (totalUnread > 0) {
+						$('#event-form').show();
+					} else {
+						$('#event-form').hide();
+					}
+				}
+			});
+		});
 		@endif
     </script>
 	

@@ -108,6 +108,10 @@ Route::prefix('admin/event')->name('event.')->middleware('auth')->group(function
 
     });
 
+    // Api total unread
+    Route::get('/total-unread', [EventController::class, 'totalUnread'])
+        ->name('totalUnread');
+
 });
 
 /**

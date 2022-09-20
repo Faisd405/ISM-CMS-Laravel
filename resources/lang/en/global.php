@@ -88,6 +88,7 @@ return [
     'view_detail' => 'View Details',
     'lower_case' => 'It is recommended to use lowercase',
     'approval_info' => 'Requires approval',
+    'unread_message' => 'Message unread',
 
     // form module
     'setting' => 'Setting',

@@ -119,6 +119,13 @@
                                 <br>
                                 <small class="form-text text-danger">@lang('global.approval_info')</small>
                                 @endif
+                                @php
+                                    $unread =  $item->forms()->where('status', 0)->count()
+                                @endphp
+                                @if ($unread > 0)
+                                <br>
+                                <small class="form-text"><span class="badge badge-main">{{ $unread }}</span> @lang('global.unread_message')</small>
+                                @endif
                             </td>
                             <td class="text-center"><span class="badge badge-{{ $item['type'] == 1 ? 'success' : 'secondary' }}">{{ config('cms.module.event.type.'.$item['type']) }}</span></td>
                             <td class="text-center"><span class="badge badge-info">{{ $item['hits'] }}</span></td>

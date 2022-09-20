@@ -88,6 +88,7 @@ return [
     'view_detail' => 'Lihat Detail',
     'lower_case' => 'Disarankan menggunakan huruf kecil',
     'approval_info' => 'Membutuhkan persetujuan',
+    'unread_message' => 'Pesan belum dibaca',
     
     // form module
     'setting' => 'Setting',

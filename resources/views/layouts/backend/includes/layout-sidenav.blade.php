@@ -222,6 +222,9 @@
                     <i class="fi fi-rr-calendar-clock"></i>
                 </div>
               <div>@lang('module/event.caption')</div>
+              <div class="pl-1 ml-auto" id="event-form">
+                <div class="badge badge-main" id="total-event-unread">0</div>
+            </div>
             </a>
         </li>
         @endif
