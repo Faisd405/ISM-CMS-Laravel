@@ -2,9 +2,15 @@
     <ul class="pagination">
         {{-- Previous Page Link --}}
         @if ($paginator->onFirstPage())
-            <li class="disabled"><a href="#"><i class="las la-arrow-left"></i></a></li>
+            <li class="page-item"><a href="#!"
+                    class="page-link page-prev btn icon-btn rounded-circle btn-light-warning disabled">
+                    <div class="label-btn label-btn-left"><i class="fa-regular fa-arrow-left"></i></div>
+                </a></li>
         @else
-            <li class=""><a href="{{ $paginator->previousPageUrl() }}"><i class="las la-arrow-left"></i></a></li>
+            <li class="page-item"><a href="{{ $paginator->previousPageUrl() }}"
+                    class="page-link page-prev btn icon-btn rounded-circle btn-light-warning">
+                    <div class="label-btn label-btn-left"><i class="fa-regular fa-arrow-left"></i></div>
+                </a></li>
         @endif
 
         {{-- Pagination Elements --}}
@@ -18,9 +24,11 @@
             @if (is_array($element))
                 @foreach ($element as $page => $url)
                     @if ($page == $paginator->currentPage())
-                        <li><a class="active" href="#">{{ $page }}</a></li>
+                        <li class="page-item active"><a class="page-link btn icon-btn rounded-circle"
+                                href="#">{{ $page }}</a></li>
                     @else
-                        <li><a href="{{ $url }}">{{ $page }}</a></li>
+                        <li class="page-item"><a class="page-link btn icon-btn rounded-circle"
+                                href="{{ $url }}">{{ $page }}</a></li>
                     @endif
                 @endforeach
             @endif
@@ -28,9 +36,16 @@
 
         {{-- Next Page Link --}}
         @if ($paginator->hasMorePages())
-            <li><a href="{{ $paginator->nextPageUrl() }}"><i class="las la-arrow-right"></i></a></li>
+            <li class="page-item"><a href="{{ $paginator->nextPageUrl() }}"
+                    class="page-link page-next btn icon-btn rounded-circle btn-light-warning">
+                    <div class="label-btn label-btn-right"><i class="fa-regular fa-arrow-right"></i></div>
+                </a></li>
         @else
-            <li class="disabled"><a href="#"><i class="las la-arrow-right"></i></a></li>
+            <li class="page-item"><a href="#!"
+                    class="page-link page-next btn icon-btn rounded-circle btn-light-warning disabled">
+                    <div class="label-btn label-btn-right"><i class="fa-regular fa-arrow-right"></i></div>
+                </a></li>
         @endif
     </ul>
+
 @endif

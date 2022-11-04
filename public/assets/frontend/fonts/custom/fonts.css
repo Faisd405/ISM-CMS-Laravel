@@ -1,0 +1,25 @@
+/* Gohtam Font */
+@font-face {
+  font-family: "Gotham";
+  font-style: normal;
+  font-weight: 900;
+  src: url("../custom/Gotham-Black.woff") format("woff");
+}
+@font-face {
+  font-family: "Gotham";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../custom/Gotham-Bold.woff") format("woff");
+}
+@font-face {
+  font-family: "Gotham";
+  font-style: normal;
+  font-weight: 500;
+  src: url("../custom/Gotham-Medium.woff") format("woff");
+}
+@font-face {
+  font-family: "Gotham";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../custom/Gotham-Book.woff") format("woff");
+}

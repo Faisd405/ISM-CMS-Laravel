@@ -114,7 +114,28 @@ return [
             'size_byte' => '2048'
         ],
         'cover_default' => [
-            'file' => 'assets/dummy/cover.jpg',
+            'file' => 'assets/dummy/cover.png',
+            'mimes' => 'jpg,jpeg,png,svg,gif',
+            'pixel' => '500 x 500',
+            'size' => '2 MB',
+            'size_byte' => '2048'
+        ],
+        'support_image' => [
+            'file' => '',
+            'mimes' => 'jpg,jpeg,png,svg,gif',
+            'pixel' => '500 x 500',
+            'size' => '2 MB',
+            'size_byte' => '2048'
+        ],
+        'support_image_2' => [
+            'file' => '',
+            'mimes' => 'jpg,jpeg,png,svg,gif',
+            'pixel' => '500 x 500',
+            'size' => '2 MB',
+            'size_byte' => '2048'
+        ],
+        'support_image_3' => [
+            'file' => '',
             'mimes' => 'jpg,jpeg,png,svg,gif',
             'pixel' => '500 x 500',
             'size' => '2 MB',

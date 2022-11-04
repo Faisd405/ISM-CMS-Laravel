@@ -10,10 +10,10 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['widget']) ? route('widget.store', array_merge(['type' => $data['type']], $queryParam)) : 
+        <form action="{{ !isset($data['widget']) ? route('widget.store', array_merge(['type' => $data['type']], $queryParam)) :
             route('widget.update', array_merge(['type' => $data['type'], 'id' => $data['widget']['id']], $queryParam)) }}" method="POST">
             @csrf
-    
+
             @if (isset($data['widget']))
                 @method('PUT')
             @endif
@@ -29,8 +29,8 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.name') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1 @error('name') is-invalid @enderror" name="name" 
-                                value="{{ !isset($data['widget']) ? old('name') : old('name', $data['widget']['name']) }}" 
+                            <input type="text" class="form-control mb-1 @error('name') is-invalid @enderror" name="name"
+                                value="{{ !isset($data['widget']) ? old('name') : old('name', $data['widget']['name']) }}"
                                 placeholder="@lang('module/widget.placeholder.name')">
                             <small class="form-text">@lang('global.lower_case')</small>
                             @include('components.field-error', ['field' => 'name'])
@@ -65,9 +65,9 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.title') <i class="text-danger">{{ $data['type'] == 'text' ? '*' : '' }}</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="title_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['widget']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['widget']->fieldLang('title', $lang['iso_codes'])) }}" 
+                                    <input type="text" class="form-control mb-1 @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="title_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['widget']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['widget']->fieldLang('title', $lang['iso_codes'])) }}"
                                         placeholder="@lang('module/widget.placeholder.title')">
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
@@ -124,8 +124,8 @@
                     <div class="form-group row {{ isset($data['widget']) && $data['widget']['config']['show_url'] == false ? 'hide-form' : '' }}">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/widget.label.url')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url" 
-                                value="{{ !isset($data['widget']) ? old('url') : old('url', $data['widget']['content']['url']) }}" 
+                            <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url"
+                                value="{{ !isset($data['widget']) ? old('url') : old('url', $data['widget']['content']['url']) }}"
                                 placeholder="">
                             @include('components.field-error', ['field' => 'url'])
                         </div>
@@ -157,7 +157,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-12 hide-form">
                             <label class="form-label">@lang('global.template')</label>
-                            <input type="text" class="form-control mb-1 @error('template') is-invalid @enderror" name="template" 
+                            <input type="text" class="form-control mb-1 @error('template') is-invalid @enderror" name="template"
                                 value="{{ !isset($data['widget']) ? old('template') : old('template', $data['widget']['template']) }}"
                                 placeholder="template-name">
                             @include('components.field-error', ['field' => 'template'])
@@ -262,7 +262,7 @@
                                 @foreach ($data['widget']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name"
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
@@ -282,7 +282,7 @@
                 @endif
             </div>
         </form>
-        
+
     </div>
 </div>
 @endsection

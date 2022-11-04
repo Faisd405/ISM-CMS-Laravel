@@ -89,7 +89,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     //--- Logout Frontend
     Route::post('/logout/frontend', [LoginController::class, 'logoutFrontend'])
         ->name('logout.frontend');
-    
+
 });
 
 //------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ Route::get('/sitemap.xml', [HomeController::class, 'sitemapXml'])
     ->name('sitemap.xml');
 
 Route::group($group, function () {
-    
+
     //--- Home
     Route::get('/', [HomeController::class, 'home'])
         ->name('home');

@@ -87,7 +87,7 @@ return [
         'language' => [
             'active' => true,
             'multiple' => true,
-            'default' => config('app.fallback_locale')
+            'default' => config('app.fallback_locale'),
         ],
         'registration' => [
             'active' => false,
@@ -103,7 +103,7 @@ return [
             'url_unblock' => ['backend', 'admin', 'maintenance']
         ]
     ],
-    
+
     //---------------
     // MASTER
     //---------------
@@ -259,8 +259,8 @@ return [
             'approval' => false,
             'type' => [
                 0 => 'IMAGE',
-                1 => 'VIDEO',
-                2 => 'TEXT',
+                // 1 => 'VIDEO',
+                // 2 => 'TEXT',
             ],
             'type_image' => [
                 0 => 'UPLOAD',
