@@ -6,7 +6,6 @@
         max_height: 500,
         plugins: 'image, link, media, wordcount, lists, code, table, preview',
         toolbar: ['formatselect | bold italic strikethrough superscript subscript forecolor backcolor formatpainter | table link image media pageembed | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent | removeformat code'],
-
         path_absolute : "/",
         file_picker_callback (callback, value, meta) {
             let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth
@@ -25,6 +24,7 @@
         relative_urls : false,
         remove_script_host : true,
         convert_urls : true,
+        forced_root_block: false,
       });
 
 </script>
