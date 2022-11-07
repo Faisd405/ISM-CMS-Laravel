@@ -23,7 +23,7 @@
                     <ul class="list-unstyled list-bordered list-icon mb-0 anim-scroll-up mt-auto" data-aos>
                         @foreach ($widget['module']['childs'] as $child)
                             <li class="d-flex align-items-center">
-                                <i class="icon fa-light {{ isset($child['custom_fields']['icon']) ? '' : $child['custom_fields']['icon'] }} text-danger"></i>
+                                <i class="icon fa-light {{ isset($child['custom_fields']['icon']) ? $child['custom_fields']['icon'] : '' }} text-danger"></i>
                                 <a href="{{route('page.read.child.' . $child->slug)}}" class="d-inline-flex fs-16 text-dark">
                                     <div class="label-btn span-2-red">{!! $child->fieldLang('title') !!}</div>
                                 </a>
