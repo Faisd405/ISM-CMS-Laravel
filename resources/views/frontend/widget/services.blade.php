@@ -29,15 +29,14 @@
                                             @else
                                                 {!! $value !!}
                                             @endif
-                                            <br />
                                         @else
                                             @if ($key == 1)
                                                 <b>{!! $value !!}</b>
                                             @else
                                                 {!! $value !!}
                                             @endif
-                                            <br />
                                         @endif
+                                        <br />
                                     @endforeach
                                 </h5>
                                 <div class="service-excerpt clamp-2">
