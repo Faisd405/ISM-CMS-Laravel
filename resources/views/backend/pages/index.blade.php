@@ -44,7 +44,7 @@
                                     <label class="form-label" for="limit">@lang('global.limit')</label>
                                     <select id="limit" class="form-control" name="limit" data-style="btn-default">
                                         @foreach (config('cms.setting.limit') as $key => $val)
-                                        <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }} 
+                                        <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }}
                                             title="@lang('global.limit') {{ $val }}">
                                             {{ $val }}
                                         </option>
@@ -56,14 +56,14 @@
                                     <select class="form-control" name="status">
                                         <option value=" " selected>@lang('global.show_all')</option>
                                         @foreach (__('global.label.active') as $key => $val)
-                                        <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }} 
+                                        <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }}
                                             title="{{ $val }}">{{ $val }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="" for="search-filter">@lang('global.search')</label>
-                                    <input id="search-filter" type="text" class="form-control" name="q" value="{{ Request::get('q') }}" 
+                                    <input id="search-filter" type="text" class="form-control" name="q" value="{{ Request::get('q') }}"
                                         placeholder="@lang('global.search_keyword')">
                                 </div>
                             </div>
@@ -100,9 +100,15 @@
                             <td>
                                 <strong>{!! Str::limit($item->fieldLang('title'), 60) !!}</strong>
                                 @if ($item['detail'] == 1)
-                                <a href="{{ route('page.read.'.$item['slug']) }}" title="@lang('global.view_detail')" target="_blank">
-                                    <i class="fi fi-rr-link text-bold" style="font-size: 14px;"></i>
-                                </a>
+                                @if ($item['parent'] == null)
+                                    <a href="{{ route('page.read.'.$item['slug']) }}" title="@lang('global.view_detail')" target="_blank">
+                                        <i class="fi fi-rr-link text-bold" style="font-size: 14px;"></i>
+                                    </a>
+                                @else
+                                    <a href="{{ route('page.read.child.'.$item['slug']) }}" title="@lang('global.view_detail')" target="_blank">
+                                        <i class="fi fi-rr-link text-bold" style="font-size: 14px;"></i>
+                                    </a>
+                                @endif
                                 @endif
                                 @if ($item['approved'] != 1)
                                 <br>
@@ -142,7 +148,7 @@
                                 @if (isset(config('cms.module.page.ordering')['position']))
                                 <div class="box-btn flex-wrap justify-content-center">
                                     @if (Auth::user()->can('page_update') && $item->where('parent', $item['parent'])->min('position') != $item['position'])
-                                    <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" 
+                                    <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('global.position')">
                                         <i class="fi fi-rr-arrow-small-up"></i>
@@ -152,14 +158,14 @@
                                         </form>
                                     </a>
                                     @else
-                                    <button type="button" class="btn icon-btn btn-sm btn-secondary" 
+                                    <button type="button" class="btn icon-btn btn-sm btn-secondary"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('global.position')" disabled>
                                         <i class="fi fi-rr-arrow-small-up"></i>
                                     </button>
                                     @endif
                                     @if (Auth::user()->can('page_update') && $item->where('parent', $item['parent'])->max('position') != $item['position'])
-                                    <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark" 
+                                    <a href="javascript:void(0);" onclick="$(this).find('form').submit();" class="btn icon-btn btn-sm btn-dark"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('global.position')">
                                         <i class="fi fi-rr-arrow-small-down"></i>
@@ -169,7 +175,7 @@
                                         </form>
                                     </a>
                                     @else
-                                    <button type="button" class="btn icon-btn btn-sm btn-secondary" 
+                                    <button type="button" class="btn icon-btn btn-sm btn-secondary"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('global.position')" disabled>
                                         <i class="fi fi-rr-arrow-small-down"></i>
@@ -182,7 +188,7 @@
                                 <div class="box-btn flex-wrap justify-content-end">
                                     @can('page_create')
                                         @if (Auth::user()->hasRole('developer|super') || $item['config']['create_child'] == true)
-                                        <a href="{{ route('page.create', ['parent' => $item['id']]) }}" class="btn icon-btn btn-sm btn-main" 
+                                        <a href="{{ route('page.create', ['parent' => $item['id']]) }}" class="btn icon-btn btn-sm btn-main"
                                             data-toggle="tooltip" data-placement="bottom"
                                             data-original-title="@lang('global.add_attr_new', [
                                             'attribute' => __('module/page.caption')
@@ -192,14 +198,14 @@
                                         @endif
                                     @endcan
                                     @if (Auth::user()->hasRole('developer|super') || Auth::user()->can('medias') && config('cms.module.master.media.active') == true && $item['config']['show_media'] == true)
-                                    <a href="{{ route('media.index', ['moduleId' => $item['id'], 'moduleType' => 'page']) }}" class="btn icon-btn btn-sm btn-main" 
+                                    <a href="{{ route('media.index', ['moduleId' => $item['id'], 'moduleType' => 'page']) }}" class="btn icon-btn btn-sm btn-main"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('master/media.caption')">
                                         <i class="fi fi-rr-add-folder"></i>
                                     </a>
                                     @endif
                                     @can('page_update')
-                                    <a href="{{ route('page.edit', ['id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success" 
+                                    <a href="{{ route('page.edit', ['id' => $item['id']]) }}" class="btn icon-btn btn-sm btn-success"
                                         data-toggle="tooltip" data-placement="bottom"
                                         data-original-title="@lang('global.edit_attr', [
                                         'attribute' => __('module/page.caption')
@@ -209,7 +215,7 @@
                                     @endcan
                                     @can('page_delete')
                                         @if ($item['locked'] == 0)
-                                        <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete" 
+                                        <button type="button" class="btn btn-danger icon-btn btn-sm swal-delete"
                                             data-toggle="tooltip" data-placement="bottom"
                                             data-original-title="@lang('global.delete_attr', [
                                                 'attribute' => __('module/page.caption')
@@ -261,9 +267,9 @@
             @if ($data['pages']->total() > 0)
             <div class="card-footer justify-content-center justify-content-lg-between align-items-center flex-wrap">
                 <div class="text-muted mb-3 m-lg-0">
-                    @lang('pagination.showing') 
-                    <strong>{{ $data['pages']->firstItem() }}</strong> - 
-                    <strong>{{ $data['pages']->lastItem() }}</strong> 
+                    @lang('pagination.showing')
+                    <strong>{{ $data['pages']->firstItem() }}</strong> -
+                    <strong>{{ $data['pages']->lastItem() }}</strong>
                     @lang('pagination.of')
                     <strong>{{ $data['pages']->total() }}</strong>
                 </div>
