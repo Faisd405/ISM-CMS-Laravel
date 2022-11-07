@@ -8,8 +8,8 @@ data-bs-spy="scroll" data-bs-offset="98" data-bs-target=".nav-dot"
 @section('styles')
 {{-- css tambahan per halaman --}}
 <!--libs-->
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/swiper-bundle.min') }}.css">
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/swiper-custom.min') }}.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/swiper-bundle.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/swiper-custom.min.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/slick.min.css') }}">
 @endsection
 
@@ -23,12 +23,6 @@ data-bs-spy="scroll" data-bs-offset="98" data-bs-target=".nav-dot"
 
 @section('scripts')
 {{-- scripts tambahan per halaman --}}
-<!--libs-->
-<script src="{{ asset('assets/frontend/js/swiper-bundle.min.js')}}"></script>
-<script src="{{ asset('assets/frontend/js/swiper.init.js')}}"></script>
-<script src="{{ asset('assets/frontend/js/slick.min.js')}}"></script>
-<script src="{{ asset('assets/frontend/js/slick.init.js')}}"></script>
-<script src="{{ asset('assets/frontend/js/jquery.easing.min.js')}}"></script>
 @endsection
 
 @section('html-after-main')
