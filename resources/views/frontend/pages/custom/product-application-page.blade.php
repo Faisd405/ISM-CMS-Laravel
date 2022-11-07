@@ -71,7 +71,7 @@
             <div class="container">
                 <div class="row g-0">
                     <div class="col-lg-2">
-                        <div class="subtitle mb-4 split-text" data-aos>@lang('text.about') {!! $data['read']->fieldLang('title') !!}</div>
+                        {{-- <div class="subtitle mb-4 split-text" data-aos>@lang('text.about') {!! $data['read']->fieldLang('title') !!}</div> --}}
                     </div>
                     <div class="col-lg-8">
                         {!! $data['read']->fieldLang('content') !!}
