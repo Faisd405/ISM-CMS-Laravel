@@ -29,4 +29,8 @@ return [
     'slogan' => 'We delivering IT solutions',
     'contact_us' => 'Contact Us',
     'change_language' => 'Change Language',
+    'support_1' => 'Support #1',
+    'support_2' => 'Support #2',
+    'support_3' =>'Support #3',
+    'see_details' => 'See Details',
 ];
