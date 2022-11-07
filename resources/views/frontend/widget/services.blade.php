@@ -36,6 +36,7 @@
                                             @else
                                                 {!! $value !!}
                                             @endif
+                                            <br />
                                         @endif
                                     @endforeach
                                 </h5>
