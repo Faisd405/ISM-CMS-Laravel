@@ -73,12 +73,17 @@
                         {{-- <div class="subtitle mb-4 split-text" data-aos>@lang('text.about') {!! $data['read']->fieldLang('title') !!}</div> --}}
                     </div>
                     <div class="col-lg-8">
+                        <div class="main-title mb-6">
+                            <h1 class="title fw-700 title-display-1 line-height-sm split-text" data-aos>{!! $data['read']->fieldLang('title') !!}</h1>
+                        </div>
+                        <div class="post-entry">
                         {!! $data['read']->fieldLang('content') !!}
                         @if (!$data['read']->fieldLang('content'))
                             <div class="post-entry">
                                 <p class="text-center mt-6">@lang('text.page_content_empty')</p>
                             </div>
                         @endif
+                        </div>
                     </div>
                 </div>
             </div>
