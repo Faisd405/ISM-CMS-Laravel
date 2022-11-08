@@ -40,53 +40,47 @@
 
 --}}
 
-    <section class="page-header page-header-post">
-        <div class="page-header-content">
-            <div class="container">
-                <div class="row g-0">
-                    <div class="col-lg-5">
-                        <div class="post-img-header h-100">
-                            <div class="ratio ratio-1x1 h-100 anim-scroll-img delay-300">
-                                <img src="{{ $data['read']['coverSrc'] }}" alt="" class="thumb">
-                            </div>
+
+<section class="page-header page-header-post">
+    <div class="page-header-content">
+        <div class="container">
+            <div class="row g-0">
+                <div class="col-lg-5">
+                    <div class="post-img-header h-100">
+                        <div class="ratio ratio-1x1 h-100 anim-scroll-img delay-300">
+                            <img src="{{ $data['read']['coverSrc'] }}" alt="" class="thumb">
                         </div>
                     </div>
-                    <div class="col-lg-7">
-                        <div class="d-flex flex-column justify-content-center h-100 post-header-wrapper">
-                            <div class="post-title-header">
-                                <div class="subtitle text-danger mb-4 split-text">{!! $data['section']->fieldLang('name') !!}</div>
-                                <h1 class="title fw-700 text-white split-text">{!! $data['read']->fieldLang('title') !!}</h1>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="post-date anim-load-up delay-400">
-                                    <div class="d-flex align-items-center">
-                                        <div class="fs-38 fw-700 line-height-sm me-2 dd">
-                                            {{ $data['read']->created_at->format('d') }}</div>
-                                        <div class="flex-grow-1 mm-yy">
-                                            <div class="subtitle">{{ $data['read']->created_at->format('M') }}</div>
-                                            <div class="subtitle">{{ $data['read']->created_at->format('Y') }}</div>
-                                        </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="d-flex flex-column justify-content-center h-100 post-header-wrapper">
+                        <div class="post-title-header">
+                            <div class="subtitle text-danger mb-4 mb-xl-5 split-text">{!! $data['section']->fieldLang('name') !!}</div>
+                            <h1 class="title mb-4 mb-xl-0 fw-700 split-text">{!! $data['read']->fieldLang('title') !!}</h1>
+                        </div>
+                        <div class="d-flex flex-column flex-xl-row align-items-xl-center justify-content-between">
+                            <div class="post-date anim-load-up delay-400">
+                                <div class="d-flex align-items-center">
+                                    <div class="fs-38 fw-700 line-height-sm me-2 dd">{{ $data['read']->created_at->format('d') }}</div>
+                                    <div class="flex-grow-1 mm-yy">
+                                        <div class="subtitle">{{ $data['read']->created_at->format('M') }}</div>
+                                        <div class="subtitle">{{ $data['read']->created_at->format('Y') }}</div>
                                     </div>
                                 </div>
-                                <div class="social-share d-flex align-items-center anim-load-up delay-400">
-                                    <span class="subtitle text-muted">@lang('text.share')</span>
-                                    <a href="#!" class="social-link text-dark">
-                                        <div class="label-btn span-2-red"><i class="fa-brands fa-facebook fs-20"></i></div>
-                                    </a>
-                                    <a href="#!" class="social-link text-dark">
-                                        <div class="label-btn span-2-red"><i class="fa-brands fa-twitter fs-20"></i></div>
-                                    </a>
-                                    <a href="#!" class="social-link text-dark">
-                                        <div class="label-btn span-2-red"><i class="fa-brands fa-whatsapp fs-20"></i></div>
-                                    </a>
-                                </div>
+                            </div>
+                            <div class="social-share d-flex align-items-center anim-load-up delay-400">
+                                <span class="subtitle text-muted">@lang('text.share')</span>
+                                <a href="#!" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-facebook fs-20"></i></div></a>
+                                <a href="#!" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-twitter fs-20"></i></div></a>
+                                <a href="#!" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-whatsapp fs-20"></i></div></a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <section class="content-wrap page-content" data-nav-color="dark">
         <div class="container">
