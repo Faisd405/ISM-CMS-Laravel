@@ -100,7 +100,8 @@
                                 <div class="main-title mb-5">
                                     <h1 class="title title-display-1 line-height-sm fw-700 split-text" data-aos>{{ $data['childs']->skip(1)->first()->fieldLang('title') }}</h1>
                                 </div>
-                                <div class="post-entry">{!! $data['childs']->skip(1)->first()->fieldLang('content') !!}
+                                <div class="post-entry">
+                                    <p>{!! $data['childs']->skip(1)->first()->fieldLang('content') !!}</p>
                                 </div>
                             </div>
                         </div>

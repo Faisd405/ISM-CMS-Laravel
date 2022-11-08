@@ -93,7 +93,7 @@
             <div class="row g-0 justify-content-center">
                 <div class="col-lg-8">
                     <div class="post-entry">
-                        {!! $data['read']->fieldLang('content') !!}
+                        <p>{!! $data['read']->fieldLang('content') !!}</p>
                     </div>
                 </div>
             </div>

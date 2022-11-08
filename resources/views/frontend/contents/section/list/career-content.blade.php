@@ -67,7 +67,7 @@ class="single-page"
                                 <div class="accordion-collapse collapse" id="col-1" data-bs-parent="#career-accordion">
                                     <div class="accordion-body">
                                         <div class="post-entry">
-                                            {!! $post->fieldLang('content') !!}
+                                            <p>{!! $post->fieldLang('content') !!}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -59,11 +59,9 @@
                         <h1 class="title fw-700 title-display-1 line-height-sm split-text" data-aos>{!! $data['read']->fieldLang('name') !!}</h1>
                     </div>
                     <div class="post-entry">
-                        {!! $data['read']->fieldLang('description') !!}
+                        <p>{!! $data['read']->fieldLang('description') !!}</p>
                         @if (!$data['read']->fieldLang('description'))
-                        <div class="post-entry">
                             <p class="text-center mt-6">@lang('text.page_content_empty')</p>
-                        </div>
                         @endif
                     </div>
                 </div>

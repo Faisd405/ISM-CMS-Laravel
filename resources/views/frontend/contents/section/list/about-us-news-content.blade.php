@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="post-body mb-5">
                                         <div class="post-text clamp-3">
-                                            {!! $post->fieldLang('content') !!}
+                                            {!! $post->fieldLang('intro') !!}
                                         </div>
                                     </div>
                                     <div class="post-footer mt-auto">
