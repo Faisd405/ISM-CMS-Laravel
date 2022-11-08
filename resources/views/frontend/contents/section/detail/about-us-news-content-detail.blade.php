@@ -70,9 +70,9 @@
                             </div>
                             <div class="social-share d-flex align-items-center anim-load-up delay-400">
                                 <span class="subtitle text-muted">@lang('text.share')</span>
-                                <a href="#!" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-facebook fs-20"></i></div></a>
-                                <a href="#!" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-twitter fs-20"></i></div></a>
-                                <a href="#!" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-whatsapp fs-20"></i></div></a>
+                                <a href="{{$data['share_facebook']}}" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-facebook fs-20"></i></div></a>
+                                <a href="{{$data['share_twitter']}}" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-twitter fs-20"></i></div></a>
+                                <a href="{{$data['share_whatsapp']}}" class="social-link text-dark"><div class="label-btn span-2-red"><i class="fa-brands fa-whatsapp fs-20"></i></div></a>
                             </div>
                         </div>
                     </div>

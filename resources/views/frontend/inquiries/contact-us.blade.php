@@ -128,12 +128,17 @@
                                                             @endif
                                                         @endforeach
                                                     </label>
-                                                    <input type="{{ $field->properties['type'] }}" class="form-control"
-                                                        name="{{ $field->name }}"
-                                                        @if (isset($field->validation)) @foreach ($field->validation as $validation)
-                                                    {{ $validation }}
-                                                @endforeach @endif>
-                                                    <div class="input-line"></div>
+                                                    @if ($field->type == '1')
+                                                        <textarea type="text" rows="2" class="form-control"></textarea>
+                                                        <div class="input-line"></div>
+                                                    @else
+                                                        <input type="text" class="form-control"
+                                                            name="{{ $field->name }}"
+                                                            @if (isset($field->validation)) @foreach ($field->validation as $validation)
+                                                                {{ $validation }}
+                                                            @endforeach @endif>
+                                                    @endif
+                                                        <div class="input-line"></div>
                                                 </div>
                                             </div>
                                         </div>
