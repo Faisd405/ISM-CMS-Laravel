@@ -6,7 +6,7 @@
         <div class="slide-intro">
             <div class="slide-bg-item slide-item position-relative">
                 <div class="slide-img thumb">
-                    <img src="{{ $widget['module']['page']['bannerSrc'] }}" alt="" class="thumb" data-rellax loading="lazy"
+                    <img src="{{ $widget['module']['section']['bannerSrc'] }}" alt="" class="thumb" data-rellax loading="lazy"
                         data-rellax-speed="-4" data-rellax-percentage=".5">
                     <div class="bg-overlay"></div>
                 </div>
@@ -30,10 +30,10 @@
         </div>
     </div>
     <div class="product-slide slide-bg vw-100 overflow-hidden">
-        @foreach ($widget['module']['childs'] as $child)
+        @foreach ($widget['module']['posts'] as $post)
             <div class="slide-bg-item slide-item position-relative">
                 <div class="slide-img thumb">
-                    <img src="{{ $child['bannerSrc'] }}" alt="" class="thumb" data-rellax loading="lazy"
+                    <img src="{{ $post['bannerSrc'] }}" alt="" class="thumb" data-rellax loading="lazy"
                         data-rellax-speed="-4" data-rellax-percentage=".5">
                     <div class="bg-overlay"></div>
                 </div>
@@ -44,15 +44,15 @@
                                 <div class="caption-inner">
                                     <div class="main-title mb-5">
                                         <h1 class="title fw-700 title-display-1 text-white text-uppercase line-height-sm split-text"
-                                            data-aos>{!! $child->fieldLang('title') !!}</h1>
+                                            data-aos>{!! $post->fieldLang('title') !!}</h1>
                                     </div>
                                     <div class="caption-text text-muted anim-scroll-up delay-300 mb-5" data-aos>
                                         <div class="clamp-3">
-                                            {!! $child->fieldLang('intro') !!}
+                                            {!! $post->fieldLang('intro') !!}
                                         </div>
                                     </div>
                                     <div class="caption-btn anim-scroll-up delay-400" data-aos>
-                                        <a href="{{ route('page.read.child.' . $child['slug']) }}"
+                                        <a href="{{ route('content.post.read.' . $post->section->slug, ['slugPost' => $post->slug]) }}"
                                             class="btn btn-danger">
                                             <div class="label-btn subtitle">@lang('text.discover_now')</div><i
                                                 class="fa-light fa-arrow-right-long ms-3"></i>
@@ -69,17 +69,17 @@
     <div class="slide-thumb-wrapper">
         <div class="container">
             <div class="product-slide slide-thumb anim-scroll-up delay-300" data-aos>
-                @foreach ($widget['module']['childs'] as $child)
-                    @if ($child['position'] == 1)
+                @foreach ($widget['module']['posts'] as $post)
+                    @if ($post['position'] == 1)
                         <div class="slide-item product-item overflow-hidden position-relative">
                             <div class="ratio ratio-1x1">
-                                <img src="{{$child['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
+                                <img src="{{$post['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
                             </div>
                         </div>
                     @else
                         <div class="product-item overflow-hidden position-relative">
                             <div class="ratio ratio-1x1">
-                                <img src="{{$child['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
+                                <img src="{{$post['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
                             </div>
                         </div>
                     @endif
