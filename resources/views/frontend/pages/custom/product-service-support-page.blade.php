@@ -53,8 +53,7 @@
                     <div class="col-lg-8">
                         <div class="main-title">
                             <div class="subtitle mb-5 text-danger split-text">{!! $data['read']->fieldLang('title') !!}</div>
-                            <h1 class="title fw-700 title-display-2 text-uppercase split-text line-height-sm text-white">
-                                @lang('text.header_title')</h1>
+                            <h1 class="title fw-700 title-display-2 text-uppercase split-text line-height-sm text-white">@lang('text.header_title')</h1>
                         </div>
                     </div>
                 </div>
