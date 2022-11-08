@@ -57,14 +57,14 @@ class="single-page"
                         @foreach ($data['posts'] as $post)
                             <div class="accordion-item career-item anim-scroll-up" data-aos>
                                 <div class="accordion-header">
-                                    <a href="#col-1" class="accordion-button" data-bs-toggle="collapse">
+                                    <a href="#col-{{$post['id']}}" class="accordion-button" data-bs-toggle="collapse">
                                         <div class="flex-grow-1 me-4">
                                             <div class="subtitle text-muted mb-2">@lang('text.position')</div>
                                             <h4 class="title fw-700">{!! $post->fieldLang('title') !!}</h4>
                                         </div>
                                     </a>
                                 </div>
-                                <div class="accordion-collapse collapse" id="col-1" data-bs-parent="#career-accordion">
+                                <div class="accordion-collapse collapse" id="col-{{$post['id']}}" data-bs-parent="#career-accordion">
                                     <div class="accordion-body">
                                         <div class="post-entry">
                                             <p>{!! $post->fieldLang('content') !!}</p>
