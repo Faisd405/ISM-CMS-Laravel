@@ -88,30 +88,5 @@
             </div>
         </div>
     </div>
-    @if ($data['medias']->count() > 0)
-        <div class="content-wrap bg-gradient-muted">
-            <div class="container">
-                <div class="list-customer-logo">
-                    <div class="row g-0 justify-content-center">
-                        <div class="col-lg-6">
-                            <div class="main-title text-center mb-5">
-                                <div class="subtitle text-muted mb-5 split-text" data-aos>@lang('text.our_customers')</div>
-                                <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>@lang('text.header_title_3')</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row justify-content-center">
-                        @foreach ($data['medias'] as $media)
-                            <div class="col-lg-2">
-                                <div class="ratio ratio-4x3 logo-item anim-scroll-up" data-aos>
-                                    <img src="{{ $media['file_src'] }}" alt="" class="thumb">
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
 </section>
 @endsection
