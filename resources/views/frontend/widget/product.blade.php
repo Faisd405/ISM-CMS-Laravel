@@ -15,9 +15,9 @@
                         <div class="row g-0">
                             <div class="col-lg-6">
                                 <div class="main-title mb-5">
-                                    <div class="subtitle mb-4 mb-xl-5 split-text text-danger" data-aos>@lang('text.our') {!! $widget->fieldLang('title') !!}</div>
+                                    <div class="subtitle mb-4 mb-xl-5 split-text text-danger" data-aos>{!! $widget['module']['section']->fieldLang('name') !!}</div>
                                     <h1 class="title fw-700 title-display-1 text-white text-uppercase line-height-sm split-text"
-                                        data-aos>@lang('text.widget_product')</h1>
+                                        data-aos>{!! $widget->fieldLang('title') !!}</h1>
                                 </div>
                                 <div class="caption-text text-muted anim-scroll-up" data-aos>
                                     {!! $widget->fieldLang('description') !!}
