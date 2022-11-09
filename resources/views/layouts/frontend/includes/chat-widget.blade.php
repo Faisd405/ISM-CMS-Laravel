@@ -11,7 +11,7 @@
                 <li class="wa-body">
                     @if (config('cmsConfig.general.support_phone') && config('cmsConfig.general.support_name'))
                         <div class="wa-item">
-                            <a href="https://web.whatsapp.com/send?phone={{ config('cmsConfig.general.support_phone') }}text={{ config('cmsConfig.general.support_text') ?? '' }}"
+                            <a href="https://api.whatsapp.com/send?phone={{ config('cmsConfig.general.support_phone') }}&text={{ config('cmsConfig.general.support_text') ?? '' }}"
                                 target="_blank" class="wa-link dropdown-link d-flex align-items-center">
                                 <div class="wa-icon ratio ratio-1x1 rounded-circle overflow-hidden me-3">
                                     <div class="thumb d-flex align-items-center justify-content-center">
@@ -31,7 +31,7 @@
                     @endif
                     @if (config('cmsConfig.general.support_phone_2') && config('cmsConfig.general.support_name_2'))
                         <div class="wa-item">
-                            <a href="https://web.whatsapp.com/send?phone={{ config('cmsConfig.general.support_phone_2') }}text={{ config('cmsConfig.general.support_text_2') ?? '' }}"
+                            <a href="https://api.whatsapp.com/send?phone={{ config('cmsConfig.general.support_phone_2') }}&text={{ config('cmsConfig.general.support_text_2') ?? '' }}"
                                 target="_blank" class="wa-link dropdown-link d-flex align-items-center">
                                 <div class="wa-icon ratio ratio-1x1 rounded-circle overflow-hidden me-3">
                                     <div class="thumb d-flex align-items-center justify-content-center">
@@ -52,7 +52,7 @@
                     @endif
                     @if (config('cmsConfig.general.support_phone_3') && config('cmsConfig.general.support_name_3'))
                         <div class="wa-item">
-                            <a href="https://web.whatsapp.com/send?phone={{ config('cmsConfig.general.support_phone_3') }}text={{ config('cmsConfig.general.support_text_3') ?? '' }}"
+                            <a href="https://api.whatsapp.com/send?phone={{ config('cmsConfig.general.support_phone_3') }}&text={{ config('cmsConfig.general.support_text_3') ?? '' }}"
                                 target="_blank" class="wa-link dropdown-link d-flex align-items-center">
                                 <div class="wa-icon ratio ratio-1x1 rounded-circle overflow-hidden me-3">
                                     <div class="thumb d-flex align-items-center justify-content-center">
