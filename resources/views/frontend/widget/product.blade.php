@@ -17,7 +17,7 @@
                                 <div class="main-title mb-5">
                                     <div class="subtitle mb-4 mb-xl-5 split-text text-danger" data-aos>@lang('text.our') {!! $widget->fieldLang('title') !!}</div>
                                     <h1 class="title fw-700 title-display-1 text-white text-uppercase line-height-sm split-text"
-                                        data-aos>@lang('text.in') {{ config('cmsConfig.general.website_name') }}</h1>
+                                        data-aos>@lang('text.widget_product')</h1>
                                 </div>
                                 <div class="caption-text text-muted anim-scroll-up" data-aos>
                                     {!! $widget->fieldLang('description') !!}

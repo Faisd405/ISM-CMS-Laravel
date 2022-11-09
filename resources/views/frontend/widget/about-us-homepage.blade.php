@@ -14,8 +14,8 @@
             <div class="col-lg-5">
                 <div class="d-flex flex-column">
                     <div class="main-title mb-5">
-                        <div class="subtitle mb-4 mb-xl-5 split-text text-danger" data-aos>@lang('text.about_us')</div>
-                        <h1 class="title fw-700 title-display-1 text-uppercase line-height-sm split-text" data-aos>{{ config('cmsConfig.general.website_name') }}</h1>
+                        <div class="subtitle mb-4 mb-xl-5 split-text text-danger" data-aos>@lang($widget['module']['page']->fieldLang('title'))</div>
+                        <h1 class="title fw-700 title-display-1 text-uppercase line-height-sm split-text" data-aos>@lang('text.widget_about_us')</h1>
                     </div>
                     <div class="caption-text anim-scroll-up mb-6" data-aos>
                         {!! $widget->fieldLang('description') !!}
