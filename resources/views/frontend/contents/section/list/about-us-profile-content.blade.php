@@ -24,7 +24,7 @@
 
     <section class="page-header">
         <div class="page-header-bg thumb overflow-hidden">
-            <div class="thumb overflow-hidden min-vh-100">
+            <div class="thumb overflow-hidden">
                 <img src="{{ $data['read']['bannerSrc'] }}" alt="" class="thumb" data-rellax data-rellax-speed="-4">
                 <div class="bg-overlay"></div>
             </div>
@@ -34,7 +34,7 @@
                 <div class="row g-0">
                     <div class="col-lg-8">
                         <div class="main-title">
-                            <div class="subtitle mb-5 text-danger split-text">{!! $data['read']->fieldLang('name') !!}</div>
+                            <div class="subtitle mb-4 mb-xl-5 text-danger split-text">{!! $data['read']->fieldLang('name') !!}</div>
                             <h1 class="title fw-700 title-display-2 text-uppercase split-text line-height-sm text-white">@lang('text.header_title')</h1>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                                         <img src="{{ $post['coverSrc'] }}" alt="" class="thumb">
                                         <div class="bg-overlay"></div>
                                     </div>
-                                    <div class="team-social d-flex flex-column align-items-end">
+                                    <div class="team-social d-flex flex-xl-column align-items-end">
                                         <a href="{{ $post['addon_fields']['facebook'] }}"
                                             class="btn icon-btn btn-sm btn-light">
                                             <div class="label-btn span-center fs-16 span-2-red"><i class="fa-brands fa-facebook"></i>

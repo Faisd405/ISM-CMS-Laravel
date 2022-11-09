@@ -23,7 +23,7 @@
 --}}
     <section class="page-header">
         <div class="page-header-bg thumb overflow-hidden">
-            <div class="thumb overflow-hidden min-vh-100">
+            <div class="thumb overflow-hidden">
                 <img src="{{ $data['read']['bannerSrc'] }}" alt="" class="thumb" data-rellax data-rellax-speed="-4">
                 <div class="bg-overlay"></div>
             </div>

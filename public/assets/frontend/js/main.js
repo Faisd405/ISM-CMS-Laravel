@@ -55,7 +55,8 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 
 // Post Entry Image Wrapper
 $(".post-entry").each(function(){
-    $(this).find("img").wrap("<figure class='figure-img'></figure>")
+    $(this).find("img").wrap("<figure class='figure-img'></figure>");
+    $(".figure-img").unwrap();
 });
 
 // Custom Dropdown

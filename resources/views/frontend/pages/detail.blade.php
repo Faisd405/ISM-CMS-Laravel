@@ -42,7 +42,7 @@
 --}}
     <section class="page-header">
         <div class="page-header-bg thumb overflow-hidden">
-            <div class="thumb overflow-hidden min-vh-100">
+            <div class="thumb overflow-hidden">
                 <img src="{{$data['read']['bannerSrc']}}" alt="" class="thumb" data-rellax data-rellax-speed="-4">
                 <div class="bg-overlay"></div>
             </div>
@@ -52,7 +52,7 @@
                 <div class="row g-0">
                     <div class="col-lg-8">
                         <div class="main-title">
-                            <div class="subtitle mb-5 text-danger split-text">{!! $data['read']->fieldLang('title') !!}</div>
+                            <div class="subtitle mb-4 mb-xl-5 text-danger split-text">{!! $data['read']->fieldLang('title') !!}</div>
                             <h1 class="title fw-700 title-display-2 text-uppercase split-text line-height-sm text-white">@lang('text.header_title')</h1>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                         </div>
                         <div class="row justify-content-center">
                             @foreach ($data['medias'] as $media)
-                                <div class="col-lg-2">
+                                <div class="col-xl-2 col-lg-4 col-6">
                                     <div class="ratio ratio-4x3 logo-item anim-scroll-up" data-aos>
                                         <img src="{{ $media['file_src'] }}" alt="" class="thumb">
                                     </div>
