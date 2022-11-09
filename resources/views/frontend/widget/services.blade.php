@@ -3,7 +3,7 @@
         <div class="row g-0 align-items-center justify-content-center">
             <div class="col-lg-6">
                 <div class="main-title text-center mb-5">
-                    <div class="subtitle mb-4 mb-xl-5 split-text text-danger" data-aos>@lang('text.our_services')</div>
+                    <div class="subtitle mb-4 mb-xl-5 split-text text-danger" data-aos>{{ $widget['module']['title'] }}</div>
                     <h1 class="title fw-700 title-display-1 text-uppercase line-height-sm split-text" data-aos>@lang('text.slogan')</h1>
                 </div>
             </div>
