@@ -33,4 +33,5 @@ return [
     'support_2' => 'Support #2',
     'support_3' =>'Support #3',
     'see_details' => 'See Details',
+    'text_support' => 'Silakan Chat Kami Sekarang',
 ];

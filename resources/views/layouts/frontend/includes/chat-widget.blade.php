@@ -6,7 +6,7 @@
         <div class="dropdown-menu-content">
             <ul class="wa-content dropdown-content">
                 <li class="wa-header">
-                    <div>Silahkan Chat Kami Sekarang !!</div>
+                    <div>@lang('text.text_support')</div>
                 </li>
                 <li class="wa-body">
                     <div class="wa-item">

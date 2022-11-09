@@ -8,7 +8,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['banner']) ? route('banner.store', $queryParam) : 
+        <form action="{{ !isset($data['banner']) ? route('banner.store', $queryParam) :
             route('banner.update', array_merge(['id' => $data['banner']['id']], $queryParam)) }}" method="POST">
             @csrf
             @isset($data['banner'])
@@ -47,9 +47,9 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/banner.label.name') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control text-bolder @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="name_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['banner']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['banner']->fieldLang('name', $lang['iso_codes'])) }}" 
+                                    <input type="text" class="form-control text-bolder @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="name_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['banner']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['banner']->fieldLang('name', $lang['iso_codes'])) }}"
                                         placeholder="@lang('module/banner.placeholder.name')">
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
@@ -163,7 +163,7 @@
                     </div>
                 </div>
 
-                @if (Auth::user()->hasRole('developer|super') || isset($data['banner']) && $data['banner']['config']['show_custom_field'] == true && !empty($data['banner']['custom_fields']))
+                @if (Auth::user()->hasRole('developer|super') || isset($data['banner']))
                 {{-- CUSTOM FIELD --}}
                 <hr class="border-light m-0">
                 <div class="table-responsive text-center">
@@ -189,7 +189,7 @@
                                 @foreach ($data['banner']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name"
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
