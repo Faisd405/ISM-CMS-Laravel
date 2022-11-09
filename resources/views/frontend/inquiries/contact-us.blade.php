@@ -116,7 +116,7 @@
                         @else
                             <form action="{{ route('inquiry.submit', ['id' => $data['read']->id]) }}" method="post">
                                 @csrf
-                                <div class="row justify-content-center mb-4 mb-xl-5">
+                                <div class="row justify-content-between mb-4 mb-xl-5">
                                     @foreach ($data['fields'] as $field)
                                         <div class="{{ $field['type'] == 0 ? 'col-lg-6' : 'col-lg-12' }}">
                                             <div class="form-group">
