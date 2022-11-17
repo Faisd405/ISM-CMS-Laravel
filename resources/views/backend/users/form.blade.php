@@ -8,7 +8,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-8 col-md-8">
 
-        <form action="{{ !isset($data['user']) ? route('user.store', $queryParam) : 
+        <form action="{{ !isset($data['user']) ? route('user.store', $queryParam) :
             route('user.update', array_merge(['id' => $data['user']['id']], $queryParam)) }}" method="POST">
             @csrf
             @isset ($data['user'])
@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-md-10">
                             <input type="text" class="form-control text-bolder @error('name') is-invalid @enderror" name="name"
-                                value="{{ !isset($data['user']) ? old('name') : old('name', $data['user']['name']) }}" 
+                                value="{{ !isset($data['user']) ? old('name') : old('name', $data['user']['name']) }}"
                                 placeholder="@lang('module/user.placeholder.name')" autofocus>
                                 @include('components.field-error', ['field' => 'name'])
                         </div>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-md-10">
                             <input type="text" class="form-control text-bolder @error('email') is-invalid @enderror" name="email"
-                                value="{{ !isset($data['user']) ? old('email') : old('email', $data['user']['email']) }}" 
+                                value="{{ !isset($data['user']) ? old('email') : old('email', $data['user']['email']) }}"
                                 placeholder="@lang('module/user.placeholder.email')">
                                 @include('components.field-error', ['field' => 'email'])
                         </div>
@@ -51,7 +51,7 @@
                         </div>
                         <div class="col-md-10">
                             <input type="number" class="form-control text-bolder @error('phone') is-invalid @enderror" name="phone"
-                                value="{{ !isset($data['user']) ? old('phone') : old('phone', $data['user']['phone']) }}" 
+                                value="{{ !isset($data['user']) ? old('phone') : old('phone', $data['user']['phone']) }}"
                                 placeholder="@lang('module/user.placeholder.phone')">
                             @include('components.field-error', ['field' => 'phone'])
                         </div>
@@ -62,7 +62,7 @@
                         </div>
                         <div class="col-md-10">
                             <input type="text" class="form-control text-bolder @error('username') is-invalid @enderror" name="username"
-                                value="{{ !isset($data['user']) ? old('username') : old('username', $data['user']['username']) }}" 
+                                value="{{ !isset($data['user']) ? old('username') : old('username', $data['user']['username']) }}"
                                 placeholder="@lang('module/user.placeholder.username')">
                                 @include('components.field-error', ['field' => 'username'])
                             <small class="form-text">@lang('module/user.username_info')</small>
@@ -77,7 +77,7 @@
                             <select id="roles" class="form-control select2 @error('roles') is-invalid @enderror" name="roles" data-style="btn-default">
                                 <option value="" disabled selected>@lang('global.select')</option>
                                 @foreach ($data['roles'] as $item)
-                                    <option value="{{ $item['name'] }}" {{ !isset($data['user']) ? (old('roles') == $item['name'] ? 'selected' : '') : 
+                                    <option value="{{ $item['name'] }}" {{ !isset($data['user']) ? (old('roles') == $item['name'] ? 'selected' : '') :
                                         (old('roles', $data['user']->roles[0]['name']) == $item['name'] ? 'selected' : '') }}>
                                         {{ Str::upper($item['name']) }}
                                     </option>
@@ -114,7 +114,7 @@
                             <small class="form-text">@lang('global.locked_info')</small>
                         </div>
                     </div>
-                    <div class="form-group row hide-form">
+                    <div class="form-group row">
                         <div class="col-md-2 text-md-right">
                             <label class="col-form-label text-sm-right">@lang('module/user.label.password')</label>
                         </div>
@@ -132,7 +132,7 @@
                             </small>
                         </div>
                     </div>
-                    <div class="form-group row hide-form">
+                    <div class="form-group row">
                         <div class="col-md-2 text-md-right">
                             <label class="col-form-label text-sm-right">@lang('module/user.label.password_confirmation')</label>
                         </div>
@@ -166,7 +166,7 @@
                     </div>
                 </div>
 
-                @if (!isset($data['user']) || isset($data['user']))  
+                @if (!isset($data['user']) || isset($data['user']))
                 <div class="table-responsive" id="permissions" style="overflow: scroll; height: 400px;">
                     <table class="table">
                         <thead>
@@ -190,7 +190,7 @@
                                 <td class="text-center">
                                     <div class="form-group m-0">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input check-parent" id="parent{{ $item['id'] }}" type="checkbox" data-id="{{ $item['id'] }}" name="permissions[]" value="{{ $item['id'] }}" 
+                                            <input class="custom-control-input check-parent" id="parent{{ $item['id'] }}" type="checkbox" data-id="{{ $item['id'] }}" name="permissions[]" value="{{ $item['id'] }}"
                                                 {{ isset($data['permission_ids']) ? (in_array($item['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
                                             <label class="custom-control-label" for="parent{{ $item['id'] }}"></label>
                                         </div>
@@ -217,7 +217,7 @@
                                 <td class="text-center">
                                     <div class="form-group m-0">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input check-child-{{ $child['parent'] }}" id="child{{ $child['id'] }}" type="checkbox" name="permissions[]" value="{{ $child['id'] }}" 
+                                            <input class="custom-control-input check-child-{{ $child['parent'] }}" id="child{{ $child['id'] }}" type="checkbox" name="permissions[]" value="{{ $child['id'] }}"
                                                 {{ isset($data['permission_ids']) ? (in_array($child['id'], $data['permission_ids']) ? 'checked' : '') : '' }}>
                                             <label class="custom-control-label" for="child{{ $child['id'] }}"></label>
                                         </div>
@@ -240,19 +240,19 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>  
+                </div>
                 @endif
             </div>
         </form>
     </div>
 </div>
 @endsection
-  
+
 @section('scripts')
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 <script src="{{ asset('assets/backend/js/ui_tooltips.js') }}"></script>
 @endsection
-  
+
 @section('jsbody')
 <script>
     //select2
