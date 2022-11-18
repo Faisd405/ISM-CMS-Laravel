@@ -11,28 +11,6 @@
 @endsection
 
 @section('content')
-    {{-- DETAIL
-
-    DATA :
-    {!! $data['read']->fieldLang('title') !!} // title
-
-    @if ($data['read']['config']['hide_body'] == false)
-    {!! $data['read']->fieldLang('body') !!} //body
-    @endif
-
-    {!! $data['read']->fieldLang('after_body') !!} //after_body
-
-    @if ($data['read']['config']['hide_banner'] == false) //banner
-    <img src="{{ $data['banner'] }}" title="{{ $data['read']['banner']['title'] }}" alt="{{ $data['read']['banner']['alt'] }}">
-    @endif
-
-    DATA LOOPING :
-    $data['read']['fields']
-    $data['read']['custom_fields']
-
-    {!! $data['creator'] !!}
-
---}}
     <section class="page-header">
         <div class="page-header-bg thumb overflow-hidden">
             <div class="thumb overflow-hidden">
@@ -138,7 +116,7 @@
                                                                 {{ $validation }}
                                                             @endforeach @endif>
                                                     @endif
-                                                        <div class="input-line"></div>
+                                                    <div class="input-line"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -160,4 +138,19 @@
         </div>
 
     </section>
+@endsection
+
+@section('styles')
+    <style>
+        .grecaptcha-badge {
+            width: 70px !important;
+            overflow: hidden !important;
+            transition: all 0.3s ease !important;
+            left: 4px !important;
+        }
+
+        .grecaptcha-badge:hover {
+            width: 256px !important;
+        }
+    </style>
 @endsection
