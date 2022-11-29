@@ -28,7 +28,7 @@ class="single-page"
 <section class="page-header">
     <div class="page-header-bg thumb overflow-hidden">
         <div class="thumb overflow-hidden">
-            <img src="{{asset('assets/frontend/img/bg-career.jpg')}}" alt="" class="thumb" data-rellax data-rellax-speed="-4">
+            <img src="{{ $data['read']['bannerSrc'] }}" alt="" class="thumb" data-rellax data-rellax-speed="-4">
             <div class="bg-overlay"></div>
         </div>
     </div>
