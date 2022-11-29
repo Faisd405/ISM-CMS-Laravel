@@ -79,9 +79,11 @@
                         </div>
                         <div class="col-lg-7">
                             <div class="media-info h-100 d-flex flex-column justify-content-center">
-                                <div class="main-title">
-                                    <div class="subtitle mb-5 split-text" data-aos>{{ $data['childs']->first()->fieldLang('title') }}</div>
-                                    <h1 class="title title-display-1 line-height-sm fw-700 split-text" data-aos>{!! $data['childs']->first()->fieldLang('content') !!}</h1>
+                                <div class="main-title mb-5">
+                                    <h1 class="title title-display-1 line-height-sm fw-700 split-text" data-aos>{{ $data['childs']->first()->fieldLang('title') }}</h1>
+                                </div>
+                                <div class="post-entry">
+                                    <p>{!! $data['childs']->first()->fieldLang('content') !!}</p>
                                 </div>
                             </div>
                         </div>
