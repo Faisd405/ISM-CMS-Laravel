@@ -8,7 +8,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['media']) ? route('media.store', $data['params']) : 
+        <form action="{{ !isset($data['media']) ? route('media.store', $data['params']) :
             route('media.update', $data['param_id']) }}" method="POST">
             @csrf
             @isset($data['media'])
@@ -33,7 +33,7 @@
                     </ol>
                 </div>
                 <hr class="border-light m-0">
-                
+
                 {{-- MEDIA --}}
                 <div class="card-body">
                     <div class="form-group row">
@@ -48,7 +48,7 @@
                     <div class="form-group row" id="youtube_id">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('master/media.label.youtube_id') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control text-bolder @error('youtube_id') is-invalid @enderror" name="youtube_id" 
+                            <input type="text" class="form-control text-bolder @error('youtube_id') is-invalid @enderror" name="youtube_id"
                                 value="{{ !isset($data['media']) ? old('youtube_id') : old('youtube_id', $data['media']['youtube_id']) }}" placeholder="@lang('master/media.label.youtube_id')">
                             <small class="text-muted">https://www.youtube.com/watch?v=<strong>hZK640cDj2s</strong></small>
                             @include('components.field-error', ['field' => 'youtube_id'])
@@ -139,9 +139,9 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('master/media.label.title')</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control text-bolder @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="title_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['media']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['media']->fieldLang('title', $lang['iso_codes'])) }}" 
+                                    <input type="text" class="form-control text-bolder @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="title_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['media']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['media']->fieldLang('title', $lang['iso_codes'])) }}"
                                         placeholder="@lang('master/media.label.title')">
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
@@ -165,7 +165,8 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('assets/backend/vendor/libs/wysiwyg/tinymce.min.js') }}"></script>
+<script src="https://cdn.tiny.cloud/1/9p772cxf3cqe1smwkua8bcgyf2lf2sa9ak2cm6tunijg1zr9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
 <script src="{{ asset('assets/backend/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 @endsection
@@ -188,7 +189,7 @@
         } else {
             $('#youtube_id').hide();
             $('#files').show();
-        }    
+        }
     });
 </script>
 

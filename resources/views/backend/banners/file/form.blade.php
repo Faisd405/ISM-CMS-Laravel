@@ -8,8 +8,8 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['file']) ? route('banner.file.store', array_merge(['bannerId' => $data['banner']['id']], $queryParam)) : 
-            route('banner.file.update', array_merge(['bannerId' => $data['banner']['id'], 'id' => $data['file']['id']], $queryParam)) }}" method="POST" 
+        <form action="{{ !isset($data['file']) ? route('banner.file.store', array_merge(['bannerId' => $data['banner']['id']], $queryParam)) :
+            route('banner.file.update', array_merge(['bannerId' => $data['banner']['id'], 'id' => $data['file']['id']], $queryParam)) }}" method="POST"
                 enctype="multipart/form-data">
             @csrf
             @isset($data['file'])
@@ -209,7 +209,7 @@
                     <div class="form-group row" id="video-youtube">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/banner.file.label.youtube_id')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control text-bolder @error('file_youtube') is-invalid @enderror" name="file_youtube" placeholder="" 
+                            <input type="text" class="form-control text-bolder @error('file_youtube') is-invalid @enderror" name="file_youtube" placeholder=""
                                 value="{{ isset($data['file']) ? old('file_youtube', $data['file']['file']) : '' }}">
                             <small class="form-text">https://www.youtube.com/watch?v=<strong>hZK640cDj2s</strong></small>
                             @include('components.field-error', ['field' => 'file_youtube'])
@@ -294,9 +294,9 @@
                             <div class="form-group row {{ isset($data['file']) && $data['file']['config']['show_title'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/banner.file.label.title') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control text-bolder @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="title_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['file']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['file']->fieldLang('title', $lang['iso_codes'])) }}" 
+                                    <input type="text" class="form-control text-bolder @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="title_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['file']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['file']->fieldLang('title', $lang['iso_codes'])) }}"
                                         placeholder="@lang('module/banner.file.placeholder.title')">
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
@@ -415,7 +415,7 @@
                                 @foreach ($data['file']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name"
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
@@ -436,13 +436,14 @@
             </div>
 
         </form>
-       
+
     </div>
 </div>
 @endsection
 
 @section('scripts')
-<script src="{{ asset('assets/backend/vendor/libs/wysiwyg/tinymce.min.js') }}"></script>
+<script src="https://cdn.tiny.cloud/1/9p772cxf3cqe1smwkua8bcgyf2lf2sa9ak2cm6tunijg1zr9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
 @endsection
 
 @section('jsbody')
@@ -451,7 +452,7 @@
     //type
     $('#image-type-form').hide();
     $('#video-type-form').hide();
-    
+
     $('#type').on('change', function() {
         $('#image-type').prop('selectedIndex', ' ');
         $('#video-type').prop('selectedIndex', ' ');
@@ -532,7 +533,7 @@
             $('#video-thumbnail').show();
         }
     });
-</script>    
+</script>
 @endif
 
 <script>

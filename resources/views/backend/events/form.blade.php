@@ -11,7 +11,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['event']) ? route('event.store', $queryParam) : 
+        <form action="{{ !isset($data['event']) ? route('event.store', $queryParam) :
             route('event.update', array_merge(['id' => $data['event']['id']], $queryParam)) }}" method="POST">
             @csrf
             @isset($data['event'])
@@ -50,9 +50,9 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/event.label.name') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 {{ !isset($data['event']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="name_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['event']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['event']->fieldLang('name', $lang['iso_codes'])) }}" 
+                                    <input type="text" class="form-control mb-1 {{ !isset($data['event']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="name_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['event']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['event']->fieldLang('name', $lang['iso_codes'])) }}"
                                         placeholder="@lang('module/event.placeholder.name')">
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
@@ -140,8 +140,8 @@
                         <div class="col-sm-10">
                             <div class="input-group">
                                 <input id="start_date" type="text" class="datetime-picker form-control @error('start_date') is-invalid @enderror" name="start_date"
-                                    value="{{ !isset($data['event']) ? old('start_date') : (!empty($data['event']['start_date']) ? 
-                                    old('start_date', $data['event']['start_date']->format('Y-m-d H:i')) : old('start_date')) }}" 
+                                    value="{{ !isset($data['event']) ? old('start_date') : (!empty($data['event']['start_date']) ?
+                                    old('start_date', $data['event']['start_date']->format('Y-m-d H:i')) : old('start_date')) }}"
                                     placeholder="Select date">
                                 <div class="input-group-append">
                                     <span class="input-group-text"><i class="fi fi-rr-calendar-clock"></i></span>
@@ -160,8 +160,8 @@
                         <div class="col-sm-10">
                             <div class="input-group">
                                 <input id="end_date" type="text" class="datetime-picker form-control @error('end_date') is-invalid @enderror" name="end_date"
-                                    value="{{ !isset($data['event']) ? old('end_date') : (!empty($data['event']['end_date']) ? 
-                                    old('end_date', $data['event']['end_date']->format('Y-m-d H:i')) : old('end_date')) }}" 
+                                    value="{{ !isset($data['event']) ? old('end_date') : (!empty($data['event']['end_date']) ?
+                                    old('end_date', $data['event']['end_date']->format('Y-m-d H:i')) : old('end_date')) }}"
                                     placeholder="Select date">
                                 <div class="input-group-append">
                                     <span class="input-group-text"><i class="fi fi-rr-calendar-clock"></i></span>
@@ -403,7 +403,7 @@
                                 @foreach ($data['event']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name"
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
@@ -423,14 +423,15 @@
                 @endif
             </div>
         </form>
-        
+
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script src="{{ asset('assets/backend/js/admin.js') }}"></script>
-<script src="{{ asset('assets/backend/vendor/libs/wysiwyg/tinymce.min.js') }}"></script>
+<script src="https://cdn.tiny.cloud/1/9p772cxf3cqe1smwkua8bcgyf2lf2sa9ak2cm6tunijg1zr9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
 <script src="{{ asset('assets/backend/vendor/libs/moment/moment.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>

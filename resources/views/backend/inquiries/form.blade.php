@@ -10,7 +10,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['inquiry']) ? route('inquiry.store', $queryParam) : 
+        <form action="{{ !isset($data['inquiry']) ? route('inquiry.store', $queryParam) :
             route('inquiry.update', array_merge(['id' => $data['inquiry']['id']], $queryParam)) }}" method="POST">
             @csrf
             @isset($data['inquiry'])
@@ -50,9 +50,9 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/inquiry.label.name') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 {{ !isset($data['inquiry']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="name_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['inquiry']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['inquiry']->fieldLang('name', $lang['iso_codes'])) }}" 
+                                    <input type="text" class="form-control mb-1 {{ !isset($data['inquiry']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="name_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['inquiry']) ? old('name_'.$lang['iso_codes']) : old('name_'.$lang['iso_codes'], $data['inquiry']->fieldLang('name', $lang['iso_codes'])) }}"
                                         placeholder="@lang('module/inquiry.placeholder.name')">
                                     @include('components.field-error', ['field' => 'name_'.$lang['iso_codes']])
                                 </div>
@@ -335,7 +335,7 @@
                                 @foreach ($data['inquiry']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name"
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
@@ -355,14 +355,15 @@
                 @endif
             </div>
         </form>
-        
+
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script src="{{ asset('assets/backend/js/admin.js') }}"></script>
-<script src="{{ asset('assets/backend/vendor/libs/wysiwyg/tinymce.min.js') }}"></script>
+<script src="https://cdn.tiny.cloud/1/9p772cxf3cqe1smwkua8bcgyf2lf2sa9ak2cm6tunijg1zr9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
 <script src="{{ asset('assets/backend/vendor/libs/jquery-ace/ace/ace.js') }}"></script>
