@@ -1,5 +1,11 @@
 @extends('layouts.backend.layout')
 
+@if (config('cms.setting.recaptcha') == true)
+    @section('jshead')
+        {!! htmlScriptTagJsApi() !!}
+    @endsection
+@endif
+
 @section('styles')
 <link rel="stylesheet" href="{{ asset('assets/backend/vendor/libs/select2/select2.css') }}">
 @endsection
