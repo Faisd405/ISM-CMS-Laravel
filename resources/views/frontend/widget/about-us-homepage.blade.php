@@ -4,10 +4,10 @@
             <div class="col-lg-6">
                 <div class="section-img">
                     <div class="section-img-1 ratio ratio-1x1 anim-scroll-img" data-aos>
-                        <img src="{{ $widget['module']['bannerSrc'] ?? 'assets/frontend/img/integra_about_featured.jpg' }}" alt="" class="thumb">
+                        <img src="{{ $widget['module']['page']['bannerSrc'] ?? 'assets/frontend/img/integra_about_featured.jpg' }}" alt="" class="thumb">
                     </div>
                     <div class="section-img-2 ratio ratio-1x1 anim-scroll-img delay-200" data-aos>
-                        <img src="{{ $widget['module']['coverSrc'] ?? 'assets/frontend/img/integra_about_approach1.jpg' }}" alt="" class="thumb">
+                        <img src="{{ $widget['module']['page']['coverSrc'] ?? 'assets/frontend/img/integra_about_approach1.jpg' }}" alt="" class="thumb">
                     </div>
                 </div>
             </div>
