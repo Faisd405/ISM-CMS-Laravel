@@ -3,15 +3,12 @@
         <div class="row g-0 align-items-center justify-content-between">
             <div class="col-lg-6">
                 <div class="section-img">
-                    @foreach ($widget['module']['childs'] as $key => $child)
-                        <div class="section-img-{{$key+1}} ratio ratio-1x1 anim-scroll-img
-                            @if ($loop->first) delay-100 @else  @endif" data-aos>
-                            <img src="{{$child['bannerSrc']}}" alt="" class="thumb">
-                        </div>
-                    @endforeach
-                    {{-- <div class="section-img-2 ratio ratio-1x1 anim-scroll-img delay-200" data-aos>
-                        <img src="{{ asset('assets/frontend/img/integra_about_approach1.jpg') }}" alt="" class="thumb">
-                    </div> --}}
+                    <div class="section-img-1 ratio ratio-1x1 anim-scroll-img" data-aos>
+                        <img src="{{ $widget['module']['bannerSrc'] ?? 'assets/frontend/img/integra_about_featured.jpg' }}" alt="" class="thumb">
+                    </div>
+                    <div class="section-img-2 ratio ratio-1x1 anim-scroll-img delay-200" data-aos>
+                        <img src="{{ $widget['module']['coverSrc'] ?? 'assets/frontend/img/integra_about_approach1.jpg' }}" alt="" class="thumb">
+                    </div>
                 </div>
             </div>
             <div class="col-lg-5">
