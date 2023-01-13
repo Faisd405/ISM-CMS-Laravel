@@ -90,6 +90,13 @@
                                 <article>
                                     {!! $data['read']->fieldLang('after_body') !!}
                                 </article>
+
+                                <div class="flex justify-content-center mt-5">
+                                    <a class="btn btn-danger" href="{{ route('document.download', ['id' => 1]) }}"
+                                        target="_blank">
+                                        <div class="label-btn span-center subtitle">@lang('text.after_message_file')</div>
+                                    </a>
+                                </div>
                             </div>
                         @else
                             <form action="{{ route('inquiry.submit', ['id' => $data['read']->id]) }}" method="post">

@@ -33,4 +33,5 @@ return [
 	'support_3' => 'Support #3',
 	'see_details' => 'See Details',
 	'text_support' => 'Please message us',
+    'after_message_file'=> 'Download File',
 ];
