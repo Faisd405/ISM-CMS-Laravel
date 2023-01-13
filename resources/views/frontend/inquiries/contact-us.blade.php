@@ -107,7 +107,7 @@
                                                         @endforeach
                                                     </label>
                                                     @if ($field->type == '1')
-                                                        <textarea type="text" rows="2" class="form-control"></textarea>
+                                                        <textarea name="{{ $field->name }}" type="text" rows="2" class="form-control"></textarea>
                                                         <div class="input-line"></div>
                                                     @else
                                                         <input type="text" class="form-control"
