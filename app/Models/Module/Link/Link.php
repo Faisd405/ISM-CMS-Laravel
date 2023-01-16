@@ -25,6 +25,7 @@ class Link extends Model
     protected $casts = [
         'name' => 'json',
         'description' => 'json',
+        'header_text' => 'json',
         'cover' => 'json',
         'banner' => 'json',
         'config' => 'json',

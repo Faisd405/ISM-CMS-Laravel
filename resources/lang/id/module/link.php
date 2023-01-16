@@ -8,6 +8,7 @@ return [
         'name' => 'Nama',
         'slug' => 'Slug / URL',
         'description' => 'Deskripsi',
+        'header_text' => 'Teks Header',
     ],
     'placeholder' => [
         'name' => 'Masukan nama',

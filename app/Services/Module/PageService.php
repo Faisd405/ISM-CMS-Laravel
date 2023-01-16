@@ -40,7 +40,7 @@ class PageService
      * @param array $with
      * @param array $orderBy
      */
-    public function getPageList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getPageList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $page = $this->pageModel->query();
@@ -100,7 +100,7 @@ class PageService
 
             $result = $page->get();
         }
-        
+
         return $result;
     }
 
@@ -112,10 +112,10 @@ class PageService
     public function getPage($where, $with = [])
     {
         $page = $this->pageModel->query();
-        
+
         if (!empty($with))
             $page->with($with);
-        
+
         $result = $page->firstWhere($where);;
 
         return $result;
@@ -158,7 +158,7 @@ class PageService
             $page->save();
 
             try {
-                
+
                 DB::commit();
 
                 if ($page['parent'] == 0) {
@@ -178,12 +178,12 @@ class PageService
             } catch (Exception $e) {
 
                 DB::rollBack();
-                
+
                 return $this->error(null,  $e->getMessage());
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -198,7 +198,7 @@ class PageService
         $page = $this->getPage($where);
 
         try {
-            
+
             $this->setField($data, $page);
             if (Auth::guard()->check())
                 $page->updated_by = Auth::user()['id'];
@@ -218,7 +218,7 @@ class PageService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -237,6 +237,9 @@ class PageService
             $title[$value['iso_codes']] = ($data['title_'.$value['iso_codes']] == null) ?
                 $data['title_'.$langDefault] : $data['title_'.$value['iso_codes']];
 
+            $header_text[$value['iso_codes']] = ($data['header_text_'.$value['iso_codes']] == null) ?
+                $data['header_text_'.$langDefault] : $data['header_text_'.$value['iso_codes']];
+
             $intro[$value['iso_codes']] = ($data['intro_'.$value['iso_codes']] == null) ?
                 $data['intro_'.$langDefault] : $data['intro_'.$value['iso_codes']];
 
@@ -248,6 +251,7 @@ class PageService
         $page->title = $title;
         $page->intro = $intro;
         $page->content = $content;
+        $page->header_text = $header_text;
         $page->cover = [
             'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
             'title' => $data['cover_title'] ?? null,
@@ -263,6 +267,7 @@ class PageService
         $page->detail = (bool)$data['detail'];
         $page->locked = (bool)$data['locked'];
         $page->config = [
+            'show_header_text' => (bool)$data['config_show_header_text'],
             'show_intro' => (bool)$data['config_show_intro'],
             'show_content' => (bool)$data['config_show_content'],
             'show_tags' => (bool)$data['config_show_tags'],
@@ -288,7 +293,7 @@ class PageService
         ];
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -317,7 +322,7 @@ class PageService
             if ($field == 'approved') {
                 $value = $page['approved'] == 1 ? 0 : 1;
             }
-            
+
             $page->update([
                 $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $page['updated_by'],
@@ -335,9 +340,9 @@ class PageService
             return $this->success($page, __('global.alert.update_success', [
                 'attribute' => __('module/page.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -351,11 +356,11 @@ class PageService
     public function position($where, $position, $parent = null)
     {
         $page = $this->getPage($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 if ($parent != null) {
                     $this->pageModel->where('position', $position)->where('parent', $parent)->update([
                         'position' => $page['position'],
@@ -365,13 +370,13 @@ class PageService
                         'position' => $page['position'],
                     ]);
                 }
-    
+
                 $page->position = $position;
                 if (Auth::guard()->check()) {
                     $page->updated_by = Auth::user()['id'];
                 }
                 $page->save();
-    
+
                 return $this->success($page, __('global.alert.update_success', [
                     'attribute' => __('module/page.caption')
                 ]));
@@ -382,9 +387,9 @@ class PageService
                     'attribute' => __('module/page.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -416,7 +421,7 @@ class PageService
         $page = $this->getPage($where);
 
         try {
-            
+
             $childs = $page->childs()->count();
 
             if ($page['locked'] == 0 && $childs == 0) {
@@ -443,7 +448,7 @@ class PageService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/page.caption')
                 ]));
-    
+
             } else {
                 return $this->error($page,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/page.caption')
@@ -451,7 +456,7 @@ class PageService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -465,7 +470,7 @@ class PageService
         $page = $this->pageModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkSlug = $this->getPage(['slug' => $page['slug']]);
             $checkParent = $this->getPage(['id' => $page['parent']]);
             if (!empty($checkSlug) || $page['parent'] > 0 && empty($checkParent)) {
@@ -473,7 +478,7 @@ class PageService
                     'attribute' => __('module/page.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $page->medias()->restore();
             $page->menus()->restore();
@@ -484,9 +489,9 @@ class PageService
             return $this->success($page, __('global.alert.restore_success', [
                 'attribute' => __('module/page.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -504,7 +509,7 @@ class PageService
         }
 
         try {
-                
+
             $page->medias()->forceDelete();
             $page->tags()->delete();
             $page->menus()->forceDelete();
@@ -517,9 +522,9 @@ class PageService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/page.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

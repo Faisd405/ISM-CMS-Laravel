@@ -12,6 +12,7 @@ return[
             'description' => 'Description',
             'template_list' => 'Template List',
             'template_detail' => 'Template Detail',
+            'header_text' => 'Header Text (Banner)',
         ],
         'placeholder' => [
             'name' => 'Enter name',

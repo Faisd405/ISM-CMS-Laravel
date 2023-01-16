@@ -126,6 +126,7 @@ class PageController extends Controller
         $data['locked'] = (bool)$request->locked;
         $data['config_show_intro'] = (bool)$request->config_show_intro;
         $data['config_show_content'] = (bool)$request->config_show_content;
+        $data['config_show_header_text'] = (bool)$request->config_show_header_text;
         $data['config_show_tags'] = (bool)$request->config_show_tags;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
@@ -187,6 +188,7 @@ class PageController extends Controller
         $data['config_is_detail'] = (bool)$request->config_is_detail;
         $data['config_show_intro'] = (bool)$request->config_show_intro;
         $data['config_show_content'] = (bool)$request->config_show_content;
+        $data['config_show_header_text'] = (bool)$request->config_show_header_text;
         $data['config_show_tags'] = (bool)$request->config_show_tags;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_banner'] = (bool)$request->config_show_banner;

@@ -42,7 +42,7 @@ class LinkController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['links'] = $this->linkService->getLinkList($filter, true, 10, false, [], 
+        $data['links'] = $this->linkService->getLinkList($filter, true, 10, false, [],
             config('cms.module.link.ordering'));
         $data['no'] = $data['links']->firstItem();
         $data['links']->withQueryString();
@@ -106,6 +106,7 @@ class LinkController extends Controller
         $data = $request->all();
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
+        $data['config_show_header_text'] = (bool)$request->config_show_header_text;
         $data['config_show_description'] = (bool)$request->config_show_description;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
@@ -256,7 +257,7 @@ class LinkController extends Controller
         $data['links'] = $this->linkService->getLinkList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], 
+        ], true, $limit, false, [],
             config('cms.module.link.ordering'));
         $data['no_links'] = $data['links']->firstItem();
         $data['links']->withQueryString();
@@ -309,7 +310,7 @@ class LinkController extends Controller
        $filter['approved'] = 1;
 
        //data
-       $data['medias'] = $this->linkService->getMediaList($filter, 
+       $data['medias'] = $this->linkService->getMediaList($filter,
            $data['read']['config']['paginate_media'], $data['read']['config']['media_limit'], false,
        [], [$data['read']['config']['media_order_by'] => $data['read']['config']['media_order_type']]);
        if ($data['read']['config']['paginate_media'] == true) {

@@ -8,6 +8,7 @@ return [
         'name' => 'Name',
         'slug' => 'Slug / URL',
         'description' => 'Description',
+        'header_text' => 'Header Text',
     ],
     'placeholder' => [
         'name' => 'Enter name',

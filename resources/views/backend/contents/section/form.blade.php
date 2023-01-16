@@ -48,6 +48,16 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group row">
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.header_text')</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control text-bolder {{ !isset($data['section']) ? 'gen_slug' : '' }} @error('header_text_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="header_text_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['section']) ? old('header_text_'.$lang['iso_codes']) : (isset($data['section']['header_text'])?old('header_text_'.$lang['iso_codes'], $data['section']->fieldLang('header_text', $lang['iso_codes'])) : old('header_text_'.$lang['iso_codes'])) }}"
+                                        placeholder="@lang('module/content.section.label.header_text')">
+                                    @include('components.field-error', ['field' => 'header_text_'.$lang['iso_codes']])
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.section.label.name') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control text-bolder {{ !isset($data['section']) ? 'gen_slug' : '' }} @error('name_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"

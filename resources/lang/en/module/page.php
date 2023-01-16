@@ -9,6 +9,7 @@ return [
         'slug' => 'Slug / URL',
         'intro' => 'Intro',
         'content' => 'Content',
+        'header_text' => 'Header Text (Banner)',
         'child' => 'Child',
     ],
     'placeholder' => [

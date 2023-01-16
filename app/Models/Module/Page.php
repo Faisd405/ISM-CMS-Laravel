@@ -27,6 +27,7 @@ class Page extends Model
         'path' => 'json',
         'title' => 'json',
         'intro' => 'json',
+        'header_text' => 'json',
         'content' => 'json',
         'cover' => 'json',
         'banner' => 'json',
@@ -72,7 +73,7 @@ class Page extends Model
             foreach ($this->whereIn('id', $this->path)->get() as $key => $value) {
                 $path[$key] = $value->slug;
             }
-    
+
             $getSlug = implode('/', $path);
             $slug = $getSlug.'/'.$this->slug;
         }

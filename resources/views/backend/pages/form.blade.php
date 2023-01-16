@@ -63,6 +63,16 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group row">
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/page.label.header_text') </label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control text-bolder @error('header_text_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="header_text_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['page']) ? old('header_text_'.$lang['iso_codes']) : (isset($data['page']['header_text'])?old('header_text_'.$lang['iso_codes'], $data['page']->fieldLang('header_text', $lang['iso_codes'])) : old('header_text_'.$lang['iso_codes'])) }}"
+                                        placeholder="@lang('module/page.label.header_text')">
+                                    @include('components.field-error', ['field' => 'header_text_'.$lang['iso_codes']])
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/page.label.title') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control text-bolder {{ !isset($data['page']) ? 'gen_slug' : '' }} @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
@@ -246,6 +256,14 @@
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                             <small class="form-text">@lang('global.detail_info')</small>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Header Text</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_header_text" value="1"
+                                {{ !isset($data['page']) ? (old('config_show_header_text', 1) ? 'checked' : '') : (isset($data['page']['config']['show_header_text'])?(old('config_show_header_text', $data['page']['config']['show_header_text']) == 1 ? 'checked' : ''):old('config_show_header_text', 1) ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
                         </div>
                         <div class="form-group col-md-2 hide-form">
                             <label class="form-label">Show Intro</label>

@@ -42,7 +42,7 @@ class ContentSectionController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['sections'] = $this->contentService->getSectionList($filter, true, 10, false, [], 
+        $data['sections'] = $this->contentService->getSectionList($filter, true, 10, false, [],
             config('cms.module.content.section.ordering'));
 
         $data['no'] = $data['sections']->firstItem();
@@ -114,6 +114,7 @@ class ContentSectionController extends Controller
         $data['locked'] = (bool)$request->locked;
         $data['config_show_description'] = (bool)$request->config_show_description;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_header_text'] = (bool)$request->config_show_header_text;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_category'] = (bool)$request->config_show_category;
         $data['config_multiple_category'] = (bool)$request->config_multiple_category;
@@ -168,6 +169,7 @@ class ContentSectionController extends Controller
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_description'] = (bool)$request->config_show_description;
+        $data['config_show_header_text'] = (bool)$request->config_show_header_text;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_category'] = (bool)$request->config_show_category;
@@ -317,7 +319,7 @@ class ContentSectionController extends Controller
         if ($data['read']['public'] == 0 && Auth::guard()->check() == false) {
             return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
         }
-        
+
         // filtering
         $categoryId = $request->input('category_id', '');
         $keyword = $request->input('keyword', '');
@@ -364,7 +366,7 @@ class ContentSectionController extends Controller
         $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             !empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
