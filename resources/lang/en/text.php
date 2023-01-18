@@ -5,7 +5,13 @@ return [
 	'message_success' => 'Message sent successfully',
 	'header_title' => 'Find the right solution for your business',
 	'header_title_2' => 'Here you can see what\'s new in Integrate',
-	'header_title_3' => 'Grow Professionally with the best',
+
+	'sap_solution_title_customer' => 'Grow Professionally with the best',
+	'industries_solution_customer' => 'Grow Professionally with the best',
+	'our_service_customer' => 'Grow Professionally with the best',
+	'product_application_title_customer' => 'Grow Professionally with the best',
+	'about_us_customer' => 'Grow Professionally with the best',
+
 	'share' => 'Share',
 	'read_more' => 'Read More',
 	'meet_our_team' => 'Meet Our Team',

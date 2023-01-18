@@ -112,7 +112,7 @@
                             <div class="col-lg-6">
                                 <div class="main-title text-center mb-5">
                                     <div class="subtitle text-muted mb-5 split-text" data-aos>@lang('text.our_customers')</div>
-                                    <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>@lang('text.header_title_3')</h1>
+                                    <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>@lang('text.about_us_customer')</h1>
                                 </div>
                             </div>
                         </div>
