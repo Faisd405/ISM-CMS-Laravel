@@ -96,7 +96,7 @@ return [
     'title' => 'Title',
     'alt' => 'ALT',
     'cover' => 'Cover',
-    'logo_banner' => 'Logo Banner',
+    'logo_banner' => 'Logo Banner (Landing Page)',
     'banner' => 'Banner',
     'browse' => 'Browse',
     'language' => 'Language',

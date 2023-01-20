@@ -354,7 +354,7 @@
                             </label>
                         </div>
                         <div class="form-group col-md-2 hide-form">
-                            <label class="form-label">Show Logo Banner (Landing Page)</label>
+                            <label class="form-label">Show Logo Banner</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_logo_banner" value="1"
                                 {{ !isset($data['post']) ? (old('config_show_logo_banner') ? 'checked' : 'checked') : (isset($data['post']['config']['show_logo_banner'])?(old('config_show_logo_banner', $data['post']['config']['show_logo_banner']) == 1 ? 'checked' : ''):old('config_show_logo_banner') ? 'checked' : '') }}>
