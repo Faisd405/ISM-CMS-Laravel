@@ -152,6 +152,7 @@ class ContentPostController extends Controller
         $data['config_show_intro'] = (bool)$request->config_show_intro;
         $data['config_show_content'] = (bool)$request->config_show_content;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_logo_banner'] = (bool)$request->config_show_logo_banner;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_media'] = (bool)$request->config_show_media;
         $data['config_action_media'] = (bool)$request->config_action_media;
@@ -189,7 +190,7 @@ class ContentPostController extends Controller
             foreach ($data['post']->tags as $key => $value) {
                 $tags[$key] = $value->tag->name;
             }
-    
+
             $data['tags'] = implode(',', $tags);
         }
 
@@ -215,6 +216,7 @@ class ContentPostController extends Controller
         $data['config_show_intro'] = (bool)$request->config_show_intro;
         $data['config_show_content'] = (bool)$request->config_show_content;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
+        $data['config_show_logo_banner'] = (bool)$request->config_show_logo_banner;
         $data['config_show_banner'] = (bool)$request->config_show_banner;
         $data['config_show_media'] = (bool)$request->config_show_media;
         $data['config_action_media'] = (bool)$request->config_action_media;
@@ -411,6 +413,7 @@ class ContentPostController extends Controller
             $data['creator'] = $data['read']['posted_by_alias'];
         }
         $data['cover'] = $data['read']['cover_src'];
+        $data['logo_banner'] = $data['read']['logo_banner_src'];
         $data['banner'] = $data['read']['banner_src'];
 
         // meta data
@@ -422,10 +425,10 @@ class ContentPostController extends Controller
         $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             !empty($data['read']->fieldLang('intro'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('intro')), 155);
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             empty($data['read']->fieldLang('intro')) && !empty($data['read']->fieldLang('content'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('content')), 155);
         }

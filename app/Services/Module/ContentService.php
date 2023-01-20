@@ -1245,6 +1245,11 @@ class ContentService
             'title' => $data['cover_title'] ?? null,
             'alt' => $data['cover_alt'] ?? null,
         ];
+        $post->logo_banner = [
+            'filepath' => Str::replace(url('/storage'), '', $data['logo_banner_file']) ?? null,
+            'title' => $data['logo_banner_title'] ?? null,
+            'alt' => $data['logo_banner_alt'] ?? null,
+        ];
         $post->banner = [
             'filepath' => Str::replace(url('/storage'), '', $data['banner_file']) ?? null,
             'title' => $data['banner_title'] ?? null,
@@ -1258,6 +1263,7 @@ class ContentService
             'show_intro' => (bool)$data['config_show_intro'],
             'show_content' => (bool)$data['config_show_content'],
             'show_cover' => (bool)$data['config_show_cover'],
+            'show_logo_banner' => (bool)$data['config_show_logo_banner'],
             'show_banner' => (bool)$data['config_show_banner'],
             'show_media' => (bool)$data['config_show_media'],
             'action_media' => (bool)$data['config_action_media'],

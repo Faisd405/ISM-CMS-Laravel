@@ -28,6 +28,7 @@ class ContentPost extends Model
         'intro' => 'json',
         'content' => 'json',
         'cover' => 'json',
+        'logo_banner' => 'json',
         'banner' => 'json',
         'addon_fields' => 'json',
         'custom_fields' => 'json',
@@ -39,7 +40,8 @@ class ContentPost extends Model
 
     protected $appends = [
         'cover_src',
-        'banner_src'
+        'banner_src',
+        'logo_banner_src'
     ];
 
     public static function boot()
@@ -145,6 +147,21 @@ class ContentPost extends Model
         }
 
         return $cover;
+    }
+
+    public function getLogoBannerSrcAttribute()
+    {
+        if (!empty($this->logo_banner['filepath'])) {
+            $logo_banner = Storage::url($this->logo_banner['filepath']);
+        } else {
+            if (!empty(config('cmsConfig.file.cover_default'))) {
+                $logo_banner = config('cmsConfig.file.cover_default');
+            } else {
+                $logo_banner = asset(config('cms.files.config.cover_default.file'));
+            }
+        }
+
+        return $logo_banner;
     }
 
     public function getBannerSrcAttribute()

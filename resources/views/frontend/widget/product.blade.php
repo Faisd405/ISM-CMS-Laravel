@@ -73,13 +73,13 @@
                     @if ($post['position'] == 1)
                         <div class="slide-item product-item overflow-hidden position-relative">
                             <div class="ratio ratio-1x1">
-                                <img src="{{$post['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
+                                <img src="{{ !empty($post['logo_banner']['filepath'])?$post['logoBannerSrc']:$post['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
                             </div>
                         </div>
                     @else
                         <div class="product-item overflow-hidden position-relative">
                             <div class="ratio ratio-1x1">
-                                <img src="{{$post['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
+                                <img src="{{ !empty($post['logo_banner']['filepath'])?$post['logoBannerSrc']:$post['coverSrc']}}" alt="" class="thumb object-fit-contain" loading="lazy">
                             </div>
                         </div>
                     @endif

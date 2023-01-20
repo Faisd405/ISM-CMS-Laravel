@@ -262,6 +262,11 @@ class PageService
             'title' => $data['banner_title'] ?? null,
             'alt' => $data['banner_alt'] ?? null,
         ];
+        $page->logo_banner = [
+            'filepath' => Str::replace(url('/storage'), '', $data['logo_banner_file']) ?? null,
+            'title' => $data['logo_banner_title'] ?? null,
+            'alt' => $data['logo_banner_alt'] ?? null,
+        ];
         $page->publish = (bool)$data['publish'];
         $page->public = (bool)$data['public'];
         $page->detail = (bool)$data['detail'];
@@ -272,6 +277,7 @@ class PageService
             'show_content' => (bool)$data['config_show_content'],
             'show_tags' => (bool)$data['config_show_tags'],
             'show_cover' => (bool)$data['config_show_cover'],
+            'show_logo_banner' => (bool)$data['config_show_logo_banner'],
             'show_banner' => (bool)$data['config_show_banner'],
             'show_media' => (bool)$data['config_show_media'],
             'detail_child' => (bool)$data['config_detail_child'],

@@ -24,6 +24,16 @@
         });
         }
 
+        var image3 = document.getElementById('button-image3');
+        if (image3 != null) {
+            image3.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            inputId = 'image3';
+
+            window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+        });
+        }
     });
 
     // input
