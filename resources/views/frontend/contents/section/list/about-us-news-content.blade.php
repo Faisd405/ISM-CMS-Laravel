@@ -34,7 +34,7 @@
                     <div class="col-lg-8">
                         <div class="main-title">
                             <div class="subtitle mb-4 text-danger split-text">{!! $data['read']->fieldLang('name') !!}</div>
-                            <h1 class="title fw-700 title-display-2 text-uppercase split-text line-height-sm text-white">{{ $data['read']['header_text'] ? $data['read']->fieldLang('header_text') : __('text.header_title_2')}}</h1>
+                            <h1 class="title fw-700 title-display-2 text-uppercase split-text line-height-sm text-white">{{ $data['read']['header_text'] && !empty($data['read']->fieldLang('header_text')) ? $data['read']->fieldLang('header_text') : __('text.header_title_2') }}</h1>
                         </div>
                     </div>
                 </div>
