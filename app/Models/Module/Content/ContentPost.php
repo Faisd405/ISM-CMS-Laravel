@@ -26,6 +26,7 @@ class ContentPost extends Model
         'category_id' => 'array',
         'title' => 'json',
         'intro' => 'json',
+        'intro_banner' => 'json',
         'content' => 'json',
         'cover' => 'json',
         'logo_banner' => 'json',

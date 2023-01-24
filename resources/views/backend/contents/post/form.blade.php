@@ -69,6 +69,13 @@
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.post.label.intro_banner')</label>
+                                <div class="col-sm-10">
+                                <textarea class="form-control {{ !isset($data['post']) ? 'gen_slug' : '' }} @error('intro_banner_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                    name="intro_banner_{{ $lang['iso_codes'] }}">{{ !isset($data['post']) ? old('intro_banner_'.$lang['iso_codes']) : (isset($data['post']['intro_banner'])?old('intro_banner_'.$lang['iso_codes'], $data['post']->fieldLang('intro_banner', $lang['iso_codes'])) : old('intro_banner_'.$lang['iso_codes'])) }}</textarea>
+                                </div>
+                            </div>
                             <div class="form-group row {{ isset($data['post']) && $data['post']['config']['show_intro'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.post.label.intro')</label>
                                 <div class="col-sm-10">
@@ -334,6 +341,14 @@
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_intro" value="1"
                                 {{ !isset($data['post']) ? (old('config_show_intro') ? 'checked' : 'checked') : (old('config_show_intro', $data['post']['config']['show_intro']) == 1 ? 'checked' : '') }}>
+                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-2 hide-form">
+                            <label class="form-label">Show Intro Banner</label>
+                            <label class="custom-control custom-checkbox m-0">
+                                <input type="checkbox" class="custom-control-input" name="config_show_intro_banner" value="1"
+                                {{ !isset($data['page']) ? (old('config_show_intro_banner', 1) ? 'checked' : '') : (isset($data['page']['config']['show_intro_banner'])?(old('config_show_intro_banner', $data['page']['config']['show_intro_banner']) == 1 ? 'checked' : ''):old('config_show_intro_banner', 1) ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>

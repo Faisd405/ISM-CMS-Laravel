@@ -1227,6 +1227,9 @@ class ContentService
             $intro[$value['iso_codes']] = ($data['intro_'.$value['iso_codes']] == null) ?
                 $data['intro_'.$langDefault] : $data['intro_'.$value['iso_codes']];
 
+            $intro_banner[$value['iso_codes']] = ($data['intro_banner_'.$value['iso_codes']] == null) ?
+                $data['intro_banner_'.$langDefault] : $data['intro_banner_'.$value['iso_codes']];
+
             $content[$value['iso_codes']] = ($data['content_'.$value['iso_codes']] == null) ?
                 $data['content_'.$langDefault] : $data['content_'.$value['iso_codes']];
         }
@@ -1239,6 +1242,7 @@ class ContentService
         $post->slug = Str::slug(strip_tags($data['slug']), '-');
         $post->title = $title;
         $post->intro = $intro;
+        $post->intro_banner = $intro_banner;
         $post->content = $content;
         $post->cover = [
             'filepath' => Str::replace(url('/storage'), '', $data['cover_file']) ?? null,
@@ -1261,6 +1265,7 @@ class ContentService
         $post->locked = (bool)$data['locked'];
         $post->config = [
             'show_intro' => (bool)$data['config_show_intro'],
+            'show_intro_banner' => (bool)$data['config_show_intro_banner'],
             'show_content' => (bool)$data['config_show_content'],
             'show_cover' => (bool)$data['config_show_cover'],
             'show_logo_banner' => (bool)$data['config_show_logo_banner'],

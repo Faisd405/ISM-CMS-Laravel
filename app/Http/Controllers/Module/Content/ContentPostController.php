@@ -150,6 +150,7 @@ class ContentPostController extends Controller
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_intro'] = (bool)$request->config_show_intro;
+        $data['config_show_intro_banner'] = (bool)$request->config_show_intro_banner;
         $data['config_show_content'] = (bool)$request->config_show_content;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_logo_banner'] = (bool)$request->config_show_logo_banner;
@@ -214,6 +215,7 @@ class ContentPostController extends Controller
         $data['detail'] = (bool)$request->detail;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_intro'] = (bool)$request->config_show_intro;
+        $data['config_show_intro_banner'] = (bool)$request->config_show_intro_banner;
         $data['config_show_content'] = (bool)$request->config_show_content;
         $data['config_show_cover'] = (bool)$request->config_show_cover;
         $data['config_show_logo_banner'] = (bool)$request->config_show_logo_banner;

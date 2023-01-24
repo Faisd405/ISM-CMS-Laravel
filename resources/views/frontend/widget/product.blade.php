@@ -48,7 +48,11 @@
                                     </div>
                                     <div class="caption-text text-muted anim-scroll-up delay-300 mb-5" data-aos>
                                         <div class="clamp-3">
+                                            @if (isset($post->intro_banner) && !empty($post->fieldLang('intro_banner')))
+                                            {!! $post->fieldLang('intro_banner') !!}
+                                            @else
                                             {!! $post->fieldLang('intro') !!}
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="caption-btn anim-scroll-up delay-400" data-aos>

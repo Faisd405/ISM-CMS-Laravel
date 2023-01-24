@@ -41,6 +41,7 @@ return[
             'title' => 'Title',
             'slug' => 'Slug / URL',
             'intro' => 'Intro',
+            'intro_banner' => 'Intro Banner (Landing Page)',
             'content' => 'Content',
             'publish_time' => 'Publish Time',
             'publish_end' => 'Publish End',
