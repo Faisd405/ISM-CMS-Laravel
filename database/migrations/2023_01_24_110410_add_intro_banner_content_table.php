@@ -14,7 +14,7 @@ class AddIntroBannerContentTable extends Migration
     public function up()
     {
         Schema::table('mod_content_posts', function (Blueprint $table) {
-            $table->string('intro_banner')->nullable()->after('cover');
+            $table->text('intro_banner')->nullable()->after('cover');
         });
     }
 
