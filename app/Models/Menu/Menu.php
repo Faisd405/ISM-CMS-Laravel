@@ -60,6 +60,11 @@ class Menu extends Model
         return $this->childs()->with('childs');
     }
 
+    public function childPublish()
+    {
+        return $this->childs()->where('publish', 1);
+    }
+
     public function getParent()
     {
         return $this->firstWhere('id', $this->parent);

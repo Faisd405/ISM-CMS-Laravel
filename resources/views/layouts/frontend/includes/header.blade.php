@@ -54,7 +54,7 @@
                                         <div class="dropdown-menu-hover collapse show"
                                             id="collapse-menu-{{ $header['id'] }}">
                                             <ul class="dropdown-content">
-                                                @foreach ($header->childs as $child)
+                                                @foreach ($header->childPublish()->get() as $child)
                                                     @if (count($child->childs) == 0)
                                                         <li class="dropdown-item"><a
                                                                 href="{{ $child['module_data']['routes'] }}"
@@ -77,7 +77,7 @@
                                                                 id="collapse-inner-{{ $child['id'] }}"
                                                                 data-bs-parent="#collapse-menu-{{ $header['id'] }}">
                                                                 <ul class="dropdown-content">
-                                                                    @foreach ($child->childs as $subchild)
+                                                                    @foreach ($child->childPublish()->get() as $subchild)
                                                                         <li class="dropdown-item"><a
                                                                                 href="{{ $subchild['module_data']['routes'] }}"
                                                                                 class="dropdown-link">
