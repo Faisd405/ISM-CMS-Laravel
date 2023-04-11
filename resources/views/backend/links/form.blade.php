@@ -326,7 +326,7 @@
 
 @section('scripts')
 <script src="{{ asset('assets/backend/js/admin.js') }}"></script>
-<script src="https://cdn.tiny.cloud/1/9p772cxf3cqe1smwkua8bcgyf2lf2sa9ak2cm6tunijg1zr9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="{{ env('TINY_MCE_API_KEY') }}" referrerpolicy="origin"></script>
 
 <script src="{{ asset('assets/backend/vendor/libs/select2/select2.js') }}"></script>
 @endsection
