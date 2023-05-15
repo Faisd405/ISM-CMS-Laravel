@@ -117,7 +117,7 @@
                     <div class="col-lg-6">
                         <div class="main-title text-center mb-4">
                             <div class="subtitle text-danger mb-5 split-text" data-aos>@lang('text.about_values')</div>
-                            <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>@lang('text.core_values')</h1>
+                            <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>{{ $data['childs']->skip(2)->first()->fieldLang('title') }}</h1>
                         </div>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
                     <div class="col-lg-6">
                         <div class="main-title text-center mb-4">
                             <div class="subtitle text-danger mb-5 split-text" data-aos>@lang('text.about_leadership')</div>
-                            <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>{{ $data['childs']->skip(2)->first()->fieldLang('title') }}</h1>
+                            <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>{{ $data['childs']->skip(3)->first()->fieldLang('title') }}</h1>
                         </div>
                     </div>
                 </div>
