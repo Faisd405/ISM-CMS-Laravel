@@ -111,37 +111,13 @@
                 </div>
             </div>
         </div>
-        @if (!empty($data['core_values']))
+        @if ($data['childs']->skip(2)->first())
         <div class="content-wrap bg-muted">
             <div class="container">
                 <div class="row g-0 justify-content-center">
                     <div class="col-lg-6">
                         <div class="main-title text-center mb-4">
-                            <div class="subtitle text-danger mb-5 split-text" data-aos>@lang('text.about_values')</div>
-                            <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>@lang('text.core_values')</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="row gx-5 justify-content-center">
-                    @foreach ($data['core_values']['childs'] as $coreValues)
-                        <div class="col-lg-4">
-                            <div class="text-center my-5 px-4 anim-scroll-up" data-aos>
-                                <img class="my-4" src="{{$coreValues['coverSrc']}}" style="width:4rem">
-                                <h3 class="title line-height-sm fw-700 mb-4">{{$coreValues->fieldLang('title')}}</h3>
-                                <p class="mb-0">{!!$coreValues->fieldLang('content')!!}</p>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-        <div class="content-wrap bg-muted">
-            <div class="container">
-                <div class="row g-0 justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="main-title text-center mb-4">
-                            <div class="subtitle text-danger mb-5 split-text" data-aos>@lang('text.about_leadership')</div>
+                            <div class="subtitle text-danger mb-5 split-text" data-aos>{{ $data['childs']->skip(2)->first()->slug == 'leadership-traits' ? __('text.about_leadership') : __('text.about_values') }}</div>
                             <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>{{ $data['childs']->skip(2)->first()->fieldLang('title') }}</h1>
                         </div>
                     </div>
@@ -159,5 +135,31 @@
                 </div>
             </div>
         </div>
+        @endif
+        @if ($data['childs']->skip(3)->first())
+        <div class="content-wrap bg-muted">
+            <div class="container">
+                <div class="row g-0 justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="main-title text-center mb-4">
+                            <div class="subtitle text-danger mb-5 split-text" data-aos>{{ $data['childs']->skip(3)->first()->slug == 'leadership-traits' ? __('text.about_leadership') : __('text.about_values') }}</div>
+                            <h1 class="title text-uppercase line-height-sm fw-700 split-text" data-aos>{{ $data['childs']->skip(3)->first()->fieldLang('title') }}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-5 justify-content-center">
+                    @foreach ($data['childs']->skip(3)->first()['childs'] as $child)
+                        <div class="col-lg-4">
+                            <div class="text-center my-5 px-4 anim-scroll-up" data-aos>
+                                <img class="my-4" src="{{$child['coverSrc']}}" style="width:4rem">
+                                <h3 class="title line-height-sm fw-700 mb-4">{{$child->fieldLang('title')}}</h3>
+                                <p class="mb-0">{!!$child->fieldLang('content')!!}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
     </section>
 @endsection

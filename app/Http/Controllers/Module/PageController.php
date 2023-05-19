@@ -412,10 +412,6 @@ class PageController extends Controller
         // record hits
         $this->pageService->recordHits(['id' => $data['read']['id']]);
 
-        if ($blade == 'custom.about-us-leadership-page') {
-            $data['core_values'] = $this->pageService->getPage(['slug' => 'company-profile']);
-        }
-
         return view('frontend.pages.'.$blade, compact('data'), [
             'title' => $data['read']->fieldLang('title'),
             'breadcrumbs' => [
