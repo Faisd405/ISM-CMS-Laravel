@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
         // Bootstrap pagination default
         Paginator::useBootstrap();
 
-        if (config('cms.setting.index_url') == true) {
+        if (config('cms.setting.index_url') == true && !App::runningInConsole()) {
             // set config cache
             App::make(ConfigurationService::class)->setConfigCache();
 

@@ -65,7 +65,7 @@ Route::prefix('admin/inquiry')->name('inquiry.')->middleware('auth')->group(func
 
     //--- Field
     Route::prefix('{inquiryId}/field')->name('field.')->group(function () {
-        
+
         Route::get('/', [InquiryFieldController::class, 'index'])
             ->name('index')
             ->middleware('permission:inquiry_fields');
@@ -132,7 +132,7 @@ Route::group($group, function () {
     Route::get('/inquiry', [InquiryController::class, 'list'])
         ->name('inquiry.list');
 
-    if (config('cms.setting.index_url') == true) {
+    if (config('cms.setting.index_url') == true && !App::runningInConsole()) {
         $indexing = IndexingUrl::where('module', 'inquiry')->get();
         if ($indexing->count() > 0) {
             foreach ($indexing as $key => $value) {

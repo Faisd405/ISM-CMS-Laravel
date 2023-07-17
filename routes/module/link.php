@@ -60,7 +60,7 @@ Route::prefix('admin/link')->name('link.')->middleware('auth')->group(function (
         Route::get('/trash', [LinkMediaController::class, 'trash'])
             ->name('trash')
             ->middleware('role:developer|super');
-            
+
         Route::get('/create', [LinkMediaController::class, 'create'])
             ->name('create')
             ->middleware('permission:link_media_create');
@@ -114,7 +114,7 @@ Route::group($group, function () {
     Route::get('link', [LinkController::class, 'list'])
         ->name('link.list');
 
-    if (config('cms.setting.index_url') == true) {
+    if (config('cms.setting.index_url') == true && !App::runningInConsole()) {
         $indexing = IndexingUrl::where('module', 'link')->get();
         if ($indexing->count() > 0) {
             foreach ($indexing as $key => $value) {
