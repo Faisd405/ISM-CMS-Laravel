@@ -309,7 +309,15 @@
                             <label class="form-label">Show Header Text</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_header_text" value="1"
-                                {{ !isset($data['page']) ? (old('config_show_header_text', 1) ? 'checked' : '') : (isset($data['page']['config']['show_header_text'])?(old('config_show_header_text', $data['page']['config']['show_header_text']) == 1 ? 'checked' : ''):old('config_show_header_text', 1) ? 'checked' : '') }}>
+                                @if (!isset($data['section']) && old('config_show_header_text', 1))
+                                    checked
+                                @elseif(isset($data['section']['config']['show_header_text']) && old('config_show_header_text', $data['section']['config']['show_header_text']) == 1)
+                                    checked
+                                @elseif(old('config_show_header_text', 1))
+                                    checked
+                                @endif
+                                {{-- {{ !isset($data['section']) ? (old('config_show_header_text', 1) ? 'checked' : '') : (isset($data['section']['config']['show_header_text'])?(old('config_show_header_text', $data['section']['config']['show_header_text']) == 1 ? 'checked' : ''):old('config_show_header_text', 1) ? 'checked' : '') }}> --}}
+                                >
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
