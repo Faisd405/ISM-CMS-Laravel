@@ -3,7 +3,6 @@
 return [
     'code' => 'ism', // kode cms untuuk generate password dll.
 
-    // untuk setup pertama, set 2 variable ini menjadi false
     'index_url' => true, //untuk mengaktifkan permalink short
     'locales' => true,  //untuk mengaktifkan auto redirect ke ISO CODE bahasa
 

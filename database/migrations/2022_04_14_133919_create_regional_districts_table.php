@@ -22,7 +22,7 @@ class CreateRegionalDistrictsTable extends Migration
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->boolean('locked')->default(false)->comment('1 = tidak bisa didelete , 0 = bisa didelete');
-            
+
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
@@ -49,6 +49,6 @@ class CreateRegionalDistrictsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('regional_ditricts');
+        Schema::dropIfExists('regional_districts');
     }
 }

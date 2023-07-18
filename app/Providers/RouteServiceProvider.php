@@ -6,6 +6,7 @@ use App\Models\Feature\Language;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
@@ -36,20 +37,20 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (config('cms.setting.locales') == true) {
-            
+        if (config('cms.setting.locales') == true && !App::runningInConsole()) {
+
             $locales = [];
             foreach (Language::active()->get() as $val) {
                 if($val->iso_codes != config('app.fallback_locale'))
                     $locales[$val->iso_codes] = $val->name;
             }
-            
+
             config(['cms.module.feature.language.listLocale'=> $locales]);
-            
+
             // set needLocale yang digunakan di semua routes
-            config(['cms.module.feature.language.needLocale' => 
-                    request()->segment(1)!=config('app.fallback_locale') && 
-                    array_key_exists(request()->segment(1), 
+            config(['cms.module.feature.language.needLocale' =>
+                    request()->segment(1)!=config('app.fallback_locale') &&
+                    array_key_exists(request()->segment(1),
                         config('cms.module.feature.language.listLocale'))
             ]);
         }

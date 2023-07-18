@@ -63,7 +63,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
         Route::get('/trash', [ContentCategoryController::class, 'trash'])
             ->name('trash')
             ->middleware('role:developer|super');
-        
+
         Route::get('/create', [ContentCategoryController::class, 'create'])
             ->name('create')
             ->middleware('permission:content_category_create');
@@ -97,7 +97,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
         Route::put('/{id}/restore', [ContentCategoryController::class, 'restore'])
             ->name('restore')
             ->middleware('role:developer|super');
-            
+
     });
 
     //--- Post
@@ -109,7 +109,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
         Route::get('/trash', [ContentPostController::class, 'trash'])
             ->name('trash')
             ->middleware('role:developer|super');
-        
+
         Route::get('/create', [ContentPostController::class, 'create'])
             ->name('create')
             ->middleware('permission:content_post_create');
@@ -146,7 +146,7 @@ Route::prefix('admin/content')->name('content.')->middleware('auth')->group(func
         Route::put('/{id}/restore', [ContentPostController::class, 'restore'])
             ->name('restore')
             ->middleware('role:developer|super');
-            
+
     });
 
 });
@@ -172,7 +172,7 @@ Route::group($group, function () {
     Route::get('content/post', [ContentPostController::class, 'list'])
         ->name('content.post.list');
 
-    if (config('cms.setting.index_url') == true) {
+    if (config('cms.setting.index_url') == true && !App::runningInConsole()) {
         $indexing = IndexingUrl::where('module', 'content_section')->get();
         if ($indexing->count() > 0) {
             foreach ($indexing as $key => $value) {

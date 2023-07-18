@@ -13,7 +13,7 @@ Route::prefix('admin/page')->name('page.')->middleware('auth')->group(function (
     Route::get('/trash', [PageController::class, 'trash'])
         ->name('trash')
         ->middleware('role:developer|super');
-        
+
     Route::get('/create', [PageController::class, 'create'])
         ->name('create')
         ->middleware('permission:page_create');
@@ -59,8 +59,8 @@ Route::group($group, function () {
 
     Route::get('/page', [PageController::class, 'list'])
         ->name('page.list');
-    
-    if (config('cms.setting.index_url') == true) {
+
+    if (config('cms.setting.index_url') == true && !App::runningInConsole()) {
         $indexing = IndexingUrl::where('module', 'page')->get();
         if ($indexing->count() > 0) {
             foreach ($indexing as $key => $value) {
@@ -75,5 +75,5 @@ Route::group($group, function () {
             }
         }
     }
-        
+
 });
