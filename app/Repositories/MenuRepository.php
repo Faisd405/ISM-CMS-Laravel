@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories;
 
 use App\Models\Menu\Menu;
 use App\Models\Menu\MenuCategory;
@@ -14,14 +14,14 @@ use App\Models\Module\Gallery\GalleryCategory;
 use App\Models\Module\Inquiry\Inquiry;
 use App\Models\Module\Link\Link;
 use App\Models\Module\Page;
-use App\Services\Feature\LanguageService;
+use App\Repositories\Feature\LanguageRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class MenuService
+class MenuRepository
 {
     use ApiResponser;
 
@@ -30,7 +30,7 @@ class MenuService
     public function __construct(
         MenuCategory $menuCategoryModel,
         Menu $menuModel,
-        LanguageService $language
+        LanguageRepository $language
     )
     {
         $this->menuCategoryModel = $menuCategoryModel;
@@ -51,7 +51,7 @@ class MenuService
      * @param array $with
      * @param array $orderBy
      */
-    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $menuCategory = $this->menuCategoryModel->query();
@@ -126,9 +126,9 @@ class MenuService
             return $this->success($menuCategory,  __('global.alert.create_success', [
                 'attribute' => __('module/menu.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -143,7 +143,7 @@ class MenuService
         $menuCategory = $this->getCategory($where);
 
         try {
-            
+
             $menuCategory->update([
                 'name' => Str::slug($data['name'], '_'),
                 'active' => (bool)$data['active'],
@@ -157,7 +157,7 @@ class MenuService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -172,7 +172,7 @@ class MenuService
         $menuCategory = $this->getCategory($where);
 
         try {
-            
+
             $menuCategory->update([
                 $field => !$menuCategory[$field],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $menuCategory['updated_by'],
@@ -181,9 +181,9 @@ class MenuService
             return $this->success($menuCategory, __('global.alert.update_success', [
                 'attribute' => __('module/menu.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -199,9 +199,9 @@ class MenuService
         try {
 
             $menus = $menuCategory->menus()->count();
-            
+
             if ($menuCategory['locked'] == 0 && $menus == 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $menuCategory->update([
                         'deleted_by' => Auth::user()['id']
@@ -213,7 +213,7 @@ class MenuService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/menu.catgory.caption')
                 ]));
-    
+
             } else {
                 return $this->error($menuCategory,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/menu.catgory.caption')
@@ -221,7 +221,7 @@ class MenuService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -235,16 +235,16 @@ class MenuService
         $menuCategory = $this->menuCategoryModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $menuCategory->restore();
 
             return $this->success($menuCategory, __('global.alert.restore_success', [
                 'attribute' => __('module/menu.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -262,15 +262,15 @@ class MenuService
         }
 
         try {
-                
+
             $menuCategory->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/menu.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -288,7 +288,7 @@ class MenuService
      * @param array $with
      * @param array $orderBy
      */
-    public function getMenuList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getMenuList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $menu = $this->menuModel->query();
@@ -336,7 +336,7 @@ class MenuService
         if ($withPaginate == true) {
             $result = $menu->paginate($limit);
         } else {
-            
+
             if ($limit > 0)
                 $menu->limit($limit);
 
@@ -386,11 +386,11 @@ class MenuService
 
                 $menu->path = $path;
             }
-            
+
             $this->setFieldMenu($data, $menu);
 
             $menu->position = $this->menuModel->where('menu_category_id', $data['menu_category_id'])
-                ->where('parent', (int)$data['parent']) 
+                ->where('parent', (int)$data['parent'])
                 ->max('position') + 1;
             if (Auth::guard()->check()) {
 
@@ -405,9 +405,9 @@ class MenuService
             return $this->success($menu,  __('global.alert.create_success', [
                 'attribute' => __('module/menu.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -422,7 +422,7 @@ class MenuService
         $menu = $this->getMenu($where);
 
         try {
-            
+
             $this->setFieldMenu($data, $menu);
 
             if (Auth::guard()->check()) {
@@ -436,7 +436,7 @@ class MenuService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -464,7 +464,7 @@ class MenuService
             $menu->menuable_id = null;
             $menu->menuable_type = null;
         }
-        
+
         if ($notFromModule == 0 && !empty($data['module']) && !empty($data['menuable_id'])) {
             $this->moduleAssociate($data, $menu);
         }
@@ -480,7 +480,7 @@ class MenuService
             'edit_public_menu' => (bool)$data['edit_public_menu'],
             'create_child' => (bool)$data['create_child'],
         ];
-        
+
         return $menu;
     }
 
@@ -544,12 +544,12 @@ class MenuService
         $menu = $this->getMenu($where);
 
         try {
-            
+
             $value = !$menu[$field];
             if ($field == 'approved') {
                 $value = $menu['approved'] == 1 ? 0 : 1;
             }
-            
+
             $menu->update([
                 $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $menu['updated_by'],
@@ -558,9 +558,9 @@ class MenuService
             return $this->success($menu, __('global.alert.update_success', [
                 'attribute' => __('module/menu.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -574,11 +574,11 @@ class MenuService
     public function positionMenu($where, $position, $parent = null)
     {
         $menu = $this->getMenu($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 if ($parent != null) {
                     $this->menuModel->where('position', $position)->where('menu_category_id', $menu['menu_category_id'])
                         ->where('parent', $parent)->update([
@@ -590,13 +590,13 @@ class MenuService
                         'position' => $menu['position'],
                     ]);
                 }
-    
+
                 $menu->position = $position;
                 if (Auth::guard()->check()) {
                     $menu->updated_by = Auth::user()['id'];
                 }
                 $menu->save();
-    
+
                 return $this->success($menu, __('global.alert.update_success', [
                     'attribute' => __('module/menu.caption')
                 ]));
@@ -607,9 +607,9 @@ class MenuService
                     'attribute' => __('module/menu.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -623,7 +623,7 @@ class MenuService
         $menu = $this->getMenu($where);
 
         try {
-            
+
             $childs = $menu->childs()->count();
 
             if ($menu['locked'] == 0 && $childs == 0) {
@@ -646,7 +646,7 @@ class MenuService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/menu.caption')
                 ]));
-    
+
             } else {
                 return $this->error($menu,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/menu.caption')
@@ -654,7 +654,7 @@ class MenuService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -668,23 +668,23 @@ class MenuService
         $menu = $this->menuModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkParent = $this->getMenu(['id' => $menu['parent']]);
             if ($menu['parent'] > 0 && empty($checkParent)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/menu.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $menu->restore();
 
             return $this->success($menu, __('global.alert.restore_success', [
                 'attribute' => __('module/menu.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -708,9 +708,9 @@ class MenuService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/menu.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

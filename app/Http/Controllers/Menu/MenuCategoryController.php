@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Menu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Menu\MenuCategoryRequest;
-use App\Services\MenuService;
+use App\Repositories\MenuRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class MenuCategoryController extends Controller
     private $menuService;
 
     public function __construct(
-        MenuService $menuService
+        MenuRepository $menuService
     )
     {
         $this->menuService = $menuService;

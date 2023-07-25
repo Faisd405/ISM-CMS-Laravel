@@ -6,10 +6,10 @@ use App\Exports\InquiryFormExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Inquiry\InquiryFormRequest;
 use App\Http\Requests\Module\Inquiry\InquiryRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Feature\NotificationService;
-use App\Services\Module\InquiryService;
-use App\Services\UserService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Feature\NotificationRepository;
+use App\Repositories\Module\InquiryRepository;
+use App\Repositories\UserRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Http\Request;
@@ -27,10 +27,10 @@ class InquiryController extends Controller
         $notifService;
 
     public function __construct(
-        InquiryService $inquiryService,
-        LanguageService $languageService,
-        UserService $userService,
-        NotificationService $notifService
+        InquiryRepository $inquiryService,
+        LanguageRepository $languageService,
+        UserRepository $userService,
+        NotificationRepository $notifService
     )
     {
         $this->inquiryService = $inquiryService;
@@ -54,7 +54,7 @@ class InquiryController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['inquiries'] = $this->inquiryService->getInquiryList($filter, true, 10, false, [], 
+        $data['inquiries'] = $this->inquiryService->getInquiryList($filter, true, 10, false, [],
             config('cms.module.inquiry.ordering'));
         $data['no'] = $data['inquiries']->firstItem();
         $data['inquiries']->withQueryString();
@@ -141,7 +141,7 @@ class InquiryController extends Controller
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $id]);
         if (empty($data['inquiry']))
             return abort(404);
-            
+
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
 
         return view('backend.inquiries.form', compact('data'), [
@@ -429,10 +429,10 @@ class InquiryController extends Controller
         $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             !empty($data['read']->fieldLang('body'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('body')), 155);
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             empty($data['read']->fieldLang('body')) && !empty($data['read']->fieldLang('after_body'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('after_body')), 155);
         }
@@ -509,7 +509,7 @@ class InquiryController extends Controller
         ]);
 
         $this->inquiryService->recordForm($formData);
-        
+
 
         if (config('cmsConfig.notif.notif_apps_inquiry') == 1) {
             $this->notifService->sendNotif([
@@ -539,7 +539,7 @@ class InquiryController extends Controller
         }
 
         try {
-            
+
             if (config('cmsConfig.notif.notif_email_inquiry') == 1 && !empty($inquiry['email'])) {
                 Mail::to($inquiry['email'])->send(new \App\Mail\InquiryFormMail($data));
             }

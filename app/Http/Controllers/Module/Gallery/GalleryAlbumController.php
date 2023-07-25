@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Module\Gallery;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Gallery\GalleryAlbumRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Master\TemplateService;
-use App\Services\Module\GalleryService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Master\TemplateRepository;
+use App\Repositories\Module\GalleryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -17,9 +17,9 @@ class GalleryAlbumController extends Controller
     private $galleryService, $languageService, $templateService;
 
     public function __construct(
-        GalleryService $galleryService,
-        LanguageService $languageService,
-        TemplateService $templateService
+        GalleryRepository $galleryService,
+        LanguageRepository $languageService,
+        TemplateRepository $templateService
     )
     {
         $this->galleryService = $galleryService;
@@ -45,7 +45,7 @@ class GalleryAlbumController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['albums'] = $this->galleryService->getAlbumList($filter, true, 10, false, [], 
+        $data['albums'] = $this->galleryService->getAlbumList($filter, true, 10, false, [],
             config('cms.module.gallery.album.ordering'));
         $data['no'] = $data['albums']->firstItem();
         $data['albums']->withQueryString();

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Module;
+namespace App\Repositories\Module;
 
 use App\Models\Module\Page;
-use App\Services\Feature\LanguageService;
-use App\Services\IndexUrlService;
-use App\Services\Master\TagService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\IndexUrlRepository;
+use App\Repositories\Master\TagRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
-class PageService
+class PageRepository
 {
     use ApiResponser;
 
@@ -22,8 +22,8 @@ class PageService
 
     public function __construct(
         Page $pageModel,
-        LanguageService $language,
-        IndexUrlService $indexUrl
+        LanguageRepository $language,
+        IndexUrlRepository $indexUrl
     )
     {
         $this->pageModel = $pageModel;
@@ -40,7 +40,7 @@ class PageService
      * @param array $with
      * @param array $orderBy
      */
-    public function getPageList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getPageList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $page = $this->pageModel->query();
@@ -100,7 +100,7 @@ class PageService
 
             $result = $page->get();
         }
-        
+
         return $result;
     }
 
@@ -112,10 +112,10 @@ class PageService
     public function getPage($where, $with = [])
     {
         $page = $this->pageModel->query();
-        
+
         if (!empty($with))
             $page->with($with);
-        
+
         $result = $page->firstWhere($where);;
 
         return $result;
@@ -158,7 +158,7 @@ class PageService
             $page->save();
 
             try {
-                
+
                 DB::commit();
 
                 if ($page['parent'] == 0) {
@@ -169,7 +169,7 @@ class PageService
                 }
 
                 if (isset($data['tags']))
-                    App::make(TagService::class)->wipeStore($data['tags'], $page);
+                    App::make(TagRepository::class)->wipeStore($data['tags'], $page);
 
                 return $this->success($page,  __('global.alert.create_success', [
                     'attribute' => __('module/page.caption')
@@ -178,12 +178,12 @@ class PageService
             } catch (Exception $e) {
 
                 DB::rollBack();
-                
+
                 return $this->error(null,  $e->getMessage());
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -198,7 +198,7 @@ class PageService
         $page = $this->getPage($where);
 
         try {
-            
+
             $this->setField($data, $page);
             if (Auth::guard()->check())
                 $page->updated_by = Auth::user()['id'];
@@ -211,14 +211,14 @@ class PageService
             }
 
             if (isset($data['tags']))
-                App::make(TagService::class)->wipeStore($data['tags'], $page);
+                App::make(TagRepository::class)->wipeStore($data['tags'], $page);
 
             return $this->success($page,  __('global.alert.update_success', [
                 'attribute' => __('module/page.caption')
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -288,7 +288,7 @@ class PageService
         ];
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -317,7 +317,7 @@ class PageService
             if ($field == 'approved') {
                 $value = $page['approved'] == 1 ? 0 : 1;
             }
-            
+
             $page->update([
                 $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $page['updated_by'],
@@ -335,9 +335,9 @@ class PageService
             return $this->success($page, __('global.alert.update_success', [
                 'attribute' => __('module/page.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -351,11 +351,11 @@ class PageService
     public function position($where, $position, $parent = null)
     {
         $page = $this->getPage($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 if ($parent != null) {
                     $this->pageModel->where('position', $position)->where('parent', $parent)->update([
                         'position' => $page['position'],
@@ -365,13 +365,13 @@ class PageService
                         'position' => $page['position'],
                     ]);
                 }
-    
+
                 $page->position = $position;
                 if (Auth::guard()->check()) {
                     $page->updated_by = Auth::user()['id'];
                 }
                 $page->save();
-    
+
                 return $this->success($page, __('global.alert.update_success', [
                     'attribute' => __('module/page.caption')
                 ]));
@@ -382,9 +382,9 @@ class PageService
                     'attribute' => __('module/page.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -416,7 +416,7 @@ class PageService
         $page = $this->getPage($where);
 
         try {
-            
+
             $childs = $page->childs()->count();
 
             if ($page['locked'] == 0 && $childs == 0) {
@@ -443,7 +443,7 @@ class PageService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/page.caption')
                 ]));
-    
+
             } else {
                 return $this->error($page,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/page.caption')
@@ -451,7 +451,7 @@ class PageService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -465,7 +465,7 @@ class PageService
         $page = $this->pageModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkSlug = $this->getPage(['slug' => $page['slug']]);
             $checkParent = $this->getPage(['id' => $page['parent']]);
             if (!empty($checkSlug) || $page['parent'] > 0 && empty($checkParent)) {
@@ -473,7 +473,7 @@ class PageService
                     'attribute' => __('module/page.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $page->medias()->restore();
             $page->menus()->restore();
@@ -484,9 +484,9 @@ class PageService
             return $this->success($page, __('global.alert.restore_success', [
                 'attribute' => __('module/page.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -504,7 +504,7 @@ class PageService
         }
 
         try {
-                
+
             $page->medias()->forceDelete();
             $page->tags()->delete();
             $page->menus()->forceDelete();
@@ -517,9 +517,9 @@ class PageService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/page.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

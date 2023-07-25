@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Module;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\WidgetRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Module\BannerService;
-use App\Services\Module\WidgetService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Module\BannerRepository;
+use App\Repositories\Module\WidgetRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -15,8 +15,8 @@ class WidgetController extends Controller
     private $widgetService, $languageService;
 
     public function __construct(
-        WidgetService $widgetService,
-        LanguageService $languageService
+        WidgetRepository $widgetService,
+        LanguageRepository $languageService
     )
     {
         $this->widgetService = $widgetService;
@@ -97,7 +97,7 @@ class WidgetController extends Controller
     {
         $data['type'] = $type;
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['banners'] = App::make(BannerService::class)->getBannerList([
+        $data['banners'] = App::make(BannerRepository::class)->getBannerList([
             'publish' => 1,
             'approved' => 1
         ], false, 0, false, [], []);
@@ -146,7 +146,7 @@ class WidgetController extends Controller
         $data['widget']['module'] = $this->widgetService->getModuleData($data['widget']);
         $data['type'] = $type;
         $data['languages'] = $this->languageService->getLanguageActive($this->lang);
-        $data['banners'] = App::make(BannerService::class)->getBannerList([
+        $data['banners'] = App::make(BannerRepository::class)->getBannerList([
             'publish' => 1,
             'approved' => 1
         ], false, 0, false, [], []);

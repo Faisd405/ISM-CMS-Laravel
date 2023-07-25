@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Feature;
+namespace App\Repositories\Feature;
 
 use App\Models\Feature\Language;
 use App\Traits\ApiResponser;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class LanguageService
+class LanguageRepository
 {
     use ApiResponser;
 
@@ -32,7 +32,7 @@ class LanguageService
      * @param array $with
      * @param array $orderBy
      */
-    public function getLanguageList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getLanguageList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $language = $this->languageModel->query();
@@ -144,9 +144,9 @@ class LanguageService
             return $this->success($language,  __('global.alert.create_success', [
                 'attribute' => __('feature/language.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -161,7 +161,7 @@ class LanguageService
         $language = $this->getLanguage($where);
 
         try {
-            
+
             $oldIso = $data['old_iso'];
             $iso = Str::lower($data['iso_codes']);
             $language->update([
@@ -193,7 +193,7 @@ class LanguageService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -207,7 +207,7 @@ class LanguageService
         $language = $this->getLanguage($where);
 
         try {
-            
+
             $language->update([
                 'active' => !$language['active'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $language['updated_by'],
@@ -216,9 +216,9 @@ class LanguageService
             return $this->success($language, __('global.alert.update_success', [
                 'attribute' => __('feature/language.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -230,11 +230,11 @@ class LanguageService
     public function trash($where)
     {
         $language = $this->getLanguage($where);
-        
+
         try {
-            
+
             if ($language['locked'] == 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $language->update([
                         'deleted_by' => Auth::user()['id']
@@ -246,7 +246,7 @@ class LanguageService
                 return $this->success($language,  __('global.alert.delete_success', [
                     'attribute' => __('feature/language.caption')
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('feature/language.caption')
@@ -254,7 +254,7 @@ class LanguageService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -268,16 +268,16 @@ class LanguageService
         $language = $this->languageModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $language->restore();
 
             return $this->success($language, __('global.alert.restore_success', [
                 'attribute' => __('feature/language.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -295,7 +295,7 @@ class LanguageService
         }
 
         try {
-                
+
             File::deleteDirectory(resource_path('lang/'.$language['iso_codes']));
 
             $language->forceDelete();
@@ -303,9 +303,9 @@ class LanguageService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('feature/language.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

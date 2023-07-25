@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Module\Link;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Link\LinkRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Master\TemplateService;
-use App\Services\Module\LinkService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Master\TemplateRepository;
+use App\Repositories\Module\LinkRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -17,9 +17,9 @@ class LinkController extends Controller
     private $linkService, $languageService, $templateService;
 
     public function __construct(
-        LinkService $linkService,
-        LanguageService $languageService,
-        TemplateService $templateService
+        LinkRepository $linkService,
+        LanguageRepository $languageService,
+        TemplateRepository $templateService
     )
     {
         $this->linkService = $linkService;
@@ -42,7 +42,7 @@ class LinkController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['links'] = $this->linkService->getLinkList($filter, true, 10, false, [], 
+        $data['links'] = $this->linkService->getLinkList($filter, true, 10, false, [],
             config('cms.module.link.ordering'));
         $data['no'] = $data['links']->firstItem();
         $data['links']->withQueryString();
@@ -256,7 +256,7 @@ class LinkController extends Controller
         $data['links'] = $this->linkService->getLinkList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [], 
+        ], true, $limit, false, [],
             config('cms.module.link.ordering'));
         $data['no_links'] = $data['links']->firstItem();
         $data['links']->withQueryString();
@@ -309,7 +309,7 @@ class LinkController extends Controller
        $filter['approved'] = 1;
 
        //data
-       $data['medias'] = $this->linkService->getMediaList($filter, 
+       $data['medias'] = $this->linkService->getMediaList($filter,
            $data['read']['config']['paginate_media'], $data['read']['config']['media_limit'], false,
        [], [$data['read']['config']['media_order_by'] => $data['read']['config']['media_order_type']]);
        if ($data['read']['config']['paginate_media'] == true) {

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Feature\Language;
-use App\Services\Feature\ConfigurationService;
+use App\Repositories\Feature\ConfigurationRepository;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
 
         if (config('cms.setting.index_url') == true && !App::runningInConsole()) {
             // set config cache
-            App::make(ConfigurationService::class)->setConfigCache();
+            App::make(ConfigurationRepository::class)->setConfigCache();
 
             // set lang cache
             $language = Language::where('iso_codes', config('cmsConfig.dev.default_lang'))->active()->first();

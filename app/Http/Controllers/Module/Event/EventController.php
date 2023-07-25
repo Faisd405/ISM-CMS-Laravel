@@ -6,10 +6,10 @@ use App\Exports\EventFormExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Event\EventFormRequest;
 use App\Http\Requests\Module\Event\EventRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Feature\NotificationService;
-use App\Services\Module\EventService;
-use App\Services\UserService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Feature\NotificationRepository;
+use App\Repositories\Module\EventRepository;
+use App\Repositories\UserRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Http\Request;
@@ -22,14 +22,14 @@ use Illuminate\Support\Str;
 class EventController extends Controller
 {
     use ApiResponser;
-    
+
     private $eventService, $languageService, $userService, $notifService;
 
     public function __construct(
-        EventService $eventService,
-        LanguageService $languageService,
-        UserService $userService,
-        NotificationService $notifService
+        EventRepository $eventService,
+        LanguageRepository $languageService,
+        UserRepository $userService,
+        NotificationRepository $notifService
     )
     {
         $this->eventService = $eventService;
@@ -53,7 +53,7 @@ class EventController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['events'] = $this->eventService->getEventList($filter, true, 10, false, [], 
+        $data['events'] = $this->eventService->getEventList($filter, true, 10, false, [],
             config('cms.module.event.ordering'));
         $data['no'] = $data['events']->firstItem();
         $data['events']->withQueryString();
@@ -417,7 +417,7 @@ class EventController extends Controller
             'is_unique' => 1
         ], false, 0);
         if ($fields->count()) {
-            $form = $data['read']->forms()->firstWhere('fields->'.$fields[0]['name'], 
+            $form = $data['read']->forms()->firstWhere('fields->'.$fields[0]['name'],
                 $request->input($fields[0]['name'], ''));
         }
 
@@ -446,7 +446,7 @@ class EventController extends Controller
         $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             !empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }
@@ -553,11 +553,11 @@ class EventController extends Controller
         }
 
         try {
-            
+
             if (config('cmsConfig.notif.notif_email_event') == 1 && !empty($event['email'])) {
                 Mail::to($event['email'])->send(new \App\Mail\EventFormMail($data));
             }
-            
+
             return redirect()->route('event.read', $redirect)->with('success', $message);
 
         } catch (Exception $e) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories;
 
 use App\Models\Feature\Registration;
 use App\Models\User;
@@ -21,7 +21,7 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Str;
 
-class UserService
+class UserRepository
 {
     use ApiResponser;
 
@@ -66,7 +66,7 @@ class UserService
             $checkRole = $user->hasRole(config('cms.module.auth.login.frontend.role'));
 
         try {
-            
+
             if ($checkRole) {
 
                 $isMaintenance = config('cmsConfig.dev.maintenance');
@@ -77,19 +77,19 @@ class UserService
                 $remember = $data['remember'] ? true : false;
                 $auth = Auth::attempt($data['forms'], $remember);
                 if ($auth) {
-                    
+
                     $this->setSession($user['session']);
                     // $auth['token'] = $user->createToken('User Token '.$user['id'])->plainTextToken;
-    
+
                     return $this->success($auth, __('auth.login_'.$loginType.'.alert.success'));
                 }
-    
+
                 return $this->error(null, __('auth.login_'.$loginType.'.alert.failed'));
 
             } else {
                 return $this->error(null, __('auth.login_'.$loginType.'.alert.failed'));
             }
-            
+
         } catch (Exception $e) {
 
             return $this->error(null,  $e->getMessage());
@@ -102,7 +102,7 @@ class UserService
     public function logoutProccess()
     {
         try {
-            
+
             $session = Auth::user()['session'];
             if (!empty($session)) {
                 $session->update([
@@ -117,7 +117,7 @@ class UserService
             return $this->success(null, __('auth.logout.alert.success'));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -133,7 +133,7 @@ class UserService
         $userAgent = request()->server('HTTP_USER_AGENT');
 
         if (empty($session)) {
-            
+
             $this->userSessionModel->create([
                 'user_id' => Auth::user()->id,
                 'ip_address' => $ipAddress,
@@ -141,9 +141,9 @@ class UserService
                 'last_login' => $dateNow,
                 'user_agent' => $userAgent
             ]);
-            
+
         } else {
-            
+
             $session->update([
                 'ip_address' => $ipAddress,
                 'last_login' => $dateNow,
@@ -168,7 +168,7 @@ class UserService
      * @param array $with
      * @param array $orderBy
      */
-    public function getUserList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getUserList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $user = $this->userModel->query();
@@ -264,12 +264,12 @@ class UserService
                 $user->locked = (bool)$data['locked'];
 
             $user->assignRole($data['roles']);
-            
+
             if (Auth::guard()->check())
                 $user->created_by = Auth::user()['id'];
 
             $user->save();
-           
+
             return $this->success($user, __('global.alert.create_success', [
                 'attribute' => __('module/user.caption')
             ]));
@@ -337,7 +337,7 @@ class UserService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -351,7 +351,7 @@ class UserService
         $user = $this->getUser($where);
 
         try {
-            
+
             $user->active = !$user['active'];
             $user->active_at = $user['active'] == 1 ? now() : null;
 
@@ -361,9 +361,9 @@ class UserService
             $user->save();
 
             return $this->success($user, __('module/user.alert.activate_success'));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -377,21 +377,21 @@ class UserService
         $user = $this->getUser(['email' => $email]);
 
         try {
-            
+
             $user->email_verified = 1;
             $user->email_verified_at = now();
 
             if (Auth::guard()->check())
                 $user->updated_by = Auth::user()['id'];
-                
+
             $user->save();
 
             return $this->success($user, __('module/user.alert.verification_success'));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
-        }     
+        }
     }
 
     /**
@@ -404,7 +404,7 @@ class UserService
         $user = $this->getUser($where);
 
         try {
-            
+
             $user->name = $data['name'];
             $user->email = $data['email'];
             $user->username = $data['username'];
@@ -428,7 +428,7 @@ class UserService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -443,17 +443,17 @@ class UserService
         $user = $this->getUser($where);
 
         try {
-           
+
             if ($request->hasFile('avatar')) {
                 $file = $request->file('avatar');
                 $name = Str::slug($user['username'], '-');
                 $fileName = $name.'.'.$file->getClientOriginalExtension();
-    
+
                 Storage::delete(config('cms.files.avatar.path').
                     $request['old_avatar']);
                 Storage::put(config('cms.files.avatar.path').
                     $fileName, file_get_contents($file));
-    
+
                 $user->photo = [
                     'filename' => $fileName,
                     'filetype' => $file->getClientOriginalExtension(),
@@ -464,11 +464,11 @@ class UserService
                     $user->updated_by = Auth::user()['id'];
 
                 $user->save();
-        
+
                 return $this->success($user, __('global.alert.update_success', [
                     'attribute' => __('module/user.label.photo')
                 ]));
-    
+
             } else {
                 return $this->success($user, __('global.alert.update_failed', [
                     'attribute' => __('module/user.label.photo')
@@ -476,7 +476,7 @@ class UserService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -497,7 +497,7 @@ class UserService
 
             if (Auth::guard()->check())
                 $user->updated_by = Auth::user()['id'];
-                
+
             $user->save();
 
             return $this->success($user, __('global.alert.delete_success', [
@@ -520,14 +520,14 @@ class UserService
         $user = $this->getUser($where);
 
         try {
-            
+
             $logs = $user['logs']->count();
 
             if ($user['locked'] == 0 && $logs == 0) {
-                
+
                 if (Auth::guard()->check())
                     $user->deleted_by = Auth::user()['id'];
-                    
+
                 $user->save();
 
                 //hapus data yang bersangkutan
@@ -542,9 +542,9 @@ class UserService
                     'attribute' => __('module/user.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -558,16 +558,16 @@ class UserService
         $user = $this->userModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $user->restore();
 
             return $this->success($user, __('global.alert.restore_success', [
                 'attribute' => __('module/user.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -585,15 +585,15 @@ class UserService
         }
 
         try {
-            
+
             $logs = $user['logs']->count();
 
             if ($user['locked'] == 0 && $logs == 0) {
-                
+
                 if (!empty($user['photo']))
                     Storage::delete(config('cms.files.avatar.path').
                         $user['photo']['filename']);
-        
+
                 //hapus data tabel tambahan jika ada user dengan role berbeda & memiliki tabel tersendiri
                 if (!empty($user['session']))
                     $user->session()->delete();
@@ -601,7 +601,7 @@ class UserService
                 $user->logs()->delete();
                 $user->permissions()->delete();
                 $user->forceDelete();
-        
+
                 return $this->success(null, __('global.alert.delete_success', [
                     'attribute' => __('module/user.caption')
                 ]));
@@ -611,9 +611,9 @@ class UserService
                     'attribute' => __('module/user.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -631,7 +631,7 @@ class UserService
      * @param array $with
      * @param array $orderBy
      */
-    public function getLogList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getLogList($filter = [], $withPaginate = true, $limit = 10,
          $with = [], $orderBy = [])
     {
         $log = $this->userLogModel->query();
@@ -682,7 +682,7 @@ class UserService
     public function recordLog($data, $model)
     {
         try {
-            
+
             $log = new UserLog();
             $logData = $log->logable()->associate($model);
 
@@ -697,7 +697,7 @@ class UserService
                     'ip_address' => request()->ip(),
                 ]);
             }
-            
+
         } catch (Exception $e) {
             //throw $e;
         }
@@ -711,7 +711,7 @@ class UserService
         $log = $this->userLogModel;
 
         try {
-            
+
             if ($log->count() == 0)
                 return $this->error(null,  __('global.data_attr_empty', [
                     'attribute' => __('module/user.log.caption')
@@ -724,7 +724,7 @@ class UserService
             ]));
 
         } catch (Exception $th) {
-            
+
             return $this->error(null,  $th->getMessage());
         }
     }
@@ -738,7 +738,7 @@ class UserService
         $log = $this->userLogModel->firstWhere($where);
 
         try {
-            
+
             $log->delete();
 
             return $this->success(null,  __('global.alert.delete_success', [
@@ -746,7 +746,7 @@ class UserService
             ]));
 
         } catch (Exception $th) {
-            
+
             return $this->error(null,  $th->getMessage());
         }
     }
@@ -764,7 +764,7 @@ class UserService
      * @param array $with
      * @param array $orderBy
      */
-    public function getLoginFailedList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getLoginFailedList($filter = [], $withPaginate = true, $limit = 10,
          $with = [], $orderBy = [])
     {
         $loginFailed = $this->userLoginFailedModel->query();
@@ -801,7 +801,7 @@ class UserService
 
             if ($limit > 0)
                 $loginFailed->limit($limit);
-            
+
             $result = $loginFailed->get();
         }
 
@@ -824,7 +824,7 @@ class UserService
 
         return $failed;
     }
-    
+
     /**
      * Reset Login Failed (delete all row)
      */
@@ -833,7 +833,7 @@ class UserService
         $loginFailed = $this->userLoginFailedModel;
 
         try {
-            
+
             if ($loginFailed->count() == 0)
                 return $this->error(null,  __('global.data_attr_empty', [
                     'attribute' => __('module/user.login_failed.caption')
@@ -846,7 +846,7 @@ class UserService
             ]));
 
         } catch (Exception $th) {
-            
+
             return $this->error(null,  $th->getMessage());
         }
     }
@@ -860,7 +860,7 @@ class UserService
         $loginFailed = $this->userLoginFailedModel->firstWhere($where);
 
         try {
-            
+
             $loginFailed->delete();
 
             return $this->success(null,  __('global.alert.delete_success', [
@@ -868,7 +868,7 @@ class UserService
             ]));
 
         } catch (Exception $th) {
-            
+
             return $this->error(null,  $th->getMessage());
         }
     }
@@ -886,7 +886,7 @@ class UserService
      * @param array $with
      * @param array $orderBy
      */
-    public function getRoleList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getRoleList($filter = [], $withPaginate = true, $limit = 10,
         $with = [], $orderBy = [])
     {
         $role = $this->roleModel->query();
@@ -918,7 +918,7 @@ class UserService
             foreach ($orderBy as $key => $value) {
                 $role->orderBy($key, $value);
             }
-        
+
         if ($withPaginate == true) {
             $result = $role->paginate($limit);
         } else {
@@ -963,10 +963,10 @@ class UserService
     public function getRole($where, $with = [])
     {
         $role = $this->roleModel->query();
-        
+
         if (!empty($with))
             $role->with($with);
-        
+
         $result = $role->firstWhere($where);;
 
         return $result;
@@ -1000,9 +1000,9 @@ class UserService
             return $this->success($role, __('global.alert.create_success', [
                 'attribute' => __('module/user.role.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1050,7 +1050,7 @@ class UserService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1086,7 +1086,7 @@ class UserService
                 ->count();
             $registration = Registration::whereJsonContains('roles', $id)->count();
 
-            if ($role['locked'] == 0 && $hasRole == 0 && $hasPermission == 0 
+            if ($role['locked'] == 0 && $hasRole == 0 && $hasPermission == 0
                 && $registration == 0) {
 
                 $this->recordLog([
@@ -1094,13 +1094,13 @@ class UserService
                     'content' => $role,
                     'logable_name' => 'role'
                 ], $role);
-        
+
                 $role->delete();
 
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => 'Role'
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/user.role.caption')
@@ -1126,7 +1126,7 @@ class UserService
      * @param array $with
      * @param array $orderBy
      */
-    public function getPermissionList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getPermissionList($filter = [], $withPaginate = true, $limit = 10,
         $with = [], $orderBy = [])
     {
         $permission = $this->permissionModel->query();
@@ -1159,7 +1159,7 @@ class UserService
 
             $result = $permission->get();
         }
-        
+
         return $result;
     }
 
@@ -1171,10 +1171,10 @@ class UserService
     public function getPermission($where, $with = [])
     {
         $permission = $this->permissionModel->query();
-        
+
         if (!empty($with))
             $permission->with($with);
-        
+
         $result = $permission->firstWhere($where);;
 
         return $result;
@@ -1194,7 +1194,7 @@ class UserService
                 'guard_name' => 'web',
                 'locked' => (bool)$data['locked'],
             ]);
-            
+
             $this->recordLog([
                 'event' => 1,
                 'content' => $permission,
@@ -1204,9 +1204,9 @@ class UserService
             return $this->success($permission,  __('global.alert.create_success', [
                 'attribute' => __('module/user.permission.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1221,7 +1221,7 @@ class UserService
         $oldData = $this->getPermission($where);
 
         try {
-            
+
             $permission->update([
                 'name' => Str::slug($data['name'], '_'),
                 'guard_name' => 'web',
@@ -1243,7 +1243,7 @@ class UserService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1264,9 +1264,9 @@ class UserService
                 ->where('permission_id', $id)
                 ->count();
 
-            if ($permission['locked'] == 0 && $roleHasPermission == 0 
+            if ($permission['locked'] == 0 && $roleHasPermission == 0
                 && $modelHasPermission == 0) {
-        
+
                 $this->recordLog([
                     'event' => 0,
                     'content' => $permission,
@@ -1279,7 +1279,7 @@ class UserService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/user.permission.caption')
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/user.permission.caption')
@@ -1287,7 +1287,7 @@ class UserService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }

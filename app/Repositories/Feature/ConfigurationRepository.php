@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Feature;
+namespace App\Repositories\Feature;
 
 use App\Models\Feature\Configuration;
 use App\Traits\ApiResponser;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class ConfigurationService
+class ConfigurationRepository
 {
     use ApiResponser;
 
@@ -61,7 +61,7 @@ class ConfigurationService
     public function getConfig($where, $with = [])
     {
         $config = $this->configModel->query();
-        
+
         if (!empty($with))
             $config->with($with);
 
@@ -81,7 +81,7 @@ class ConfigurationService
 
         return $config;
     }
-    
+
     /**
      * Get Config File
      * @param string $name
@@ -116,7 +116,7 @@ class ConfigurationService
         $config = app('config');
         $config->set('cmsConfig', $setConfigs);
     }
-    
+
     /**
      * Create Confg
      * @param array $data
@@ -124,7 +124,7 @@ class ConfigurationService
     public function storeConfig($data)
     {
         try {
-            
+
             $config = new Configuration;
             $config->group = $data['group'];
             $config->name = Str::slug($data['name'], '_');
@@ -139,9 +139,9 @@ class ConfigurationService
             return $this->success($config,  __('global.alert.create_success', [
                 'attribute' => __('feature/configuration.website.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -153,7 +153,7 @@ class ConfigurationService
     public function setConfig($data)
     {
         try {
-            
+
             foreach ($data['label'] as $key => $value) {
                 $this->getConfig(['name' => $key])->update([
                     'label' => $value,
@@ -167,9 +167,9 @@ class ConfigurationService
             return $this->success($data,  __('global.alert.update_success', [
                 'attribute' => __('feature/configuration.website.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -181,7 +181,7 @@ class ConfigurationService
     public function updateConfig($requestName)
     {
         try {
-            
+
             foreach ($requestName as $key => $value) {
                 $this->getConfig(['name' => $key])->update([
                     'value' => $value
@@ -191,9 +191,9 @@ class ConfigurationService
             return $this->success($requestName,  __('global.alert.update_success', [
                 'attribute' => __('feature/configuration.website.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -205,25 +205,25 @@ class ConfigurationService
     public function uploadFileConfig($request, $name)
     {
         try {
-            
+
             if ($request->hasFile($name)) {
 
                 $file = $request->file($name);
                 $fileName = Str::replace(' ', '-', $file->getClientOriginalName());
-    
+
                 Storage::delete(config('cms.files.config.path').
                     $request->input('old_'.$name));
                 Storage::put(config('cms.files.config.path').
                     $fileName, file_get_contents($file));
-    
+
                 $config = $this->getConfig(['name' => $name])->update([
                         'value' => $fileName
                     ]);
-    
+
                 return $this->success($config,  __('global.alert.update_success', [
                     'attribute' => __('feature/configuration.website.caption')
                 ]));
-    
+
             }
 
             return $this->error($name,  __('global.alert.update_failed', [
@@ -231,7 +231,7 @@ class ConfigurationService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -243,9 +243,9 @@ class ConfigurationService
     public function deleteFileConfig($name)
     {
         $config = $this->getConfig(['name' => $name]);
-        
+
         try {
-            
+
             Storage::delete(config('cms.files.config.path').$config['value']);
 
             $config->update([
@@ -257,7 +257,7 @@ class ConfigurationService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -269,11 +269,11 @@ class ConfigurationService
     public function deleteConfig($name)
     {
         $config = $this->getConfig(['name' => $name]);
-        
+
         try {
 
             if ($config['locked'] == 0) {
-                
+
                 $config->delete();
 
                 return $this->success($config,  __('global.alert.delete_success', [
@@ -281,14 +281,14 @@ class ConfigurationService
                 ]));
 
             } else {
-                
+
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('feature/configuration.website.caption')
                 ]));
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }

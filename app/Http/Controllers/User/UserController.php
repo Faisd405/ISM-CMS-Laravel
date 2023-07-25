@@ -7,7 +7,7 @@ use App\Http\Requests\User\ProfilePhotoRequest;
 use App\Http\Requests\User\ProfileRequest;
 use App\Http\Requests\User\UserRequest;
 use App\Mail\VerificationEmail;
-use App\Services\UserService;
+use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +21,7 @@ class UserController extends Controller
     private $userService;
 
     public function __construct(
-        UserService $userService
+        UserRepository $userService
     )
     {
         $this->userService = $userService;
@@ -203,11 +203,11 @@ class UserController extends Controller
     public function bypass(Request $request, $id)
     {
         $user = $this->userService->getUser(['id' => $id]);
-        if (($user['roles'][0]['level'] < Auth::user()['roles'][0]['level'] ) 
+        if (($user['roles'][0]['level'] < Auth::user()['roles'][0]['level'] )
             || ($id == Auth::user()['id'])) {
             return abort(403);
         }
-        
+
         $auth = Auth::loginUsingId($id);
         if ($auth) {
 
@@ -215,7 +215,7 @@ class UserController extends Controller
 
             return redirect()->route('dashboard')->with('success', __('auth.login_backend.alert.success'));
         }
-        
+
         return redirect()->back()->with('failed', 'Bypass failed');
     }
 
@@ -235,7 +235,7 @@ class UserController extends Controller
         }
         $data['permission_ids'] = $data['user']['permissions']->pluck('id')->toArray();
 
-        if (($data['user']['roles'][0]['level'] < Auth::user()['roles'][0]['level'] ) 
+        if (($data['user']['roles'][0]['level'] < Auth::user()['roles'][0]['level'] )
             || ($id == Auth::user()['id'])) {
             return abort(403);
         }
@@ -385,7 +385,7 @@ class UserController extends Controller
         $data = $request->all();
         $profile = $this->userService->updateProfile($data, ['id' => Auth::user()['id']]);
 
-        if (!empty($request->old_password) && Hash::check($request->old_password, Auth::user()->password)) { 
+        if (!empty($request->old_password) && Hash::check($request->old_password, Auth::user()->password)) {
             if (Auth::attempt([
                 'email' => Auth::user()->email,
                 'password' => $request->password
@@ -410,7 +410,7 @@ class UserController extends Controller
         $expired = now()->format('YmdHis');
 
         try {
-            
+
             if (config('cms.module.feature.notification.email.verification_email') == true) {
                 $encrypt = Crypt::encrypt($email);
                 $data = [
@@ -420,9 +420,9 @@ class UserController extends Controller
                     'expired' => $expired,
                     'link' => route('profile.email.verification', ['email' => $encrypt, 'expired' => $expired]),
                 ];
-    
+
                 Mail::to($email)->send(new VerificationEmail($data));
-    
+
                 return back()->with('info', __('module/user.alert.verification_info'));
             } else {
                 return back()->with('warning', __('module/user.alert.verification_warning'));

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services\Feature;
+namespace App\Repositories\Feature;
 
 use App\Models\Feature\Registration;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
-class RegistrationService
+class RegistrationRepository
 {
     use ApiResponser;
 
@@ -29,7 +29,7 @@ class RegistrationService
      * @param array $with
      * @param array $orderBy
      */
-    public function getRegistrationList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getRegistrationList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $registration = $this->registrationModel->query();
@@ -114,9 +114,9 @@ class RegistrationService
             return $this->success($registration,  __('global.alert.create_success', [
                 'attribute' => __('feature/registration.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -131,7 +131,7 @@ class RegistrationService
         $registration = $this->getRegistration($where);
 
         try {
-            
+
             $registration->update([
                 'name' => $data['name'],
                 'type' => $data['type'],
@@ -149,7 +149,7 @@ class RegistrationService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -163,7 +163,7 @@ class RegistrationService
         $registration = $this->getRegistration($where);
 
         try {
-            
+
             $registration->update([
                 'active' => !$registration['active'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $registration['updated_by'],
@@ -172,9 +172,9 @@ class RegistrationService
             return $this->success($registration, __('global.alert.update_success', [
                 'attribute' => __('feature/registration.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -186,11 +186,11 @@ class RegistrationService
     public function trash($where)
     {
         $registration = $this->getRegistration($where);
-        
+
         try {
-            
+
             if ($registration['locked'] == 0 && $registration['type'] != 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $registration->update([
                         'deleted_by' => Auth::user()['id']
@@ -202,7 +202,7 @@ class RegistrationService
                 return $this->success($registration,  __('global.alert.delete_success', [
                     'attribute' => __('feature/registration.caption')
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('feature/registration.caption')
@@ -210,7 +210,7 @@ class RegistrationService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -224,16 +224,16 @@ class RegistrationService
         $registration = $this->registrationModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $registration->restore();
 
             return $this->success($registration, __('global.alert.restore_success', [
                 'attribute' => __('feature/registration.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -251,15 +251,15 @@ class RegistrationService
         }
 
         try {
-            
+
             $registration->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('feature/registration.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

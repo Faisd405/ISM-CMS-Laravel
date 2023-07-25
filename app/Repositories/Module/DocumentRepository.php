@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Module;
+namespace App\Repositories\Module;
 
 use App\Models\Module\Document\Document;
 use App\Models\Module\Document\DocumentFile;
-use App\Services\Feature\LanguageService;
+use App\Repositories\Feature\LanguageRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class DocumentService
+class DocumentRepository
 {
     use ApiResponser;
 
@@ -22,7 +22,7 @@ class DocumentService
     public function __construct(
         Document $documentModel,
         DocumentFile $fileModel,
-        LanguageService $language
+        LanguageRepository $language
     )
     {
         $this->documentModel = $documentModel;
@@ -43,7 +43,7 @@ class DocumentService
      * @param array $with
      * @param array $orderBy
      */
-    public function getDocumentList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getDocumentList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $document = $this->documentModel->query();
@@ -92,7 +92,7 @@ class DocumentService
 
             $result = $document->get();
         }
-        
+
         return $result;
     }
 
@@ -104,10 +104,10 @@ class DocumentService
     public function getDocument($where, $with = [])
     {
         $document = $this->documentModel->query();
-        
+
         if (!empty($with))
             $document->with($with);
-        
+
         $result = $document->firstWhere($where);;
 
         return $result;
@@ -136,9 +136,9 @@ class DocumentService
             return $this->success($document,  __('global.alert.create_success', [
                 'attribute' => __('module/document.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -153,7 +153,7 @@ class DocumentService
         $document = $this->getDocument($where);
 
         try {
-            
+
             $this->setFieldDocument($data, $document);
             if (Auth::guard()->check())
                 $document->updated_by = Auth::user()['id'];
@@ -165,7 +165,7 @@ class DocumentService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -223,7 +223,7 @@ class DocumentService
         $document->template_id = $data['template_id'] ?? null;
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -247,7 +247,7 @@ class DocumentService
         $document = $this->getDocument($where);
 
         try {
-            
+
             $value = !$document[$field];
             if ($field == 'approved') {
                 $value = $document['approved'] == 1 ? 0 : 1;
@@ -270,9 +270,9 @@ class DocumentService
             return $this->success($document, __('global.alert.update_success', [
                 'attribute' => __('module/document.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -304,21 +304,21 @@ class DocumentService
     public function positionDocument($where, $position)
     {
         $document = $this->getDocument($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->documentModel->where('position', $position)->update([
                     'position' => $document['position'],
                 ]);
-    
+
                 $document->position = $position;
                 if (Auth::guard()->check()) {
                     $document->updated_by = Auth::user()['id'];
                 }
                 $document->save();
-    
+
                 return $this->success($document, __('global.alert.update_success', [
                     'attribute' => __('module/document.caption')
                 ]));
@@ -329,9 +329,9 @@ class DocumentService
                     'attribute' => __('module/document.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -363,7 +363,7 @@ class DocumentService
         $document = $this->getDocument($where);
 
         try {
-            
+
             $files = $document->files()->count();
 
             if ($document['locked'] == 0 && $files == 0) {
@@ -388,7 +388,7 @@ class DocumentService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/document.caption')
                 ]));
-    
+
             } else {
                 return $this->error($document,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/document.caption')
@@ -396,7 +396,7 @@ class DocumentService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -410,14 +410,14 @@ class DocumentService
         $document = $this->documentModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkSlug = $this->getDocument(['slug' => $document['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/document.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $document->menus()->restore();
             $document->widgets()->restore();
@@ -426,9 +426,9 @@ class DocumentService
             return $this->success($document, __('global.alert.restore_success', [
                 'attribute' => __('module/document.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -446,7 +446,7 @@ class DocumentService
         }
 
         try {
-            
+
             $document->menus()->forceDelete();
             $document->widgets()->forceDelete();
             $document->forceDelete();
@@ -454,9 +454,9 @@ class DocumentService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/document.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -491,7 +491,7 @@ class DocumentService
      * @param array $with
      * @param array $orderBy
      */
-    public function getFileList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getFileList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $documentFile = $this->fileModel->query();
@@ -543,7 +543,7 @@ class DocumentService
 
             $result = $documentFile->get();
         }
-        
+
         return $result;
     }
 
@@ -555,10 +555,10 @@ class DocumentService
     public function getFile($where, $with = [])
     {
         $documentFile = $this->fileModel->query();
-        
+
         if (!empty($with))
             $documentFile->with($with);
-        
+
         $result = $documentFile->firstWhere($where);;
 
         return $result;
@@ -584,10 +584,10 @@ class DocumentService
                 if (file_exists(storage_path('app/public/document/'.$data['document_id'].'/'.$fileName))) {
                     $fileName = Str::random(3).'-'.$file->getClientOriginalName();
                 }
-    
-                Storage::put(config('cms.files.document.path').$data['document_id'].'/'.$fileName, 
+
+                Storage::put(config('cms.files.document.path').$data['document_id'].'/'.$fileName,
                     file_get_contents($file));
-                
+
                 $documentFile->file = $fileName;
             }
 
@@ -613,9 +613,9 @@ class DocumentService
             return $this->success($documentFile,  __('global.alert.create_success', [
                 'attribute' => __('module/document.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -632,16 +632,16 @@ class DocumentService
             $documentFile->document_id = $data['document_id'];
 
             $documentFile->type = '0';
-            
+
             $file = $data['file'];
             $fileName = $file->getClientOriginalName();
             if (file_exists(storage_path('app/public/document/'.$data['document_id'].'/'.$fileName))) {
                 $fileName = Str::random(3).'-'.$file->getClientOriginalName();
             }
 
-            Storage::put(config('cms.files.document.path').$data['document_id'].'/'.$fileName, 
+            Storage::put(config('cms.files.document.path').$data['document_id'].'/'.$fileName,
                 file_get_contents($file));
-            
+
             $documentFile->file = $fileName;
 
             $this->setFieldFile($data, $documentFile);
@@ -674,7 +674,7 @@ class DocumentService
         $documentFile = $this->getFile($where);
 
         try {
-                
+
             if ($documentFile['type'] == '0' && isset($data['file_document'])) {
                 $file = $data['file_document'];
                 $fileName = $file->getClientOriginalName();
@@ -684,10 +684,10 @@ class DocumentService
 
                 Storage::delete(config('cms.files.document.path').$documentFile['document_id'].
                     '/'.$data['old_file']);
-    
-                Storage::put(config('cms.files.document.path').$documentFile['document_id'].'/'.$fileName, 
+
+                Storage::put(config('cms.files.document.path').$documentFile['document_id'].'/'.$fileName,
                     file_get_contents($file));
-                
+
                 $documentFile->file = $fileName;
             }
 
@@ -698,7 +698,7 @@ class DocumentService
             if ($documentFile['type'] == '2') {
                 $documentFile->file = $data['file_url'];
             }
-            
+
             $this->setFieldFile($data, $documentFile);
             if (Auth::guard()->check())
                 $documentFile->updated_by = Auth::user()['id'];
@@ -710,7 +710,7 @@ class DocumentService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -751,7 +751,7 @@ class DocumentService
         ];
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -775,7 +775,7 @@ class DocumentService
         $file = $this->getFile($where);
 
         try {
-            
+
             $value = !$file[$field];
             if ($field == 'approved') {
                 $value = $file['approved'] == 1 ? 0 : 1;
@@ -789,9 +789,9 @@ class DocumentService
             return $this->success($file, __('global.alert.update_success', [
                 'attribute' => __('module/document.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -822,22 +822,22 @@ class DocumentService
     public function positionFile($where, $position)
     {
         $documentFile = $this->getFile($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->fileModel->where('document_id', $documentFile['document_id'])
                     ->where('position', $position)->update([
                     'position' => $documentFile['position'],
                 ]);
-    
+
                 $documentFile->position = $position;
                 if (Auth::guard()->check()) {
                     $documentFile->updated_by = Auth::user()['id'];
                 }
                 $documentFile->save();
-    
+
                 return $this->success($documentFile, __('global.alert.update_success', [
                     'attribute' => __('module/document.file.caption')
                 ]));
@@ -848,9 +848,9 @@ class DocumentService
                     'attribute' => __('module/document.file.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -894,7 +894,7 @@ class DocumentService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -908,16 +908,16 @@ class DocumentService
         $documentFile = $this->fileModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $documentFile->restore();
 
             return $this->success($documentFile, __('global.alert.restore_success', [
                 'attribute' => __('module/document.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -935,7 +935,7 @@ class DocumentService
         }
 
         try {
-            
+
             if ($documentFile['type'] == '0') {
                 Storage::delete(config('cms.files.document.path').$documentFile['document_id'].
                  '/'.$documentFile['file']);
@@ -946,9 +946,9 @@ class DocumentService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/document.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

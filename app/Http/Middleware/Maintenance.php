@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Feature\ConfigurationService;
+use App\Repositories\Feature\ConfigurationRepository;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -10,7 +10,7 @@ class Maintenance
 {
     private $config;
 
-    public function __construct(ConfigurationService $config)
+    public function __construct(ConfigurationRepository $config)
     {
         $this->config = $config;
     }

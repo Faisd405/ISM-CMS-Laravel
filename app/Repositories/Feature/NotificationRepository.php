@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Services\Feature;
+namespace App\Repositories\Feature;
 
 use App\Models\Feature\Notification;
 use App\Traits\ApiResponser;
 use Illuminate\Support\Facades\App;
 
-class NotificationService
+class NotificationRepository
 {
     use ApiResponser;
 
@@ -18,7 +18,7 @@ class NotificationService
     {
         $this->notifModel = $notifModel;
     }
-    
+
     /**
      * Get Notif List
      * @param array $filter
@@ -34,7 +34,7 @@ class NotificationService
 
         if (isset($filter['user_to']))
             $notif->whereJsonContains('user_to', $filter['user_to']);
-            
+
         if (isset($filter['q']))
             $notif->when($filter['q'], function ($notif, $q) {
                 $notif->where('attribute->title', 'like', '%'.$q.'%')
@@ -52,7 +52,7 @@ class NotificationService
             foreach ($orderBy as $key => $value) {
                 $notif->orderBy($key, $value);
             }
-        
+
         if ($withPaginate == true) {
             $result = $notif->paginate($limit);
         } else {
@@ -111,7 +111,7 @@ class NotificationService
     public function getNotif($where, $with = [])
     {
         $notif = $this->notifModel->query();
-        
+
         if (!empty($with))
             $notif->with($with);
 
@@ -146,7 +146,7 @@ class NotificationService
 
         if(!in_array($userId, $readby))
             array_push($readby, $userId);
-        
+
         $notif->update(['read_by' => $readby]);
 
         // $this->deleteNotifIfAllRead($where);
@@ -176,7 +176,7 @@ class NotificationService
     {
         return [
             'id' => $notif['id'],
-            'from' => !empty($notif['user_from']) && !empty($notif['userFrom']) ? 
+            'from' => !empty($notif['user_from']) && !empty($notif['userFrom']) ?
                 $notif['userFrom']['name'] : __('global.visitor'),
             'icon' => $notif['attribute']['icon'],
             'color' => $notif['attribute']['color'],

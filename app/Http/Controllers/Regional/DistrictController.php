@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Regional;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Regional\DistrictRequest;
-use App\Services\RegionalService;
+use App\Repositories\RegionalRepository;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,7 +16,7 @@ class DistrictController extends Controller
     private $regionalService;
 
     public function __construct(
-        RegionalService $regionalService
+        RegionalRepository $regionalService
     )
     {
         $this->regionalService = $regionalService;
@@ -100,7 +100,7 @@ class DistrictController extends Controller
                 'attribute' => __('module/regional.district.caption')
             ]),
             'routeBack' => route('district.index', array_merge([
-                'provinceCode' => $provinceCode, 
+                'provinceCode' => $provinceCode,
                 'cityCode' => $cityCode
             ], $request->query())),
             'breadcrumbs' => [
@@ -142,7 +142,7 @@ class DistrictController extends Controller
                 'attribute' => __('module/regional.district.caption')
             ]),
             'routeBack' => route('district.index', array_merge([
-                'provinceCode' => $provinceCode, 
+                'provinceCode' => $provinceCode,
                 'cityCode' => $cityCode
             ], $request->query())),
             'breadcrumbs' => [
@@ -197,7 +197,7 @@ class DistrictController extends Controller
     private function redirectForm($data)
     {
         $redir = redirect()->route('district.index', array_merge([
-            'provinceCode' => $data['province_code'], 
+            'provinceCode' => $data['province_code'],
             'cityCode' => $data['city_code'],
         ], $data['query']));
         if ($data['action'] == 'back') {

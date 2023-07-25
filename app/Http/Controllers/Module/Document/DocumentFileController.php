@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Module\Document;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Document\DocumentFileMultipleRequest;
 use App\Http\Requests\Module\Document\DocumentFileRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Module\DocumentService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Module\DocumentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,8 +15,8 @@ class DocumentFileController extends Controller
     private $documentService, $languageService;
 
     public function __construct(
-        DocumentService $documentService,
-        LanguageService $languageService
+        DocumentRepository $documentService,
+        LanguageRepository $languageService
     )
     {
         $this->documentService = $documentService;
@@ -76,7 +76,7 @@ class DocumentFileController extends Controller
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
         }
-        
+
         $data['document'] = $this->documentService->getDocument(['id' => $documentId]);
         if (empty($data['document']))
             return abort(404);
@@ -124,7 +124,7 @@ class DocumentFileController extends Controller
         if ($request->hasFile('file_document')) {
             $data['file_document'] = $request->file('file_document');
         }
-        
+
         $data['document_id'] = $documentId;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_title'] = (bool)$request->config_show_title;
@@ -200,7 +200,7 @@ class DocumentFileController extends Controller
         if ($request->hasFile('file_document')) {
             $data['file_document'] = $request->file('file_document');
         }
-        
+
         $data['document_id'] = $documentId;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_title'] = (bool)$request->config_show_title;
@@ -301,7 +301,7 @@ class DocumentFileController extends Controller
         $document = $documentFile['document'];
 
         if (!empty($document['roles'])) {
-            
+
             $checkRole = $this->documentService->checkRole(['id' => $document['id']], Auth::user()->hasRole()[0]['id']);
 
             if (Auth::guard()->check() == false && $checkRole > 0) {

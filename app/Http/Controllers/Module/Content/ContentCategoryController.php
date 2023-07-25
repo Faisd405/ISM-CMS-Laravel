@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Module\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Content\ContentCategoryRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Master\TemplateService;
-use App\Services\Module\ContentService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Master\TemplateRepository;
+use App\Repositories\Module\ContentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -17,9 +17,9 @@ class ContentCategoryController extends Controller
     private $contentService, $languageService, $templateService;
 
     public function __construct(
-        ContentService $contentService,
-        LanguageService $languageService,
-        TemplateService $templateService
+        ContentRepository $contentService,
+        LanguageRepository $languageService,
+        TemplateRepository $templateService
     )
     {
         $this->contentService = $contentService;
@@ -351,7 +351,7 @@ class ContentCategoryController extends Controller
         $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             !empty($data['read']->fieldLang('description'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('description')), 155);
         }

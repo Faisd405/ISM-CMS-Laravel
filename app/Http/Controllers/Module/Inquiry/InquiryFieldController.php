@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Module\Inquiry;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Inquiry\InquiryFieldRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Module\InquiryService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Module\InquiryRepository;
 use Illuminate\Http\Request;
 
 class InquiryFieldController extends Controller
@@ -13,8 +13,8 @@ class InquiryFieldController extends Controller
     private $inquiryService, $languageService;
 
     public function __construct(
-        InquiryService $inquiryService,
-        LanguageService $languageService
+        InquiryRepository $inquiryService,
+        LanguageRepository $languageService
     )
     {
         $this->inquiryService = $inquiryService;
@@ -113,7 +113,7 @@ class InquiryFieldController extends Controller
     public function store(InquiryFieldRequest $request, $inquiryId)
     {
         $data = $request->all();
-        
+
         $data['inquiry_id'] = $inquiryId;
         $data['is_unique'] = (bool)$request->is_unique;
         $data['locked'] = (bool)$request->locked;
@@ -132,7 +132,7 @@ class InquiryFieldController extends Controller
         $data['inquiry'] = $this->inquiryService->getInquiry(['id' => $inquiryId]);
         if (empty($data['inquiry']))
         return abort(404);
-        
+
         $data['field'] = $this->inquiryService->getField(['id' => $id]);
         if (empty($data['field']))
             return abort(404);

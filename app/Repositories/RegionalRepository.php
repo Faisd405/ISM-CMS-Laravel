@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories;
 
 use App\Models\Regional\City;
 use App\Models\Regional\District;
@@ -10,7 +10,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class RegionalService
+class RegionalRepository
 {
     use ApiResponser;
 
@@ -40,7 +40,7 @@ class RegionalService
      * @param array $with
      * @param array $orderBy
      */
-    public function getProvinceList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getProvinceList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $province = $this->provinceModel->query();
@@ -81,7 +81,7 @@ class RegionalService
 
             $result = $province->get();
         }
-        
+
         return $result;
     }
 
@@ -93,10 +93,10 @@ class RegionalService
     public function getProvince($where, $with = [])
     {
         $province = $this->provinceModel->query();
-        
+
         if (!empty($with))
             $province->with($with);
-        
+
         $result = $province->firstWhere($where);;
 
         return $result;
@@ -122,9 +122,9 @@ class RegionalService
             return $this->success($province,  __('global.alert.create_success', [
                 'attribute' => __('module/regional.province.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -139,7 +139,7 @@ class RegionalService
         $province = $this->getProvince($where);
 
         try {
-            
+
             $province->update([
                 'code' => $data['code'],
                 'name' => Str::upper($data['name']),
@@ -155,7 +155,7 @@ class RegionalService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -171,9 +171,9 @@ class RegionalService
         try {
 
             $cities = $province->cities()->count();
-            
+
             if ($province['locked'] == 0 && $cities == 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $province->update([
                         'deleted_by' => Auth::user()['id']
@@ -185,7 +185,7 @@ class RegionalService
                 return $this->success($province,  __('global.alert.delete_success', [
                     'attribute' => __('module/regional.province.caption')
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/regional.province.caption')
@@ -193,7 +193,7 @@ class RegionalService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -207,16 +207,16 @@ class RegionalService
         $province = $this->provinceModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $province->restore();
 
             return $this->success($province, __('global.alert.restore_success', [
                 'attribute' => __('module/regional.province.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -234,15 +234,15 @@ class RegionalService
         }
 
         try {
-            
+
             $province->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/regional.province.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -260,7 +260,7 @@ class RegionalService
      * @param array $with
      * @param array $orderBy
      */
-    public function getCityList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getCityList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $city = $this->cityModel->query();
@@ -304,7 +304,7 @@ class RegionalService
 
             $result = $city->get();
         }
-        
+
         return $result;
     }
 
@@ -316,10 +316,10 @@ class RegionalService
     public function getCity($where, $with = [])
     {
         $city = $this->cityModel->query();
-        
+
         if (!empty($with))
             $city->with($with);
-        
+
         $result = $city->firstWhere($where);;
 
         return $result;
@@ -346,9 +346,9 @@ class RegionalService
             return $this->success($city,  __('global.alert.create_success', [
                 'attribute' => __('module/regional.city.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -363,7 +363,7 @@ class RegionalService
         $city = $this->getCity($where);
 
         try {
-            
+
             $city->update([
                 'province_code' => $data['province_code'],
                 'code' => $data['code'],
@@ -380,7 +380,7 @@ class RegionalService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -398,7 +398,7 @@ class RegionalService
             $districts = $city->districts()->count();
 
             if ($city['locked'] == 0 && $districts == 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $city->update([
                         'deleted_by' => Auth::user()['id']
@@ -410,7 +410,7 @@ class RegionalService
                 return $this->success($city,  __('global.alert.delete_success', [
                     'attribute' => __('module/regional.city.caption')
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/regional.city.caption')
@@ -418,7 +418,7 @@ class RegionalService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -432,7 +432,7 @@ class RegionalService
         $city = $this->cityModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             if ($city['province']->onlyTrashed()->count() > 0) {
                 return $this->error(null, __('global.alert.restore_failed', [
@@ -445,9 +445,9 @@ class RegionalService
             return $this->success($city, __('global.alert.restore_success', [
                 'attribute' => __('module/regional.city.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -465,15 +465,15 @@ class RegionalService
         }
 
         try {
-            
+
             $city->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/regional.city.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -491,7 +491,7 @@ class RegionalService
      * @param array $with
      * @param array $orderBy
      */
-    public function getDistrictList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getDistrictList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $district = $this->districtModel->query();
@@ -538,7 +538,7 @@ class RegionalService
 
             $result = $district->get();
         }
-        
+
         return $result;
     }
 
@@ -550,10 +550,10 @@ class RegionalService
     public function getDistrict($where, $with = [])
     {
         $district = $this->districtModel->query();
-        
+
         if (!empty($with))
             $district->with($with);
-        
+
         $result = $district->firstWhere($where);;
 
         return $result;
@@ -581,9 +581,9 @@ class RegionalService
             return $this->success($district,  __('global.alert.create_success', [
                 'attribute' => __('module/regional.district.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -597,7 +597,7 @@ class RegionalService
         $district = $this->getDistrict($where);
 
         try {
-            
+
             $district->update([
                 'province_code' => $data['province_code'],
                 'city_code' => $data['city_code'],
@@ -615,7 +615,7 @@ class RegionalService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -631,7 +631,7 @@ class RegionalService
         try {
 
             if ($district['locked'] == 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $district->update([
                         'deleted_by' => Auth::user()['id']
@@ -643,7 +643,7 @@ class RegionalService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/regional.district.caption')
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/regional.district.caption')
@@ -651,7 +651,7 @@ class RegionalService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -665,7 +665,7 @@ class RegionalService
         $district = $this->districtModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             if ($district['city']->onlyTrashed()->count() > 0) {
                 return $this->error(null, __('global.alert.restore_failed', [
@@ -678,9 +678,9 @@ class RegionalService
             return $this->success($district, __('global.alert.restore_success', [
                 'attribute' => __('module/regional.district.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -698,15 +698,15 @@ class RegionalService
         }
 
         try {
-            
+
             $district->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/regional.district.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

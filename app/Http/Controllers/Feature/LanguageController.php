@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Feature;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Feature\LanguageRequest;
-use App\Services\Feature\LanguageService;
+use App\Repositories\Feature\LanguageRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class LanguageController extends Controller
     private $languageService;
 
     public function __construct(
-        LanguageService $languageService
+        LanguageRepository $languageService
     )
     {
         $this->languageService = $languageService;

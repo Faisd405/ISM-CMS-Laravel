@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Module;
+namespace App\Repositories\Module;
 
 use App\Models\Module\Link\Link;
 use App\Models\Module\Link\LinkMedia;
-use App\Services\Feature\LanguageService;
-use App\Services\IndexUrlService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\IndexUrlRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
-class LinkService
+class LinkRepository
 {
     use ApiResponser;
 
@@ -23,8 +23,8 @@ class LinkService
     public function __construct(
         Link $linkModel,
         LinkMedia $mediaModel,
-        LanguageService $language,
-        IndexUrlService $indexUrl
+        LanguageRepository $language,
+        IndexUrlRepository $indexUrl
     )
     {
         $this->linkModel = $linkModel;
@@ -46,7 +46,7 @@ class LinkService
      * @param array $with
      * @param array $orderBy
      */
-    public function getLinkList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getLinkList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $link = $this->linkModel->query();
@@ -95,7 +95,7 @@ class LinkService
 
             $result = $link->get();
         }
-        
+
         return $result;
     }
 
@@ -107,10 +107,10 @@ class LinkService
     public function getLink($where, $with = [])
     {
         $link = $this->linkModel->query();
-        
+
         if (!empty($with))
             $link->with($with);
-        
+
         $result = $link->firstWhere($where);;
 
         return $result;
@@ -139,7 +139,7 @@ class LinkService
             $link->save();
 
             try {
-                
+
                 DB::commit();
                 $slug = Str::slug(strip_tags($data['slug']), '-');
                 $data['slug'] = $slug;
@@ -151,12 +151,12 @@ class LinkService
                 ]));
 
             } catch (Exception $e) {
-            
+
                 return $this->error(null,  $e->getMessage());
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -171,7 +171,7 @@ class LinkService
         $link = $this->getLink($where);
 
         try {
-            
+
             $this->setFieldLink($data, $link);
             if (Auth::guard()->check())
                 $link->updated_by = Auth::user()['id'];
@@ -186,7 +186,7 @@ class LinkService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -239,7 +239,7 @@ class LinkService
         $link->template_id = $data['template_id'] ?? null;
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -263,7 +263,7 @@ class LinkService
         $link = $this->getLink($where);
 
         try {
-            
+
             $value = !$link[$field];
             if ($field == 'approved') {
                 $value = $link['approved'] == 1 ? 0 : 1;
@@ -286,9 +286,9 @@ class LinkService
             return $this->success($link, __('global.alert.update_success', [
                 'attribute' => __('module/link.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -320,21 +320,21 @@ class LinkService
     public function positionLink($where, $position)
     {
         $link = $this->getLink($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->linkModel->where('position', $position)->update([
                     'position' => $link['position'],
                 ]);
-    
+
                 $link->position = $position;
                 if (Auth::guard()->check()) {
                     $link->updated_by = Auth::user()['id'];
                 }
                 $link->save();
-    
+
                 return $this->success($link, __('global.alert.update_success', [
                     'attribute' => __('module/link.caption')
                 ]));
@@ -345,9 +345,9 @@ class LinkService
                     'attribute' => __('module/link.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -359,7 +359,7 @@ class LinkService
     public function recordLinkHits($where)
     {
         $link = $this->getLink($where);
-        
+
         if (empty(Session::get('linktHits-'.$link['id']))) {
             Session::put('linktHits-'.$link['id'], $link['id']);
             $link->hits = ($link->hits+1);
@@ -379,7 +379,7 @@ class LinkService
         $link = $this->getLink($where);
 
         try {
-            
+
             $meedia = $link->medias()->count();
 
             if ($link['locked'] == 0 && $meedia == 0) {
@@ -405,7 +405,7 @@ class LinkService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/link.caption')
                 ]));
-    
+
             } else {
                 return $this->error($link,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/link.caption')
@@ -413,7 +413,7 @@ class LinkService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -427,14 +427,14 @@ class LinkService
         $link = $this->linkModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkSlug = $this->getLink(['slug' => $link['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/link.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $link->menus()->restore();
             $link->widgets()->restore();
@@ -444,9 +444,9 @@ class LinkService
             return $this->success($link, __('global.alert.restore_success', [
                 'attribute' => __('module/link.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -464,7 +464,7 @@ class LinkService
         }
 
         try {
-            
+
             $link->menus()->forceDelete();
             $link->widgets()->forceDelete();
             $link->indexing()->forceDelete();
@@ -473,9 +473,9 @@ class LinkService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/link.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -493,7 +493,7 @@ class LinkService
      * @param array $with
      * @param array $orderBy
      */
-    public function getMediaList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getMediaList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $media = $this->mediaModel->query();
@@ -542,7 +542,7 @@ class LinkService
 
             $result = $media->get();
         }
-        
+
         return $result;
     }
 
@@ -554,10 +554,10 @@ class LinkService
     public function getMedia($where, $with = [])
     {
         $media = $this->mediaModel->query();
-        
+
         if (!empty($with))
             $media->with($with);
-        
+
         $result = $media->firstWhere($where);;
 
         return $result;
@@ -587,9 +587,9 @@ class LinkService
             return $this->success($media,  __('global.alert.create_success', [
                 'attribute' => __('module/link.media.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -604,7 +604,7 @@ class LinkService
         $media = $this->getMedia($where);
 
         try {
-            
+
             $this->setFieldMedia($data, $media);
             if (Auth::guard()->check())
                 $media->updated_by = Auth::user()['id'];
@@ -616,7 +616,7 @@ class LinkService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -664,7 +664,7 @@ class LinkService
         ];
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -693,7 +693,7 @@ class LinkService
             if ($field == 'approved') {
                 $value = $media['approved'] == 1 ? 0 : 1;
             }
-            
+
             $media->update([
                 $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $media['updated_by'],
@@ -702,9 +702,9 @@ class LinkService
             return $this->success($media, __('global.alert.update_success', [
                 'attribute' => __('module/link.media.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -735,22 +735,22 @@ class LinkService
     public function positionMedia($where, $position)
     {
         $media = $this->getMedia($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->mediaModel->where('link_id', $media['link_id'])
                     ->where('position', $position)->update([
                     'position' => $media['position'],
                 ]);
-    
+
                 $media->position = $position;
                 if (Auth::guard()->check()) {
                     $media->updated_by = Auth::user()['id'];
                 }
                 $media->save();
-    
+
                 return $this->success($media, __('global.alert.update_success', [
                     'attribute' => __('module/link.media.caption')
                 ]));
@@ -761,9 +761,9 @@ class LinkService
                     'attribute' => __('module/link.media.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -807,7 +807,7 @@ class LinkService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -821,16 +821,16 @@ class LinkService
         $media = $this->mediaModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $media->restore();
 
             return $this->success($media, __('global.alert.restore_success', [
                 'attribute' => __('module/link.media.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -854,9 +854,9 @@ class LinkService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/link.media.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

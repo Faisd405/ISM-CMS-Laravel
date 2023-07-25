@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Module;
+namespace App\Repositories\Module;
 
 use App\Models\Module\Gallery\GalleryAlbum;
 use App\Models\Module\Gallery\GalleryCategory;
 use App\Models\Module\Gallery\GalleryFile;
-use App\Services\Feature\LanguageService;
+use App\Repositories\Feature\LanguageRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class GalleryService
+class GalleryRepository
 {
     use ApiResponser;
 
@@ -25,7 +25,7 @@ class GalleryService
         GalleryCategory $categoryModel,
         GalleryAlbum $albumModel,
         GalleryFile $fileModel,
-        LanguageService $language
+        LanguageRepository $language
     )
     {
         $this->categoryModel = $categoryModel;
@@ -47,7 +47,7 @@ class GalleryService
      * @param array $with
      * @param array $orderBy
      */
-    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $category = $this->categoryModel->query();
@@ -96,7 +96,7 @@ class GalleryService
 
             $result = $category->get();
         }
-        
+
         return $result;
     }
 
@@ -108,10 +108,10 @@ class GalleryService
     public function getCategory($where, $with = [])
     {
         $category = $this->categoryModel->query();
-        
+
         if (!empty($with))
             $category->with($with);
-        
+
         $result = $category->firstWhere($where);;
 
         return $result;
@@ -140,9 +140,9 @@ class GalleryService
             return $this->success($category,  __('global.alert.create_success', [
                 'attribute' => __('module/gallery.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -157,7 +157,7 @@ class GalleryService
         $category = $this->getCategory($where);
 
         try {
-            
+
             $this->setFieldCategory($data, $category);
             if (Auth::guard()->check())
                 $category->updated_by = Auth::user()['id'];
@@ -169,7 +169,7 @@ class GalleryService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -223,7 +223,7 @@ class GalleryService
         $category->template_detail_id = $data['template_detail_id'] ?? null;
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -247,7 +247,7 @@ class GalleryService
         $category = $this->getCategory($where);
 
         try {
-            
+
             $value = !$category[$field];
             if ($field == 'approved') {
                 $value = $category['approved'] == 1 ? 0 : 1;
@@ -271,9 +271,9 @@ class GalleryService
             return $this->success($category, __('global.alert.update_success', [
                 'attribute' => __('module/gallery.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -305,21 +305,21 @@ class GalleryService
     public function positionCategory($where, $position)
     {
         $category = $this->getCategory($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->categoryModel->where('position', $position)->update([
                     'position' => $category['position'],
                 ]);
-    
+
                 $category->position = $position;
                 if (Auth::guard()->check()) {
                     $category->updated_by = Auth::user()['id'];
                 }
                 $category->save();
-    
+
                 return $this->success($category, __('global.alert.update_success', [
                     'attribute' => __('module/gallery.category.caption')
                 ]));
@@ -330,9 +330,9 @@ class GalleryService
                     'attribute' => __('module/gallery.category.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -364,7 +364,7 @@ class GalleryService
         $category = $this->getCategory($where);
 
         try {
-            
+
             $albums = $category->albums()->count();
             $files = $category->files()->count();
 
@@ -390,7 +390,7 @@ class GalleryService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/gallery.category.caption')
                 ]));
-    
+
             } else {
                 return $this->error($category,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/gallery.category.caption')
@@ -398,7 +398,7 @@ class GalleryService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -412,14 +412,14 @@ class GalleryService
         $category = $this->categoryModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkSlug = $this->getCategory(['slug' => $category['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/gallery.category.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $category->menus()->restore();
             $category->widgets()->restore();
@@ -428,9 +428,9 @@ class GalleryService
             return $this->success($category, __('global.alert.restore_success', [
                 'attribute' => __('module/gallery.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -448,7 +448,7 @@ class GalleryService
         }
 
         try {
-            
+
             $category->menus()->forceDelete();
             $category->widgets()->forceDelete();
             $category->forceDelete();
@@ -456,9 +456,9 @@ class GalleryService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/gallery.category.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -476,7 +476,7 @@ class GalleryService
      * @param array $with
      * @param array $orderBy
      */
-    public function getAlbumList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getAlbumList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $album = $this->albumModel->query();
@@ -528,7 +528,7 @@ class GalleryService
 
             $result = $album->get();
         }
-        
+
         return $result;
     }
 
@@ -540,10 +540,10 @@ class GalleryService
     public function getAlbum($where, $with = [])
     {
         $album = $this->albumModel->query();
-        
+
         if (!empty($with))
             $album->with($with);
-        
+
         $result = $album->firstWhere($where);;
 
         return $result;
@@ -572,9 +572,9 @@ class GalleryService
             return $this->success($album,  __('global.alert.create_success', [
                 'attribute' => __('module/gallery.album.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -589,7 +589,7 @@ class GalleryService
         $album = $this->getAlbum($where);
 
         try {
-            
+
             $this->setFieldAlbum($data, $album);
             if (Auth::guard()->check())
                 $album->updated_by = Auth::user()['id'];
@@ -601,7 +601,7 @@ class GalleryService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -662,7 +662,7 @@ class GalleryService
         $album->template_id = $data['template_id'] ?? null;
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -686,7 +686,7 @@ class GalleryService
         $album = $this->getAlbum($where);
 
         try {
-            
+
             $value = !$album[$field];
             if ($field == 'approved') {
                 $value = $album['approved'] == 1 ? 0 : 1;
@@ -709,9 +709,9 @@ class GalleryService
             return $this->success($album, __('global.alert.update_success', [
                 'attribute' => __('module/gallery.album.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -743,21 +743,21 @@ class GalleryService
     public function positionAlbum($where, $position)
     {
         $album = $this->getAlbum($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->albumModel->where('position', $position)->update([
                     'position' => $album['position'],
                 ]);
-    
+
                 $album->position = $position;
                 if (Auth::guard()->check()) {
                     $album->updated_by = Auth::user()['id'];
                 }
                 $album->save();
-    
+
                 return $this->success($album, __('global.alert.update_success', [
                     'attribute' => __('module/gallery.album.caption')
                 ]));
@@ -768,9 +768,9 @@ class GalleryService
                     'attribute' => __('module/gallery.album.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -802,7 +802,7 @@ class GalleryService
         $album = $this->getAlbum($where);
 
         try {
-            
+
             $files = $album->files()->count();
 
             if ($album['locked'] == 0 && $files == 0) {
@@ -827,7 +827,7 @@ class GalleryService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/gallery.album.caption')
                 ]));
-    
+
             } else {
                 return $this->error($album,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/gallery.album.caption')
@@ -835,7 +835,7 @@ class GalleryService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -849,14 +849,14 @@ class GalleryService
         $album = $this->albumModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkSlug = $this->getAlbum(['slug' => $album['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/gallery.album.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $album->menus()->restore();
             $album->widgets()->restore();
@@ -865,9 +865,9 @@ class GalleryService
             return $this->success($album, __('global.alert.restore_success', [
                 'attribute' => __('module/gallery.album.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -885,7 +885,7 @@ class GalleryService
         }
 
         try {
-                
+
             $album->menus()->forceDelete();
             $album->widgets()->forceDelete();
             $album->forceDelete();
@@ -893,9 +893,9 @@ class GalleryService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/gallery.album.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -913,7 +913,7 @@ class GalleryService
      * @param array $with
      * @param array $orderBy
      */
-    public function getFileList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getFileList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $file = $this->fileModel->query();
@@ -968,7 +968,7 @@ class GalleryService
 
             $result = $file->get();
         }
-        
+
         return $result;
     }
 
@@ -980,10 +980,10 @@ class GalleryService
     public function getFile($where, $with = [])
     {
         $file = $this->fileModel->query();
-        
+
         if (!empty($with))
             $file->with($with);
-        
+
         $result = $file->firstWhere($where);;
 
         return $result;
@@ -1017,10 +1017,10 @@ class GalleryService
                     if (file_exists(storage_path('app/public/gallery/'.$data['gallery_album_id'].'/'.$fileName))) {
                         $fileName = Str::random(3).'-'.$file->getClientOriginalName();
                     }
-        
-                    Storage::put(config('cms.files.gallery.path').$data['gallery_album_id'].'/'.$fileName, 
+
+                    Storage::put(config('cms.files.gallery.path').$data['gallery_album_id'].'/'.$fileName,
                         file_get_contents($file));
-                    
+
                     $galleryFile->file = $fileName;
                 }
 
@@ -1042,10 +1042,10 @@ class GalleryService
                     if (file_exists(storage_path('app/public/gallery/'.$data['gallery_album_id'].'/'.$fileName))) {
                         $fileName = Str::random(3).'-'.$file->getClientOriginalName();
                     }
-        
-                    Storage::put(config('cms.files.gallery.path').$data['gallery_album_id'].'/'.$fileName, 
+
+                    Storage::put(config('cms.files.gallery.path').$data['gallery_album_id'].'/'.$fileName,
                         file_get_contents($file));
-                    
+
                     $galleryFile->file = $fileName;
                 }
 
@@ -1054,14 +1054,14 @@ class GalleryService
                 }
 
                 if (isset($data['thumbnail'])) {
-                        
+
                     $fileThumb = $data['thumbnail'];
                     $fileNameThumb = $fileThumb->getClientOriginalName();
                     if (file_exists(storage_path('app/public/gallery/thumbnail/'.$data['gallery_album_id'].'/'.$fileNameThumb))) {
                         $fileNameThumb = Str::random(3).'-'.$fileThumb->getClientOriginalName();
                     }
-        
-                    Storage::put(config('cms.files.gallery.thumbnail.path').$data['gallery_album_id'].'/'.$fileNameThumb, 
+
+                    Storage::put(config('cms.files.gallery.thumbnail.path').$data['gallery_album_id'].'/'.$fileNameThumb,
                         file_get_contents($fileThumb));
 
                     $galleryFile->thumbnail = $fileNameThumb;
@@ -1082,9 +1082,9 @@ class GalleryService
             return $this->success($galleryFile,  __('global.alert.create_success', [
                 'attribute' => __('module/gallery.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1105,16 +1105,16 @@ class GalleryService
 
             $galleryFile->type = '0';
             $galleryFile->image_type = '0';
-            
+
             $file = $data['file'];
             $fileName = $file->getClientOriginalName();
             if (file_exists(storage_path('app/public/gallery/'.$data['gallery_album_id'].'/'.$fileName))) {
                 $fileName = Str::random(3).'-'.$file->getClientOriginalName();
             }
 
-            Storage::put(config('cms.files.gallery.path').$data['gallery_album_id'].'/'.$fileName, 
+            Storage::put(config('cms.files.gallery.path').$data['gallery_album_id'].'/'.$fileName,
                 file_get_contents($file));
-            
+
             $galleryFile->file = $fileName;
 
             $this->setFieldFile($data, $galleryFile);
@@ -1133,7 +1133,7 @@ class GalleryService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1150,7 +1150,7 @@ class GalleryService
         try {
 
             if ($galleryFile['type'] == '0') {
-                
+
                 if ($galleryFile['image_type'] == '0' && isset($data['file_image'])) {
                     $file = $data['file_image'];
                     $fileName = $file->getClientOriginalName();
@@ -1160,10 +1160,10 @@ class GalleryService
 
                     Storage::delete(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].
                         '/'.$data['old_file']);
-        
-                    Storage::put(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].'/'.$fileName, 
+
+                    Storage::put(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].'/'.$fileName,
                         file_get_contents($file));
-                    
+
                     $galleryFile->file = $fileName;
                 }
 
@@ -1177,7 +1177,7 @@ class GalleryService
             }
 
             if ($galleryFile['type'] == '1') {
-                
+
                 if ($galleryFile['video_type'] == '0') {
 
                     if (isset($data['file_video'])) {
@@ -1189,10 +1189,10 @@ class GalleryService
 
                         Storage::delete(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].
                             '/'.$data['old_file']);
-                        
-                        Storage::put(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].'/'.$fileName, 
+
+                        Storage::put(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].'/'.$fileName,
                             file_get_contents($file));
-                        
+
                         $galleryFile->file = $fileName;
                     }
                 }
@@ -1202,7 +1202,7 @@ class GalleryService
                 }
 
                 if (isset($data['thumbnail'])) {
-                        
+
                     $fileThumb = $data['thumbnail'];
                     $fileNameThumb = $fileThumb->getClientOriginalName();
                     if (file_exists(storage_path('app/public/gallery/thumbnail/'.$galleryFile['gallery_album_id'].'/'.$fileNameThumb))) {
@@ -1211,14 +1211,14 @@ class GalleryService
 
                     Storage::delete(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].
                         '/'.$data['old_thumbnail']);
-        
-                    Storage::put(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].'/'.$fileNameThumb, 
+
+                    Storage::put(config('cms.files.gallery.thumbnail.path').$galleryFile['gallery_album_id'].'/'.$fileNameThumb,
                         file_get_contents($fileThumb));
 
                     $galleryFile->thumbnail = $fileNameThumb;
                 }
             }
-            
+
             $this->setFieldFile($data, $galleryFile);
             if (Auth::guard()->check())
                 $galleryFile->updated_by = Auth::user()['id'];
@@ -1230,7 +1230,7 @@ class GalleryService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1265,7 +1265,7 @@ class GalleryService
         ];
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -1289,7 +1289,7 @@ class GalleryService
         $file = $this->getFile($where);
 
         try {
-            
+
             $value = !$file[$field];
             if ($field == 'approved') {
                 $value = $file['approved'] == 1 ? 0 : 1;
@@ -1303,9 +1303,9 @@ class GalleryService
             return $this->success($file, __('global.alert.update_success', [
                 'attribute' => __('module/gallery.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1336,22 +1336,22 @@ class GalleryService
     public function positionFile($where, $position)
     {
         $galleryFile = $this->getFile($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->fileModel->where('gallery_album_id', $galleryFile['gallery_album_id'])
                     ->where('position', $position)->update([
                     'position' => $galleryFile['position'],
                 ]);
-    
+
                 $galleryFile->position = $position;
                 if (Auth::guard()->check()) {
                     $galleryFile->updated_by = Auth::user()['id'];
                 }
                 $galleryFile->save();
-    
+
                 return $this->success($galleryFile, __('global.alert.update_success', [
                     'attribute' => __('module/gallery.file.caption')
                 ]));
@@ -1362,9 +1362,9 @@ class GalleryService
                     'attribute' => __('module/gallery.file.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1408,7 +1408,7 @@ class GalleryService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1422,16 +1422,16 @@ class GalleryService
         $galleryFile = $this->fileModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $galleryFile->restore();
 
             return $this->success($galleryFile, __('global.alert.restore_success', [
                 'attribute' => __('module/gallery.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1449,7 +1449,7 @@ class GalleryService
         }
 
         try {
-            
+
             if ($galleryFile['type'] == '0' && $galleryFile['image_type'] == '0') {
                 Storage::delete(config('cms.files.gallery.path').$galleryFile['gallery_album_id'].
                  '/'.$galleryFile['file']);
@@ -1470,9 +1470,9 @@ class GalleryService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/gallery.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\UserService;
+use App\Repositories\UserRepository;
 use Illuminate\Console\Command;
 
 class RemoveLoginFailed extends Command
@@ -28,7 +28,7 @@ class RemoveLoginFailed extends Command
      *
      * @return void
      */
-    public function __construct(UserService $userService)
+    public function __construct(UserRepository $userService)
     {
         parent::__construct();
 
@@ -53,7 +53,7 @@ class RemoveLoginFailed extends Command
             $failedTime = $value->failed_time->addHours($hour)->format('Y-m-d H');
             if ($timeNow >= $failedTime)
                 $value->delete();
-                
+
                 // sleep(rand(1, 5));
         }
 

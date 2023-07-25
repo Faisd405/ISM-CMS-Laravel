@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Module\Inquiry;
 
-use App\Services\Module\InquiryService;
+use App\Repositories\Module\InquiryRepository;
 use Illuminate\Foundation\Http\FormRequest;
 
 class InquiryFormRequest extends FormRequest
@@ -10,7 +10,7 @@ class InquiryFormRequest extends FormRequest
     private $inquiry;
 
     public function __construct(
-        InquiryService $inquiry
+        InquiryRepository $inquiry
     )
     {
         $this->inquiry = $inquiry;
@@ -44,7 +44,7 @@ class InquiryFormRequest extends FormRequest
             'publish' => 1,
             'approved' => 1
         ], false, 0);
-        
+
         $fields['g-recaptcha-response'] = 'Recaptcha';
         foreach ($getFields as $value) {
             $fields[$value['name']] = $value->fieldLang('label');

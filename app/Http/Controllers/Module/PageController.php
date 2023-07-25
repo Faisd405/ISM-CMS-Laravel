@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Module;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\PageRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Master\MediaService;
-use App\Services\Master\TemplateService;
-use App\Services\Module\PageService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Master\MediaRepository;
+use App\Repositories\Master\TemplateRepository;
+use App\Repositories\Module\PageRepository;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,10 +21,10 @@ class PageController extends Controller
     private $pageService, $mediaService, $languageService, $templateService;
 
     public function __construct(
-        PageService $pageService,
-        MediaService $mediaService,
-        LanguageService $languageService,
-        TemplateService $templateService
+        PageRepository $pageService,
+        MediaRepository $mediaService,
+        LanguageRepository $languageService,
+        TemplateRepository $templateService
     )
     {
         $this->pageService = $pageService;
@@ -48,7 +48,7 @@ class PageController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['pages'] = $this->pageService->getPageList($filter, true, 10, false, [], 
+        $data['pages'] = $this->pageService->getPageList($filter, true, 10, false, [],
             config('cms.module.page.ordering'));
         $data['no'] = $data['pages']->firstItem();
         $data['pages']->withQueryString();
@@ -158,12 +158,12 @@ class PageController extends Controller
         if (!empty($data['page']['parent'])) {
             $data['parent'] = $this->pageService->getPage(['id' => $data['page']['parent']]);
         }
-        
+
         if ($data['page']->tags()->count() > 0) {
             foreach ($data['page']->tags as $key => $value) {
                 $tags[$key] = $value->tag->name;
             }
-    
+
             $data['tags'] = implode(',', $tags);
         }
 
@@ -315,7 +315,7 @@ class PageController extends Controller
         }
 
         if ($data['read']['detail'] == 0) {
-            
+
             return redirect()->route('home');
             if ($data['read']['parent'] > 0) {
                 return redirect()->route('page.read.'.$data['read']->getParent()['slug']);
@@ -330,7 +330,7 @@ class PageController extends Controller
         $filterChild['parent'] = $data['read']['id'];
         $filterChild['publish'] = 1;
         $filterChild['approved'] = 1;
-        $data['childs'] = $this->pageService->getPageList($filterChild, 
+        $data['childs'] = $this->pageService->getPageList($filterChild,
             $data['read']['config']['paginate_child'], $data['read']['config']['child_limit'], false, [], [
             $data['read']['config']['child_order_by'] => $data['read']['config']['child_order_type']
         ]);
@@ -346,7 +346,7 @@ class PageController extends Controller
             'approved' => 1
         ], false, 0, false, [], ['position' => 'ASC']);
 
-        
+
         // media
         $data['medias'] = $this->mediaService->getMediaList([
             'module' => 'page',
@@ -374,10 +374,10 @@ class PageController extends Controller
         $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             !empty($data['read']->fieldLang('intro'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('intro')), 155);
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             empty($data['read']->fieldLang('intro')) && !empty($data['read']->fieldLang('content'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('content')), 155);
         }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\RoleRequest;
-use App\Services\UserService;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class RoleController extends Controller
     private $userService;
 
     public function __construct(
-        UserService $userService
+        UserRepository $userService
     )
     {
         $this->userService = $userService;

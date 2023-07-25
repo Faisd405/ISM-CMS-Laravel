@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Master;
+namespace App\Repositories\Master;
 
 use App\Models\Master\Tag;
 use App\Models\Master\TagType;
@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class TagService
+class TagRepository
 {
     use ApiResponser;
 
@@ -33,7 +33,7 @@ class TagService
      * @param array $with
      * @param array $orderBy
      */
-    public function getTagList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getTagList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $tag = $this->tagModel->query();
@@ -116,9 +116,9 @@ class TagService
             return $this->success($tag,  __('global.alert.create_success', [
                 'attribute' => __('master/tags.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -133,7 +133,7 @@ class TagService
         $tag = $this->getTag($where);
 
         try {
-            
+
             $tag->update([
                 'name' => Str::lower($data['name']),
                 'description' => $data['description'] ?? null,
@@ -148,7 +148,7 @@ class TagService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -163,7 +163,7 @@ class TagService
         $tag = $this->getTag($where);
 
         try {
-            
+
             $tag->update([
                 $field => !$tag[$field],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $tag['updated_by'],
@@ -172,9 +172,9 @@ class TagService
             return $this->success($tag, __('global.alert.update_success', [
                 'attribute' => __('master/tags.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -215,7 +215,7 @@ class TagService
         $type->where('tagable_id', $model['tagable_id'])
             ->where('tagable_type', $model['tagable_type'])
             ->get();
-        
+
         $type->delete();
     }
 
@@ -260,9 +260,9 @@ class TagService
         try {
 
             $type = $tag->types()->count();
-            
+
             if ($type == 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $tag->update([
                         'deleted_by' => Auth::user()['id']
@@ -274,7 +274,7 @@ class TagService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('master/tags.caption')
                 ]));
-    
+
             } else {
                 return $this->error($tag,  __('global.alert.delete_failed_used', [
                     'attribute' => __('master/tags.caption')
@@ -282,7 +282,7 @@ class TagService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -296,16 +296,16 @@ class TagService
         $tag = $this->tagModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $tag->restore();
 
             return $this->success($tag, __('global.alert.restore_success', [
                 'attribute' => __('master/tags.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -323,15 +323,15 @@ class TagService
         }
 
         try {
-                
+
             $tag->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('master/tags.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

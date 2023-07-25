@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Module\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Content\ContentPostRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Master\MediaService;
-use App\Services\Master\TemplateService;
-use App\Services\Module\ContentService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Master\MediaRepository;
+use App\Repositories\Master\TemplateRepository;
+use App\Repositories\Module\ContentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -18,10 +18,10 @@ class ContentPostController extends Controller
     private $contentService, $mediaService, $languageService, $templateService;
 
     public function __construct(
-        ContentService $contentService,
-        MediaService $mediaService,
-        LanguageService $languageService,
-        TemplateService $templateService
+        ContentRepository $contentService,
+        MediaRepository $mediaService,
+        LanguageRepository $languageService,
+        TemplateRepository $templateService
     )
     {
         $this->contentService = $contentService;
@@ -189,7 +189,7 @@ class ContentPostController extends Controller
             foreach ($data['post']->tags as $key => $value) {
                 $tags[$key] = $value->tag->name;
             }
-    
+
             $data['tags'] = implode(',', $tags);
         }
 
@@ -422,10 +422,10 @@ class ContentPostController extends Controller
         $data['meta_description'] = config('cmsConfig.seo.meta_description');
         if (!empty($data['read']['seo']['description'])) {
             $data['meta_description'] = $data['read']['seo']['description'];
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             !empty($data['read']->fieldLang('intro'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('intro')), 155);
-        } elseif (empty($data['read']['seo']['description']) && 
+        } elseif (empty($data['read']['seo']['description']) &&
             empty($data['read']->fieldLang('intro')) && !empty($data['read']->fieldLang('content'))) {
             $data['meta_description'] = Str::limit(strip_tags($data['read']->fieldLang('content')), 155);
         }

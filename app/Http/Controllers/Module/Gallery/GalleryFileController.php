@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Module\Gallery;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Gallery\GalleryFileMultipleRequest;
 use App\Http\Requests\Module\Gallery\GalleryFileRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\Module\GalleryService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\Module\GalleryRepository;
 use Illuminate\Http\Request;
 
 class GalleryFileController extends Controller
@@ -14,8 +14,8 @@ class GalleryFileController extends Controller
     private $galleryService, $languageService;
 
     public function __construct(
-        GalleryService $galleryService,
-        LanguageService $languageService
+        GalleryRepository $galleryService,
+        LanguageRepository $languageService
     )
     {
         $this->galleryService = $galleryService;
@@ -137,7 +137,7 @@ class GalleryFileController extends Controller
         if ($request->hasFile('file_youtube')) {
             $data['file_youtube'] = $request->file('file_youtube');
         }
-        
+
         $data['gallery_album_id'] = $albumId;
         $data['image_type'] = $request->image_type ?? null;
         $data['video_type'] = $request->video_type ?? null;
@@ -222,7 +222,7 @@ class GalleryFileController extends Controller
         if ($request->hasFile('file_youtube')) {
             $data['file_youtube'] = $request->file('file_youtube');
         }
-        
+
         $data['gallery_album_id'] = $albumId;
         $data['image_type'] = $request->image_type ?? null;
         $data['video_type'] = $request->video_type ?? null;

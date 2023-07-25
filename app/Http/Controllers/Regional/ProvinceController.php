@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Regional;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Regional\ProvinceRequest;
-use App\Services\RegionalService;
+use App\Repositories\RegionalRepository;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,7 +16,7 @@ class ProvinceController extends Controller
     private $regionalService;
 
     public function __construct(
-        RegionalService $regionalService
+        RegionalRepository $regionalService
     )
     {
         $this->regionalService = $regionalService;

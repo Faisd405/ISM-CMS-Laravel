@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Feature;
+namespace App\Repositories\Feature;
 
 use App\Models\Feature\Api;
 use App\Traits\ApiResponser;
@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class ApiService
+class ApiRepository
 {
     use ApiResponser;
 
@@ -30,7 +30,7 @@ class ApiService
      * @param array $with
      * @param array $orderBy
      */
-    public function getApiList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getApiList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $api = $this->apiModel->query();
@@ -114,9 +114,9 @@ class ApiService
             return $this->success($api,  __('global.alert.create_success', [
                 'attribute' => __('feature/api.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -131,7 +131,7 @@ class ApiService
         $api = $this->getApi($where);
 
         try {
-            
+
             $api->update([
                 'name' => $data['name'],
                 'description' => $data['description'] ?? null,
@@ -148,7 +148,7 @@ class ApiService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -162,7 +162,7 @@ class ApiService
         $api = $this->getApi($where);
 
         try {
-            
+
             $api->update([
                 'active' => !$api['active'],
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $api['updated_by'],
@@ -171,9 +171,9 @@ class ApiService
             return $this->success($api, __('global.alert.update_success', [
                 'attribute' => __('feature/api.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -187,7 +187,7 @@ class ApiService
         $api = $this->getApi($where);
 
         try {
-            
+
             $api->update([
                 'api_key' => $this->generateApi()['apiKey'],
                 'api_secret' => $this->generateApi()['apiSecret'],
@@ -197,9 +197,9 @@ class ApiService
             return $this->success($api, __('global.alert.update_success', [
                 'attribute' => __('feature/api.label.regenerate')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -211,9 +211,9 @@ class ApiService
     public function trash($where)
     {
         $api = $this->getApi($where);
-        
+
         try {
-            
+
             if ($api['is_default'] == 0) {
 
                 if (Auth::guard()->check()) {
@@ -221,9 +221,9 @@ class ApiService
                         'deleted_by' => Auth::user()['id']
                     ]);
                 }
-    
+
                 $api->delete();
-    
+
                 return $this->success($api,  __('global.alert.delete_success', [
                     'attribute' => __('feature/api.caption')
                 ]));
@@ -236,7 +236,7 @@ class ApiService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -250,16 +250,16 @@ class ApiService
         $api = $this->apiModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $api->restore();
 
             return $this->success($api, __('global.alert.restore_success', [
                 'attribute' => __('feature/api.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -277,15 +277,15 @@ class ApiService
         }
 
         try {
-            
+
             $api->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('feature/api.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

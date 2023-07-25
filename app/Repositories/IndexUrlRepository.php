@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories;
 
 use App\Models\IndexingUrl;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Str;
 
-class IndexUrlService
+class IndexUrlRepository
 {
     use ApiResponser;
 
@@ -29,7 +29,7 @@ class IndexUrlService
      * @param array $with
      * @param array $orderBy
      */
-    public function getIndexUrlList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getIndexUrlList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $indexUrl = $this->indexUrlModel->query();
@@ -65,7 +65,7 @@ class IndexUrlService
 
             $result = $indexUrl->get();
         }
-        
+
         return $result;
     }
 
@@ -77,10 +77,10 @@ class IndexUrlService
     public function getIndexUrl($where, $with = [])
     {
         $indexUrl = $this->indexUrlModel->query();
-        
+
         if (!empty($with))
             $indexUrl->with($with);
-        
+
         $result = $indexUrl->firstWhere($where);;
 
         return $result;
@@ -105,9 +105,9 @@ class IndexUrlService
             return $this->success($indexUrl,  __('global.alert.create_success', [
                 'attribute' => __('module/url.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -139,7 +139,7 @@ class IndexUrlService
         $indexUrl = $this->getIndexUrl($where);
 
         try {
-            
+
             $indexUrl->update([
                 'slug' => Str::slug($data['slug'], '-'),
                 'module' => $data['module'] ?? null,
@@ -153,7 +153,7 @@ class IndexUrlService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -168,7 +168,7 @@ class IndexUrlService
         $indexUrl = $this->getIndexUrl($where);
 
         try {
-            
+
             $indexUrl->update([
                 'slug' => $slug
             ]);
@@ -178,7 +178,7 @@ class IndexUrlService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -200,7 +200,7 @@ class IndexUrlService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/url.caption')
                 ]));
-    
+
             } else {
                 return $this->error($indexUrl,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/url.caption')
@@ -208,7 +208,7 @@ class IndexUrlService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -222,23 +222,23 @@ class IndexUrlService
         $indexUrl = $this->indexUrlModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $checkSlug = $this->indexUrlModel->firstWhere('slug', $indexUrl['slug']);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/url.caption')
                 ]));
             }
-            
+
             //restore data yang bersangkutan
             $indexUrl->restore();
 
             return $this->success($indexUrl, __('global.alert.restore_success', [
                 'attribute' => __('module/url.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -256,15 +256,15 @@ class IndexUrlService
         }
 
         try {
-                
+
             $indexUrl->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/url.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

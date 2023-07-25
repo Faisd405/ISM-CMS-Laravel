@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Menu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Menu\MenuRequest;
-use App\Services\Feature\LanguageService;
-use App\Services\MenuService;
+use App\Repositories\Feature\LanguageRepository;
+use App\Repositories\MenuRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,8 +14,8 @@ class MenuController extends Controller
     private $menuService, $languageService;
 
     public function __construct(
-        MenuService $menuService,
-        LanguageService $languageService
+        MenuRepository $menuService,
+        LanguageRepository $languageService
     )
     {
         $this->menuService = $menuService;
@@ -74,7 +74,7 @@ class MenuController extends Controller
         $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
         if (empty($data['category']))
             return abort(404);
-            
+
         $data['menus'] = $this->menuService->getMenuList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Master;
+namespace App\Repositories\Master;
 
 use App\Models\Master\Template;
 use App\Traits\ApiResponser;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class TemplateService
+class TemplateRepository
 {
     use ApiResponser;
 
@@ -31,7 +31,7 @@ class TemplateService
      * @param array $with
      * @param array $orderBy
      */
-    public function getTemplateList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getTemplateList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $template = $this->templateModel->query();
@@ -115,36 +115,36 @@ class TemplateService
             $setPath = $filePath.$fileName;
 
             if (!file_exists(resource_path($setPath))) {
-                
+
                 if ($type == 0) {
-                    File::copy(resource_path($templateResource['full'].'/detail.blade.php'), 
+                    File::copy(resource_path($templateResource['full'].'/detail.blade.php'),
                         resource_path($templateResource['full'].'/custom/'.$fileName));
                 } else {
 
                     if ($data['module'] == 'content_section') {
                         if ($type == 1) {
-                            File::copy(resource_path($templateResource['full'].'/detail.blade.php'), 
+                            File::copy(resource_path($templateResource['full'].'/detail.blade.php'),
                                 resource_path($setPath));
                         } else {
                             $templateResourcePath = config('cms.module.master.template.mod.content_post');
-                            File::copy(resource_path($templateResourcePath['full'].'/detail.blade.php'), 
+                            File::copy(resource_path($templateResourcePath['full'].'/detail.blade.php'),
                                 resource_path($setPath));
                         }
                     }
 
                     if ($data['module'] == 'gallery_category') {
                         if ($type == 1) {
-                            File::copy(resource_path($templateResource['full'].'/detail.blade.php'), 
+                            File::copy(resource_path($templateResource['full'].'/detail.blade.php'),
                                 resource_path($setPath));
                         } else {
                             $templateResourcePath = config('cms.module.master.template.mod.gallery_album');
-                            File::copy(resource_path($templateResourcePath['full'].'/detail.blade.php'), 
+                            File::copy(resource_path($templateResourcePath['full'].'/detail.blade.php'),
                                 resource_path($setPath));
                         }
                     }
-                    
+
                 }
-                
+
             }
 
             $template = $this->templateModel->create([
@@ -161,9 +161,9 @@ class TemplateService
             return $this->success($template,  __('global.alert.create_success', [
                 'attribute' => __('master/template.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -178,7 +178,7 @@ class TemplateService
         $template = $this->getTemplate($where);
 
         try {
-            
+
             $template->update([
                 'name' => $data['name'],
                 'content_template' => isset($data['content_template']) ? $data['content_template'] : null,
@@ -192,7 +192,7 @@ class TemplateService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -218,12 +218,12 @@ class TemplateService
             $galleryAlbums = $template->galleryAlbums()->withTrashed()->count();
             $documents = $template->documents()->withTrashed()->count();
             $links = $template->links()->withTrashed()->count();
-            
+
             if ($pages == 0 || $contentSectionLists == 0 && $contentSectionCategoryDetails == 0 && $contentSectionPostDetails == 0
                 || $contentCategories == 0 || $contentPosts == 0 || $galleryCategoryLists == 0
                 || $galleryCategoryDetails == 0 || $galleryAlbums == 0 || $documents == 0
                 || $links == 0) {
-        
+
                 if (Auth::guard()->check()) {
                     $template->update([
                         'deleted_by' => Auth::user()['id']
@@ -235,7 +235,7 @@ class TemplateService
                 return $this->success($template,  __('global.alert.delete_success', [
                     'attribute' => __('master/template.caption')
                 ]));
-    
+
             } else {
                 return $this->error(null,  __('global.alert.delete_failed_used', [
                     'attribute' => __('master/template.caption')
@@ -243,7 +243,7 @@ class TemplateService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -257,16 +257,16 @@ class TemplateService
         $template = $this->templateModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $template->restore();
 
             return $this->success($template, __('global.alert.restore_success', [
                 'attribute' => __('master/template.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -284,18 +284,18 @@ class TemplateService
         }
 
         try {
-            
+
             $path = resource_path($template['filepath'].$template['filename']);
                 File::delete($path);
-                
+
             $template->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('master/template.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

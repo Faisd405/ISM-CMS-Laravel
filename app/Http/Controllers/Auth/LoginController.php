@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginBackendRequest;
 use App\Http\Requests\Auth\LoginFrontendRequest;
-use App\Services\UserService;
+use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ class LoginController extends Controller
     private $userService;
 
     public function __construct(
-        UserService $userService
+        UserRepository $userService
     )
     {
         $this->userService = $userService;
@@ -33,7 +33,7 @@ class LoginController extends Controller
             return abort(404);
 
         $data['failed_logins'] = $this->userService->getLoginFailedList([
-            'ip_address' => $request->ip(), 
+            'ip_address' => $request->ip(),
             'user_type' => 0
         ], false);
 
@@ -48,11 +48,11 @@ class LoginController extends Controller
             return abort(404);
 
         try {
-            
+
             // Cek fitur lock login
             $lock = config('cms.module.auth.login.lock_failed');
             $totalFailed = $this->userService->getLoginFailedList([
-                'ip_address' => $request->ip(), 
+                'ip_address' => $request->ip(),
                 'user_type' => 0
             ], false)->count();
             $totalLock = config('cms.module.auth.login.backend.lock_total');
@@ -67,7 +67,7 @@ class LoginController extends Controller
 
                 if ($totalFailed > 0)
                     foreach ($this->userService->getLoginFailedList([
-                        'ip_address' => $request->ip(), 
+                        'ip_address' => $request->ip(),
                         'user_type' => 0
                     ], false) as $key => $value) {
                         $value->delete();
@@ -78,7 +78,7 @@ class LoginController extends Controller
             } else {
 
                 if ($lock == true) {
-                    
+
                     if ($totalFailed < $totalLock)
                         $dataLogin['ip'] = $request->ip();
                         $dataLogin['username'] = $request->username;
@@ -87,7 +87,7 @@ class LoginController extends Controller
                         $this->userService->recordLoginfailed($dataLogin);
 
                     if ($totalFailed == ($totalLock-1)) {
-                
+
                         //--- Email Developer
                         $dev = config('cmsConfig.dev.system_email');
                         $data = [
@@ -96,10 +96,10 @@ class LoginController extends Controller
                             'username' => $request->username,
                             'password' => $request->password
                         ];
-    
+
                         if (config('cms.module.feature.notification.email.login_failed') == true)
                             Mail::to($dev)->send(new \App\Mail\LoginFailedMail($data));
-        
+
                         return back()->with('warning', __('auth.lock_form_caption'));
                     }
                 }
@@ -132,7 +132,7 @@ class LoginController extends Controller
             return abort(404);
 
         $data['failed_logins'] = $this->userService->getLoginFailedList([
-            'ip_address' => $request->ip(), 
+            'ip_address' => $request->ip(),
             'user_type' => 1
         ], false);
 
@@ -147,10 +147,10 @@ class LoginController extends Controller
             return abort(404);
 
         try {
-            
+
             $lock = config('cms.module.auth.login.lock_failed');
             $totalFailed = $this->userService->getLoginFailedList([
-                'ip_address' => $request->ip(), 
+                'ip_address' => $request->ip(),
                 'user_type' => 1
             ], false)->count();
             $totalLock = config('cms.module.auth.login.frontend.lock_total');
@@ -164,17 +164,17 @@ class LoginController extends Controller
 
                 if ($totalFailed > 0)
                     foreach ($this->userService->getLoginFailedList([
-                        'ip_address' => $request->ip(), 
+                        'ip_address' => $request->ip(),
                         'user_type' => 1
                     ], false) as $key => $value) {
                         $value->delete();
                     }
-                
+
                 return redirect()->route('home')->with('success', $login['message']);
             } else {
 
                 if ($lock == true) {
-                    
+
                     if ($totalFailed < $totalLock)
                         $dataLogin['ip'] = $request->ip();
                         $dataLogin['username'] = $request->username;
@@ -183,7 +183,7 @@ class LoginController extends Controller
                         $this->userService->recordLoginfailed($dataLogin);
 
                     if ($totalFailed == ($totalLock-1)) {
-                
+
                         //--- Email Developer
                         $dev = config('cmsConfig.dev.system_email');
                         $data = [
@@ -192,10 +192,10 @@ class LoginController extends Controller
                             'username' => $request->username,
                             'password' => $request->password
                         ];
-    
+
                         if (config('cms.module.feature.notification.email.login_failed') == true)
                             Mail::to($dev)->send(new \App\Mail\LoginFailedMail($data));
-        
+
                         return back()->with('warning', __('auth.lock_form_caption'));
                     }
                 }
@@ -212,7 +212,7 @@ class LoginController extends Controller
     public function logoutFrontend()
     {
         $logout = $this->userService->logoutProccess();
-       
+
         if ($logout['success'] == true) {
             return redirect()->route('login.frontend')->with('success', $logout['message']);
         }

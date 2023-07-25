@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Services\Master;
+namespace App\Repositories\Master;
 
 use App\Models\Master\Media;
 use App\Models\Module\Content\ContentPost;
 use App\Models\Module\Page;
-use App\Services\Feature\LanguageService;
+use App\Repositories\Feature\LanguageRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class MediaService
+class MediaRepository
 {
     use ApiResponser;
 
@@ -20,7 +20,7 @@ class MediaService
 
     public function __construct(
         Media $mediaModel,
-        LanguageService $language
+        LanguageRepository $language
     )
     {
         $this->mediaModel = $mediaModel;
@@ -36,7 +36,7 @@ class MediaService
      * @param array $with
      * @param array $orderBy
      */
-    public function getMediaList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getMediaList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $media = $this->mediaModel->query();
@@ -125,7 +125,7 @@ class MediaService
             $media = new Media;
             $media->module = $data['module_type'];
             $media->is_youtube = $isYoutube;
-            
+
             if ($isYoutube == 0) {
                 $media->filepath = [
                     'filename' => Str::replace(url('/storage'), '', $data['filename']),
@@ -153,9 +153,9 @@ class MediaService
             return $this->success($media,  __('global.alert.create_success', [
                 'attribute' => __('master/media.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -170,7 +170,7 @@ class MediaService
         $media = $this->getMedia($where);
 
         try {
-            
+
             $isYoutube = (bool)$data['is_youtube'];
 
             $media->is_youtube = $isYoutube;
@@ -201,7 +201,7 @@ class MediaService
 
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -229,7 +229,7 @@ class MediaService
 
         $media->locked = (bool)$data['locked'];
         $media->config = [];
-        
+
         return $media;
     }
 
@@ -270,7 +270,7 @@ class MediaService
         try {
 
             if ($position >= 1) {
-    
+
                 $this->mediaModel->where('position', $position)
                     ->where('module', $media['module'])
                     ->where('mediable_id', $media['mediable_id'])
@@ -278,13 +278,13 @@ class MediaService
                     ->update([
                     'position' => $media['position'],
                 ]);
-    
+
                 $media->position = $position;
                 if (Auth::guard()->check()) {
                     $media->updated_by = Auth::user()['id'];
                 }
                 $media->save();
-    
+
                 return $this->success($media, __('global.alert.update_success', [
                     'attribute' => __('master/media.caption')
                 ]));
@@ -295,9 +295,9 @@ class MediaService
                     'attribute' => __('master/media.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -319,7 +319,7 @@ class MediaService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -333,15 +333,15 @@ class MediaService
         $media = $this->mediaModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             $media->restore();
 
             return $this->success($media, __('global.alert.restore_success', [
                 'attribute' => __('master/media.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -359,15 +359,15 @@ class MediaService
         }
 
         try {
-            
+
             $media->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('master/media.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

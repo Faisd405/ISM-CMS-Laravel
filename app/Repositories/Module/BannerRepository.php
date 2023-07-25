@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Module;
+namespace App\Repositories\Module;
 
 use App\Models\Module\Banner\Banner;
 use App\Models\Module\Banner\BannerFile;
-use App\Services\Feature\LanguageService;
+use App\Repositories\Feature\LanguageRepository;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Support\Facades\App;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class BannerService
+class BannerRepository
 {
     use ApiResponser;
 
@@ -21,7 +21,7 @@ class BannerService
     public function __construct(
         Banner $bannerModel,
         BannerFile $fileModel,
-        LanguageService $language
+        LanguageRepository $language
     )
     {
         $this->bannerModel = $bannerModel;
@@ -42,7 +42,7 @@ class BannerService
      * @param array $with
      * @param array $orderBy
      */
-    public function getBannerList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getBannerList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $banner = $this->bannerModel->query();
@@ -88,7 +88,7 @@ class BannerService
 
             $result = $banner->get();
         }
-        
+
         return $result;
     }
 
@@ -100,10 +100,10 @@ class BannerService
     public function getBanner($where, $with = [])
     {
         $banner = $this->bannerModel->query();
-        
+
         if (!empty($with))
             $banner->with($with);
-        
+
         $result = $banner->firstWhere($where);;
 
         return $result;
@@ -133,9 +133,9 @@ class BannerService
             return $this->success($banner,  __('global.alert.create_success', [
                 'attribute' => __('module/banner.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -150,7 +150,7 @@ class BannerService
         $banner = $this->getBanner($where);
 
         try {
-            
+
             $this->setField($data, $banner);
             if (Auth::guard()->check())
                 $banner->updated_by = Auth::user()['id'];
@@ -162,13 +162,13 @@ class BannerService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
 
     /**
-     * Set Field 
+     * Set Field
      * @param array $data
      * @param model $banner
      */
@@ -198,7 +198,7 @@ class BannerService
         ];
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -227,7 +227,7 @@ class BannerService
             if ($field == 'approved') {
                 $value = $banner['approved'] == 1 ? 0 : 1;
             }
-            
+
             $banner->update([
                 $field => $value,
                 'updated_by' => Auth::guard()->check() ? Auth::user()['id'] : $banner['updated_by'],
@@ -242,9 +242,9 @@ class BannerService
             return $this->success($banner, __('global.alert.update_success', [
                 'attribute' => __('module/banner.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -276,21 +276,21 @@ class BannerService
     public function positionBanner($where, $position)
     {
         $banner = $this->getBanner($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->bannerModel->where('position', $position)->update([
                     'position' => $banner['position'],
                 ]);
-    
+
                 $banner->position = $position;
                 if (Auth::guard()->check()) {
                     $banner->updated_by = Auth::user()['id'];
                 }
                 $banner->save();
-    
+
                 return $this->success($banner, __('global.alert.update_success', [
                     'attribute' => __('module/banner.caption')
                 ]));
@@ -301,9 +301,9 @@ class BannerService
                     'attribute' => __('module/banner.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -317,7 +317,7 @@ class BannerService
         $banner = $this->getBanner($where);
 
         try {
-            
+
             $files = $banner->files()->count();
 
             if ($banner['locked'] == 0 && $files == 0) {
@@ -341,7 +341,7 @@ class BannerService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/banner.caption')
                 ]));
-    
+
             } else {
                 return $this->error($banner,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/banner.caption')
@@ -349,7 +349,7 @@ class BannerService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -363,7 +363,7 @@ class BannerService
         $banner = $this->bannerModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $banner->widgets()->restore();
             $banner->restore();
@@ -371,9 +371,9 @@ class BannerService
             return $this->success($banner, __('global.alert.restore_success', [
                 'attribute' => __('module/banner.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -391,16 +391,16 @@ class BannerService
         }
 
         try {
-                
+
             $banner->widgets()->forceDelete();
             $banner->forceDelete();
 
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/banner.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -418,7 +418,7 @@ class BannerService
      * @param array $with
      * @param array $orderBy
      */
-    public function getFileList($filter = [], $withPaginate = true, $limit = 10, 
+    public function getFileList($filter = [], $withPaginate = true, $limit = 10,
         $isTrash = false, $with = [], $orderBy = [])
     {
         $bannerFile = $this->fileModel->query();
@@ -470,7 +470,7 @@ class BannerService
 
             $result = $bannerFile->get();
         }
-        
+
         return $result;
     }
 
@@ -482,10 +482,10 @@ class BannerService
     public function getFile($where, $with = [])
     {
         $bannerFile = $this->fileModel->query();
-        
+
         if (!empty($with))
             $bannerFile->with($with);
-        
+
         $result = $bannerFile->firstWhere($where);;
 
         return $result;
@@ -516,10 +516,10 @@ class BannerService
                     if (file_exists(storage_path('app/public/banner/'.$data['banner_id'].'/'.$fileName))) {
                         $fileName = Str::random(3).'-'.$fileUpload->getClientOriginalName();
                     }
-        
-                    Storage::put(config('cms.files.banner.path').$data['banner_id'].'/'.$fileName, 
+
+                    Storage::put(config('cms.files.banner.path').$data['banner_id'].'/'.$fileName,
                         file_get_contents($fileUpload));
-                    
+
                     $bannerFile->file = $fileName;
                 }
 
@@ -541,10 +541,10 @@ class BannerService
                     if (file_exists(storage_path('app/public/banner/'.$data['banner_id'].'/'.$fileName))) {
                         $fileName = Str::random(3).'-'.$fileUpload->getClientOriginalName();
                     }
-        
-                    Storage::put(config('cms.files.banner.path').$data['banner_id'].'/'.$fileName, 
+
+                    Storage::put(config('cms.files.banner.path').$data['banner_id'].'/'.$fileName,
                         file_get_contents($fileUpload));
-                    
+
                     $bannerFile->file = $fileName;
                 }
 
@@ -553,14 +553,14 @@ class BannerService
                 }
 
                 if (isset($data['thumbnail'])) {
-                        
+
                     $fileThumb = $data['thumbnail'];
                     $fileNameThumb = $fileThumb->getClientOriginalName();
                     if (file_exists(storage_path('app/public/banner/thumbnail/'.$data['banner_id'].'/'.$fileNameThumb))) {
                         $fileNameThumb = Str::random(3).'-'.$fileThumb->getClientOriginalName();
                     }
-        
-                    Storage::put(config('cms.files.banner.thumbnail.path').$data['banner_id'].'/'.$fileNameThumb, 
+
+                    Storage::put(config('cms.files.banner.thumbnail.path').$data['banner_id'].'/'.$fileNameThumb,
                         file_get_contents($fileThumb));
 
                     $bannerFile->thumbnail = $fileNameThumb;
@@ -581,9 +581,9 @@ class BannerService
             return $this->success($bannerFile,  __('global.alert.create_success', [
                 'attribute' => __('module/banner.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -601,16 +601,16 @@ class BannerService
 
             $bannerFile->type = '0';
             $bannerFile->image_type = '0';
-            
+
             $fileUpload = $data['file'];
             $fileName = $fileUpload->getClientOriginalName();
             if (file_exists(storage_path('app/public/banner/'.$data['banner_id'].'/'.$fileName))) {
                 $fileName = Str::random(3).'-'.$fileUpload->getClientOriginalName();
             }
 
-            Storage::put(config('cms.files.banner.path').$data['banner_id'].'/'.$fileName, 
+            Storage::put(config('cms.files.banner.path').$data['banner_id'].'/'.$fileName,
                 file_get_contents($fileUpload));
-            
+
             $bannerFile->file = $fileName;
 
             $this->setFieldFile($data, $bannerFile);
@@ -645,7 +645,7 @@ class BannerService
         try {
 
             if ($bannerFile['type'] == '0') {
-                
+
                 if ($bannerFile['image_type'] == '0' && isset($data['file_image'])) {
                     $fileUpload = $data['file_image'];
                     $fileName = $fileUpload->getClientOriginalName();
@@ -655,10 +655,10 @@ class BannerService
 
                     Storage::delete(config('cms.files.banner.path').$bannerFile['banner_id'].
                         '/'.$data['old_file']);
-        
-                    Storage::put(config('cms.files.banner.path').$bannerFile['banner_id'].'/'.$fileName, 
+
+                    Storage::put(config('cms.files.banner.path').$bannerFile['banner_id'].'/'.$fileName,
                         file_get_contents($fileUpload));
-                    
+
                     $bannerFile->file = $fileName;
                 }
 
@@ -672,7 +672,7 @@ class BannerService
             }
 
             if ($bannerFile['type'] == '1') {
-                
+
                 if ($bannerFile['video_type'] == '0') {
 
                     if (isset($data['file_video'])) {
@@ -684,10 +684,10 @@ class BannerService
 
                         Storage::delete(config('cms.files.banner.path').$bannerFile['banner_id'].
                             '/'.$data['old_file']);
-                        
-                        Storage::put(config('cms.files.banner.path').$bannerFile['banner_id'].'/'.$fileName, 
+
+                        Storage::put(config('cms.files.banner.path').$bannerFile['banner_id'].'/'.$fileName,
                             file_get_contents($fileUpload));
-                        
+
                         $bannerFile->file = $fileName;
                     }
                 }
@@ -697,7 +697,7 @@ class BannerService
                 }
 
                 if (isset($data['thumbnail'])) {
-                        
+
                     $fileThumb = $data['thumbnail'];
                     $fileNameThumb = $fileThumb->getClientOriginalName();
                     if (file_exists(storage_path('app/public/banner/thumbnail/'.$bannerFile['banner_id'].'/'.$fileNameThumb))) {
@@ -706,14 +706,14 @@ class BannerService
 
                     Storage::delete(config('cms.files.banner.thumbnail.path').$bannerFile['banner_id'].
                         '/'.$data['old_thumbnail']);
-        
-                    Storage::put(config('cms.files.banner.thumbnail.path').$bannerFile['banner_id'].'/'.$fileNameThumb, 
+
+                    Storage::put(config('cms.files.banner.thumbnail.path').$bannerFile['banner_id'].'/'.$fileNameThumb,
                         file_get_contents($fileThumb));
 
                     $bannerFile->thumbnail = $fileNameThumb;
                 }
             }
-            
+
             $this->setFieldFile($data, $bannerFile);
             if (Auth::guard()->check())
                 $bannerFile->updated_by = Auth::user()['id'];
@@ -725,7 +725,7 @@ class BannerService
             ]));
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -762,7 +762,7 @@ class BannerService
         ];
 
         if (isset($data['cf_name'])) {
-            
+
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -786,7 +786,7 @@ class BannerService
         $bannerFile = $this->getFile($where);
 
         try {
-            
+
             $value = !$bannerFile[$field];
             if ($field == 'approved') {
                 $value = $bannerFile['approved'] == 1 ? 0 : 1;
@@ -800,9 +800,9 @@ class BannerService
             return $this->success($bannerFile, __('global.alert.update_success', [
                 'attribute' => __('module/banner.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -816,7 +816,7 @@ class BannerService
     public function sortFile($where, $position)
     {
         $bannerFile = $this->getFile($where);
-        
+
         $bannerFile->position = $position;
         if (Auth::guard()->check()) {
             $bannerFile->updated_by = Auth::user()['id'];
@@ -834,22 +834,22 @@ class BannerService
     public function positionFile($where, $position)
     {
         $bannerFile = $this->getFile($where);
-        
+
         try {
 
             if ($position >= 1) {
-    
+
                 $this->fileModel->where('banner_id', $bannerFile['banner_id'])
                     ->where('position', $position)->update([
                     'position' => $bannerFile['position'],
                 ]);
-    
+
                 $bannerFile->position = $position;
                 if (Auth::guard()->check()) {
                     $bannerFile->updated_by = Auth::user()['id'];
                 }
                 $bannerFile->save();
-    
+
                 return $this->success($bannerFile, __('global.alert.update_success', [
                     'attribute' => __('module/banner.file.caption')
                 ]));
@@ -860,9 +860,9 @@ class BannerService
                     'attribute' => __('module/banner.file.caption')
                 ]));
             }
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -897,7 +897,7 @@ class BannerService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/banner.file.caption')
                 ]));
-            
+
             } else {
 
                 return $this->error($bannerFile,  __('global.alert.delete_failed_used', [
@@ -906,7 +906,7 @@ class BannerService
             }
 
         } catch (Exception $e) {
-            
+
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -920,16 +920,16 @@ class BannerService
         $bannerFile = $this->fileModel->onlyTrashed()->firstWhere($where);
 
         try {
-            
+
             //restore data yang bersangkutan
             $bannerFile->restore();
 
             return $this->success($bannerFile, __('global.alert.restore_success', [
                 'attribute' => __('module/banner.file.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }
@@ -947,7 +947,7 @@ class BannerService
         }
 
         try {
-            
+
             if ($bannerFile['type'] == '0' && $bannerFile['image_type'] == '0') {
                 Storage::delete(config('cms.files.banner.path').$bannerFile['banner_id'].
                  '/'.$bannerFile['file']);
@@ -968,9 +968,9 @@ class BannerService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/banner.caption')
             ]));
-            
+
         } catch (Exception $e) {
-            
+
             return $this->error(null, $e->getMessage());
         }
     }

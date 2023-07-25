@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Feature\ApiService;
+use App\Repositories\Feature\ApiRepository;
 use App\Traits\ApiResponser;
 use Closure;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ class ApiCheck
 
     private $api;
 
-    public function __construct(ApiService $api)
+    public function __construct(ApiRepository $api)
     {
         $this->api = $api;
     }
