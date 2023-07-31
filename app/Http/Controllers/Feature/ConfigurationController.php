@@ -142,7 +142,7 @@ class ConfigurationController extends Controller
                 $data .= "\t'$key' => '$val',\n";
             }
             $data .= "];";
-            File::put(base_path('resources/lang/'.$lang.'/text.php'), $data);
+            File::put(base_path('lang/'.$lang.'/text.php'), $data);
             return back()->with('success', __('global.alert.update_success', [
                 'attribute' => __('feature/configuration.text.caption')
             ]));
@@ -182,57 +182,57 @@ class ConfigurationController extends Controller
         $data = [];
 
         try {
-            
+
             if (!empty(env('ANALYTICS_VIEW_ID'))) {
 
                 $filter = $request->input('filter', '');
-    
+
                 if ($filter == 'today') {
                     $start = now()->today();
                     $end = now()->today();
                 }
-    
+
                 if ($filter == 'current_week') {
                     $start = now()->startOfWeek();
                     $end = now()->endOfWeek();
                 }
-    
+
                 if ($filter == 'latest_week') {
                     $start = now()->subWeek()->startOfWeek();
                     $end = now()->subWeek()->endOfWeek();
                 }
-    
+
                 if ($filter == 'current_month') {
                     $start = now()->startOfMonth();
                     $end = now()->endOfMonth();
                 }
-    
+
                 if ($filter == 'latest_month') {
                     $start = now()->parse('-1 months')->startOfMonth();
                     $end = now()->parse('-1 months')->endOfMonth();
                 }
-    
+
                 if ($filter == 'current_year') {
                     $start = now()->startOfYear();
                     $end = now()->endOfYear();
                 }
-    
+
                 if ($filter == 'current_year') {
                     $start = now()->startOfYear();
                     $end = now()->endOfYear();
                 }
-    
+
                 if ($filter == 'latest_year') {
                     $start = now()->parse('-1 years')->startOfYear();
                     $end = now()->parse('-1 years')->endOfYear();
                 }
-    
+
                 if ($filter != '') {
                     $periode = Period::create($start, $end);
                 } else {
                     $periode = Period::days(7);
                 }
-    
+
                 $data['total'] = Analytics::fetchTotalVisitorsAndPageViews($periode);
                 $data['n_visitor'] = Analytics::fetchUserTypes($periode);
                 $data['browser'] = Analytics::fetchTopBrowsers($periode);
@@ -244,7 +244,7 @@ class ConfigurationController extends Controller
                     'metrics' => 'ga:sessions, ga:pageviews',
                     'dimensions' => 'ga:yearMonth'
                 ]);
-                
+
                 //session
                 $sessionLabel = [];
                 $sessionTotal = [];
@@ -252,12 +252,12 @@ class ConfigurationController extends Controller
                     $sessionLabel[$key] = $value['type'];
                     $sessionTotal[$key] = $value['sessions'];
                 }
-    
+
                 $data['session_visitor'] = [
                     'label' => $sessionLabel,
                     'total' => $sessionTotal
                 ];
-    
+
                 //browser
                 $browserLabel = [];
                 $browserTotal = [];
@@ -265,12 +265,12 @@ class ConfigurationController extends Controller
                     $browserLabel[$key] = $value['browser'];
                     $browserTotal[$key] = $value['sessions'];
                 }
-    
+
                 $data['browser_visitor'] = [
                     'label' => $browserLabel,
                     'total' => $browserTotal
                 ];
-    
+
                 //visitor total
                 $visitorLabel = [];
                 $visitorTotal = [];
@@ -278,12 +278,12 @@ class ConfigurationController extends Controller
                     $visitorLabel[$key] = Carbon::parse($value['date'])->format('d F Y');
                     $visitorTotal[$key] = $value['visitors'];
                 }
-    
+
                 $data['total_visitor'] = [
                     'label' => $visitorLabel,
                     'total' => $visitorTotal
                 ];
-    
+
             } else {
                 $data['error'] = __('feature/configuration.visitor.warning_caption');
             }
