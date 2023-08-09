@@ -348,7 +348,14 @@
                             <label class="form-label">Show Intro Banner</label>
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="config_show_intro_banner" value="1"
-                                {{ !isset($data['page']) ? (old('config_show_intro_banner', 1) ? 'checked' : '') : (isset($data['page']['config']['show_intro_banner'])?(old('config_show_intro_banner', $data['page']['config']['show_intro_banner']) == 1 ? 'checked' : ''):old('config_show_intro_banner', 1) ? 'checked' : '') }}>
+                                @if (!isset($data['page']) && old('config_show_intro_banner', 1))
+                                    checked
+                                @elseif(isset($data['page']['config']['show_intro_banner']) && old('config_show_intro_banner', $data['page']['config']['show_intro_banner']) == 1)
+                                    checked
+                                @elseif(old('config_show_intro_banner', 1))
+                                    checked
+                                @endif
+                                >
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
