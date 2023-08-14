@@ -5,7 +5,7 @@ return [
     /*
      * The view id of which you want to display data.
      */
-    'property_id_id' => env('ANALYTICS_PROPERTY_ID'),
+    'property_id' => env('ANALYTICS_PROPERTY_ID'),
 
     /*
      * Path to the client secret json file. Take a look at the README of this package
