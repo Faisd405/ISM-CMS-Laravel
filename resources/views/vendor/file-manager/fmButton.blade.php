@@ -28,6 +28,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     // set fm height
     document.getElementById('fm-main-block').setAttribute('style', 'height:' + window.innerHeight + 'px');
+    document.getElementById('fm').setAttribute('style', 'height:' + window.innerHeight + 'px');
 
     // Add callback to file manager
     fm.$store.commit('fm/setFileCallBack', function(fileUrl) {
