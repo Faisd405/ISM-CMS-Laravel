@@ -225,6 +225,5 @@ return [
             0 => 'BACKEND',
             1 => 'FRONTEND'
         ],
-        'select_empty' => 'Select :attribute',
     ],
 ];

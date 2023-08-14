@@ -65,13 +65,13 @@ class Language extends Model
 
         $checkUrl = Str::replaceFirst(url('/'), '', URL::full());
         $replaceUrl = Str::replace(url(''), '', URL::full());
-
+        
         if ($checkUrl == '' || $checkUrl == '/'.$lang) {
             $url = Str::replaceFirst($lang, '', Str::replaceFirst($lang.'/', '', $replaceUrl));
         } else {
             $url = Str::replaceFirst('/'.$lang, '', Str::replaceFirst($lang.'/', '', $replaceUrl));
         }
-
+        
         if ($this->iso_codes != config('app.fallback_locale')) {
             $varCode = '';
             if (App::getLocale() != $this->iso_codes) {

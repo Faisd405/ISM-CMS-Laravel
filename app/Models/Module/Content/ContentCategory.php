@@ -7,7 +7,6 @@ use App\Models\Menu\Menu;
 use App\Models\Module\Widget;
 use App\Models\User;
 use App\Observers\LogObserver;
-use App\Traits\Helper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,7 +17,6 @@ class ContentCategory extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use Helper;
 
     protected $table = 'mod_content_categories';
     protected $guarded = [];
@@ -121,10 +119,6 @@ class ContentCategory extends Model
     public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
-            if ($this->isImageLink($this->cover['filepath'])) {
-                return $this->cover['filepath'];
-            }
-
             $cover = Storage::url($this->cover['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.cover_default'))) {
@@ -140,9 +134,6 @@ class ContentCategory extends Model
     public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
-            if ($this->isImageLink($this->banner['filepath'])) {
-                return $this->banner['filepath'];
-            }
             $banner = Storage::url($this->banner['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.banner_default'))) {

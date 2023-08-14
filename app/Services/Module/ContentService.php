@@ -50,7 +50,7 @@ class ContentService
      * @param array $with
      * @param array $orderBy
      */
-    public function getSectionList($filter = [], $withPaginate = true, $limit = 10,
+    public function getSectionList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
         $section = $this->sectionModel->query();
@@ -100,7 +100,7 @@ class ContentService
 
             $result = $section->get();
         }
-
+        
         return $result;
     }
 
@@ -113,10 +113,10 @@ class ContentService
     public function getSection($where, $with = [])
     {
         $section = $this->sectionModel->query();
-
+        
         if (!empty($with))
             $section->with($with);
-
+        
         $result = $section->firstWhere($where);;
 
         return $result;
@@ -145,7 +145,7 @@ class ContentService
             $section->save();
 
             try {
-
+                
                 DB::commit();
                 $slug = Str::slug(strip_tags($data['slug']), '-');
                 $data['slug'] = $slug;
@@ -157,14 +157,14 @@ class ContentService
                 ]));
 
             } catch (Exception $e) {
-
+            
                 DB::rollBack();
-
+                
                 return $this->error(null,  $e->getMessage());
             }
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -179,7 +179,7 @@ class ContentService
         $section = $this->getSection($where);
 
         try {
-
+            
             $this->setFieldSection($data, $section);
             if (Auth::guard()->check())
                 $section->updated_by = Auth::user()['id'];
@@ -194,7 +194,7 @@ class ContentService
             ]));
 
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -266,7 +266,7 @@ class ContentService
         ];
 
         if (isset($data['cf_name'])) {
-
+            
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -279,7 +279,7 @@ class ContentService
 
         if (Auth::user()->hasRole('developer|super')) {
             if (isset($data['af_name'])) {
-
+                
                 $addonField = [];
                 foreach ($data['af_name'] as $key => $value) {
                     $addonField[$key] = [
@@ -308,7 +308,7 @@ class ContentService
         $section = $this->getSection($where);
 
         try {
-
+            
             $value = !$section[$field];
             if ($field == 'approved') {
                 $value = $section['approved'] == 1 ? 0 : 1;
@@ -331,9 +331,9 @@ class ContentService
             return $this->success($section, __('global.alert.update_success', [
                 'attribute' => __('module/content.section.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -365,21 +365,21 @@ class ContentService
     public function positionSection($where, $position)
     {
         $section = $this->getSection($where);
-
+        
         try {
 
             if ($position >= 1) {
-
+    
                 $this->sectionModel->where('position', $position)->update([
                     'position' => $section['position'],
                 ]);
-
+    
                 $section->position = $position;
                 if (Auth::guard()->check()) {
                     $section->updated_by = Auth::user()['id'];
                 }
                 $section->save();
-
+    
                 return $this->success($section, __('global.alert.update_success', [
                     'attribute' => __('module/content.section.caption')
                 ]));
@@ -390,9 +390,9 @@ class ContentService
                     'attribute' => __('module/content.section.caption')
                 ]));
             }
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -424,7 +424,7 @@ class ContentService
         $section = $this->getSection($where);
 
         try {
-
+            
             $categories = $section->categories()->count();
             $posts = $section->posts()->count();
 
@@ -451,7 +451,7 @@ class ContentService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/content.section.caption')
                 ]));
-
+    
             } else {
                 return $this->error($section,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/content.section.caption')
@@ -459,7 +459,7 @@ class ContentService
             }
 
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -473,14 +473,14 @@ class ContentService
         $section = $this->sectionModel->onlyTrashed()->firstWhere($where);
 
         try {
-
+            
             $checkSlug = $this->getSection(['slug' => $section['slug']]);
             if (!empty($checkSlug)) {
                 return $this->error(null, __('global.alert.restore_failed', [
                     'attribute' => __('module/content.section.caption')
                 ]));
             }
-
+            
             //restore data yang bersangkutan
             $section->menus()->restore();
             $section->widgets()->restore();
@@ -490,9 +490,9 @@ class ContentService
             return $this->success($section, __('global.alert.restore_success', [
                 'attribute' => __('module/content.section.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -510,7 +510,7 @@ class ContentService
         }
 
         try {
-
+            
             $section->menus()->forceDelete();
             $section->widgets()->forceDelete();
             $section->indexing()->forceDelete();
@@ -519,9 +519,9 @@ class ContentService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/content.section.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -539,7 +539,7 @@ class ContentService
      * @param array $with
      * @param array $orderBy
      */
-    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10,
+    public function getCategoryList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
         $category = $this->categoryModel->query();
@@ -592,7 +592,7 @@ class ContentService
 
             $result = $category->get();
         }
-
+        
         return $result;
     }
 
@@ -604,10 +604,10 @@ class ContentService
     public function getCategory($where, $with = [])
     {
         $category = $this->categoryModel->query();
-
+        
         if (!empty($with))
             $category->with($with);
-
+        
         $result = $category->firstWhere($where);;
 
         return $result;
@@ -637,9 +637,9 @@ class ContentService
             return $this->success($category,  __('global.alert.create_success', [
                 'attribute' => __('module/content.category.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -654,7 +654,7 @@ class ContentService
         $category = $this->getCategory($where);
 
         try {
-
+            
             $this->setFieldCategory($data, $category);
             if (Auth::guard()->check())
                 $category->updated_by = Auth::user()['id'];
@@ -666,7 +666,7 @@ class ContentService
             ]));
 
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -724,7 +724,7 @@ class ContentService
         ];
 
         if (isset($data['cf_name'])) {
-
+            
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -748,7 +748,7 @@ class ContentService
         $category = $this->getCategory($where);
 
         try {
-
+            
             $value = !$category[$field];
             if ($field == 'approved') {
                 $value = $category['approved'] == 1 ? 0 : 1;
@@ -771,9 +771,9 @@ class ContentService
             return $this->success($category, __('global.alert.update_success', [
                 'attribute' => __('module/content.category.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -787,7 +787,7 @@ class ContentService
     public function sortCategory($where, $position)
     {
         $category = $this->getCategory($where);
-
+        
         $category->position = $position;
         if (Auth::guard()->check()) {
             $category->updated_by = Auth::user()['id'];
@@ -805,22 +805,22 @@ class ContentService
     public function positionCategory($where, $position)
     {
         $category = $this->getCategory($where);
-
+        
         try {
 
             if ($position >= 1) {
-
+    
                 $this->categoryModel->where('section_id', $category['section_id'])
                     ->where('position', $position)->update([
                     'position' => $category['position'],
                 ]);
-
+    
                 $category->position = $position;
                 if (Auth::guard()->check()) {
                     $category->updated_by = Auth::user()['id'];
                 }
                 $category->save();
-
+    
                 return $this->success($category, __('global.alert.update_success', [
                     'attribute' => __('module/content.category.caption')
                 ]));
@@ -831,9 +831,9 @@ class ContentService
                     'attribute' => __('module/content.category.caption')
                 ]));
             }
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -865,7 +865,7 @@ class ContentService
         $category = $this->getCategory($where);
 
         try {
-
+            
             $posts = $category->posts()->count();
 
             if ($category['locked'] == 0 && $posts == 0) {
@@ -890,7 +890,7 @@ class ContentService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/content.category.caption')
                 ]));
-
+    
             } else {
                 return $this->error($category,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/content.category.caption')
@@ -898,7 +898,7 @@ class ContentService
             }
 
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -912,7 +912,7 @@ class ContentService
         $category = $this->categoryModel->onlyTrashed()->firstWhere($where);
 
         try {
-
+            
             $checkSlug = $this->getCategory(['slug' => $category['slug']]);
             $section = $this->getSection(['id' => $category['section_id']]);
             if (!empty($checkSlug) || empty($section)) {
@@ -920,7 +920,7 @@ class ContentService
                     'attribute' => __('module/content.category.caption')
                 ]));
             }
-
+            
             //restore data yang bersangkutan
             $category->menus()->restore();
             $category->widgets()->restore();
@@ -929,9 +929,9 @@ class ContentService
             return $this->success($category, __('global.alert.restore_success', [
                 'attribute' => __('module/content.category.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -949,7 +949,7 @@ class ContentService
         }
 
         try {
-
+                
             $category->menus()->forceDelete();
             $category->widgets()->forceDelete();
             $category->forceDelete();
@@ -957,9 +957,9 @@ class ContentService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/content.category.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -977,7 +977,7 @@ class ContentService
      * @param array $with
      * @param array $orderBy
      */
-    public function getPostList($filter = [], $withPaginate = true, $limit = 10,
+    public function getPostList($filter = [], $withPaginate = true, $limit = 10, 
         $isTrash = false, $with = [], $orderBy = [])
     {
         $post = $this->postModel->query();
@@ -1051,7 +1051,7 @@ class ContentService
 
             $result = $post->get();
         }
-
+        
         return $result;
     }
 
@@ -1082,7 +1082,7 @@ class ContentService
         }
 
         $result = $post->inRandomOrder()->get();
-
+        
         return $result;
     }
 
@@ -1117,7 +1117,7 @@ class ContentService
         $post->where('id', '!=', $id);
 
         $result = $post->inRandomOrder()->limit($limit)->get();
-
+        
         return $result;
     }
 
@@ -1129,10 +1129,10 @@ class ContentService
     public function getPost($where, $with = [])
     {
         $post = $this->postModel->query();
-
+        
         if (!empty($with))
             $post->with($with);
-
+        
         $result = $post->firstWhere($where);;
 
         return $result;
@@ -1167,9 +1167,9 @@ class ContentService
             return $this->success($post,  __('global.alert.create_success', [
                 'attribute' => __('module/content.post.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1184,7 +1184,7 @@ class ContentService
         $post = $this->getPost($where);
 
         try {
-
+            
             $this->setFieldPost($data, $post, $post['section_id']);
             if (Auth::guard()->check())
                 $post->updated_by = Auth::user()['id'];
@@ -1199,7 +1199,7 @@ class ContentService
             ]));
 
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1271,7 +1271,7 @@ class ContentService
         $post->publish_end = $data['publish_end'] ?? null;
 
         if (isset($data['cf_name'])) {
-
+            
             $customField = [];
             foreach ($data['cf_name'] as $key => $value) {
                 $customField[$value] = $data['cf_value'][$key];
@@ -1313,7 +1313,7 @@ class ContentService
         $post = $this->getPost($where);
 
         try {
-
+            
             $value = !$post[$field];
             if ($field == 'approved') {
                 $value = $post['approved'] == 1 ? 0 : 1;
@@ -1333,9 +1333,9 @@ class ContentService
             return $this->success($post, __('global.alert.update_success', [
                 'attribute' => __('module/content.post.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1349,7 +1349,7 @@ class ContentService
     public function sortPost($where, $position)
     {
         $post = $this->getPost($where);
-
+        
         $post->position = $position;
         if (Auth::guard()->check()) {
             $post->updated_by = Auth::user()['id'];
@@ -1367,22 +1367,22 @@ class ContentService
     public function positionPost($where, $position)
     {
         $post = $this->getPost($where);
-
+        
         try {
 
             if ($position >= 1) {
-
+    
                 $this->postModel->where('section_id', $post['section_id'])
                     ->where('position', $position)->update([
                     'position' => $post['position'],
                 ]);
-
+    
                 $post->position = $position;
                 if (Auth::guard()->check()) {
                     $post->updated_by = Auth::user()['id'];
                 }
                 $post->save();
-
+    
                 return $this->success($post, __('global.alert.update_success', [
                     'attribute' => __('module/content.post.caption')
                 ]));
@@ -1393,9 +1393,9 @@ class ContentService
                     'attribute' => __('module/content.post.caption')
                 ]));
             }
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1450,7 +1450,7 @@ class ContentService
                 return $this->success(null,  __('global.alert.delete_success', [
                     'attribute' => __('module/content.post.caption')
                 ]));
-
+    
             } else {
                 return $this->error($post,  __('global.alert.delete_failed_used', [
                     'attribute' => __('module/content.post.caption')
@@ -1458,7 +1458,7 @@ class ContentService
             }
 
         } catch (Exception $e) {
-
+            
             return $this->error(null,  $e->getMessage());
         }
     }
@@ -1472,7 +1472,7 @@ class ContentService
         $post = $this->postModel->onlyTrashed()->firstWhere($where);
 
         try {
-
+            
             $checkSlug = $this->getPost(['slug' => $post['slug']]);
             $section = $this->getSection(['id' => $post['section_id']]);
             if (!empty($checkSlug) || empty($section)) {
@@ -1480,7 +1480,7 @@ class ContentService
                     'attribute' => __('module/content.post.caption')
                 ]));
             }
-
+            
             //restore data yang bersangkutan
             $post->medias()->restore();
             $post->menus()->restore();
@@ -1489,9 +1489,9 @@ class ContentService
             return $this->success($post, __('global.alert.restore_success', [
                 'attribute' => __('module/content.post.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }
@@ -1509,7 +1509,7 @@ class ContentService
         }
 
         try {
-
+                
             $post->medias()->forceDelete();
             $post->tags()->delete();
             $post->menus()->forceDelete();
@@ -1518,9 +1518,9 @@ class ContentService
             return $this->success(null,  __('global.alert.delete_success', [
                 'attribute' => __('module/content.post.caption')
             ]));
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, $e->getMessage());
         }
     }

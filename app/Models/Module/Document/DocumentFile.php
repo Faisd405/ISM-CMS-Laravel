@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Helper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +14,6 @@ class DocumentFile extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use Helper;
 
     protected $table = 'mod_document_files';
     protected $guarded = [];
@@ -91,10 +89,6 @@ class DocumentFile extends Model
     public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
-            if ($this->isImageLink($this->cover['filepath'])) {
-                return $this->cover['filepath'];
-            }
-
             $cover = Storage::url($this->cover['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.cover_default'))) {

@@ -59,7 +59,7 @@ Route::prefix('admin/document')->name('document.')->middleware('auth')->group(fu
         Route::get('/trash', [DocumentFileController::class, 'trash'])
             ->name('trash')
             ->middleware('role:developer|super');
-
+            
         Route::get('/create', [DocumentFileController::class, 'create'])
             ->name('create')
             ->middleware('permission:document_file_create');
@@ -119,10 +119,6 @@ Route::group($group, function () {
     //--- Category
     Route::get('document/{slugDocument}', [DocumentController::class, 'read'])
         ->name('document.read');
-
-    //--- File
-    Route::get('document/{slugDocument}/file/{slugFile}', [DocumentFileController::class, 'read'])
-        ->name('document.file.read');
 
 });
 

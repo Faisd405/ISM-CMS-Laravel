@@ -76,7 +76,7 @@ class DocumentFileController extends Controller
         if ($request->input('publish', '') != '') {
             $filter['publish'] = $request->input('publish');
         }
-
+        
         $data['document'] = $this->documentService->getDocument(['id' => $documentId]);
         if (empty($data['document']))
             return abort(404);
@@ -124,7 +124,7 @@ class DocumentFileController extends Controller
         if ($request->hasFile('file_document')) {
             $data['file_document'] = $request->file('file_document');
         }
-
+        
         $data['document_id'] = $documentId;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_title'] = (bool)$request->config_show_title;
@@ -200,7 +200,7 @@ class DocumentFileController extends Controller
         if ($request->hasFile('file_document')) {
             $data['file_document'] = $request->file('file_document');
         }
-
+        
         $data['document_id'] = $documentId;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_title'] = (bool)$request->config_show_title;
@@ -301,7 +301,7 @@ class DocumentFileController extends Controller
         $document = $documentFile['document'];
 
         if (!empty($document['roles'])) {
-
+            
             $checkRole = $this->documentService->checkRole(['id' => $document['id']], Auth::user()->hasRole()[0]['id']);
 
             if (Auth::guard()->check() == false && $checkRole > 0) {
@@ -320,44 +320,13 @@ class DocumentFileController extends Controller
         }
 
         if ($documentFile['type'] == '1') {
-            return response()->download(public_path(str_replace(env('APP_URL'), '', $documentFile['file'])));
+
+            return response()->download(storage_path('app/public/'.$documentFile['file']));
         }
 
         if ($documentFile['type'] == '2') {
 
             return redirect($documentFile['file']);
         }
-    }
-
-    // FrontEnd
-    public function read(Request $request)
-    {
-        $slugDocument = $request->route('slugDocument');
-        $slugFile = $request->route('slugFile');
-        $data['document'] = $this->documentService->getDocument(['slug' => $slugDocument]);
-
-
-        if (empty($data['document']) || $data['document']['publish'] == 0 || $data['document']['approved'] != 1){
-            return redirect()->route('home');
-        }
-
-        $data['read'] = $this->documentService->getFile(['slug' => $slugFile]);
-
-        if (empty($data['read']) || $data['read']['publish'] == 0 || $data['read']['approved'] != 1){
-            return redirect()->route('home');
-        }
-
-        if ($data['read']['public'] == 0 && Auth::guard()->check() == false) {
-            return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
-        }
-
-        $blade = 'files.detail';
-
-        return view('frontend.documents.'.$blade, compact('data'), [
-            'title' => $data['read']->fieldLang('title'),
-            'breadcrumbs' => [
-                $data['read']->fieldLang('title') => '',
-            ]
-        ]);
     }
 }

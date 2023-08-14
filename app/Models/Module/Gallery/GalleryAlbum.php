@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Helper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +17,6 @@ class GalleryAlbum extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use Helper;
 
     protected $table = 'mod_gallery_albums';
     protected $guarded = [];
@@ -123,13 +121,9 @@ class GalleryAlbum extends Model
         $file = GalleryFile::where('gallery_album_id', $this->id)->first();
 
         if (!empty($this->cover['filepath'])) {
-            if ($this->isImageLink($this->cover['filepath'])) {
-                return $this->cover['filepath'];
-            }
-
             $cover = Storage::url($this->cover['filepath']);
         } else {
-
+           
             if (!empty($file)) {
 
                 if ($file['type'] == 0) {
@@ -137,7 +131,7 @@ class GalleryAlbum extends Model
                         $cover = Storage::url(config('cms.files.gallery.path').'/'.$this->id.'/'.
                             $file['file']);
                     }
-
+    
                     if ($file['image_type'] == 1) {
                         $cover = Storage::url($file['file']);
                     }
@@ -148,7 +142,7 @@ class GalleryAlbum extends Model
                 }
 
                 if ($file['type'] == 1) {
-
+                    
                     $thumbnail = Storage::url(config('cms.files.gallery.thumbnail.path').$file['gallery_album_id'].'/'.$file['thumbnail']);
                     if (empty($file['thumbnail'])) {
                         if (!empty(config('cmsConfig.file.cover_default'))) {
@@ -161,13 +155,13 @@ class GalleryAlbum extends Model
                     if ($file['video_type'] == '0') {
                         $cover = $thumbnail;
                     }
-
+        
                     if ($file['video_type'] == '1') {
                         $cover = !empty($file['thumbnail']) ? $thumbnail : 'https://i.ytimg.com/vi/'.$file['file'].'/mqdefault.jpg';
                     }
 
                 }
-
+    
             } else {
 
                 if (!empty(config('cmsConfig.file.cover_default'))) {
@@ -176,18 +170,15 @@ class GalleryAlbum extends Model
                     $cover = asset(config('cms.files.config.cover_default.file'));
                 }
             }
-
-        }
-
+    
+        }        
+        
         return $cover;
     }
 
     public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
-            if ($this->isImageLink($this->banner['filepath'])) {
-                return $this->banner['filepath'];
-            }
             $banner = Storage::url($this->banner['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.banner_default'))) {

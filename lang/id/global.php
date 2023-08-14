@@ -89,7 +89,7 @@ return [
     'lower_case' => 'Disarankan menggunakan huruf kecil',
     'approval_info' => 'Membutuhkan persetujuan',
     'unread_message' => 'Pesan belum dibaca',
-
+    
     // form module
     'setting' => 'Setting',
     'custom' => 'Custom',
@@ -225,6 +225,5 @@ return [
             0 => 'BACKEND',
             1 => 'FRONTEND'
         ],
-        'select_empty' => 'Pilih :attribute',
     ],
 ];

@@ -9,7 +9,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['menu']) ? route('menu.store', array_merge(['categoryId' => $data['category']['id'], 'parent' => Request::get('parent')], $queryParam)) :
+        <form action="{{ !isset($data['menu']) ? route('menu.store', array_merge(['categoryId' => $data['category']['id'], 'parent' => Request::get('parent')], $queryParam)) : 
             route('menu.update', array_merge(['categoryId' => $data['category']['id'], 'id' => $data['menu']['id']], $queryParam)) }}" method="POST">
             @csrf
             @isset($data['menu'])
@@ -72,9 +72,9 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/menu.label.title') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control text-bolder @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
-                                        name="title_{{ $lang['iso_codes'] }}"
-                                        value="{{ !isset($data['menu']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['menu']->fieldLang('title', $lang['iso_codes'])) }}"
+                                    <input type="text" class="form-control text-bolder @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                        name="title_{{ $lang['iso_codes'] }}" 
+                                        value="{{ !isset($data['menu']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['menu']->fieldLang('title', $lang['iso_codes'])) }}" 
                                         placeholder="@lang('module/menu.placeholder.title')">
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-md-10">
                             <label class="switcher switcher-success">
-                                <input id="not_from_module" type="checkbox" class="switcher-input" name="not_from_module" value="1"
+                                <input id="not_from_module" type="checkbox" class="switcher-input" name="not_from_module" value="1" 
                                     {{ !isset($data['menu']) ? '' : ($data['menu']['config']['not_from_module'] == 1 ? 'checked' : '') }}>
                                 <span class="switcher-indicator">
                                 <span class="switcher-yes">
@@ -138,8 +138,8 @@
                     <div class="form-group row" id="external-link">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/menu.label.url') <i class="text-danger">*</i></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url"
-                                value="{{ !isset($data['menu']) ? old('url') : old('url', $data['menu']['config']['url']) }}"
+                            <input type="text" class="form-control mb-1 @error('url') is-invalid @enderror" name="url" 
+                                value="{{ !isset($data['menu']) ? old('url') : old('url', $data['menu']['config']['url']) }}" 
                                 placeholder="">
                             @include('components.field-error', ['field' => 'url'])
                         </div>
@@ -150,7 +150,7 @@
                         </div>
                         <div class="col-md-10">
                             <label class="switcher switcher-success">
-                                <input type="checkbox" class="switcher-input" name="target_blank" value="1"
+                                <input type="checkbox" class="switcher-input" name="target_blank" value="1" 
                                     {{ !isset($data['menu']) ? (old('target_blank', 0) ? 'checked' : '') : (old('target_blank', $data['menu']['config']['target_blank']) ? 'checked' : '') }}>
                                 <span class="switcher-indicator">
                                 <span class="switcher-yes">
@@ -169,7 +169,7 @@
                         </div>
                         <div class="col-md-10">
                             <label class="switcher switcher-success">
-                                <input type="checkbox" class="switcher-input" name="edit_public_menu" value="1"
+                                <input type="checkbox" class="switcher-input" name="edit_public_menu" value="1" 
                                     {{ !isset($data['menu']) ? (old('edit_public_menu', 1) ? 'checked' : '') : (old('edit_public_menu', $data['menu']['config']['edit_public_menu']) ? 'checked' : '') }}>
                                 <span class="switcher-indicator">
                                 <span class="switcher-yes">
@@ -185,8 +185,8 @@
                     <div class="form-group row hide-form">
                         <label class="col-form-label col-sm-2 text-sm-right">@lang('module/menu.label.icon')</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control mb-1 @error('icon') is-invalid @enderror" name="icon"
-                                value="{{ !isset($data['menu']) ? old('icon') : old('icon', $data['menu']['config']['icon']) }}"
+                            <input type="text" class="form-control mb-1 @error('icon') is-invalid @enderror" name="icon" 
+                                value="{{ !isset($data['menu']) ? old('icon') : old('icon', $data['menu']['config']['icon']) }}" 
                                 placeholder="@lang('module/menu.label.icon')">
                             <small class="text-muted">
                                 Icon Refence :
@@ -222,18 +222,6 @@
                             <label class="custom-control custom-checkbox m-0">
                                 <input type="checkbox" class="custom-control-input" name="create_child" value="1"
                                 {{ !isset($data['menu']) ? (old('create_child') ? 'checked' : '') : (old('create_child', $data['menu']['config']['create_child']) == 1 ? 'checked' : '') }}>
-                                <span class="custom-control-label">@lang('global.label.optional.1')</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group row hide-form">
-                        <div class="col-md-2 text-md-right">
-                          <label class="col-form-label text-sm-right">Event</label>
-                        </div>
-                        <div class="col-md-10">
-                            <label class="custom-control custom-checkbox m-0">
-                                <input type="checkbox" class="custom-control-input" name="event" value="1"
-                                {{ !isset($data['menu']) ? (old('event') ? 'checked' : '') : (old('event', $data['menu']['config']['event']) == 1 ? 'checked' : '') }}>
                                 <span class="custom-control-label">@lang('global.label.optional.1')</span>
                             </label>
                         </div>
@@ -334,13 +322,13 @@
         $("#module").val(module);
         $("#menuable").show();
     }
-
+    
     $("#menuable_id").hide();
     $("#module").change(function() {
         $("#menuable_id").show();
         $("#menuable").hide();
         var val = $(this).val();
-
+        
         $('.select-autocomplete').select2({
             minimumInputLength: 1,
             ajax: {

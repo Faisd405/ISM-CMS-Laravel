@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\Feature\ConfigurationService;
 use App\Services\Feature\LanguageService;
-use App\Services\MenuService;
 use App\Services\Module\ContentService;
 use App\Services\Module\DocumentService;
 use App\Services\Module\EventService;
@@ -22,7 +21,7 @@ class HomeController extends Controller
     {
         if (config('cms.setting.url.landing') == false)
             return redirect()->route('home');
-
+        
         $data['data'] = null;
 
         return view('frontend.landing', compact('data'));
@@ -40,14 +39,6 @@ class HomeController extends Controller
         foreach ($data['widgets'] as $key => $value) {
             $data['widgets'][$key]['module'] = App::make(WidgetService::class)->getModuleData($value);
         }
-
-        $menuHome = [
-            'name' => 'Menu',
-            'module' => App::make(MenuService::class)->getCategory(['id' => 5]),
-            'template' => 'landing-page-menu'
-        ];
-
-        $data['widgets']->splice(2, 0, [$menuHome]);
 
         return view('frontend.index', compact('data'));
     }
@@ -161,7 +152,7 @@ class HomeController extends Controller
     {
         if (config('cms.setting.url.feed') == false)
             return redirect()->route('home');
-
+            
         $data['title'] = config('cmsConfig.seo.meta_title');
         $data['description'] = config('cmsConfig.seo.meta_description');
         $data['posts'] = App::make(ContentService::class)->getPostList([

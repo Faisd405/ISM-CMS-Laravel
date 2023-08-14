@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Helper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +19,6 @@ class Page extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use Helper;
 
     protected $table = 'mod_pages';
     protected $guarded = [];
@@ -74,9 +72,9 @@ class Page extends Model
             foreach ($this->whereIn('id', $this->path)->get() as $key => $value) {
                 $path[$key] = $value->slug;
             }
-
+    
             $getSlug = implode('/', $path);
-            $slug = $getSlug.    '/'.$this->slug;
+            $slug = $getSlug.'/'.$this->slug;
         }
 
         return $slug;
@@ -163,10 +161,6 @@ class Page extends Model
     public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
-            if ($this->isImageLink($this->cover['filepath'])) {
-                return $this->cover['filepath'];
-            }
-
             $cover = Storage::url($this->cover['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.cover_default'))) {
@@ -182,9 +176,6 @@ class Page extends Model
     public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
-            if ($this->isImageLink($this->banner['filepath'])) {
-                return $this->banner['filepath'];
-            }
             $banner = Storage::url($this->banner['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.banner_default'))) {

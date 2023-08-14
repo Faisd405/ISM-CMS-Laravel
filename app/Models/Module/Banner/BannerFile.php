@@ -92,7 +92,7 @@ class BannerFile extends Model
         $videoType = $this->video_type;
 
         if ($type == '0') {
-
+            
             if ($imageType == '0') {
                 return [
                     'image' => Storage::url(config('cms.files.banner.path').$this->banner_id.'/'.$this->file),
@@ -125,7 +125,7 @@ class BannerFile extends Model
                     $thumbnail = asset(config('cms.files.config.cover_default.file'));
                 }
             }
-
+            
             if ($videoType == '0') {
 
                 return [

@@ -74,7 +74,7 @@ class MenuController extends Controller
         $data['category'] = $this->menuService->getCategory(['id' => $categoryId]);
         if (empty($data['category']))
             return abort(404);
-
+            
         $data['menus'] = $this->menuService->getMenuList($filter, true, 10, true, [], [
             'deleted_at' => 'DESC'
         ]);
@@ -129,9 +129,8 @@ class MenuController extends Controller
         $data['module'] = $request->module;
         $data['menuable_id'] = $request->menuable_id;
         $data['target_blank'] = (bool)$request->target_blank;
-        $data['edit_public_menu'] = (bool)$request->event;
+        $data['edit_public_menu'] = (bool)$request->edit_public_menu;
         $data['create_child'] = (bool)$request->create_child;
-        $data['event'] = $request->event;
         $data['locked'] = (bool)$request->locked;
         $menu = $this->menuService->storeMenu($data);
         $data['query'] = $request->query();
@@ -177,7 +176,6 @@ class MenuController extends Controller
         $data['target_blank'] = (bool)$request->target_blank;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
         $data['create_child'] = (bool)$request->create_child;
-        $data['event'] = $request->event;
         $data['locked'] = (bool)$request->locked;
         $menu = $this->menuService->updateMenu($data, ['id' => $id]);
         $data['query'] = $request->query();

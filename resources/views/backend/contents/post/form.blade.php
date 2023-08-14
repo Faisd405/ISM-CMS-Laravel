@@ -12,7 +12,7 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['post']) ? route('content.post.store', array_merge(['sectionId' => $data['section']['id']], $queryParam)) :
+        <form action="{{ !isset($data['post']) ? route('content.post.store', array_merge(['sectionId' => $data['section']['id']], $queryParam)) : 
             route('content.post.update', array_merge(['sectionId' => $data['section']['id'], 'id' => $data['post']['id']], $queryParam)) }}" method="POST">
             @csrf
             @isset($data['post'])
@@ -62,9 +62,9 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/content.post.label.title') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control text-bolder {{ !isset($data['post']) ? 'gen_slug' : '' }} @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
-                                        name="title_{{ $lang['iso_codes'] }}"
-                                        value="{{ !isset($data['post']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['post']->fieldLang('title', $lang['iso_codes'])) }}"
+                                    <input type="text" class="form-control text-bolder {{ !isset($data['post']) ? 'gen_slug' : '' }} @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
+                                        name="title_{{ $lang['iso_codes'] }}" 
+                                        value="{{ !isset($data['post']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['post']->fieldLang('title', $lang['iso_codes'])) }}" 
                                         placeholder="@lang('module/content.post.placeholder.title')">
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
@@ -100,11 +100,7 @@
                         <div class="col-sm-10">
                             <select class="select2 show-tick" name="category_id[]" data-style="btn-default" {{ $data['section']['config']['multiple_category'] == true ? 'multiple' : '' }}>
                                 @if ($data['section']['config']['multiple_category'] == false)
-                                <option value="">
-                                    @lang('global.label.select_empty', [
-                                        'attribute' => __('module/content.category.caption')
-                                    ])
-                                </option>
+                                <option value=" " selected disabled></option>
                                 @endif
                                 @foreach ($data['categories'] as $cat)
                                     <option value="{{ $cat['id'] }}" {{ isset($data['post']) && !empty($data['post']['category_id']) ? (in_array($cat['id'], $data['post']['category_id']) ? 'selected' : '') : '' }}>
@@ -124,8 +120,8 @@
                     <div class="form-group row">
                         <label class="col-form-label col-sm-2 text-sm-right">Post by alias</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control text-bolder @error('posted_by_alias') is-invalid @enderror" name="posted_by_alias"
-                                value="{{ !isset($data['post']) ? old('posted_by_alias') : old('posted_by_alias', $data['post']['posted_by_alias']) }}"
+                            <input type="text" class="form-control text-bolder @error('posted_by_alias') is-invalid @enderror" name="posted_by_alias" 
+                                value="{{ !isset($data['post']) ? old('posted_by_alias') : old('posted_by_alias', $data['post']['posted_by_alias']) }}" 
                                 placeholder="">
                             @include('components.field-error', ['field' => 'posted_by_alias'])
                         </div>
@@ -222,8 +218,8 @@
                             <label class="form-label">@lang('module/content.post.label.publish_time')</label>
                             <div class="input-group">
                                 <input id="start_date" type="text" class="datetime-picker form-control @error('publish_time') is-invalid @enderror" name="publish_time"
-                                    value="{{ !isset($data['post']) ? old('publish_time', now()->format('Y-m-d H:i')) : (!empty($data['post']['publish_time']) ?
-                                        old('publish_time', $data['post']['publish_time']->format('Y-m-d H:i')) : old('publish_time')) }}"
+                                    value="{{ !isset($data['post']) ? old('publish_time', now()->format('Y-m-d H:i')) : (!empty($data['post']['publish_time']) ? 
+                                        old('publish_time', $data['post']['publish_time']->format('Y-m-d H:i')) : old('publish_time')) }}" 
                                     placeholder="">
                                 <div class="input-group-append">
                                     <span class="input-group-text"><i class="fi fi-rr-calendar-lines"></i></span>
@@ -238,8 +234,8 @@
                             <label class="form-label">@lang('module/content.post.label.publish_end')</label>
                             <div class="input-group">
                                 <input id="end_date" type="text" class="datetime-picker form-control @error('publish_end') is-invalid @enderror" name="publish_end"
-                                    value="{{ !isset($data['post']) ? old('publish_end') : (!empty($data['post']['publish_end']) ?
-                                        old('publish_end', $data['post']['publish_end']->format('Y-m-d H:i')) : old('publish_end')) }}"
+                                    value="{{ !isset($data['post']) ? old('publish_end') : (!empty($data['post']['publish_end']) ? 
+                                        old('publish_end', $data['post']['publish_end']->format('Y-m-d H:i')) : old('publish_end')) }}" 
                                     placeholder="">
                                 <div class="input-group-append">
                                     <span class="input-group-text"><i class="fi fi-rr-calendar-clock"></i></span>
@@ -415,7 +411,7 @@
                                 @foreach ($data['post']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name"
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>

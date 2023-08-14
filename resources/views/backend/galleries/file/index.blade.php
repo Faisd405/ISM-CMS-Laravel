@@ -84,7 +84,7 @@
                                     <label class="form-label" for="limit">@lang('global.limit')</label>
                                     <select id="limit" class="form-control" name="limit" data-style="btn-default">
                                         @foreach (config('cms.setting.limit') as $key => $val)
-                                        <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }}
+                                        <option value="{{ $key }}" {{ Request::get('limit') == ''.$key.'' ? 'selected' : '' }} 
                                             title="@lang('global.limit') {{ $val }}">
                                             {{ $val }}
                                         </option>
@@ -96,7 +96,7 @@
                                     <select class="form-control" name="type">
                                         <option value=" " selected>@lang('global.show_all')</option>
                                         @foreach (config('cms.module.gallery.file.type') as $key => $val)
-                                        <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }}
+                                        <option value="{{ $key }}" {{ Request::get('type') == ''.$key.'' ? 'selected' : '' }} 
                                             title="{{ $val }}">{{ $val }}</option>
                                         @endforeach
                                     </select>
@@ -106,14 +106,14 @@
                                     <select class="form-control" name="status">
                                         <option value=" " selected>@lang('global.show_all')</option>
                                         @foreach (__('global.label.active') as $key => $val)
-                                        <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }}
+                                        <option value="{{ $key }}" {{ Request::get('status') == ''.$key.'' ? 'selected' : '' }} 
                                             title="{{ $val }}">{{ $val }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="" for="search-filter">@lang('global.search')</label>
-                                    <input id="search-filter" type="text" class="form-control" name="q" value="{{ Request::get('q') }}"
+                                    <input id="search-filter" type="text" class="form-control" name="q" value="{{ Request::get('q') }}" 
                                         placeholder="@lang('global.search_keyword')">
                                 </div>
                             </div>
@@ -256,7 +256,7 @@
                             <td>
                                 <div class="box-btn flex-wrap justify-content-end">
                                     @if ($item['type'] == '1' && $item['video_type'] == '0')
-                                    <button type="button" class="btn btn-main icon-btn btn-sm modals-preview" data-toggle="modal"
+                                    <button type="button" class="btn btn-main icon-btn btn-sm modals-preview" data-toggle="modal" 
                                         data-target="#preview-video" data-video="{!! $item['file_src']['video'] !!}" title="@lang('global.preview')">
                                         <i class="fi fi-rr-play-alt"></i>
                                     </button>
@@ -280,7 +280,7 @@
                                         @endif
                                     @endcan
                                     @if (Auth::user()->hasRole('developer|super|support|admin') && config('cms.module.gallery.file.approval') == true)
-                                    <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-default"
+                                    <a href="javascript:void(0);" onclick="$(this).find('#form-approval').submit();" class="btn icon-btn btn-sm btn-default" 
                                         title="{{ $item['approved'] == 1 ? __('global.label.flags.0') : __('global.label.flags.1')}}">
                                         <i class="fi fi-rr-{{ $item['approved'] == 1 ? 'ban text-danger' : 'check text-success' }}"></i>
                                         <form action="{{ route('gallery.file.approved', ['albumId' => $item['gallery_album_id'], 'id' => $item['id']]) }}" method="POST" id="form-approval">
@@ -317,9 +317,9 @@
             @if ($data['files']->total() > 0)
             <div class="card-footer justify-content-center justify-content-lg-between align-items-center flex-wrap">
                 <div class="text-muted mb-3 m-lg-0">
-                    @lang('pagination.showing')
-                    <strong>{{ $data['files']->firstItem() }}</strong> -
-                    <strong>{{ $data['files']->lastItem() }}</strong>
+                    @lang('pagination.showing') 
+                    <strong>{{ $data['files']->firstItem() }}</strong> - 
+                    <strong>{{ $data['files']->lastItem() }}</strong> 
                     @lang('pagination.of')
                     <strong>{{ $data['files']->total() }}</strong>
                 </div>
