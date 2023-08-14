@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Lang;
 use Spatie\Analytics\Period;
-use Analytics;
+use Spatie\Analytics\Facades\Analytics;
 use App\Http\Requests\Feature\ConfigRequest;
 use Exception;
 use Illuminate\Support\Str;
@@ -23,8 +23,7 @@ class ConfigurationController extends Controller
     public function __construct(
         ConfigurationService $configService,
         LanguageService $langService
-    )
-    {
+    ) {
         $this->configService = $configService;
         $this->langService = $langService;
     }
@@ -58,7 +57,7 @@ class ConfigurationController extends Controller
         $data['languages'] = $this->langService->getLanguageActive();
 
         return view('backend.features.configuration.website', compact('data'), [
-            'title' => __('feature/configuration.caption').' - '.__('feature/configuration.website.caption'),
+            'title' => __('feature/configuration.caption') . ' - ' . __('feature/configuration.website.caption'),
             'breadcrumbs' => [
                 __('feature/configuration.caption') => 'javascript:;',
                 __('feature/configuration.website.caption') => ''
@@ -142,7 +141,7 @@ class ConfigurationController extends Controller
                 $data .= "\t'$key' => '$val',\n";
             }
             $data .= "];";
-            File::put(base_path('lang/'.$lang.'/text.php'), $data);
+            File::put(base_path('lang/' . $lang . '/text.php'), $data);
             return back()->with('success', __('global.alert.update_success', [
                 'attribute' => __('feature/configuration.text.caption')
             ]));
@@ -153,7 +152,7 @@ class ConfigurationController extends Controller
         $data['lang'] = $this->langService->getLanguage(['iso_codes' => $lang]);
 
         return view('backend.features.configuration.text', compact('data'), [
-            'title' => __('feature/configuration.caption').' - '.__('feature/configuration.text.caption'),
+            'title' => __('feature/configuration.caption') . ' - ' . __('feature/configuration.text.caption'),
             'breadcrumbs' => [
                 __('feature/configuration.caption') => 'javascript:;',
                 __('feature/configuration.text.caption') => ''
@@ -183,7 +182,7 @@ class ConfigurationController extends Controller
 
         try {
 
-            if (!empty(env('ANALYTICS_VIEW_ID'))) {
+            if (!empty(env('ANALYTICS_PROPERTY_ID'))) {
 
                 $filter = $request->input('filter', '');
 
@@ -217,11 +216,6 @@ class ConfigurationController extends Controller
                     $end = now()->endOfYear();
                 }
 
-                if ($filter == 'current_year') {
-                    $start = now()->startOfYear();
-                    $end = now()->endOfYear();
-                }
-
                 if ($filter == 'latest_year') {
                     $start = now()->parse('-1 years')->startOfYear();
                     $end = now()->parse('-1 years')->endOfYear();
@@ -239,18 +233,18 @@ class ConfigurationController extends Controller
                 $data['refe'] = Analytics::fetchTopReferrers($periode);
                 $data['top'] = Analytics::fetchMostVisitedPages($periode);
                 $data['vp'] = Analytics::fetchVisitorsAndPageViews($periode);
-                $data['aa'] = Analytics::performQuery(Period::years(1),
-                'ga:sessions', [
-                    'metrics' => 'ga:sessions, ga:pageviews',
-                    'dimensions' => 'ga:yearMonth'
-                ]);
+                // $data['aa'] = Analytics::performQuery(Period::years(1),
+                // 'ga:sessions', [
+                //     'metrics' => 'ga:sessions, ga:pageviews',
+                //     'dimensions' => 'ga:yearMonth'
+                // ]);
 
                 //session
                 $sessionLabel = [];
                 $sessionTotal = [];
                 foreach ($data['n_visitor'] as $key => $value) {
-                    $sessionLabel[$key] = $value['type'];
-                    $sessionTotal[$key] = $value['sessions'];
+                    $sessionLabel[$key] = $value['newVsReturning'];
+                    $sessionTotal[$key] = $value['activeUsers'];
                 }
 
                 $data['session_visitor'] = [
@@ -263,7 +257,7 @@ class ConfigurationController extends Controller
                 $browserTotal = [];
                 foreach ($data['browser'] as $key => $value) {
                     $browserLabel[$key] = $value['browser'];
-                    $browserTotal[$key] = $value['sessions'];
+                    $browserTotal[$key] = $value['screenPageViews'];
                 }
 
                 $data['browser_visitor'] = [
@@ -276,18 +270,16 @@ class ConfigurationController extends Controller
                 $visitorTotal = [];
                 foreach ($data['total'] as $key => $value) {
                     $visitorLabel[$key] = Carbon::parse($value['date'])->format('d F Y');
-                    $visitorTotal[$key] = $value['visitors'];
+                    $visitorTotal[$key] = $value['activeUsers'];
                 }
 
                 $data['total_visitor'] = [
                     'label' => $visitorLabel,
                     'total' => $visitorTotal
                 ];
-
             } else {
                 $data['error'] = __('feature/configuration.visitor.warning_caption');
             }
-
         } catch (Exception $e) {
             //throw $th;
             $data['error'] = $e->getMessage();
