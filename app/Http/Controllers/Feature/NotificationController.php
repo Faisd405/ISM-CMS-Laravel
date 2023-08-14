@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Feature;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Feature\NotificationRepository;
+use App\Services\Feature\NotificationService;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ class NotificationController extends Controller
     private $notifService;
 
     public function __construct(
-        NotificationRepository $notifService
+        NotificationService $notifService
     )
     {
         $this->notifService = $notifService;
@@ -62,7 +62,7 @@ class NotificationController extends Controller
     public function read($id)
     {
         try {
-
+            
             $notif = $this->notifService->getNotif(['id' => $id]);
             $this->notifService->readNotif(Auth::user()['id'], ['id' => $id]);
 

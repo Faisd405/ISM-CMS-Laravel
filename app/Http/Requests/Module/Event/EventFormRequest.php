@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Module\Event;
 
-use App\Repositories\Module\EventRepository;
+use App\Services\Module\EventService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EventFormRequest extends FormRequest
@@ -10,7 +10,7 @@ class EventFormRequest extends FormRequest
     private $event;
 
     public function __construct(
-        EventRepository $event
+        EventService $event
     )
     {
         $this->event = $event;
@@ -54,7 +54,7 @@ class EventFormRequest extends FormRequest
             'publish' => 1,
             'approved' => 1
         ], false);
-
+        
         $fields['g-recaptcha-response'] = 'Recaptcha';
         foreach ($getFields as $value) {
             $fields[$value['name']] = $value->fieldLang('label');

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\UserRepository;
+use App\Services\UserService;
 use Illuminate\Console\Command;
 
 class RemoveLog extends Command
@@ -28,7 +28,7 @@ class RemoveLog extends Command
      *
      * @return void
      */
-    public function __construct(UserRepository $userService)
+    public function __construct(UserService $userService)
     {
         parent::__construct();
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Feature;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Feature\ApiRequest;
-use App\Repositories\Feature\ApiRepository;
+use App\Services\Feature\ApiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class ApiController extends Controller
     private $apiService;
 
     public function __construct(
-        ApiRepository $apiService
+        ApiService $apiService
     )
     {
         $this->apiService = $apiService;

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Feature;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Feature\RegistrationRequest;
-use App\Repositories\Feature\RegistrationRepository;
-use App\Repositories\UserRepository;
+use App\Services\Feature\RegistrationService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -14,8 +14,8 @@ class RegistrationController extends Controller
     private $registrationService, $userService;
 
     public function __construct(
-        RegistrationRepository $registrationService,
-        UserRepository $userService
+        RegistrationService $registrationService,
+        UserService $userService
     )
     {
         $this->registrationService = $registrationService;

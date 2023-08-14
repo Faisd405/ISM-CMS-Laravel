@@ -8,8 +8,8 @@
 <div class="row justify-content-center">
     <div class="col-xl-9 col-lg-9 col-md-9">
 
-        <form action="{{ !isset($data['file']) ? route('document.file.store', array_merge(['documentId' => $data['document']['id']], $queryParam)) : 
-            route('document.file.update', array_merge(['documentId' => $data['document']['id'], 'id' => $data['file']['id']], $queryParam)) }}" method="POST" 
+        <form action="{{ !isset($data['file']) ? route('document.file.store', array_merge(['documentId' => $data['document']['id']], $queryParam)) :
+            route('document.file.update', array_merge(['documentId' => $data['document']['id'], 'id' => $data['file']['id']], $queryParam)) }}" method="POST"
                 enctype="multipart/form-data">
             @csrf
             @isset($data['file'])
@@ -105,6 +105,14 @@
                         </div>
                     </div>
                     @endif
+                    <div class="form-group row">
+                        <label class="col-form-label col-sm-2 text-sm-right">@lang('module/document.label.slug') <i class="text-danger">*</i></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control text-bolder slug_spot @error('slug') is-invalid @enderror" lang="{{ App::getLocale() }}" name="slug"
+                                value="{{ !isset($data['file']) ? old('slug') : old('slug', $data['file']['slug']) }}" placeholder="Slug File">
+                            @include('components.field-error', ['field' => 'slug'])
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer justify-content-center">
                     <div class="box-btn">
@@ -150,9 +158,9 @@
                             <div class="form-group row {{ isset($data['file']) && $data['file']['config']['show_title'] == false ? 'hide-form' : '' }}">
                                 <label class="col-form-label col-sm-2 text-sm-right">@lang('module/document.file.label.title') <i class="text-danger">*</i></label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control mb-1 @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}" 
-                                        name="title_{{ $lang['iso_codes'] }}" 
-                                        value="{{ !isset($data['file']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['file']->fieldLang('title', $lang['iso_codes'])) }}" 
+                                    <input type="text" class="form-control mb-1 @error('title_'.$lang['iso_codes']) is-invalid @enderror" lang="{{ $lang['iso_codes'] }}"
+                                        name="title_{{ $lang['iso_codes'] }}"
+                                        value="{{ !isset($data['file']) ? old('title_'.$lang['iso_codes']) : old('title_'.$lang['iso_codes'], $data['file']->fieldLang('title', $lang['iso_codes'])) }}"
                                         placeholder="@lang('module/document.file.placeholder.title')">
                                     @include('components.field-error', ['field' => 'title_'.$lang['iso_codes']])
                                 </div>
@@ -279,7 +287,7 @@
                                 @foreach ($data['file']['custom_fields'] as $key => $val)
                                 <tr class="num-list" id="delete-{{ $key }}">
                                     <td>
-                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name" 
+                                        <input type="text" class="form-control text-bolder" name="cf_name[]" placeholder="name"
                                             value="{{ $key }}" {{ !Auth::user()->hasRole('developer|super') ? 'readonly' : '' }}>
                                     </td>
                                     <td>
@@ -336,7 +344,7 @@
             $('#file-url').show();
         }
     });
-</script>    
+</script>
 @endif
 
 <script>

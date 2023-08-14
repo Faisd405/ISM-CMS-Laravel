@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\TemplateRequest;
-use App\Repositories\Master\TemplateRepository;
+use App\Services\Master\TemplateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class TemplateController extends Controller
     private $templateService;
 
     public function __construct(
-        TemplateRepository $templateService
+        TemplateService $templateService
     )
     {
         $this->templateService = $templateService;

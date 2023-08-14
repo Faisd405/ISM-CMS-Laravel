@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Module\ContentRepository;
-use App\Repositories\Module\DocumentRepository;
-use App\Repositories\Module\EventRepository;
-use App\Repositories\Module\GalleryRepository;
-use App\Repositories\Module\InquiryRepository;
-use App\Repositories\Module\LinkRepository;
-use App\Repositories\Module\PageRepository;
+use App\Services\Module\ContentService;
+use App\Services\Module\DocumentService;
+use App\Services\Module\EventService;
+use App\Services\Module\GalleryService;
+use App\Services\Module\InquiryService;
+use App\Services\Module\LinkService;
+use App\Services\Module\PageService;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -25,9 +25,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $pages = App::make(PageRepository::class)->getPageList($filter, false, 5, false, [], []);
-
+        
+        $pages = App::make(PageService::class)->getPageList($filter, false, 5, false, [], []);
+        
         $pageMap = [];
         foreach ($pages as $key => $value) {
             $pageMap[$key] = [
@@ -46,9 +46,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $sections = App::make(ContentRepository::class)->getSectionList($filter, false, 10, false, [], []);
-
+        
+        $sections = App::make(ContentService::class)->getSectionList($filter, false, 10, false, [], []);
+        
         $sectionMap = [];
         foreach ($sections as $key => $value) {
             $sectionMap[$key] = [
@@ -67,9 +67,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $categoriees = App::make(ContentRepository::class)->getCategoryList($filter, false, 10, false, [], []);
-
+        
+        $categoriees = App::make(ContentService::class)->getCategoryList($filter, false, 10, false, [], []);
+        
         $categoryMap = [];
         foreach ($categoriees as $key => $value) {
             $categoryMap[$key] = [
@@ -88,9 +88,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $posts = App::make(ContentRepository::class)->getPostList($filter, false, 10, false, [], []);
-
+        
+        $posts = App::make(ContentService::class)->getPostList($filter, false, 10, false, [], []);
+        
         $postMap = [];
         foreach ($posts as $key => $value) {
             $postMap[$key] = [
@@ -109,9 +109,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $categories = App::make(GalleryRepository::class)->getCategoryList($filter, false, 10, false, [], []);
-
+        
+        $categories = App::make(GalleryService::class)->getCategoryList($filter, false, 10, false, [], []);
+        
         $categoryMap = [];
         foreach ($categories as $key => $value) {
             $categoryMap[$key] = [
@@ -130,9 +130,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $albums = App::make(GalleryRepository::class)->getAlbumList($filter, false, 10, false, [], []);
-
+        
+        $albums = App::make(GalleryService::class)->getAlbumList($filter, false, 10, false, [], []);
+        
         $albumMap = [];
         foreach ($albums as $key => $value) {
             $albumMap[$key] = [
@@ -151,9 +151,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $documents = App::make(DocumentRepository::class)->getDocumentList($filter, false, 10, false, [], []);
-
+        
+        $documents = App::make(DocumentService::class)->getDocumentList($filter, false, 10, false, [], []);
+        
         $documentMap = [];
         foreach ($documents as $key => $value) {
             $documentMap[$key] = [
@@ -172,9 +172,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $links = App::make(LinkRepository::class)->getLinkList($filter, false, 10, false, [], []);
-
+        
+        $links = App::make(LinkService::class)->getLinkList($filter, false, 10, false, [], []);
+        
         $linkMap = [];
         foreach ($links as $key => $value) {
             $linkMap[$key] = [
@@ -193,9 +193,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $inquiries = App::make(InquiryRepository::class)->getInquiryList($filter, false, 10, false, [], []);
-
+        
+        $inquiries = App::make(InquiryService::class)->getInquiryList($filter, false, 10, false, [], []);
+        
         $inquiryMap = [];
         foreach ($inquiries as $key => $value) {
             $inquiryMap[$key] = [
@@ -214,9 +214,9 @@ class ApiModuleController extends Controller
         if ($request->input('q', '') != '') {
             $filter['q'] = $request->input('q');
         }
-
-        $events = App::make(EventRepository::class)->getEventList($filter, false, 10, false, [], []);
-
+        
+        $events = App::make(EventService::class)->getEventList($filter, false, 10, false, [], []);
+        
         $eventMap = [];
         foreach ($events as $key => $value) {
             $eventMap[$key] = [

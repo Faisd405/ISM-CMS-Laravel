@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Module\Document;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Document\DocumentRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Master\TemplateRepository;
-use App\Repositories\Module\DocumentRepository;
-use App\Repositories\UserRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Master\TemplateService;
+use App\Services\Module\DocumentService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -19,10 +19,10 @@ class DocumentController extends Controller
         $userService;
 
     public function __construct(
-        DocumentRepository $documentService,
-        LanguageRepository $languageService,
-        TemplateRepository $templateService,
-        UserRepository $userService
+        DocumentService $documentService,
+        LanguageService $languageService,
+        TemplateService $templateService,
+        UserService $userService
     )
     {
         $this->documentService = $documentService;
@@ -46,7 +46,7 @@ class DocumentController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['documents'] = $this->documentService->getDocumentList($filter, true, 10, false, [],
+        $data['documents'] = $this->documentService->getDocumentList($filter, true, 10, false, [], 
             config('cms.module.document.ordering'));
         $data['no'] = $data['documents']->firstItem();
         $data['documents']->withQueryString();
@@ -262,7 +262,7 @@ class DocumentController extends Controller
         $data['categories'] = $this->documentService->getDocumentList([
             'publish' => 1,
             'approved' => 1
-        ], true, $limit, false, [],
+        ], true, $limit, false, [], 
             config('cms.module.document.ordering'));
         $data['no_categories'] = $data['categories']->firstItem();
         $data['categories']->withQueryString();
@@ -315,7 +315,7 @@ class DocumentController extends Controller
         $filter['approved'] = 1;
 
         //data
-        $data['files'] = $this->documentService->getFileList($filter,
+        $data['files'] = $this->documentService->getFileList($filter, 
             $data['read']['config']['paginate_file'], $data['read']['config']['file_limit'], false,
         [], [$data['read']['config']['file_order_by'] => $data['read']['config']['file_order_type']]);
         if ($data['read']['config']['paginate_file'] == true) {

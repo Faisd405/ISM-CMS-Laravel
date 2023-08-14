@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ActivateRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Repositories\Feature\NotificationRepository;
-use App\Repositories\Feature\RegistrationRepository;
-use App\Repositories\UserRepository;
+use App\Services\Feature\NotificationService;
+use App\Services\Feature\RegistrationService;
+use App\Services\UserService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,9 +19,9 @@ class RegisterController extends Controller
     private $userService, $registrationService, $notifService;
 
     public function __construct(
-        UserRepository $userService,
-        RegistrationRepository $registrationService,
-        NotificationRepository $notifService
+        UserService $userService,
+        RegistrationService $registrationService,
+        NotificationService $notifService
     )
     {
         $this->userService = $userService;
@@ -61,7 +61,7 @@ class RegisterController extends Controller
         $start = $register['start_date'];
         $end = $register['end_date'];
         $now = now()->format('Y-m-d H:i');
-
+    
         if (!empty($start) && $now < $start->format('Y-m-d H:i'))
             return redirect()->back()->with('warning', __('auth.register.label.form_open', [
                 'attribute' => $start->format('d F Y H:i (A)')
@@ -69,12 +69,12 @@ class RegisterController extends Controller
 
         if (!empty($end) && $now > $end->format('Y-m-d H:i'))
             return redirect()->back()->with('warning', __('auth.register.label.form_close'));
-
+            
         if (empty($register['roles']))
             return abort(404);
 
         try {
-
+            
             $data = $request->all();
             if (count($register['roles']) == 1)
                 $data['roles'] = $register['role_list'][0]['name'];
@@ -86,7 +86,7 @@ class RegisterController extends Controller
             $register = $this->userService->store($data);
 
             if ($register['success'] == true) {
-
+                
                 if ($loginAfterRegister == true) {
                     Auth::login($register['data']);
 
@@ -102,7 +102,7 @@ class RegisterController extends Controller
                         'expired' => $expired,
                         'link' => route('register.activate', ['email' => $email, 'expired' => $expired]),
                     ];
-
+        
                     if (config('cmsConfig.notif.notif_email_register') == 1)
                         Mail::to($request->email)->send(new \App\Mail\ActivateAccountMail($data));
                 }
@@ -123,9 +123,9 @@ class RegisterController extends Controller
                         'read_by' => [],
                         'link' => 'admin/user?q='.$request->email.'&'
                     ]);
-
+    
                 return redirect()->route('login.frontend')->with('success', __('auth.register.alert.success'));
-
+    
             } else {
                 return back()->with('failed', $register['message']);
             }
@@ -151,7 +151,7 @@ class RegisterController extends Controller
         $user = $this->userService->getUser(['email' => $request->email]);
 
         try {
-
+            
             $email = Crypt::encrypt($request->email);
             $expired = now()->addHours(3)->format('YmdHis');
             $data = [
@@ -171,7 +171,7 @@ class RegisterController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->with('failed', $e->getMessage());
         }
-
+        
     }
 
     public function activate(Request $request)

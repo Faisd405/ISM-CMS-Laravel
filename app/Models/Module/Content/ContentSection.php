@@ -8,6 +8,7 @@ use App\Models\Menu\Menu;
 use App\Models\Module\Widget;
 use App\Models\User;
 use App\Observers\LogObserver;
+use App\Traits\Helper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,6 +19,7 @@ class ContentSection extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Helper;
 
     protected $table = 'mod_content_sections';
     protected $guarded = [];
@@ -133,9 +135,24 @@ class ContentSection extends Model
         return $query->where('locked', 1);
     }
 
+    public function listYearUnique()
+    {
+        return $this->posts()
+            ->distinct()
+            ->select('created_at')
+            ->pluck('created_at')
+            ->map(function ($postDate) {
+                return $postDate->format('Y');
+            })->unique();
+    }
+
     public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
+            if ($this->isImageLink($this->cover['filepath'])) {
+                return $this->cover['filepath'];
+            }
+
             $cover = Storage::url($this->cover['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.cover_default'))) {
@@ -151,6 +168,9 @@ class ContentSection extends Model
     public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
+            if ($this->isImageLink($this->banner['filepath'])) {
+                return $this->banner['filepath'];
+            }
             $banner = Storage::url($this->banner['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.banner_default'))) {

@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\MediaRequest;
 use App\Models\Module\Content\ContentPost;
 use App\Models\Module\Page;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Master\MediaRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Master\MediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 class MediaController extends Controller
@@ -15,8 +15,8 @@ class MediaController extends Controller
     private $mediaService, $languageService;
 
     public function __construct(
-        MediaRepository $mediaService,
-        LanguageRepository $languageService
+        MediaService $mediaService,
+        LanguageService $languageService
     )
     {
         $this->mediaService = $mediaService;
@@ -28,7 +28,7 @@ class MediaController extends Controller
     public function index(Request $request, $moduleId, $moduleType)
     {
         $data['params'] = ['moduleId' => $moduleId, 'moduleType' => $moduleType];
-
+        
         $filter['mediable_id'] = $moduleId;
         $filter['module'] = $moduleType;
         if ($request->input('q', '') != '') {
@@ -63,7 +63,7 @@ class MediaController extends Controller
     public function trash(Request $request, $moduleId, $moduleType)
     {
         $data['params'] = ['moduleId' => $moduleId, 'moduleType' => $moduleType];
-
+        
         $filter['module'] = $moduleType;
         $filter['mediable_id'] = $moduleId;
         if ($request->input('q', '') != '') {

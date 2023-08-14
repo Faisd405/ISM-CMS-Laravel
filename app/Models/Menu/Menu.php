@@ -14,6 +14,7 @@ use App\Models\Module\Link\Link;
 use App\Models\Module\Page;
 use App\Models\User;
 use App\Observers\LogObserver;
+use App\Traits\Helper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,6 +25,7 @@ class Menu extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Helper;
 
     protected $table = 'menus';
     protected $guarded = [];
@@ -119,10 +121,10 @@ class Menu extends Model
         $id = $this->menuable_id;
 
         if ($this->module == 'page') {
-            
+
             $model = Page::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['title'][App::getLocale()],
                 'routes' => $model['parent'] == 0 ? route('page.read.'.$model['slug']) : route('page.read.child.'.$model['slug']),
                 'active' => '',
@@ -131,10 +133,10 @@ class Menu extends Model
         }
 
         if ($this->module == 'content_section') {
-            
+
             $model = ContentSection::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
                 'routes' => route('content.section.read.'.$model['slug']),
                 'active' => '',
@@ -143,10 +145,10 @@ class Menu extends Model
         }
 
         if ($this->module == 'content_category') {
-            
+
             $model = ContentCategory::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
                 'routes' => route('content.category.read.'.$model['section']['slug'], ['slugCategory' => $model['slug']]),
                 'active' => '',
@@ -155,10 +157,10 @@ class Menu extends Model
         }
 
         if ($this->module == 'content_post') {
-            
+
             $model = ContentPost::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['title'][App::getLocale()],
                 'routes' => route('content.post.read.'.$model['section']['slug'], ['slugPost' => $model['slug']]),
                 'active' => '',
@@ -167,10 +169,10 @@ class Menu extends Model
         }
 
         if ($this->module == 'gallery_category') {
-            
+
             $model = GalleryCategory::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
                 'routes' => route('gallery.category.read', ['slugCategory' => $model['slug']]),
                 'active' => '',
@@ -179,10 +181,10 @@ class Menu extends Model
         }
 
         if ($this->module == 'gallery_album') {
-            
+
             $model = GalleryAlbum::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
                 'routes' => route('gallery.album.read', ['slugAlbum' => $model['slug']]),
                 'active' => '',
@@ -191,22 +193,22 @@ class Menu extends Model
         }
 
         if ($this->module == 'document') {
-            
+
             $model = Document::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
-                'routes' => route('document.category.read', ['slugCategory' => $model['slug']]),
+                'routes' => route('document.read', ['slugDocument' => $model['slug']]),
                 'active' => '',
                 'is_trash' => Document::onlyTrashed()->find($id),
             ];
         }
 
         if ($this->module == 'link') {
-            
+
             $model = Link::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
                 'routes' => route('link.category.read', ['slugCategory' => $model['slug']]),
                 'active' => '',
@@ -215,10 +217,10 @@ class Menu extends Model
         }
 
         if ($this->module == 'inquiry') {
-            
+
             $model = Inquiry::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
                 'routes' => route('inquiry.read.'.$model['slug']),
                 'active' => '',
@@ -227,10 +229,10 @@ class Menu extends Model
         }
 
         if ($this->module == 'event') {
-            
+
             $model = Event::withTrashed()->find($id);
             $module = [
-                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()] 
+                'title' => !empty($this->title[App::getLocale()]) ? $this->title[App::getLocale()]
                     : $model['name'][App::getLocale()],
                 'routes' => route('event.read', ['slugEvent' => $model['slug']]),
                 'active' => '',

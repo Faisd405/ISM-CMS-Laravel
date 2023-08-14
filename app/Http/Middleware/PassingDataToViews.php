@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\MenuRepository;
-use App\Repositories\Module\WidgetRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\MenuService;
+use App\Services\Module\WidgetService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,9 +15,9 @@ class PassingDataToViews
     protected $languange, $menu, $widget;
 
     public function __construct(
-        LanguageRepository $languange,
-        MenuRepository $menu,
-        WidgetRepository $widget
+        LanguageService $languange,
+        MenuService $menu,
+        WidgetService $widget
     )
     {
         $this->languange = $languange;
@@ -37,14 +37,14 @@ class PassingDataToViews
         $passingData = [];
         $passingData['queryParam'] = $request->query();
         $passingData['totalQueryParam'] = count($passingData['queryParam']);
-
+        
         if (request()->segment(1) != 'backend' || request()->segment(1) != 'admin') {
 
             //--- Language
             if (config('cms.module.feature.language.multiple') == true) {
                 $passingData['languages'] = $this->languange->getLanguageActive();
             }
-
+            
             //--- Menu Category
             $filterMenu['parent'] = 0;
             $filterMenu['publish'] = 1;

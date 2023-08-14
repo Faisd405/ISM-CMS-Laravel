@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Regional;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Regional\CityRequest;
-use App\Repositories\RegionalRepository;
+use App\Services\RegionalService;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,7 +16,7 @@ class CityController extends Controller
     private $regionalService;
 
     public function __construct(
-        RegionalRepository $regionalService
+        RegionalService $regionalService
     )
     {
         $this->regionalService = $regionalService;

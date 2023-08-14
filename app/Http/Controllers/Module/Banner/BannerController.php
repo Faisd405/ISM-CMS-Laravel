@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Module\Banner;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Banner\BannerRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Module\BannerRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Module\BannerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -14,8 +14,8 @@ class BannerController extends Controller
     private $bannerService, $languageService;
 
     public function __construct(
-        BannerRepository $bannerService,
-        LanguageRepository $languageService
+        BannerService $bannerService,
+        LanguageService $languageService
     )
     {
         $this->bannerService = $bannerService;
@@ -37,7 +37,7 @@ class BannerController extends Controller
             $filter['publish'] = $request->input('publish');
         }
 
-        $data['banners'] = $this->bannerService->getBannerList($filter, true, 10, false, [],
+        $data['banners'] = $this->bannerService->getBannerList($filter, true, 10, false, [], 
             config('cms.module.banner.ordering'));
         $data['no'] = $data['banners']->firstItem();
         $data['banners']->withQueryString();

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Observers\LogObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Helper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,7 @@ class Link extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Helper;
 
     protected $table = 'mod_links';
     protected $guarded = [];
@@ -120,6 +122,10 @@ class Link extends Model
     public function getCoverSrcAttribute()
     {
         if (!empty($this->cover['filepath'])) {
+            if ($this->isImageLink($this->cover['filepath'])) {
+                return $this->cover['filepath'];
+            }
+
             $cover = Storage::url($this->cover['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.cover_default'))) {
@@ -135,6 +141,9 @@ class Link extends Model
     public function getBannerSrcAttribute()
     {
         if (!empty($this->banner['filepath'])) {
+            if ($this->isImageLink($this->banner['filepath'])) {
+                return $this->banner['filepath'];
+            }
             $banner = Storage::url($this->banner['filepath']);
         } else {
             if (!empty(config('cmsConfig.file.banner_default'))) {

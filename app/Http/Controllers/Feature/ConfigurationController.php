@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Feature;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Feature\ConfigUploadRequest;
-use App\Repositories\Feature\ConfigurationRepository;
-use App\Repositories\Feature\LanguageRepository;
+use App\Services\Feature\ConfigurationService;
+use App\Services\Feature\LanguageService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -21,8 +21,8 @@ class ConfigurationController extends Controller
     private $configService, $langService;
 
     public function __construct(
-        ConfigurationRepository $configService,
-        LanguageRepository $langService
+        ConfigurationService $configService,
+        LanguageService $langService
     )
     {
         $this->configService = $configService;
@@ -142,7 +142,7 @@ class ConfigurationController extends Controller
                 $data .= "\t'$key' => '$val',\n";
             }
             $data .= "];";
-            File::put(base_path('resources/lang/'.$lang.'/text.php'), $data);
+            File::put(base_path('lang/'.$lang.'/text.php'), $data);
             return back()->with('success', __('global.alert.update_success', [
                 'attribute' => __('feature/configuration.text.caption')
             ]));

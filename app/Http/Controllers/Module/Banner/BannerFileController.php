@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Module\Banner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Banner\BannerFileMultipleRequest;
 use App\Http\Requests\Module\Banner\BannerFileRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Module\BannerRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Module\BannerService;
 use Illuminate\Http\Request;
 
 class BannerFileController extends Controller
@@ -14,8 +14,8 @@ class BannerFileController extends Controller
     private $bannerService, $languageService;
 
     public function __construct(
-        BannerRepository $bannerService,
-        LanguageRepository $languageService
+        BannerService $bannerService,
+        LanguageService $languageService
     )
     {
         $this->bannerService = $bannerService;
@@ -135,7 +135,7 @@ class BannerFileController extends Controller
         if ($request->hasFile('file_youtube')) {
             $data['file_youtube'] = $request->file('file_youtube');
         }
-
+        
         $data['banner_id'] = $bannerId;
         $data['image_type'] = $request->image_type ?? null;
         $data['video_type'] = $request->video_type ?? null;
@@ -221,7 +221,7 @@ class BannerFileController extends Controller
         if ($request->hasFile('file_youtube')) {
             $data['file_youtube'] = $request->file('file_youtube');
         }
-
+        
         $data['banner_id'] = $bannerId;
         $data['image_type'] = $request->image_type ?? null;
         $data['video_type'] = $request->video_type ?? null;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IndexUrlRequest;
-use App\Repositories\IndexUrlRepository;
+use App\Services\IndexUrlService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -12,7 +12,7 @@ class IndexUrlController extends Controller
     private $indexUrlService;
 
     public function __construct(
-        IndexUrlRepository $indexUrlService
+        IndexUrlService $indexUrlService
     )
     {
         $this->indexUrlService = $indexUrlService;

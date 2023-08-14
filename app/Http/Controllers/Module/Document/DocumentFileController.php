@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Module\Document;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Document\DocumentFileMultipleRequest;
 use App\Http\Requests\Module\Document\DocumentFileRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Module\DocumentRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Module\DocumentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,8 +15,8 @@ class DocumentFileController extends Controller
     private $documentService, $languageService;
 
     public function __construct(
-        DocumentRepository $documentService,
-        LanguageRepository $languageService
+        DocumentService $documentService,
+        LanguageService $languageService
     )
     {
         $this->documentService = $documentService;
@@ -320,13 +320,44 @@ class DocumentFileController extends Controller
         }
 
         if ($documentFile['type'] == '1') {
-
-            return response()->download(storage_path('app/public/'.$documentFile['file']));
+            return response()->download(public_path(str_replace(env('APP_URL'), '', $documentFile['file'])));
         }
 
         if ($documentFile['type'] == '2') {
 
             return redirect($documentFile['file']);
         }
+    }
+
+    // FrontEnd
+    public function read(Request $request)
+    {
+        $slugDocument = $request->route('slugDocument');
+        $slugFile = $request->route('slugFile');
+        $data['document'] = $this->documentService->getDocument(['slug' => $slugDocument]);
+
+
+        if (empty($data['document']) || $data['document']['publish'] == 0 || $data['document']['approved'] != 1){
+            return redirect()->route('home');
+        }
+
+        $data['read'] = $this->documentService->getFile(['slug' => $slugFile]);
+
+        if (empty($data['read']) || $data['read']['publish'] == 0 || $data['read']['approved'] != 1){
+            return redirect()->route('home');
+        }
+
+        if ($data['read']['public'] == 0 && Auth::guard()->check() == false) {
+            return redirect()->route('login.frontend')->with('warning', __('auth.login_request'));
+        }
+
+        $blade = 'files.detail';
+
+        return view('frontend.documents.'.$blade, compact('data'), [
+            'title' => $data['read']->fieldLang('title'),
+            'breadcrumbs' => [
+                $data['read']->fieldLang('title') => '',
+            ]
+        ]);
     }
 }

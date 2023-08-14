@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Module\Link;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Link\LinkMediaRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Module\LinkRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Module\LinkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -14,8 +14,8 @@ class LinkMediaController extends Controller
     private $linkService, $languageService;
 
     public function __construct(
-        LinkRepository $linkService,
-        LanguageRepository $languageService
+        LinkService $linkService,
+        LanguageService $languageService
     )
     {
         $this->linkService = $linkService;
@@ -113,7 +113,7 @@ class LinkMediaController extends Controller
     public function store(LinkMediaRequest $request, $linkId)
     {
         $data = $request->all();
-
+        
         $data['link_id'] = $linkId;
         $data['locked'] = (bool)$request->locked;
         $data['config_show_description'] = (bool)$request->config_show_description;

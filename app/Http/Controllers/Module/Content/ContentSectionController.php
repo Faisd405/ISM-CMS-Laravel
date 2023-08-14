@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Module\Content;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Content\ContentSectionRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Master\TemplateRepository;
-use App\Repositories\Module\ContentRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Master\TemplateService;
+use App\Services\Module\ContentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -17,9 +17,9 @@ class ContentSectionController extends Controller
     private $contentService, $languageService, $templateService;
 
     public function __construct(
-        ContentRepository $contentService,
-        LanguageRepository $languageService,
-        TemplateRepository $templateService
+        ContentService $contentService,
+        LanguageService $languageService,
+        TemplateService $templateService
     )
     {
         $this->contentService = $contentService;

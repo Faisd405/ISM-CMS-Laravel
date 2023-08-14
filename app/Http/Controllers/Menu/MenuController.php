@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Menu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Menu\MenuRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\MenuRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\MenuService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,8 +14,8 @@ class MenuController extends Controller
     private $menuService, $languageService;
 
     public function __construct(
-        MenuRepository $menuService,
-        LanguageRepository $languageService
+        MenuService $menuService,
+        LanguageService $languageService
     )
     {
         $this->menuService = $menuService;
@@ -129,8 +129,9 @@ class MenuController extends Controller
         $data['module'] = $request->module;
         $data['menuable_id'] = $request->menuable_id;
         $data['target_blank'] = (bool)$request->target_blank;
-        $data['edit_public_menu'] = (bool)$request->edit_public_menu;
+        $data['edit_public_menu'] = (bool)$request->event;
         $data['create_child'] = (bool)$request->create_child;
+        $data['event'] = $request->event;
         $data['locked'] = (bool)$request->locked;
         $menu = $this->menuService->storeMenu($data);
         $data['query'] = $request->query();
@@ -176,6 +177,7 @@ class MenuController extends Controller
         $data['target_blank'] = (bool)$request->target_blank;
         $data['edit_public_menu'] = (bool)$request->edit_public_menu;
         $data['create_child'] = (bool)$request->create_child;
+        $data['event'] = $request->event;
         $data['locked'] = (bool)$request->locked;
         $menu = $this->menuService->updateMenu($data, ['id' => $id]);
         $data['query'] = $request->query();

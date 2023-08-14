@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Module\Event;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Module\Event\EventFieldRequest;
-use App\Repositories\Feature\LanguageRepository;
-use App\Repositories\Module\EventRepository;
+use App\Services\Feature\LanguageService;
+use App\Services\Module\EventService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 class EventFieldController extends Controller
@@ -13,8 +13,8 @@ class EventFieldController extends Controller
     private $eventService, $languageService;
 
     public function __construct(
-        EventRepository $eventService,
-        LanguageRepository $languageService
+        EventService $eventService,
+        LanguageService $languageService
     )
     {
         $this->eventService = $eventService;
@@ -39,7 +39,7 @@ class EventFieldController extends Controller
         $data['event'] = $this->eventService->getEvent(['id' => $eventId]);
         if (empty($data['event']))
             return abort(404);
-
+            
         $data['fields'] = $this->eventService->getFieldList($filter, true, 10, false, [], [
             'position' => 'ASC'
         ]);
@@ -113,7 +113,7 @@ class EventFieldController extends Controller
     public function store(EventFieldRequest $request, $eventId)
     {
         $data = $request->all();
-
+        
         $data['event_id'] = $eventId;
         $data['is_unique'] = (bool)$request->is_unique;
         $data['locked'] = (bool)$request->locked;

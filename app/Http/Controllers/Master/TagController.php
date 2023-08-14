@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\TagRequest;
-use App\Repositories\Master\TagRepository;
+use App\Services\Master\TagService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,7 +13,7 @@ class TagController extends Controller
     private $tagService;
 
     public function __construct(
-        TagRepository $tagService
+        TagService $tagService
     )
     {
         $this->tagService = $tagService;

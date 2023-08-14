@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\Module\ContentRepository;
-use App\Repositories\Module\InquiryRepository;
-use App\Repositories\Module\PageRepository;
+use App\Services\Module\ContentService;
+use App\Services\Module\InquiryService;
+use App\Services\Module\PageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Analytics\Period;
 use Analytics;
-use App\Repositories\Feature\ConfigurationRepository;
+use App\Services\Feature\ConfigurationService;
 use App\Traits\ApiResponser;
 use Carbon\Carbon;
 use Exception;
 
 class DashboardController extends Controller
 {
-    use ApiResponser;
+    use ApiResponser; 
 
     public function index(Request $request)
     {
@@ -26,25 +26,25 @@ class DashboardController extends Controller
            return redirect()->route('home');
 
         $data['counter'] = [
-            'page' => App::make(PageRepository::class)->getPageList([
+            'page' => App::make(PageService::class)->getPageList([
                 'publish' => 1,
                 'approved' => 1,
             ], false, 0)->count(),
-            'post' => App::make(ContentRepository::class)->getPostList([
+            'post' => App::make(ContentService::class)->getPostList([
                 'publish' => 1,
                 'approved' => 1
             ], false, 0)->count(),
         ];
 
         $data['list'] = [
-            'posts' => App::make(ContentRepository::class)->getPostList([
+            'posts' => App::make(ContentService::class)->getPostList([
                 'publish' => 1,
                 'approved' => 1,
                 'detail' => 1
             ], true, 5, false, [], [
                 'created_at' => 'DESC'
             ]),
-            'inquiries' => App::make(InquiryRepository::class)->getFormList([], true, 5, false, [], [
+            'inquiries' => App::make(InquiryService::class)->getFormList([], true, 5, false, [], [
                 'submit_time' => 'DESC'
             ]),
         ];
@@ -57,7 +57,7 @@ class DashboardController extends Controller
     public function analytics(Request $request)
     {
         try {
-
+            
             $periode = Period::days(7);
 
             $visitors = [];
@@ -69,9 +69,9 @@ class DashboardController extends Controller
             }
 
             return $this->success($visitors, 'load analytics successfully');
-
+            
         } catch (Exception $e) {
-
+            
             return $this->error(null, 'load analytics failed');
         }
     }
