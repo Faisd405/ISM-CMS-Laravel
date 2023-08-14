@@ -33,7 +33,7 @@
                                     <select id="filter" class="custom-select" name="filter">
                                         <option value=" " selected disabled>@lang('global.select')</option>
                                         @foreach (__('feature/configuration.visitor.filter') as $key => $val)
-                                        <option value="{{ $key }}" {{ Request::get('filter') == ''.$key.'' ? 'selected' : '' }} 
+                                        <option value="{{ $key }}" {{ Request::get('filter') == ''.$key.'' ? 'selected' : '' }}
                                             title="Range {{ $val }}">{{ $val }}</option>
                                         @endforeach
                                     </select>
@@ -104,7 +104,7 @@
                                     <th>@lang('feature/configuration.visitor.label.title')</th>
                                     <th class="text-center">@lang('global.hits')</th>
                                     <th class="text-center">@lang('feature/configuration.visitor.title')</th>
-                                    <th style="width: 160px;">@lang('feature/configuration.visitor.label.date')</th>
+                                    {{-- <th style="width: 160px;">@lang('feature/configuration.visitor.label.date')</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -112,12 +112,12 @@
                                 <tr>
                                     <td title="{{ $v['pageTitle'] }}">{{ Str::limit($v['pageTitle'], 40) }}</td>
                                     <td class="text-center">
-                                        <span class="badge badge-info">{{ $v['pageViews'] }}</span>
+                                        <span class="badge badge-info">{{ $v['screenPageViews'] }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge badge-main">{{ $v['visitors'] }}</span>
+                                        <span class="badge badge-main">{{ $v['activeUsers'] }}</span>
                                     </td>
-                                    <td>{{ Carbon\Carbon::parse($v['date'])->format('d F Y') }}</td>
+                                    {{-- <td>{{ Carbon\Carbon::parse($v['date'])->format('d F Y') }}</td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -144,16 +144,16 @@
                                 @foreach($data['top']->take(5) as $tt)
                                 <tr>
                                     <td>
-                                        <a href="{{ url('/').$tt['url'] }}" title="{{ $tt['pageTitle'] }}">
+                                        <a href="{{ url('/').$tt['fullPageUrl'] }}" title="{{ $tt['pageTitle'] }}">
                                             @if ($tt['pageTitle'] == '(not set)')
-                                                @lang('menu.frontend.home') 
+                                                @lang('menu.frontend.home')
                                             @else
                                                 {{ Str::limit($tt['pageTitle'], 65) }}
                                             @endif
                                         </a>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge badge-info">{{ $tt['pageViews'] }}</span> 
+                                        <span class="badge badge-info">{{ $tt['screenPageViews'] }}</span>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -184,7 +184,7 @@
         return false;
     });
 </script>
-@if (!isset($data['error']) && !empty(env('ANALYTICS_VIEW_ID')))
+@if (!isset($data['error']) && !empty(env('ANALYTICS_PROPERTY_ID')))
 <script>
     //pie
     var pieChart = new Chart(document.getElementById('chart-pie').getContext("2d"), {

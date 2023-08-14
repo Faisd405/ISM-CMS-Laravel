@@ -20,7 +20,7 @@
 </div>
 @endif
 
-@if (Auth::user()->can('pages') && config('cms.module.page.active') == true 
+@if (Auth::user()->can('pages') && config('cms.module.page.active') == true
     || Auth::user()->can('content_posts') && config('cms.module.content.post.active') == true)
 <div class="row">
     <div class="d-flex col-xl-12 align-items-stretch">
@@ -65,7 +65,7 @@
 @endif
 
 @can('visitor')
-    @if (!empty(env('ANALYTICS_VIEW_ID')))
+    @if (!empty(env('ANALYTICS_PROPERTY_ID')))
     <div class="card">
         <div class="card-header">
             <h5 class="my-2">

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Analytics\Period;
-use Analytics;
+use Spatie\Analytics\Facades\Analytics;
 use App\Services\Feature\ConfigurationService;
 use App\Traits\ApiResponser;
 use Carbon\Carbon;
@@ -17,13 +17,13 @@ use Exception;
 
 class DashboardController extends Controller
 {
-    use ApiResponser; 
+    use ApiResponser;
 
     public function index(Request $request)
     {
         $roleBackend = config('cms.module.auth.login.backend.role');
         if (!Auth::user()->hasRole($roleBackend))
-           return redirect()->route('home');
+            return redirect()->route('home');
 
         $data['counter'] = [
             'page' => App::make(PageService::class)->getPageList([
@@ -57,21 +57,19 @@ class DashboardController extends Controller
     public function analytics(Request $request)
     {
         try {
-            
             $periode = Period::days(7);
+            $analytics = Analytics::fetchTotalVisitorsAndPageViews($periode);
 
             $visitors = [];
-            foreach (Analytics::fetchTotalVisitorsAndPageViews($periode) as $key => $value) {
+            foreach ($analytics as $key => $value) {
                 $visitors[$key] = [
                     'date' => Carbon::parse($value['date'])->format('d F'),
-                    'visitor' => $value['visitors']
+                    'visitor' => $value['activeUsers']
                 ];
             }
 
             return $this->success($visitors, 'load analytics successfully');
-            
         } catch (Exception $e) {
-            
             return $this->error(null, 'load analytics failed');
         }
     }
