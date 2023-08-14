@@ -13,7 +13,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ isset($title) ? $title.' | ' : '' }} @yield('title') {{ strip_tags(config('cmsConfig.seo.meta_title')) }}</title>
+    <title>{{ isset($title) ? $title.' | IISIA' : 'IISIA (The Indonesian Iron and Steel Industry Association)' }} @yield('title') {{ strip_tags(config('cmsConfig.seo.meta_title')) }}</title>
 
     <meta name="robots" content="index,follow" />
     <meta name="googlebot" content="index,follow" />
@@ -41,13 +41,16 @@
     <meta name="twitter:image" content="{!! isset($data['cover']) ? asset($data['cover']) : config('cmsConfig.file.open_graph') !!}">
 
     <link rel="canonical" href="{{ url()->full() }}" />
-    
+
     <!-- Icon -->
     @include('layouts.frontend.assets.icon')
 
     <!-- Css -->
     @include('layouts.frontend.assets.css')
-    
+
+    <!-- Fonts -->
+    @include('layouts.frontend.assets.font')
+
     <!-- jsHead -->
     @yield('jshead')
 
@@ -77,9 +80,6 @@
 
         <!-- jS -->
         @include('layouts.frontend.assets.js')
-
-        <!-- Fonts -->
-        @include('layouts.frontend.assets.font')
 
         <!-- jsbody-->
         @yield('jsbody')

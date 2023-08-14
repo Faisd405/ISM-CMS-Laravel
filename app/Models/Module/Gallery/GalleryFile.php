@@ -4,6 +4,7 @@ namespace App\Models\Module\Gallery;
 
 use App\Models\User;
 use App\Observers\LogObserver;
+use App\Traits\Helper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,6 +15,7 @@ class GalleryFile extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Helper;
 
     protected $table = 'mod_gallery_files';
     protected $guarded = [];
@@ -97,7 +99,7 @@ class GalleryFile extends Model
         $videoType = $this->video_type;
 
         if ($type == '0') {
-            
+
             if ($imageType == '0') {
                 return [
                     'image' => Storage::url(config('cms.files.gallery.path').$this->gallery_album_id.'/'.$this->file),
@@ -106,6 +108,13 @@ class GalleryFile extends Model
             }
 
             if ($imageType == '1') {
+                if ($this->isImageLink($this->file)) {
+                    return [
+                        'image' => $this->file,
+                        'video' => '',
+                    ];
+                }
+
                 return [
                     'image' => Storage::url($this->file),
                     'video'
@@ -130,7 +139,7 @@ class GalleryFile extends Model
                     $thumbnail = asset(config('cms.files.config.cover_default.file'));
                 }
             }
-            
+
             if ($videoType == '0') {
 
                 return [
